@@ -17,8 +17,8 @@ import { PlotTickData } from '@store/reducers/positions'
 import { SwapError } from '@store/sagas/swap'
 import SingletonOraiswapV3 from '@store/services/contractSingleton'
 import axios from 'axios'
-import { BTC, ETH, Token, TokenPriceData, USDC, tokensPrices } from './static'
-import { PoolKey, Tick } from '@/sdk/OraiswapV3.types'
+import { BTC, ETH, ORAI, Token, TokenPriceData, USDC, USDT, tokensPrices } from './static'
+import { Pool, PoolKey, Tick } from '@/sdk/OraiswapV3.types'
 
 export const createLoaderKey = () => (new Date().getMilliseconds() + Math.random()).toString()
 
@@ -331,9 +331,9 @@ export const parseFeeToPathFee = (fee: bigint): string => {
   return parsedFee.slice(0, parsedFee.length - 2) + '_' + parsedFee.slice(parsedFee.length - 2)
 }
 
-export const getPoolsByPoolKeys = async (poolKeys: PoolKey[]): Promise<PoolWithPoolKey[]> => {
+export const getPoolsByPoolKeys = async (poolKeys: PoolKey[]): Promise<Pool[]> => {
   const promises = poolKeys.map(({ token_x, token_y, fee_tier }) =>
-    SingletonOraiswapV3.contract.pool({ token0: token_x, token1: token_y, feeTier: fee_tier })
+    SingletonOraiswapV3.dex.pool({ token0: token_x, token1: token_y, feeTier: fee_tier })
   )
   const pools = await Promise.all(promises)
 
@@ -364,9 +364,11 @@ export const getNetworkTokensList = (networkType: Network): Record<string, Token
     }
     case Network.Testnet:
       return {
+        [ORAI.address.toString()]: ORAI,
+        [USDT.address.toString()]: USDT,
         [USDC.address.toString()]: USDC,
         [BTC.address.toString()]: BTC,
-        [ETH.address.toString()]: ETH
+        [ETH.address.toString()]: ETH,
       }
     default:
       return {}
@@ -539,7 +541,7 @@ export type SimulateResult = {
 }
 
 export const getPools = async (poolKeys: PoolKey[]): Promise<PoolWithPoolKey[]> => {
-  const pools = await SingletonOraiswapV3.contract.pools({})
+  const pools = await SingletonOraiswapV3.dex.pools({})
 
   return pools.map((pool, index) => {
     return { ...pool, poolKey: poolKeys[index] }
@@ -585,7 +587,7 @@ export const getAllTicks = (poolKey: PoolKey, ticks: bigint[]): Promise<Tick[]> 
   const promises: Promise<Tick>[] = []
 
   for (const tick of ticks) {
-    promises.push(SingletonOraiswapV3.contract.tick({ key: poolKey, index: Number(tick) }))
+    promises.push(SingletonOraiswapV3.dex.tick({ key: poolKey, index: Number(tick) }))
   }
 
   return Promise.all(promises)

@@ -4,6 +4,8 @@ import { connectKeplr } from '../services/keplr'
 import { Tendermint37Client, Tendermint34Client } from '@cosmjs/tendermint-rpc'
 import { CosmWasmClient, SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 import { GasPrice } from '@cosmjs/stargate'
+import { useDispatch } from 'react-redux'
+import { actions as walletActions, Status } from '@store/reducers/wallet'
 
 const getStatus = Tendermint34Client.prototype.status
 
@@ -28,7 +30,7 @@ export interface ISigningCosmWasmClientContext {
   loading: boolean
   error: any
   connectWallet: any
-  disconnect: Function
+  disconnect: any
 }
 
 export const PUBLIC_RPC_ENDPOINT = import.meta.env.VITE_CHAIN_RPC_ENDPOINT || ''
@@ -47,6 +49,7 @@ export const useSigningCosmWasmClient = (): ISigningCosmWasmClientContext => {
   const [signingClient, setSigningClient] = useState<SigningCosmWasmClient | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
+  const dispatch = useDispatch()
 
   const connectWallet = async () => {
     setLoading(true)
@@ -74,6 +77,8 @@ export const useSigningCosmWasmClient = (): ISigningCosmWasmClientContext => {
       // get user address
       const [{ address }] = await offlineSigner.getAccounts()
       setWalletAddress(address)
+      dispatch(walletActions.setStatus(Status.Initialized))
+
     } catch (error) {
       // make fallback client
       const client = await SigningCosmWasmClient.connectWithSigner(PUBLIC_RPC_ENDPOINT, null)
@@ -87,6 +92,7 @@ export const useSigningCosmWasmClient = (): ISigningCosmWasmClientContext => {
     if (signingClient) {
       signingClient.disconnect()
     }
+    dispatch(walletActions.setStatus(Status.Uninitialized))
     setWalletAddress('')
     setSigningClient(null)
     setLoading(false)

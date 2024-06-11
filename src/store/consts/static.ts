@@ -184,6 +184,24 @@ export const AZERO: Token = {
   coingeckoId: 'aleph-zero'
 }
 
+export const ORAI: Token = {
+  symbol: 'ORAI',
+  address: 'orai',
+  decimals: 6n,
+  name: 'Oraichain Native Token',
+  logoURI: 'https://assets.coingecko.com/coins/images/12931/standard/orai.png',
+  coingeckoId: 'oraichain-token'
+}
+
+export const USDT: Token = {
+  symbol: 'USDT',
+  address: 'orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh',
+  decimals: 6n,
+  name: 'Tether USD',
+  logoURI: 'https://assets.coingecko.com/coins/images/325/standard/Tether.png',
+  coingeckoId: 'tether'
+}
+
 export const DEFAULT_INVARIANT_OPTIONS = {
   storageDepositLimit: null,
   refTime: 100000000000,

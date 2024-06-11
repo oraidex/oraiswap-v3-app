@@ -92,7 +92,7 @@ function* handleInitPosition(action: PayloadAction<InitPositionData>): Generator
     txs.push(YTokenTx)
 
     if (initPool) {
-      const createPoolTx = SingletonOraiswapV3.contract.createPool(
+      const createPoolTx = SingletonOraiswapV3.dex.createPool(
         poolKeyData,
         spotSqrtPrice,
         INVARIANT_CREATE_POOL_OPTIONS
@@ -102,7 +102,7 @@ function* handleInitPosition(action: PayloadAction<InitPositionData>): Generator
       yield* call(fetchAllPoolKeys)
     }
 
-    const tx = SingletonOraiswapV3.contract.createPosition(
+    const tx = SingletonOraiswapV3.dex.createPosition(
       poolKeyData,
       lowerTick,
       upperTick,

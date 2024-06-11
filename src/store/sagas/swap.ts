@@ -100,7 +100,7 @@ export function* handleSwap(action: PayloadAction<Omit<Swap, 'txid'>>): Generato
       txs.push(approveTx)
     }
 
-    const swapTx = SingletonOraiswapV3.contract.swap(
+    const swapTx = SingletonOraiswapV3.dex.swap(
       poolKey,
       xToY,
       amountIn,
@@ -246,7 +246,7 @@ export function* handleSwapWithAZERO(action: PayloadAction<Omit<Swap, 'txid'>>):
       txs.push(approveTx)
     }
 
-    const swapTx = SingletonOraiswapV3.contract.swap(
+    const swapTx = SingletonOraiswapV3.dex.swap(
       poolKey,
       xToY,
       amountIn,

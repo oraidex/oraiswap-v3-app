@@ -1,24 +1,26 @@
 import { PUBLIC_RPC_ENDPOINT } from '../../hooks/cosmwasm'
 import { useSigningClient } from '../../contexts/cosmwasm'
 import Header from '@components/Header/Header'
-import { actions as walletActions } from '@store/reducers/wallet'
+import { Status, actions as walletActions } from '@store/reducers/wallet'
 import { networkType } from '@store/selectors/connection'
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useLocation } from 'react-router-dom'
 import SingletonOraiswapV3 from '@store/services/contractSingleton'
+import { address } from '@store/selectors/wallet'
 
 export const HeaderWrapper: React.FC = () => {
   const dispatch = useDispatch()
   const currentNetwork = useSelector(networkType)
+  const wallet = useSelector(address)
 
   const location = useLocation()
 
-  const { walletAddress, error, signingClient, connectWallet } = useSigningClient()
+  const { walletAddress, signingClient, connectWallet, disconnect } = useSigningClient()
 
   useEffect(() => {
-    // auto connect when open page
-    if (walletAddress.length === 0) {
+    console.log('wallet', {walletAddress})
+    if (walletAddress == '') {
       connectWallet()
     }
 
@@ -30,7 +32,7 @@ export const HeaderWrapper: React.FC = () => {
     return () => {
       window.removeEventListener('keplr_keystorechange', connectWallet)
     }
-  }, [signingClient])
+  }, [wallet])
 
   return (
     <Header
@@ -43,7 +45,7 @@ export const HeaderWrapper: React.FC = () => {
       //   dispatch(walletActions.airdrop())
       // }}
       onDisconnectWallet={() => {
-        dispatch(walletActions.disconnect())
+        disconnect()
       }}
       onFaucet={() => dispatch(walletActions.airdrop())}
       typeOfNetwork={currentNetwork}
