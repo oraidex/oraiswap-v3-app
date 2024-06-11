@@ -1,9 +1,9 @@
 import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 import { OraiswapV3Client } from '../../sdk'
-import { Cw20BaseClient } from '@oraichain/common-contracts-sdk'
+import { OraiswapTokenClient } from '@oraichain/oraidex-contracts-sdk'
 
 export default class SingletonOraiswapV3 {
-  private static _cw20: Cw20BaseClient
+  private static _cw20: OraiswapTokenClient
   private static _dex: OraiswapV3Client
 
   private constructor() {}
@@ -24,7 +24,7 @@ export default class SingletonOraiswapV3 {
     contractAddress: string
   ) {
     if (!this._cw20 || contractAddress !== this._cw20.contractAddress) {
-      this._cw20 = new Cw20BaseClient(signingClient, sender, contractAddress)
+      this._cw20 = new OraiswapTokenClient(signingClient, sender, contractAddress)
     }
   }
 }
