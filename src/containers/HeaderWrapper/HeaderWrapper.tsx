@@ -6,6 +6,7 @@ import { networkType } from '@store/selectors/connection'
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useLocation } from 'react-router-dom'
+import SingletonOraiswapV3 from '@store/services/contractSingleton'
 
 export const HeaderWrapper: React.FC = () => {
   const dispatch = useDispatch()
@@ -13,7 +14,7 @@ export const HeaderWrapper: React.FC = () => {
 
   const location = useLocation()
 
-  const { walletAddress, error, connectWallet } = useSigningClient()
+  const { walletAddress, error, signingClient, connectWallet } = useSigningClient()
 
   useEffect(() => {
     // auto connect when open page
@@ -21,11 +22,15 @@ export const HeaderWrapper: React.FC = () => {
       connectWallet()
     }
 
+    if (signingClient && walletAddress) {
+      SingletonOraiswapV3.load(signingClient, walletAddress)
+    }
+
     window.addEventListener('keplr_keystorechange', connectWallet)
     return () => {
       window.removeEventListener('keplr_keystorechange', connectWallet)
     }
-  }, [])
+  }, [signingClient])
 
   return (
     <Header
