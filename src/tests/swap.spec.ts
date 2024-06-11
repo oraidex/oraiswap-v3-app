@@ -3,37 +3,45 @@ import { OraiswapTokenClient, OraiswapTokenTypes } from '@oraichain/oraidex-cont
 import * as oraidexArtifacts from '@oraichain/oraidex-contracts-build'
 import fs from 'fs'
 import path from 'path'
+import * as OraiswapV3Wasm from '../wasm'
 import { OraiswapV3Client, OraiswapV3Types } from '../sdk'
 
-export const client = new SimulateCosmWasmClient({
+const senderAddress = 'orai1g4h64yjt0fvzv5v2j8tyfnpe5kmnetejvfgs7g'
+const bobAddress = 'orai1602dkqjvh4s7ryajnz2uwhr8vetrwr8nekpxv5'
+
+const client = new SimulateCosmWasmClient({
   chainId: 'Oraichain',
   bech32Prefix: 'orai'
 })
 
+const createToken = async (symbol: string, amount: string) => {
+  // init airi token
+  const res = await oraidexArtifacts.deployContract(
+    client,
+    senderAddress,
+
+    {
+      mint: {
+        minter: senderAddress
+      },
+      decimals: 6,
+      symbol,
+      name: symbol,
+      initial_balances: [{ address: senderAddress, amount }]
+    } as OraiswapTokenTypes.InstantiateMsg,
+    'token',
+    'oraiswap_token'
+  )
+  return new OraiswapTokenClient(client, senderAddress, res.contractAddress)
+}
+
 describe('swap', () => {
-  let senderAddress = 'orai1g4h64yjt0fvzv5v2j8tyfnpe5kmnetejvfgs7g'
   // decimals: 12 + scale 3 = e9
-  let protocol_fee = 6e9
-  let token: OraiswapTokenClient
+  let protocol_fee = Number(OraiswapV3Wasm.toPercentage(6, 3))
+
   let dex: OraiswapV3Client
 
   beforeEach(async () => {
-    // init airi token
-    const res = await oraidexArtifacts.deployContract(
-      client,
-      senderAddress,
-
-      {
-        decimals: 6,
-        symbol: 'AIRI',
-        name: 'Airight token',
-        initial_balances: [{ address: senderAddress, amount: '1000000000' }]
-      } as OraiswapTokenTypes.InstantiateMsg,
-      'token',
-      'oraiswap_token'
-    )
-    token = new OraiswapTokenClient(client, senderAddress, res.contractAddress)
-
     const { codeId: dexCodeId } = await client.upload(
       senderAddress,
       fs.readFileSync(path.resolve(__dirname, 'testdata', 'oraiswap-v3.wasm')),
@@ -59,116 +67,127 @@ describe('swap', () => {
     let feeTier: OraiswapV3Types.FeeTier = { fee: protocol_fee, tick_spacing: 10 }
     let res = await dex.addFeeTier({ feeTier })
     console.log(res)
-    let init_tick = 0
-    // let init_sqrt_price = calculate_sqrt_price(init_tick)
-    // let initial_amount = 10u128.pow(10);
-    // let (token_x, token_y) = create_tokens!(app, initial_amount, initial_amount);
-    // create_pool!(
-    //     app,
-    //     dex,
-    //     token_x,
-    //     token_y,
-    //     fee_tier,
-    //     init_sqrt_price,
-    //     init_tick,
-    //     "alice"
-    // )
-    // .unwrap();
-    // approve!(app, token_x, dex, initial_amount, "alice").unwrap();
-    // approve!(app, token_y, dex, initial_amount, "alice").unwrap();
-    // let pool_key = PoolKey::new(token_x.clone(), token_y.clone(), fee_tier).unwrap();
-    // let lower_tick_index = -20;
-    // let middle_tick_index = -10;
-    // let upper_tick_index = 10;
-    // let liquidity_delta = Liquidity::from_integer(1000000);
-    // create_position!(
-    //     app,
-    //     dex,
-    //     pool_key,
-    //     lower_tick_index,
-    //     upper_tick_index,
-    //     liquidity_delta,
-    //     SqrtPrice::new(0),
-    //     SqrtPrice::max_instance(),
-    //     "alice"
-    // )
-    // .unwrap();
-    // create_position!(
-    //     app,
-    //     dex,
-    //     pool_key,
-    //     lower_tick_index - 20,
-    //     middle_tick_index,
-    //     liquidity_delta,
-    //     SqrtPrice::new(0),
-    //     SqrtPrice::max_instance(),
-    //     "alice"
-    // )
-    // .unwrap();
-    // let pool = get_pool!(app, dex, token_x, token_y, fee_tier).unwrap();
-    // assert_eq!(pool.liquidity, liquidity_delta);
-    // let amount = 1000;
-    // let swap_amount = TokenAmount(amount);
-    // mint!(app, token_x, "bob", amount, "alice").unwrap();
-    // approve!(app, token_x, dex, amount, "bob").unwrap();
-    // let slippage = SqrtPrice::new(MIN_SQRT_PRICE);
-    // let target_sqrt_price = quote!(app, dex, pool_key, true, swap_amount, true, slippage)
-    //     .unwrap()
-    //     .target_sqrt_price;
-    // let before_dex_x = balance_of!(app, token_x, dex);
-    // let before_dex_y = balance_of!(app, token_y, dex);
-    // swap!(
-    //     app,
-    //     dex,
-    //     pool_key,
-    //     true,
-    //     swap_amount,
-    //     true,
-    //     target_sqrt_price,
-    //     "bob"
-    // )
-    // .unwrap();
-    // // Load states
-    // let pool = get_pool!(app, dex, token_x, token_y, fee_tier).unwrap();
-    // let lower_tick = get_tick!(app, dex, pool_key, lower_tick_index).unwrap();
-    // let middle_tick = get_tick!(app, dex, pool_key, middle_tick_index).unwrap();
-    // let upper_tick = get_tick!(app, dex, pool_key, upper_tick_index).unwrap();
-    // let lower_tick_bit = is_tick_initialized!(app, dex, pool_key, lower_tick_index);
-    // let middle_tick_bit = is_tick_initialized!(app, dex, pool_key, middle_tick_index);
-    // let upper_tick_bit = is_tick_initialized!(app, dex, pool_key, upper_tick_index);
-    // let bob_x = balance_of!(app, token_x, "bob");
-    // let bob_y = balance_of!(app, token_y, "bob");
-    // let dex_x = balance_of!(app, token_x, dex);
-    // let dex_y = balance_of!(app, token_y, dex);
-    // let delta_dex_y = before_dex_y - dex_y;
-    // let delta_dex_x = dex_x - before_dex_x;
-    // let expected_y = amount - 10;
-    // let expected_x = 0u128;
-    // // Check balances
-    // assert_eq!(bob_x, expected_x);
-    // assert_eq!(bob_y, expected_y);
-    // assert_eq!(delta_dex_x, amount);
-    // assert_eq!(delta_dex_y, expected_y);
-    // // Check Pool
-    // assert_eq!(pool.fee_growth_global_y, FeeGrowth::new(0));
-    // assert_eq!(
-    //     pool.fee_growth_global_x,
-    //     FeeGrowth::new(40000000000000000000000)
-    // );
-    // assert_eq!(pool.fee_protocol_token_y, TokenAmount(0));
-    // assert_eq!(pool.fee_protocol_token_x, TokenAmount(2));
-    // // Check Ticks
-    // assert_eq!(lower_tick.liquidity_change, liquidity_delta);
-    // assert_eq!(middle_tick.liquidity_change, liquidity_delta);
-    // assert_eq!(upper_tick.liquidity_change, liquidity_delta);
-    // assert_eq!(upper_tick.fee_growth_outside_x, FeeGrowth::new(0));
-    // assert_eq!(
-    //     middle_tick.fee_growth_outside_x,
-    //     FeeGrowth::new(30000000000000000000000)
-    // );
-    // assert_eq!(lower_tick.fee_growth_outside_x, FeeGrowth::new(0));
-    // assert!(lower_tick_bit);
-    // assert!(middle_tick_bit);
-    // assert!(upper_tick_bit);
+    let initTick = 0
+
+    let initSqrtPrice = OraiswapV3Wasm.calculateSqrtPrice(initTick)
+
+    let initialAmount = (1e10).toString()
+    let tokenX = await createToken('tokenx', initialAmount)
+    let tokenY = await createToken('tokeny', initialAmount)
+
+    res = await dex.createPool({
+      feeTier,
+      initSqrtPrice,
+      initTick,
+      token0: tokenX.contractAddress,
+      token1: tokenY.contractAddress
+    })
+
+    await tokenX.increaseAllowance({ amount: initialAmount, spender: dex.contractAddress })
+    await tokenY.increaseAllowance({ amount: initialAmount, spender: dex.contractAddress })
+
+    let poolKey: OraiswapV3Types.PoolKey = {
+      fee_tier: feeTier,
+      token_x: tokenX.contractAddress,
+      token_y: tokenY.contractAddress
+    }
+
+    let lowerTickIndex = -20
+    let middleTickIndex = -10
+    let upperTickIndex = 10
+    let liquidityDelta = (1000000e6).toString()
+
+    await dex.createPosition({
+      poolKey,
+      lowerTick: lowerTickIndex,
+      upperTick: upperTickIndex,
+      liquidityDelta,
+      slippageLimitLower: '0',
+      slippageLimitUpper: '340282366920938463463374607431768211455'
+    })
+
+    await dex.createPosition({
+      poolKey,
+      lowerTick: lowerTickIndex - 20,
+      upperTick: middleTickIndex,
+      liquidityDelta,
+      slippageLimitLower: '0',
+      slippageLimitUpper: '340282366920938463463374607431768211455'
+    })
+
+    let pool = await dex.pool({
+      feeTier,
+      token0: tokenX.contractAddress,
+      token1: tokenY.contractAddress
+    })
+    expect(pool.liquidity).toEqual(liquidityDelta)
+    let amount = 1000n
+    let swapAmount: OraiswapV3Types.TokenAmount = amount.toString()
+    await tokenX.mint({ amount: swapAmount, recipient: bobAddress })
+    tokenX.sender = bobAddress
+    await tokenX.increaseAllowance({ amount: swapAmount, spender: dex.contractAddress })
+
+    let slippage = OraiswapV3Wasm.getGlobalMinSqrtPrice().toString()
+    let { target_sqrt_price: targetSqrtPrice } = await dex.quote({
+      amount: swapAmount,
+      poolKey,
+      sqrtPriceLimit: slippage,
+      byAmountIn: true,
+      xToY: true
+    })
+
+    let beforeDexX = BigInt((await tokenX.balance({ address: dex.contractAddress })).balance)
+    let beforeDexY = BigInt((await tokenY.balance({ address: dex.contractAddress })).balance)
+
+    dex.sender = bobAddress
+    await dex.swap({
+      poolKey,
+      amount: swapAmount,
+      byAmountIn: true,
+      sqrtPriceLimit: targetSqrtPrice,
+      xToY: true
+    })
+
+    // Load states
+    pool = await dex.pool({
+      feeTier,
+      token0: tokenX.contractAddress,
+      token1: tokenY.contractAddress
+    })
+    let lowerTick = await dex.tick({ key: poolKey, index: lowerTickIndex })
+    let middleTick = await dex.tick({ key: poolKey, index: middleTickIndex })
+    let upperTick = await dex.tick({ key: poolKey, index: upperTickIndex })
+
+    let lowerTickBit = await dex.isTickInitialized({ key: poolKey, index: lowerTickIndex })
+    let middleTickBit = await dex.isTickInitialized({ key: poolKey, index: middleTickIndex })
+    let upperTickBit = await dex.isTickInitialized({ key: poolKey, index: upperTickIndex })
+    let bobX = BigInt((await tokenX.balance({ address: bobAddress })).balance)
+    let bobY = BigInt((await tokenY.balance({ address: bobAddress })).balance)
+    let dexX = BigInt((await tokenX.balance({ address: dex.contractAddress })).balance)
+    let dexY = BigInt((await tokenY.balance({ address: dex.contractAddress })).balance)
+    let deltaDexY = beforeDexY - dexY
+    let deltaDexX = dexX - beforeDexX
+    let expectedY = amount - 10n
+    let expectedX = 0n
+    // Check balances
+    expect(bobX).toEqual(expectedX)
+    expect(bobY).toEqual(expectedY)
+    expect(deltaDexX).toEqual(amount)
+    expect(deltaDexY).toEqual(expectedY)
+    // Check Pool
+    expect(pool.fee_growth_global_y).toEqual('0')
+    expect(pool.fee_growth_global_x).toEqual('40000000000000000000000')
+    expect(pool.fee_protocol_token_y).toEqual('0')
+    expect(pool.fee_protocol_token_x).toEqual('2')
+    // Check Ticks
+    expect(lowerTick.liquidity_change).toEqual(liquidityDelta)
+    expect(middleTick.liquidity_change).toEqual(liquidityDelta)
+    expect(upperTick.liquidity_change).toEqual(liquidityDelta)
+    expect(upperTick.fee_growth_outside_x).toEqual('0')
+    expect(middleTick.fee_growth_outside_x).toEqual('30000000000000000000000')
+    expect(lowerTick.fee_growth_outside_x).toEqual('0')
+    expect(lowerTickBit).toBeTruthy()
+    expect(middleTickBit).toBeTruthy()
+    expect(upperTickBit).toBeTruthy()
   })
 })
