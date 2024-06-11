@@ -364,6 +364,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
 
   const [tokenAPriceData, setTokenAPriceData] = useState<TokenPriceData | undefined>(undefined)
   const [priceALoading, setPriceALoading] = useState(false)
+
   useEffect(() => {
     if (tokenAIndex === null) {
       return
@@ -385,6 +386,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
 
   const [tokenBPriceData, setTokenBPriceData] = useState<TokenPriceData | undefined>(undefined)
   const [priceBLoading, setPriceBLoading] = useState(false)
+
   useEffect(() => {
     if (tokenBIndex === null) {
       return

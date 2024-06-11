@@ -92,85 +92,85 @@ export function* handleBalance(): Generator {
 //   return token
 // }
 
-export function* handleAirdrop(): Generator {
-  const walletAddress = yield* select(address)
+// export function* handleAirdrop(): Generator {
+//   const walletAddress = yield* select(address)
 
-  if (!walletAddress) {
-    return yield* put(
-      snackbarsActions.add({
-        message: 'You have to connect your wallet before claiming the faucet',
-        variant: 'error',
-        persist: false
-      })
-    )
-  }
+//   if (!walletAddress) {
+//     return yield* put(
+//       snackbarsActions.add({
+//         message: 'You have to connect your wallet before claiming the faucet',
+//         variant: 'error',
+//         persist: false
+//       })
+//     )
+//   }
 
-  const loaderAirdrop = createLoaderKey()
+//   const loaderAirdrop = createLoaderKey()
 
-  try {
-    yield put(
-      snackbarsActions.add({
-        message: 'Airdrop in progress...',
-        variant: 'pending',
-        persist: true,
-        key: loaderAirdrop
-      })
-    )
+//   try {
+//     yield put(
+//       snackbarsActions.add({
+//         message: 'Airdrop in progress...',
+//         variant: 'pending',
+//         persist: true,
+//         key: loaderAirdrop
+//       })
+//     )
 
-    const connection = yield* getConnection()
+//     const connection = yield* getConnection()
 
-    const data = connection.createType('Vec<u8>', [])
+//     const data = connection.createType('Vec<u8>', [])
 
-    const psp22 = yield* call(
-      [psp22Singleton, psp22Singleton.loadInstance],
-      connection,
-      Network.Testnet
-    )
+//     const psp22 = yield* call(
+//       [psp22Singleton, psp22Singleton.loadInstance],
+//       connection,
+//       Network.Testnet
+//     )
 
-    const txs = []
+//     const txs = []
 
-    for (const ticker in FaucetTokenList) {
-      const address = FaucetTokenList[ticker as keyof typeof FaucetTokenList]
-      const airdropAmount = TokenAirdropAmount[ticker as keyof typeof FaucetTokenList]
+//     for (const ticker in FaucetTokenList) {
+//       const address = FaucetTokenList[ticker as keyof typeof FaucetTokenList]
+//       const airdropAmount = TokenAirdropAmount[ticker as keyof typeof FaucetTokenList]
 
-      const mintTx = psp22.mintTx(airdropAmount, address)
+//       const mintTx = psp22.mintTx(airdropAmount, address)
 
-      txs.push(mintTx)
+//       txs.push(mintTx)
 
-      const transferTx = psp22.transferTx(walletAddress, airdropAmount, data, address)
-      txs.push(transferTx)
-    }
+//       const transferTx = psp22.transferTx(walletAddress, airdropAmount, data, address)
+//       txs.push(transferTx)
+//     }
 
-    const batchedTx = connection.tx.utility.batchAll(txs)
+//     const batchedTx = connection.tx.utility.batchAll(txs)
 
-    const signedBatchedTx = yield* call([batchedTx, batchedTx.signAsync], walletAddress, {
-      signer: adapter.signer as Signer
-    })
+//     const signedBatchedTx = yield* call([batchedTx, batchedTx.signAsync], walletAddress, {
+//       signer: adapter.signer as Signer
+//     })
 
-    const txResult = yield* call(sendTx, signedBatchedTx)
+//     const txResult = yield* call(sendTx, signedBatchedTx)
 
-    closeSnackbar(loaderAirdrop)
-    yield put(snackbarsActions.remove(loaderAirdrop))
+//     closeSnackbar(loaderAirdrop)
+//     yield put(snackbarsActions.remove(loaderAirdrop))
 
-    const tokenNames = Object.keys(FaucetTokenList).join(', ')
+//     const tokenNames = Object.keys(FaucetTokenList).join(', ')
 
-    yield* put(
-      snackbarsActions.add({
-        message: `Airdropped ${tokenNames} tokens`,
-        variant: 'success',
-        persist: false,
-        txid: txResult.hash
-      })
-    )
+//     yield* put(
+//       snackbarsActions.add({
+//         message: `Airdropped ${tokenNames} tokens`,
+//         variant: 'success',
+//         persist: false,
+//         txid: txResult.hash
+//       })
+//     )
 
-    yield* call(fetchBalances, [...Object.values(FaucetTokenList)])
-  } catch (error) {
-    console.log(error)
+//     yield* call(fetchBalances, [...Object.values(FaucetTokenList)])
+//   } catch (error) {
+//     console.log(error)
 
-    closeSnackbar(loaderAirdrop)
-    yield put(snackbarsActions.remove(loaderAirdrop))
-  }
-}
+//     closeSnackbar(loaderAirdrop)
+//     yield put(snackbarsActions.remove(loaderAirdrop))
+//   }
+// }
 
 // export function* setEmptyAccounts(collateralsAddresses: PublicKey[]): Generator {
 //   const tokensAccounts = yield* select(accounts)
@@ -285,6 +285,7 @@ export const sleep = (ms: number) => {
 }
 
 export function* handleConnect(): Generator {
+  console.log("connect")
   const walletStatus = yield* select(status)
   if (walletStatus === Status.Initialized) {
     yield* put(
@@ -301,7 +302,7 @@ export function* handleConnect(): Generator {
 
 export function* handleDisconnect(): Generator {
   try {
-    yield* call(disconnectWallet)
+    // yield* call(disconnectWallet)
     yield* put(actions.resetState())
 
     yield* put(positionsActions.setPositionsList([]))
