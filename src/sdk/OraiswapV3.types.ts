@@ -195,7 +195,6 @@ export interface Pool {
   sqrt_price: SqrtPrice;
   start_timestamp: number;
 }
-export type ArrayOfPoolKey = PoolKey[];
 export type ArrayOfPool = Pool[];
 export interface Position {
   fee_growth_inside_x: FeeGrowth;

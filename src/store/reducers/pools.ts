@@ -1,8 +1,7 @@
+import { Pool, PoolKey } from '@/sdk/OraiswapV3.types'
 import {
   FeeTier,
   LiquidityTick,
-  Pool,
-  PoolKey,
   TESTNET_BTC_ADDRESS,
   TESTNET_ETH_ADDRESS,
   TESTNET_USDC_ADDRESS,

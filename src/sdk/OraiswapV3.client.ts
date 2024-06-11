@@ -6,7 +6,7 @@
 
 import { CosmWasmClient, SigningCosmWasmClient, ExecuteResult } from "@cosmjs/cosmwasm-stargate";
 import { Coin, StdFee } from "@cosmjs/amino";
-import {Percentage, InstantiateMsg, ExecuteMsg, Addr, Liquidity, SqrtPrice, TokenAmount, PoolKey, FeeTier, SwapHop, QueryMsg, MigrateMsg, Boolean, ArrayOfFeeTier, ArrayOfLiquidityTick, LiquidityTick, Uint32, FeeGrowth, Pool, ArrayOfPoolKey, ArrayOfPool, Position, ArrayOfPositionTick, PositionTick, ArrayOfPosition, QuoteResult, Tick, ArrayOfTupleOfUint16AndUint64} from "./OraiswapV3.types";
+import {Percentage, InstantiateMsg, ExecuteMsg, Addr, Liquidity, SqrtPrice, TokenAmount, PoolKey, FeeTier, SwapHop, QueryMsg, MigrateMsg, Boolean, ArrayOfFeeTier, ArrayOfLiquidityTick, LiquidityTick, Uint32, FeeGrowth, Pool, ArrayOfPool, Position, ArrayOfPositionTick, PositionTick, ArrayOfPosition, QuoteResult, Tick, ArrayOfTupleOfUint16AndUint64} from "./OraiswapV3.types";
 export interface OraiswapV3ReadOnlyInterface {
   contractAddress: string;
   protocolFee: () => Promise<Percentage>;
@@ -46,7 +46,7 @@ export interface OraiswapV3ReadOnlyInterface {
   }: {
     limit?: number;
     startAfter?: PoolKey;
-  }) => Promise<ArrayOfPoolKey>;
+  }) => Promise<ArrayOfPool>;
   tick: ({
     index,
     key
@@ -217,7 +217,7 @@ export class OraiswapV3QueryClient implements OraiswapV3ReadOnlyInterface {
   }: {
     limit?: number;
     startAfter?: PoolKey;
-  }): Promise<ArrayOfPoolKey> => {
+  }): Promise<ArrayOfPool> => {
     return this.client.queryContractSmart(this.contractAddress, {
       pools: {
         limit,

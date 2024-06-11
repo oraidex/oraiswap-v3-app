@@ -9,8 +9,7 @@ import { actions as snackbarsActions } from '@store/reducers/snackbars'
 import { ITokenBalance, Status, actions, actions as walletActions } from '@store/reducers/wallet'
 import { networkType } from '@store/selectors/connection'
 import { address, status } from '@store/selectors/wallet'
-import psp22Singleton from '@store/services/psp22Singleton'
-import { disconnectWallet, getAlephZeroWallet } from '@utils/web3/wallet'
+
 import { closeSnackbar } from 'notistack'
 import {
   SagaGenerator,
@@ -22,12 +21,6 @@ import {
   takeLatest,
   takeLeading
 } from 'typed-redux-saga'
-import { getConnection } from './connection'
-
-export function* getWallet(): SagaGenerator<NightlyConnectAdapter> {
-  const wallet = yield* call(getAlephZeroWallet)
-  return wallet
-}
 
 type FrameSystemAccountInfo = {
   data: {
@@ -42,15 +35,7 @@ type FrameSystemAccountInfo = {
   sufficients: number
 }
 export function* getBalance(walletAddress: AddressOrPair): SagaGenerator<string> {
-  const connection = yield* call(getConnection)
-  const accountInfoResponse = yield* call(
-    [connection.query.system.account, connection.query.system.account],
-    walletAddress
-  ) as any
-
-  const accountInfo = accountInfoResponse.toPrimitive() as FrameSystemAccountInfo
-
-  return accountInfo.data.free
+  return ''
 }
 
 export function* handleBalance(): Generator {
@@ -133,7 +118,7 @@ export function* handleAirdrop(): Generator {
     )
 
     const connection = yield* getConnection()
-    const adapter = yield* call(getAlephZeroWallet)
+
     const data = connection.createType('Vec<u8>', [])
 
     const psp22 = yield* call(
@@ -332,10 +317,6 @@ export function* handleDisconnect(): Generator {
 }
 
 export function* fetchBalances(tokens: string[]): Generator {
-  const walletAddress = yield* select(address)
-  const api = yield* getConnection()
-  const network = yield* select(networkType)
-
   const balance = yield* call(getBalance, walletAddress)
   yield* put(walletActions.setBalance(BigInt(balance)))
 

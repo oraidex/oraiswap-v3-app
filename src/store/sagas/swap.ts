@@ -36,10 +36,7 @@ import { invariantAddress, networkType } from '@store/selectors/connection'
 import { poolTicks, pools, tickMaps, tokens } from '@store/selectors/pools'
 import { simulateResult } from '@store/selectors/swap'
 import { address, balance } from '@store/selectors/wallet'
-import invariantSingleton from '@store/services/invariantSingleton'
-import psp22Singleton from '@store/services/psp22Singleton'
-import wrappedAZEROSingleton from '@store/services/wrappedAZEROSingleton'
-import { getAlephZeroWallet } from '@utils/web3/wallet'
+import SingletonOraiswapV3 from '@store/services/contractSingleton'
 import { closeSnackbar } from 'notistack'
 import { all, call, put, select, spawn, takeEvery } from 'typed-redux-saga'
 import { getConnection } from './connection'
@@ -72,25 +69,12 @@ export function* handleSwap(action: PayloadAction<Omit<Swap, 'txid'>>): Generato
       })
     )
 
-    const api = yield* getConnection()
-    const network = yield* select(networkType)
-    const walletAddress = yield* select(address)
-    const adapter = yield* call(getAlephZeroWallet)
-    const invAddress = yield* select(invariantAddress)
-
     const tokenX = allTokens[poolKey.tokenX]
     const tokenY = allTokens[poolKey.tokenY]
     const xToY = tokenFrom.toString() === poolKey.tokenX
 
     const txs = []
 
-    const psp22 = yield* call([psp22Singleton, psp22Singleton.loadInstance], api, network)
-    const invariant = yield* call(
-      [invariantSingleton, invariantSingleton.loadInstance],
-      api,
-      network,
-      invAddress
-    )
     const sqrtPriceLimit = calculateSqrtPriceAfterSlippage(estimatedPriceAfterSwap, slippage, !xToY)
 
     let calculatedAmountIn = amountIn
@@ -116,7 +100,7 @@ export function* handleSwap(action: PayloadAction<Omit<Swap, 'txid'>>): Generato
       txs.push(approveTx)
     }
 
-    const swapTx = invariant.swapTx(
+    const swapTx = SingletonOraiswapV3.contract.swap(
       poolKey,
       xToY,
       amountIn,
@@ -218,31 +202,11 @@ export function* handleSwapWithAZERO(action: PayloadAction<Omit<Swap, 'txid'>>):
       })
     )
 
-    const api = yield* getConnection()
-    const network = yield* select(networkType)
-    const walletAddress = yield* select(address)
-    const adapter = yield* call(getAlephZeroWallet)
-    const swapSimulateResult = yield* select(simulateResult)
-    const invAddress = yield* select(invariantAddress)
-
     const tokenX = allTokens[poolKey.tokenX]
     const tokenY = allTokens[poolKey.tokenY]
     const xToY = tokenFrom.toString() === poolKey.tokenX
 
     const txs = []
-
-    const wazero = yield* call(
-      [wrappedAZEROSingleton, wrappedAZEROSingleton.loadInstance],
-      api,
-      network
-    )
-    const psp22 = yield* call([psp22Singleton, psp22Singleton.loadInstance], api, network)
-    const invariant = yield* call(
-      [invariantSingleton, invariantSingleton.loadInstance],
-      api,
-      network,
-      invAddress
-    )
 
     const sqrtPriceLimit = calculateSqrtPriceAfterSlippage(estimatedPriceAfterSwap, slippage, !xToY)
     let calculatedAmountIn = amountIn
@@ -282,7 +246,7 @@ export function* handleSwapWithAZERO(action: PayloadAction<Omit<Swap, 'txid'>>):
       txs.push(approveTx)
     }
 
-    const swapTx = invariant.swapTx(
+    const swapTx = SingletonOraiswapV3.contract.swap(
       poolKey,
       xToY,
       amountIn,
@@ -292,27 +256,21 @@ export function* handleSwapWithAZERO(action: PayloadAction<Omit<Swap, 'txid'>>):
     )
     txs.push(swapTx)
 
-    if (
-      (!xToY && poolKey.tokenX === TESTNET_WAZERO_ADDRESS) ||
-      (xToY && poolKey.tokenY === TESTNET_WAZERO_ADDRESS)
-    ) {
-      const withdrawTx = wazero.withdrawTx(swapSimulateResult.amountOut, WAZERO_WITHDRAW_OPTIONS)
-      txs.push(withdrawTx)
-    }
+    // if (
+    //   (!xToY && poolKey.tokenX === TESTNET_WAZERO_ADDRESS) ||
+    //   (xToY && poolKey.tokenY === TESTNET_WAZERO_ADDRESS)
+    // ) {
+    //   const withdrawTx = wazero.withdrawTx(swapSimulateResult.amountOut, WAZERO_WITHDRAW_OPTIONS)
+    //   txs.push(withdrawTx)
+    // }
 
-    const approveTx = psp22.approveTx(
-      invAddress,
-      U128MAX,
-      TESTNET_WAZERO_ADDRESS,
-      PSP22_APPROVE_OPTIONS
-    )
-    txs.push(approveTx)
-
-    const unwrapTx = invariant.withdrawAllWAZEROTx(
-      TESTNET_WAZERO_ADDRESS,
-      INVARIANT_WITHDRAW_ALL_WAZERO
-    )
-    txs.push(unwrapTx)
+    // const approveTx = psp22.approveTx(
+    //   invAddress,
+    //   U128MAX,
+    //   TESTNET_WAZERO_ADDRESS,
+    //   PSP22_APPROVE_OPTIONS
+    // )
+    // txs.push(approveTx)
 
     const batchedTx = api.tx.utility.batchAll(txs)
 
@@ -439,17 +397,17 @@ export function* handleGetSimulateResult(action: PayloadAction<Simulate>) {
     const errors = []
 
     for (const pool of filteredPools) {
-      const xToY = fromToken.toString() === pool.poolKey.tokenX
+      const xToY = fromToken.toString() === pool.poolKey.token_x
 
       try {
         const result = simulateInvariantSwap(
           deserializeTickmap(allTickmaps[poolKeyToString(pool.poolKey)]),
-          pool.poolKey.feeTier,
+          pool.poolKey.fee_tier,
           allPools[poolKeyToString(pool.poolKey)],
           allTicks[poolKeyToString(pool.poolKey)],
           xToY,
           byAmountIn
-            ? amount - (amount * pool.poolKey.feeTier.fee) / PERCENTAGE_DENOMINATOR
+            ? amount - (amount * pool.poolKey.fee_tier.fee) / PERCENTAGE_DENOMINATOR
             : amount,
           byAmountIn,
           xToY ? MIN_SQRT_PRICE : MAX_SQRT_PRICE
@@ -481,7 +439,7 @@ export function* handleGetSimulateResult(action: PayloadAction<Simulate>) {
           amountOut = calculatedAmountOut
           poolKey = pool.poolKey
           priceImpact = +printBigint(
-            calculatePriceImpact(pool.sqrtPrice, result.targetSqrtPrice),
+            calculatePriceImpact(pool.sqrt_price, result.targetSqrtPrice),
             PERCENTAGE_SCALE
           )
           targetSqrtPrice = result.targetSqrtPrice

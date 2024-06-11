@@ -1,9 +1,6 @@
 import {
-  Invariant,
   LiquidityTick,
   Network,
-  PoolKey,
-  Tick,
   Tickmap,
   TokenAmount,
   calculateSqrtPrice,
@@ -15,14 +12,13 @@ import {
 } from '@invariant-labs/a0-sdk'
 import { CHUNK_SIZE, PRICE_SCALE } from '@invariant-labs/a0-sdk/target/consts'
 import { calculateLiquidityBreakpoints } from '@invariant-labs/a0-sdk/target/utils'
-import { ApiPromise } from '@polkadot/api'
 import { PoolWithPoolKey } from '@store/reducers/pools'
 import { PlotTickData } from '@store/reducers/positions'
 import { SwapError } from '@store/sagas/swap'
-import invariantSingleton from '@store/services/invariantSingleton'
-import psp22Singleton from '@store/services/psp22Singleton'
+import SingletonOraiswapV3 from '@store/services/contractSingleton'
 import axios from 'axios'
 import { BTC, ETH, Token, TokenPriceData, USDC, tokensPrices } from './static'
+import { PoolKey, Tick } from '@/sdk/OraiswapV3.types'
 
 export const createLoaderKey = () => (new Date().getMilliseconds() + Math.random()).toString()
 
@@ -335,70 +331,9 @@ export const parseFeeToPathFee = (fee: bigint): string => {
   return parsedFee.slice(0, parsedFee.length - 2) + '_' + parsedFee.slice(parsedFee.length - 2)
 }
 
-export const getTokenDataByAddresses = async (
-  tokens: string[],
-  api: ApiPromise,
-  network: Network,
-  address: string
-): Promise<Record<string, Token>> => {
-  const psp22 = await psp22Singleton.loadInstance(api, network)
-
-  const promises = tokens.flatMap(token => {
-    return [
-      psp22.tokenSymbol(token),
-      psp22.tokenName(token),
-      psp22.tokenDecimals(token),
-      psp22.balanceOf(address, token)
-    ]
-  })
-  const results = await Promise.all(promises)
-
-  const newTokens: Record<string, Token> = {}
-  tokens.forEach((token, index) => {
-    const baseIndex = index * 4
-    newTokens[token] = {
-      symbol: results[baseIndex] as string,
-      address: token,
-      name: results[baseIndex + 1] as string,
-      decimals: results[baseIndex + 2] as bigint,
-      balance: results[baseIndex + 3] as bigint,
-      logoURI: ''
-    }
-  })
-  return newTokens
-}
-
-export const getTokenBalances = async (
-  tokens: string[],
-  api: ApiPromise,
-  network: Network,
-  address: string
-): Promise<[string, bigint][]> => {
-  const psp22 = await psp22Singleton.loadInstance(api, network)
-
-  const promises: Promise<any>[] = []
-  tokens.map(token => {
-    promises.push(psp22.balanceOf(address, token))
-  })
-  const results = await Promise.all(promises)
-
-  const tokenBalances: [string, bigint][] = []
-  tokens.map((token, index) => {
-    tokenBalances.push([token, results[index]])
-  })
-  return tokenBalances
-}
-
-export const getPoolsByPoolKeys = async (
-  invariantAddress: string,
-  poolKeys: PoolKey[],
-  api: ApiPromise,
-  network: Network
-): Promise<PoolWithPoolKey[]> => {
-  const invariant = await invariantSingleton.loadInstance(api, network, invariantAddress)
-
-  const promises = poolKeys.map(({ tokenX, tokenY, feeTier }) =>
-    invariant.getPool(tokenX, tokenY, feeTier)
+export const getPoolsByPoolKeys = async (poolKeys: PoolKey[]): Promise<PoolWithPoolKey[]> => {
+  const promises = poolKeys.map(({ token_x, token_y, fee_tier }) =>
+    SingletonOraiswapV3.contract.pool({ token0: token_x, token1: token_y, feeTier: fee_tier })
   )
   const pools = await Promise.all(promises)
 
@@ -410,15 +345,17 @@ export const getPoolsByPoolKeys = async (
 
 export const poolKeyToString = (poolKey: PoolKey): string => {
   return (
-    poolKey.tokenX +
+    poolKey.token_x +
     '-' +
-    poolKey.tokenY +
+    poolKey.token_y +
     '-' +
-    poolKey.feeTier.fee +
+    poolKey.fee_tier.fee +
     '-' +
-    poolKey.feeTier.tickSpacing
+    poolKey.fee_tier.tick_spacing
   )
 }
+
+export const getTokenBalances = () => {}
 
 export const getNetworkTokensList = (networkType: Network): Record<string, Token> => {
   switch (networkType) {
@@ -580,16 +517,16 @@ export const determinePositionTokenBlock = (
 export const findPairs = (tokenFrom: string, tokenTo: string, pairs: PoolWithPoolKey[]) => {
   return pairs.filter(
     pool =>
-      (tokenFrom === pool.poolKey.tokenX && tokenTo === pool.poolKey.tokenY) ||
-      (tokenFrom === pool.poolKey.tokenY && tokenTo === pool.poolKey.tokenX)
+      (tokenFrom === pool.poolKey.token_x && tokenTo === pool.poolKey.token_y) ||
+      (tokenFrom === pool.poolKey.token_y && tokenTo === pool.poolKey.token_x)
   )
 }
 
 export const findPairsByPoolKeys = (tokenFrom: string, tokenTo: string, poolKeys: PoolKey[]) => {
   return poolKeys.filter(
     poolKey =>
-      (tokenFrom === poolKey.tokenX && tokenTo === poolKey.tokenY) ||
-      (tokenFrom === poolKey.tokenY && tokenTo === poolKey.tokenX)
+      (tokenFrom === poolKey.token_x && tokenTo === poolKey.token_y) ||
+      (tokenFrom === poolKey.token_y && tokenTo === poolKey.token_x)
   )
 }
 
@@ -601,15 +538,9 @@ export type SimulateResult = {
   errors: SwapError[]
 }
 
-export const getPools = async (
-  invariant: Invariant,
-  poolKeys: PoolKey[]
-): Promise<PoolWithPoolKey[]> => {
-  const promises = poolKeys.map(poolKey =>
-    invariant.getPool(poolKey.tokenX, poolKey.tokenY, poolKey.feeTier)
-  )
+export const getPools = async (poolKeys: PoolKey[]): Promise<PoolWithPoolKey[]> => {
+  const pools = await SingletonOraiswapV3.contract.pools({})
 
-  const pools = await Promise.all(promises)
   return pools.map((pool, index) => {
     return { ...pool, poolKey: poolKeys[index] }
   })
@@ -650,15 +581,11 @@ export const calcTicksAmountInRange = (
   return Math.ceil(Math.abs(maxIndex - minIndex) / tickSpacing)
 }
 
-export const getAllTicks = (
-  invariant: Invariant,
-  poolKey: PoolKey,
-  ticks: bigint[]
-): Promise<Tick[]> => {
+export const getAllTicks = (poolKey: PoolKey, ticks: bigint[]): Promise<Tick[]> => {
   const promises: Promise<Tick>[] = []
 
   for (const tick of ticks) {
-    promises.push(invariant.getTick(poolKey, tick))
+    promises.push(SingletonOraiswapV3.contract.tick({ key: poolKey, index: Number(tick) }))
   }
 
   return Promise.all(promises)

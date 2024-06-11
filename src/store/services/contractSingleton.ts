@@ -2,7 +2,7 @@ import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 import { OraiswapV3Client } from '../../sdk'
 
 export default class SingletonOraiswapV3 {
-  private static _contract: OraiswapV3Client | null = null
+  private static _contract: OraiswapV3Client
 
   private constructor() {}
 
