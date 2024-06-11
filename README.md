@@ -1,11 +1,11 @@
-### Alph-zero webapp
+### Oraiswap v3 webapp
 
 #### Installation
 
 ```bash
-npm i
+yarn
 ```
 
 ```bash
-npm run dev
+yarn dev
 ```
