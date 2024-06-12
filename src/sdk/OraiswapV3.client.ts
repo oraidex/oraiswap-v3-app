@@ -10,7 +10,6 @@ import {
   Addr,
   ArrayOfFeeTier,
   ArrayOfLiquidityTick,
-  ArrayOfPool,
   ArrayOfPoolWithPoolKey,
   ArrayOfPosition,
   ArrayOfPositionTick,
@@ -97,7 +96,13 @@ export interface OraiswapV3ReadOnlyInterface {
     poolKey: PoolKey
     upperTick: number
   }) => Promise<Uint32>
-  poolsForPair: ({ token0, token1 }: { token0: Addr; token1: Addr }) => Promise<ArrayOfPool>
+  poolsForPair: ({
+    token0,
+    token1
+  }: {
+    token0: Addr
+    token1: Addr
+  }) => Promise<ArrayOfPoolWithPoolKey>
   quote: ({
     amount,
     byAmountIn,
@@ -304,7 +309,7 @@ export class OraiswapV3QueryClient implements OraiswapV3ReadOnlyInterface {
   }: {
     token0: Addr
     token1: Addr
-  }): Promise<ArrayOfPool> => {
+  }): Promise<ArrayOfPoolWithPoolKey> => {
     return this.client.queryContractSmart(this.contractAddress, {
       pools_for_pair: {
         token0,

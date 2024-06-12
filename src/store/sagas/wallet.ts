@@ -227,12 +227,8 @@ export function* handleBalance(): Generator {
 // }
 
 export function* fetchSelectedTokensBalances(action: PayloadAction<string[]>): Generator {
-  const api = yield* getConnection()
-  const network = yield* select(networkType)
-  const walletAddress = yield* select(address)
-
   const tokens = action.payload
-  const balances = yield* call(getTokenBalances, tokens, api, network, walletAddress)
+  const balances = yield* call(getTokenBalances, tokens)
 
   const convertedBalances: ITokenBalance[] = balances.map(balance => ({
     address: balance[0],
@@ -243,12 +239,8 @@ export function* fetchSelectedTokensBalances(action: PayloadAction<string[]>): G
 }
 
 export function* fetchTokensBalances(): Generator {
-  const api = yield* getConnection()
-  const network = yield* select(networkType)
-  const walletAddress = yield* select(address)
-
   const tokens = Object.values(FaucetTokenList)
-  const balances = yield* call(getTokenBalances, tokens, api, network, walletAddress)
+  const balances = yield* call(getTokenBalances, tokens)
 
   const convertedBalances: ITokenBalance[] = balances.map(balance => ({
     address: balance[0],
@@ -285,7 +277,7 @@ export const sleep = (ms: number) => {
 }
 
 export function* handleConnect(): Generator {
-  console.log("connect")
+  console.log('connect')
   const walletStatus = yield* select(status)
   if (walletStatus === Status.Initialized) {
     yield* put(

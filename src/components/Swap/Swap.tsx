@@ -2,8 +2,6 @@ import AnimatedButton, { ProgressState } from '@components/AnimatedButton/Animat
 import ChangeWalletButton from '@components/Header/HeaderButton/ChangeWalletButton'
 import ExchangeAmountInput from '@components/Inputs/ExchangeAmountInput/ExchangeAmountInput'
 import Slippage from '@components/Modals/Slippage/Slippage'
-import { PoolKey, Price, Tick, TokenAmount } from '@invariant-labs/a0-sdk'
-import { PERCENTAGE_DENOMINATOR } from '@invariant-labs/a0-sdk/target/consts'
 import { Box, Button, CardMedia, Grid, Typography } from '@mui/material'
 import { AddressOrPair } from '@polkadot/api/types'
 import infoIcon from '@static/svg/info.svg'
@@ -12,16 +10,15 @@ import settingIcon from '@static/svg/settings.svg'
 import SwapArrows from '@static/svg/swap-arrows.svg'
 import { TokenPriceData } from '@store/consts/static'
 import {
+  PERCENTAGE_DENOMINATOR,
   SimulateResult,
   convertBalanceToBigint,
   newPrintBigInt,
   printBigint,
   trimLeadingZeros
 } from '@store/consts/utils'
-import { PoolWithPoolKey } from '@store/reducers/pools'
 import { Swap as SwapData, actions } from '@store/reducers/swap'
 import { Status } from '@store/reducers/wallet'
-import { SwapError } from '@store/sagas/swap'
 import { SwapToken } from '@store/selectors/wallet'
 import { blurContent, unblurContent } from '@utils/uiUtils'
 import classNames from 'classnames'
@@ -30,6 +27,8 @@ import { useDispatch } from 'react-redux'
 import ExchangeRate from './ExchangeRate/ExchangeRate'
 import TransactionDetailsBox from './TransactionDetailsBox/TransactionDetailsBox'
 import useStyles from './style'
+import { PoolKey, PoolWithPoolKey, Tick, TokenAmount } from '@/sdk/OraiswapV3.types'
+import { Price } from '@/wasm/oraiswap_v3_wasm'
 
 export interface Pools {
   tokenX: AddressOrPair
@@ -281,8 +280,8 @@ export const Swap: React.FC<ISwap> = ({
   const getIsXToY = (fromToken: AddressOrPair, toToken: AddressOrPair) => {
     const swapPool = pools.find(
       pool =>
-        (fromToken === pool.poolKey.tokenX && toToken === pool.poolKey.tokenY) ||
-        (fromToken === pool.poolKey.tokenY && toToken === pool.poolKey.tokenX)
+        (fromToken === pool.pool_key.token_x && toToken === pool.pool_key.token_y) ||
+        (fromToken === pool.pool_key.token_y && toToken === pool.pool_key.token_x)
     )
     return !!swapPool
   }
@@ -609,7 +608,7 @@ export const Swap: React.FC<ISwap> = ({
         </Box>
         <TransactionDetailsBox
           open={getStateMessage() !== 'Loading' ? detailsOpen && canShowDetails : prevOpenState}
-          fee={simulateResult.poolKey?.feeTier.fee ?? 0n}
+          fee={BigInt(simulateResult.poolKey?.fee_tier.fee ?? 0)}
           exchangeRate={{
             val: rateReversed ? 1 / swapRate : swapRate,
             symbol: canShowDetails
@@ -661,8 +660,8 @@ export const Swap: React.FC<ISwap> = ({
                 simulateResult.targetSqrtPrice,
                 tokens[tokenFromIndex].assetAddress,
                 tokens[tokenToIndex].assetAddress,
-                convertBalanceToBigint(amountFrom, tokens[tokenFromIndex].decimals),
-                convertBalanceToBigint(amountTo, tokens[tokenToIndex].decimals),
+                convertBalanceToBigint(amountFrom, tokens[tokenFromIndex].decimals).toString(),
+                convertBalanceToBigint(amountTo, tokens[tokenToIndex].decimals).toString(),
                 inputRef === inputTarget.FROM
               )
             }}

@@ -32,7 +32,6 @@ export interface ISwapStore {
 
 export const defaultState: ISwapStore = {
   swap: {
-    poolKey: null,
     slippage: 0n,
     estimatedPriceAfterSwap: 0n,
     tokenFrom: '',

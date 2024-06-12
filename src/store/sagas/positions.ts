@@ -35,7 +35,7 @@ import { address } from '@store/selectors/wallet'
 import SingletonOraiswapV3 from '@store/services/contractSingleton'
 import { closeSnackbar } from 'notistack'
 import { all, call, fork, join, put, select, spawn, takeEvery, takeLatest } from 'typed-redux-saga'
-import { fetchAllPoolKeys, fetchTicksAndTickMaps } from './pools'
+import { fetchAllPools, fetchTicksAndTickMaps } from './pools'
 import { fetchBalances } from './wallet'
 
 function* handleInitPosition(action: PayloadAction<InitPositionData>): Generator {
@@ -99,7 +99,7 @@ function* handleInitPosition(action: PayloadAction<InitPositionData>): Generator
       )
       txs.push(createPoolTx)
 
-      yield* call(fetchAllPoolKeys)
+      yield* call(fetchAllPools)
     }
 
     const tx = SingletonOraiswapV3.dex.createPosition(
@@ -170,204 +170,20 @@ function* handleInitPosition(action: PayloadAction<InitPositionData>): Generator
   }
 }
 
-function* handleInitPositionWithAZERO(action: PayloadAction<InitPositionData>): Generator {
-  const loaderCreatePosition = createLoaderKey()
-  const loaderSigningTx = createLoaderKey()
+export async function handleGetPositionsList() {
+  const positions = await SingletonOraiswapV3.dex.positions({
+    ownerId: SingletonOraiswapV3.dex.sender
+  })
 
-  const {
-    poolKeyData,
-    lowerTick,
-    upperTick,
-    spotSqrtPrice,
-    tokenXAmount,
-    tokenYAmount,
-    liquidityDelta,
-    initPool,
-    slippageTolerance
-  } = action.payload
+  const pools: PoolKey[] = []
+  const poolSet: Set<string> = new Set()
+  for (let i = 0; i < positions.length; i++) {
+    const poolKeyString = poolKeyToString(positions[i].pool_key)
 
-  const { tokenX, tokenY, feeTier } = poolKeyData
-
-  try {
-    yield put(
-      snackbarsActions.add({
-        message: 'Creating position...',
-        variant: 'pending',
-        persist: true,
-        key: loaderCreatePosition
-      })
-    )
-
-    const txs = []
-
-    const depositTx = wazero.depositTx(
-      tokenX === TESTNET_WAZERO_ADDRESS ? tokenXAmount : tokenYAmount,
-      WAZERO_DEPOSIT_OPTIONS
-    )
-    txs.push(depositTx)
-
-    const [xAmountWithSlippage, yAmountWithSlippage] = calculateTokenAmountsWithSlippage(
-      feeTier.tickSpacing,
-      spotSqrtPrice,
-      liquidityDelta,
-      lowerTick,
-      upperTick,
-      slippageTolerance,
-      true
-    )
-
-    const XTokenTx = psp22.approveTx(invAddress, xAmountWithSlippage, tokenX, PSP22_APPROVE_OPTIONS)
-    txs.push(XTokenTx)
-
-    const YTokenTx = psp22.approveTx(invAddress, yAmountWithSlippage, tokenY, PSP22_APPROVE_OPTIONS)
-    txs.push(YTokenTx)
-
-    const invariant = yield* call(
-      [invariantSingleton, invariantSingleton.loadInstance],
-      api,
-      network,
-      invAddress
-    )
-
-    if (initPool) {
-      const createPoolTx = invariant.createPoolTx(
-        poolKeyData,
-        spotSqrtPrice,
-        INVARIANT_CREATE_POOL_OPTIONS
-      )
-      txs.push(createPoolTx)
-
-      yield* call(fetchAllPoolKeys)
+    if (!poolSet.has(poolKeyString)) {
+      poolSet.add(poolKeyString)
+      pools.push(positions[i].pool_key)
     }
-
-    const tx = invariant.createPositionTx(
-      poolKeyData,
-      lowerTick,
-      upperTick,
-      liquidityDelta,
-      spotSqrtPrice,
-      slippageTolerance,
-      INVARIANT_CREATE_POSITION_OPTIONS
-    )
-    txs.push(tx)
-
-    const approveTx = psp22.approveTx(
-      invAddress,
-      U128MAX,
-      TESTNET_WAZERO_ADDRESS,
-      PSP22_APPROVE_OPTIONS
-    )
-    txs.push(approveTx)
-
-    const unwrapTx = invariant.withdrawAllWAZEROTx(
-      TESTNET_WAZERO_ADDRESS,
-      INVARIANT_WITHDRAW_ALL_WAZERO
-    )
-    txs.push(unwrapTx)
-
-    const resetApproveTx = psp22.approveTx(
-      invAddress,
-      0n,
-      TESTNET_WAZERO_ADDRESS,
-      PSP22_APPROVE_OPTIONS
-    )
-    txs.push(resetApproveTx)
-
-    const batchedTx = api.tx.utility.batchAll(txs)
-
-    yield put(
-      snackbarsActions.add({
-        message: 'Signing transaction...',
-        variant: 'pending',
-        persist: true,
-        key: loaderSigningTx
-      })
-    )
-
-    const signedBatchedTx = yield* call([batchedTx, batchedTx.signAsync], walletAddress, {
-      signer: adapter.signer as Signer
-    })
-
-    closeSnackbar(loaderSigningTx)
-    yield put(snackbarsActions.remove(loaderSigningTx))
-
-    const txResult = yield* call(sendTx, signedBatchedTx)
-
-    yield* put(actions.setInitPositionSuccess(true))
-
-    closeSnackbar(loaderCreatePosition)
-    yield put(snackbarsActions.remove(loaderCreatePosition))
-
-    yield put(
-      snackbarsActions.add({
-        message: 'Position successfully created',
-        variant: 'success',
-        persist: false,
-        txid: txResult.hash
-      })
-    )
-
-    yield put(walletActions.getSelectedTokens([tokenX, tokenY]))
-
-    yield put(actions.getPositionsList())
-
-    yield* call(fetchBalances, [tokenX === TESTNET_WAZERO_ADDRESS ? tokenY : tokenX])
-  } catch (error) {
-    console.log(error)
-
-    yield* put(actions.setInitPositionSuccess(false))
-
-    closeSnackbar(loaderCreatePosition)
-    yield put(snackbarsActions.remove(loaderCreatePosition))
-    closeSnackbar(loaderSigningTx)
-    yield put(snackbarsActions.remove(loaderSigningTx))
-
-    yield put(
-      snackbarsActions.add({
-        message: 'Failed to send. Please try again.',
-        variant: 'error',
-        persist: false
-      })
-    )
-  }
-}
-
-export function* handleGetPositionsList() {
-  try {
-    const api = yield* getConnection()
-    const network = yield* select(networkType)
-    const invAddress = yield* select(invariantAddress)
-    const invariant = yield* call(
-      [invariantSingleton, invariantSingleton.loadInstance],
-      api,
-      network,
-      invAddress
-    )
-    const walletAddress = yield* select(address)
-
-    const positions = yield* call([invariant, invariant.getPositions], walletAddress)
-
-    const pools: PoolKey[] = []
-    const poolSet: Set<string> = new Set()
-    for (let i = 0; i < positions.length; i++) {
-      const poolKeyString = poolKeyToString(positions[i].poolKey)
-
-      if (!poolSet.has(poolKeyString)) {
-        poolSet.add(poolKeyString)
-        pools.push(positions[i].poolKey)
-      }
-    }
-
-    yield* put(
-      poolsActions.getPoolsDataForList({
-        poolKeys: Array.from(pools),
-        listType: ListType.POSITIONS
-      })
-    )
-
-    yield* put(actions.setPositionsList(positions))
-  } catch (e) {
-    yield* put(actions.setPositionsList([]))
   }
 }
 

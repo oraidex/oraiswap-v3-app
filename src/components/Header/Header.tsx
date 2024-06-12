@@ -1,7 +1,6 @@
 import RoutesModal from '@components/Modals/RoutesModal'
 import SelectTestnetRPC from '@components/Modals/SelectTestnetRPC/SelectTestnetRPC'
 import NavbarButton from '@components/Navbar/Button'
-import { Network } from '@invariant-labs/a0-sdk/src'
 import DotIcon from '@mui/icons-material/FiberManualRecordRounded'
 import { Box, Button, CardMedia, Grid, IconButton, useMediaQuery } from '@mui/material'
 import { AddressOrPair } from '@polkadot/api-base/types'
