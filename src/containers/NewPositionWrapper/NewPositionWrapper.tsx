@@ -1,12 +1,14 @@
+import { TokenAmount } from '@/sdk/OraiswapV3.types'
+import { _newPoolKey, calculateSqrtPrice, getLiquidityByX, getLiquidityByY } from '../../wasm/oraiswap_v3_wasm'
 import { ProgressState } from '@components/AnimatedButton/AnimatedButton'
 import NewPosition from '@components/NewPosition/NewPosition'
-import {
-  TokenAmount,
-  calculateSqrtPrice,
-  getLiquidityByX,
-  getLiquidityByY,
-  newPoolKey
-} from '@invariant-labs/a0-sdk'
+// import {
+//   TokenAmount,
+//   calculateSqrtPrice,
+//   getLiquidityByX,
+//   getLiquidityByY,
+//   newPoolKey
+// } from '@invariant-labs/a0-sdk'
 import { AddressOrPair } from '@polkadot/api/types'
 import {
   ALL_FEE_TIERS_DATA,
@@ -20,7 +22,7 @@ import {
   calcYPerXPriceBySqrtPrice,
   createPlaceholderLiquidityPlot,
   getCoingeckoTokenPrice,
-  getMockedTokenPrice,
+  // getMockedTokenPrice,
   poolKeyToString,
   printBigint
 } from '@store/consts/utils'
@@ -371,17 +373,17 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     }
 
     const id = tokens[tokenAIndex].coingeckoId ?? ''
-    if (id.length) {
-      setPriceALoading(true)
-      getCoingeckoTokenPrice(id)
-        .then(data => setTokenAPriceData(data))
-        .catch(() =>
-          setTokenAPriceData(getMockedTokenPrice(tokens[tokenAIndex].symbol, currentNetwork))
-        )
-        .finally(() => setPriceALoading(false))
-    } else {
-      setTokenAPriceData(undefined)
-    }
+    // if (id.length) {
+    //   setPriceALoading(true)
+    //   getCoingeckoTokenPrice(id)
+    //     .then(data => setTokenAPriceData(data))
+    //     .catch(() =>
+    //       setTokenAPriceData(getMockedTokenPrice(tokens[tokenAIndex].symbol, currentNetwork))
+    //     )
+    //     .finally(() => setPriceALoading(false))
+    // } else {
+    //   setTokenAPriceData(undefined)
+    // }
   }, [tokenAIndex])
 
   const [tokenBPriceData, setTokenBPriceData] = useState<TokenPriceData | undefined>(undefined)
@@ -393,17 +395,17 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     }
 
     const id = tokens[tokenBIndex].coingeckoId ?? ''
-    if (id.length) {
-      setPriceBLoading(true)
-      getCoingeckoTokenPrice(id)
-        .then(data => setTokenBPriceData(data))
-        .catch(() =>
-          setTokenBPriceData(getMockedTokenPrice(tokens[tokenBIndex].symbol, currentNetwork))
-        )
-        .finally(() => setPriceBLoading(false))
-    } else {
-      setTokenBPriceData(undefined)
-    }
+    // if (id.length) {
+    //   setPriceBLoading(true)
+    //   getCoingeckoTokenPrice(id)
+    //     .then(data => setTokenBPriceData(data))
+    //     .catch(() =>
+    //       setTokenBPriceData(getMockedTokenPrice(tokens[tokenBIndex].symbol, currentNetwork))
+    //     )
+    //     .finally(() => setPriceBLoading(false))
+    // } else {
+    //   setTokenBPriceData(undefined)
+    // }
   }, [tokenBIndex])
 
   const initialSlippage = localStorage.getItem('INVARIANT_NEW_POSITION_SLIPPAGE') ?? '1'
@@ -621,7 +623,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
 
         dispatch(
           positionsActions.initPosition({
-            poolKeyData: newPoolKey(
+            poolKeyData: _newPoolKey(
               tokens[tokenAIndex].assetAddress.toString(),
               tokens[tokenBIndex].assetAddress.toString(),
               ALL_FEE_TIERS_DATA[feeIndex].tier

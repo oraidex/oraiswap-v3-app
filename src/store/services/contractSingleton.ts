@@ -1,7 +1,6 @@
 import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 import { OraiswapV3Client } from '../../sdk'
 import { OraiswapTokenClient } from '@oraichain/oraidex-contracts-sdk'
-import { _newPoolKey } from '@/wasm/oraiswap_v3_wasm'
 import { ArrayOfTupleOfUint16AndUint64, LiquidityTick, PoolKey } from '@/sdk/OraiswapV3.types'
 import {
   Tickmap,
@@ -9,13 +8,10 @@ import {
   getMaxTick,
   getMaxTickmapQuerySize,
   getMinTick,
-  positionToTick
-} from '@/wasm/oraiswap_v3_wasm'
+  positionToTick,
+  _newPoolKey
+} from '../../wasm/oraiswap_v3_wasm'
 import { CHUNK_SIZE } from '@store/consts/utils'
-
-export const MAX_TICKMAP_QUERY_SIZE = getMaxTickmapQuerySize()
-
-export const LIQUIDITY_TICKS_LIMIT = getLiquidityTicksLimit()
 
 export const assert = (condition: boolean, message?: string) => {
   if (!condition) {
@@ -31,7 +27,7 @@ export const integerSafeCast = (value: bigint): number => {
 }
 
 export default class SingletonOraiswapV3 {
-  private static _tokens: {[key: string]: OraiswapTokenClient} = {}
+  private static _tokens: { [key: string]: OraiswapTokenClient } = {}
   private static _dex: OraiswapV3Client
 
   private constructor() {}

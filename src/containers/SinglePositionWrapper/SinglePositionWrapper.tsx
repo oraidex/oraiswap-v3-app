@@ -1,6 +1,6 @@
 import { EmptyPlaceholder } from '@components/EmptyPlaceholder/EmptyPlaceholder'
 import PositionDetails from '@components/PositionDetails/PositionDetails'
-import { calculateFee, calculateTokenAmounts } from '@invariant-labs/a0-sdk'
+// import { calculateFee, calculateTokenAmounts } from '@invariant-labs/a0-sdk'
 import { Grid } from '@mui/material'
 import loader from '@static/gif/loader.gif'
 import { TokenPriceData } from '@store/consts/static'
@@ -9,7 +9,7 @@ import {
   calcYPerXPriceByTickIndex,
   createPlaceholderLiquidityPlot,
   getCoingeckoTokenPrice,
-  getMockedTokenPrice,
+  // getMockedTokenPrice,
   poolKeyToString,
   printBigint
 } from '@store/consts/utils'
@@ -247,26 +247,26 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
     }
 
     const xId = position.tokenX.coingeckoId ?? ''
-    if (xId.length) {
-      getCoingeckoTokenPrice(xId)
-        .then(data => setTokenXPriceData(data))
-        .catch(() =>
-          setTokenXPriceData(getMockedTokenPrice(position.tokenX.symbol, currentNetwork))
-        )
-    } else {
-      setTokenXPriceData(undefined)
-    }
+    // if (xId.length) {
+    //   getCoingeckoTokenPrice(xId)
+    //     .then(data => setTokenXPriceData(data))
+    //     .catch(() =>
+    //       setTokenXPriceData(getMockedTokenPrice(position.tokenX.symbol, currentNetwork))
+    //     )
+    // } else {
+    //   setTokenXPriceData(undefined)
+    // }
 
     const yId = position.tokenY.coingeckoId ?? ''
-    if (yId.length) {
-      getCoingeckoTokenPrice(yId)
-        .then(data => setTokenYPriceData(data))
-        .catch(() =>
-          setTokenYPriceData(getMockedTokenPrice(position.tokenY.symbol, currentNetwork))
-        )
-    } else {
-      setTokenYPriceData(undefined)
-    }
+    // if (yId.length) {
+    //   getCoingeckoTokenPrice(yId)
+    //     .then(data => setTokenYPriceData(data))
+    //     .catch(() =>
+    //       setTokenYPriceData(getMockedTokenPrice(position.tokenY.symbol, currentNetwork))
+    //     )
+    // } else {
+    //   setTokenYPriceData(undefined)
+    // }
   }, [position])
 
   const copyPoolAddressHandler = (message: string, variant: VariantType) => {
