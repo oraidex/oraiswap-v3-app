@@ -32,17 +32,14 @@ import {
 import { actions as poolActions } from '@store/reducers/pools'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
 import { Simulate, Swap, actions } from '@store/reducers/swap'
-import { invariantAddress, networkType } from '@store/selectors/connection'
 import { poolTicks, pools, tickMaps, tokens } from '@store/selectors/pools'
-import { simulateResult } from '@store/selectors/swap'
 import { address, balance } from '@store/selectors/wallet'
 import SingletonOraiswapV3 from '@store/services/contractSingleton'
 import { closeSnackbar } from 'notistack'
 import { all, call, put, select, spawn, takeEvery } from 'typed-redux-saga'
-import { getConnection } from './connection'
 import { fetchBalances } from './wallet'
 
-export function* handleSwap(action: PayloadAction<Omit<Swap, 'txid'>>): Generator {
+export async function handleSwap(action: PayloadAction<Omit<Swap, 'txid'>>) {
   const { poolKey, tokenFrom, slippage, amountIn, byAmountIn, estimatedPriceAfterSwap, tokenTo } =
     action.payload
 
@@ -50,17 +47,11 @@ export function* handleSwap(action: PayloadAction<Omit<Swap, 'txid'>>): Generato
     return
   }
 
-  if (poolKey.tokenX === TESTNET_WAZERO_ADDRESS || poolKey.tokenY === TESTNET_WAZERO_ADDRESS) {
-    return yield* call(handleSwapWithAZERO, action)
-  }
-
   const loaderSwappingTokens = createLoaderKey()
   const loaderSigningTx = createLoaderKey()
 
   try {
-    const allTokens = yield* select(tokens)
-
-    yield put(
+     put(
       snackbarsActions.add({
         message: 'Swapping tokens...',
         variant: 'pending',
@@ -69,11 +60,7 @@ export function* handleSwap(action: PayloadAction<Omit<Swap, 'txid'>>): Generato
       })
     )
 
-    const tokenX = allTokens[poolKey.tokenX]
-    const tokenY = allTokens[poolKey.tokenY]
-    const xToY = tokenFrom.toString() === poolKey.tokenX
-
-    const txs = []
+    const xToY = tokenFrom.toString() === poolKey.token_x
 
     const sqrtPriceLimit = calculateSqrtPriceAfterSlippage(estimatedPriceAfterSwap, slippage, !xToY)
 
@@ -82,37 +69,28 @@ export function* handleSwap(action: PayloadAction<Omit<Swap, 'txid'>>): Generato
       calculatedAmountIn = calculateAmountInWithSlippage(amountIn, sqrtPriceLimit, !xToY)
     }
 
+    // check allowance to approve instead of combine message
     if (xToY) {
-      const approveTx = psp22.approveTx(
-        invAddress,
-        calculatedAmountIn,
-        tokenX.address.toString(),
-        PSP22_APPROVE_OPTIONS
-      )
-      txs.push(approveTx)
+      await SingletonOraiswapV3.tokens[poolKey.token_x].increaseAllowance({
+        spender: SingletonOraiswapV3.dex.contractAddress,
+        amount: calculatedAmountIn.toString()
+      })
     } else {
-      const approveTx = psp22.approveTx(
-        invAddress,
-        calculatedAmountIn,
-        tokenY.address.toString(),
-        PSP22_APPROVE_OPTIONS
-      )
-      txs.push(approveTx)
+      await SingletonOraiswapV3.tokens[poolKey.token_y].increaseAllowance({
+        spender: SingletonOraiswapV3.dex.contractAddress,
+        amount: calculatedAmountIn.toString()
+      })
     }
 
-    const swapTx = SingletonOraiswapV3.dex.swap(
+    const swapTx = await SingletonOraiswapV3.dex.swap({
       poolKey,
       xToY,
-      amountIn,
+      amount: amountIn.toString(),
       byAmountIn,
-      sqrtPriceLimit,
-      INVARIANT_SWAP_OPTIONS
-    )
-    txs.push(swapTx)
+      sqrtPriceLimit: sqrtPriceLimit.toString()
+    })
 
-    const batchedTx = api.tx.utility.batchAll(txs)
-
-    yield put(
+     put(
       snackbarsActions.add({
         message: 'Signing transaction...',
         variant: 'pending',
@@ -121,62 +99,62 @@ export function* handleSwap(action: PayloadAction<Omit<Swap, 'txid'>>): Generato
       })
     )
 
-    const signedBatchedTx = yield* call([batchedTx, batchedTx.signAsync], walletAddress, {
-      signer: adapter.signer as Signer
-    })
+  //   const signedBatchedTx = yield* call([batchedTx, batchedTx.signAsync], walletAddress, {
+  //     signer: adapter.signer as Signer
+  //   })
 
-    closeSnackbar(loaderSigningTx)
-    yield put(snackbarsActions.remove(loaderSigningTx))
+  //   closeSnackbar(loaderSigningTx)
+  //   yield put(snackbarsActions.remove(loaderSigningTx))
 
-    const txResult = yield* call(sendTx, signedBatchedTx)
+  //   const txResult = yield* call(sendTx, signedBatchedTx)
 
-    closeSnackbar(loaderSwappingTokens)
-    yield put(snackbarsActions.remove(loaderSwappingTokens))
+  //   closeSnackbar(loaderSwappingTokens)
+  //   yield put(snackbarsActions.remove(loaderSwappingTokens))
 
-    yield put(
-      snackbarsActions.add({
-        message: 'Tokens swapped successfully.',
-        variant: 'success',
-        persist: false,
-        txid: txResult.hash
-      })
-    )
+  //   yield put(
+  //     snackbarsActions.add({
+  //       message: 'Tokens swapped successfully.',
+  //       variant: 'success',
+  //       persist: false,
+  //       txid: txResult.hash
+  //     })
+  //   )
 
-    yield* call(fetchBalances, [poolKey.tokenX, poolKey.tokenY])
+  //   yield* call(fetchBalances, [poolKey.tokenX, poolKey.tokenY])
 
-    yield put(actions.setSwapSuccess(true))
+  //   yield put(actions.setSwapSuccess(true))
 
-    yield put(
-      poolActions.getAllPoolsForPairData({
-        first: tokenFrom,
-        second: tokenTo
-      })
-    )
-  } catch (error) {
-    console.log(error)
+  //   yield put(
+  //     poolActions.getAllPoolsForPairData({
+  //       first: tokenFrom,
+  //       second: tokenTo
+  //     })
+  //   )
+  // } catch (error) {
+  //   console.log(error)
 
-    yield put(actions.setSwapSuccess(false))
+  //   yield put(actions.setSwapSuccess(false))
 
-    closeSnackbar(loaderSwappingTokens)
-    yield put(snackbarsActions.remove(loaderSwappingTokens))
-    closeSnackbar(loaderSigningTx)
-    yield put(snackbarsActions.remove(loaderSigningTx))
+  //   closeSnackbar(loaderSwappingTokens)
+  //   yield put(snackbarsActions.remove(loaderSwappingTokens))
+  //   closeSnackbar(loaderSigningTx)
+  //   yield put(snackbarsActions.remove(loaderSigningTx))
 
-    yield put(
-      snackbarsActions.add({
-        message: 'Tokens swapping failed. Please try again.',
-        variant: 'error',
-        persist: false
-      })
-    )
+  //   yield put(
+  //     snackbarsActions.add({
+  //       message: 'Tokens swapping failed. Please try again.',
+  //       variant: 'error',
+  //       persist: false
+  //     })
+  //   )
 
-    yield put(
-      poolActions.getAllPoolsForPairData({
-        first: tokenFrom,
-        second: tokenTo
-      })
-    )
-  }
+  //   yield put(
+  //     poolActions.getAllPoolsForPairData({
+  //       first: tokenFrom,
+  //       second: tokenTo
+  //     })
+  //   )
+  // }
 }
 
 export function* handleSwapWithAZERO(action: PayloadAction<Omit<Swap, 'txid'>>): Generator {
