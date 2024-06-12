@@ -19,7 +19,6 @@ const createToken = async (symbol: string, amount: string) => {
   const res = await oraidexArtifacts.deployContract(
     client,
     senderAddress,
-
     {
       mint: {
         minter: senderAddress
@@ -97,6 +96,7 @@ describe('swap', () => {
     let upperTickIndex = 10
     let liquidityDelta = (1000000e6).toString()
 
+    // createPosition (add liquidity)
     await dex.createPosition({
       poolKey,
       lowerTick: lowerTickIndex,
@@ -106,6 +106,7 @@ describe('swap', () => {
       slippageLimitUpper: '340282366920938463463374607431768211455'
     })
 
+    // createPosition (add liquidity)
     await dex.createPosition({
       poolKey,
       lowerTick: lowerTickIndex - 20,
@@ -115,6 +116,7 @@ describe('swap', () => {
       slippageLimitUpper: '340282366920938463463374607431768211455'
     })
 
+    // get pool info
     let pool = await dex.pool({
       feeTier,
       token0: tokenX.contractAddress,
@@ -128,6 +130,8 @@ describe('swap', () => {
     await tokenX.increaseAllowance({ amount: swapAmount, spender: dex.contractAddress })
 
     let slippage = OraiswapV3Wasm.getGlobalMinSqrtPrice().toString()
+
+    //simulate price from
     let { target_sqrt_price: targetSqrtPrice } = await dex.quote({
       amount: swapAmount,
       poolKey,
@@ -140,6 +144,7 @@ describe('swap', () => {
     let beforeDexY = BigInt((await tokenY.balance({ address: dex.contractAddress })).balance)
 
     dex.sender = bobAddress
+    // swap
     await dex.swap({
       poolKey,
       amount: swapAmount,
