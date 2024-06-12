@@ -3,13 +3,17 @@ import { OraiswapV3Client } from '../../sdk'
 import { OraiswapTokenClient } from '@oraichain/oraidex-contracts-sdk'
 
 export default class SingletonOraiswapV3 {
-  private static _cw20: OraiswapTokenClient
+  private static _tokens: { [key: string]: OraiswapTokenClient } = {}
   private static _dex: OraiswapV3Client
 
   private constructor() {}
 
   public static get dex() {
     return this._dex
+  }
+
+  public static get tokens() {
+    return this._tokens
   }
 
   public static async load(signingClient: SigningCosmWasmClient, sender: string) {
@@ -23,8 +27,6 @@ export default class SingletonOraiswapV3 {
     sender: string,
     contractAddress: string
   ) {
-    if (!this._cw20 || contractAddress !== this._cw20.contractAddress) {
-      this._cw20 = new OraiswapTokenClient(signingClient, sender, contractAddress)
-    }
+    this._tokens[contractAddress] = new OraiswapTokenClient(signingClient, sender, contractAddress)
   }
 }
