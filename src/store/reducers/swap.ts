@@ -1,11 +1,11 @@
-import { PoolKey } from '@invariant-labs/a0-sdk'
+import { PoolKey } from '@/sdk/OraiswapV3.types'
 import { AddressOrPair } from '@polkadot/api/types'
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { PayloadType } from '@store/consts/types'
 import { SimulateResult } from '@store/consts/utils'
 
 export interface Swap {
-  poolKey: PoolKey | null
+  poolKey?: PoolKey
   slippage: bigint
   estimatedPriceAfterSwap: bigint
   tokenFrom: AddressOrPair
