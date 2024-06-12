@@ -140,9 +140,11 @@ export const TokenAirdropAmount = {
 }
 
 export const FaucetTokenList = {
-  BTC: TESTNET_BTC_ADDRESS,
-  ETH: TESTNET_ETH_ADDRESS,
-  USDC: TESTNET_USDC_ADDRESS
+  // BTC: TESTNET_BTC_ADDRESS,
+  // ETH: TESTNET_ETH_ADDRESS,
+  // USDC: TESTNET_USDC_ADDRESS,
+  ORAI: 'orai',
+  USDT: 'orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh'
 }
 
 export const BTC: Token = {

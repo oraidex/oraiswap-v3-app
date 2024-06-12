@@ -8,6 +8,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useLocation } from 'react-router-dom'
 import SingletonOraiswapV3 from '@store/services/contractSingleton'
 import { address } from '@store/selectors/wallet'
+import { FaucetTokenList } from '@store/consts/static'
+import { getTokenBalances } from '@store/consts/utils'
 
 export const HeaderWrapper: React.FC = () => {
   const dispatch = useDispatch()
@@ -19,20 +21,40 @@ export const HeaderWrapper: React.FC = () => {
   const { walletAddress, signingClient, connectWallet, disconnect } = useSigningClient()
 
   useEffect(() => {
-    console.log('wallet', {walletAddress})
-    if (walletAddress == '') {
-      connectWallet()
-    }
+    ;(async () => {
+      console.log('wallet', { walletAddress })
+      if (walletAddress == '') {
+        connectWallet()
+      }
 
-    if (signingClient && walletAddress) {
-      SingletonOraiswapV3.load(signingClient, walletAddress)
-    }
+      if (signingClient && walletAddress) {
+        SingletonOraiswapV3.load(signingClient, walletAddress)
+        dispatch(walletActions.setStatus(Status.Init))
+        dispatch(walletActions.setAddress(walletAddress))
+        dispatch(walletActions.setIsBalanceLoading(true))
 
-    window.addEventListener('keplr_keystorechange', connectWallet)
-    return () => {
-      window.removeEventListener('keplr_keystorechange', connectWallet)
-    }
-  }, [wallet])
+        const balance = await SingletonOraiswapV3.queryBalance()
+        dispatch(walletActions.setBalance(BigInt(balance.toString())))
+        dispatch(walletActions.setStatus(Status.Initialized))
+        const tokens = Object.values(FaucetTokenList)
+        const balances = await getTokenBalances(tokens)
+        console.log({ balances })
+
+        const convertedBalances = balances.map((balance, index) => ({
+          address: balance[0],
+          balance: balance[1]
+        }))
+
+        dispatch(walletActions.addTokenBalances(convertedBalances))
+        dispatch(walletActions.setIsBalanceLoading(false))
+      }
+
+      window.addEventListener('keplr_keystorechange', connectWallet)
+      return () => {
+        window.removeEventListener('keplr_keystorechange', connectWallet)
+      }
+    })()
+  }, [walletAddress])
 
   return (
     <Header

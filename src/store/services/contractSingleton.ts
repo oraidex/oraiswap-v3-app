@@ -27,7 +27,7 @@ export const integerSafeCast = (value: bigint): number => {
 }
 
 export default class SingletonOraiswapV3 {
-  private static _tokens: { [key: string]: OraiswapTokenClient } = {}
+  private static _tokens: { [key: string]: OraiswapTokenClient | any } = {}
   private static _dex: OraiswapV3Client
 
   private constructor() {}
@@ -46,12 +46,21 @@ export default class SingletonOraiswapV3 {
     }
   }
 
-  public static async loadCw20(
-    signingClient: SigningCosmWasmClient,
-    sender: string,
-    contractAddress: string
-  ) {
-    this._tokens[contractAddress] = new OraiswapTokenClient(signingClient, sender, contractAddress)
+  public static async loadCw20(sender: string, contractAddress: string) {
+    this._tokens[contractAddress] = new OraiswapTokenClient(
+      this._dex.client,
+      sender,
+      contractAddress
+    )
+  }
+
+  public static async loadNative(tokenDenom: string) {
+    this._tokens[tokenDenom] = tokenDenom
+  }
+
+  public static async queryBalance(tokenDenom: string = 'orai') {
+    const { amount } = await this._dex.client.getBalance(this._dex.sender, tokenDenom)
+    return amount
   }
 
   public static async getRawTickmap(

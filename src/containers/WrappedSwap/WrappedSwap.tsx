@@ -138,17 +138,17 @@ export const WrappedSwap = () => {
     const id = tokensDict[tokenFrom.toString()].coingeckoId ?? ''
 
     // if (id.length) {
-      // setPriceFromLoading(true)
-      // getCoingeckoTokenPrice(id)
-      //   .then(data => setTokenFromPriceData(data))
-      //   .catch(() =>
-      //     setTokenFromPriceData(
-      //       getMockedTokenPrice(tokensDict[tokenFrom.toString()].symbol, network)
-      //     )
-      //   )
-      //   .finally(() => setPriceFromLoading(false))
+    //   setPriceFromLoading(true)
+    //   getCoingeckoTokenPrice(id)
+    //     .then(data => setTokenFromPriceData(data))
+    //     .catch(() =>
+    //       setTokenFromPriceData(
+    //         getMockedTokenPrice(tokensDict[tokenFrom.toString()].symbol, network)
+    //       )
+    //     )
+    //     .finally(() => setPriceFromLoading(false))
     // } else {
-      setTokenFromPriceData(undefined)
+    //   setTokenFromPriceData(undefined)
     // }
   }, [tokenFrom])
 
@@ -160,17 +160,17 @@ export const WrappedSwap = () => {
     }
 
     const id = tokensDict[tokenTo.toString()].coingeckoId ?? ''
-    if (id.length) {
-      setPriceToLoading(true)
-      getCoingeckoTokenPrice(id)
-        .then(data => setTokenToPriceData(data))
-        .catch(() =>
-          setTokenToPriceData(getMockedTokenPrice(tokensDict[tokenTo.toString()].symbol, network))
-        )
-        .finally(() => setPriceToLoading(false))
-    } else {
-      setTokenToPriceData(undefined)
-    }
+    // if (id.length) {
+    //   setPriceToLoading(true)
+    //   getCoingeckoTokenPrice(id)
+    //     .then(data => setTokenToPriceData(data))
+    //     .catch(() =>
+    //       setTokenToPriceData(getMockedTokenPrice(tokensDict[tokenTo.toString()].symbol, network))
+    //     )
+    //     .finally(() => setPriceToLoading(false))
+    // } else {
+    //   setTokenToPriceData(undefined)
+    // }
   }, [tokenTo])
 
   const initialSlippage = localStorage.getItem('INVARIANT_SWAP_SLIPPAGE') ?? '1'
@@ -208,7 +208,7 @@ export const WrappedSwap = () => {
     //     )
     //     .finally(() => setPriceToLoading(false))
     // } else {
-      setTokenToPriceData(undefined)
+    //   setTokenToPriceData(undefined)
     // }
 
     const idFrom = tokensDict[tokenFrom.toString()].coingeckoId ?? ''
@@ -224,7 +224,7 @@ export const WrappedSwap = () => {
     //     )
     //     .finally(() => setPriceFromLoading(false))
     // } else {
-      setTokenFromPriceData(undefined)
+    //   setTokenFromPriceData(undefined)
     // }
   }
 

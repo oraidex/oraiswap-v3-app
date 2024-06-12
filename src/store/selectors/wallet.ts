@@ -6,6 +6,7 @@ import { IAlephZeroWallet, ITokenBalance, walletSliceName } from '@store/reducer
 import { AnyProps, keySelectors } from './helpers'
 import { tokens } from './pools'
 import { TokenAmount } from '@/sdk/OraiswapV3.types'
+import { TESTNET_WAZERO_ADDRESS } from '@invariant-labs/a0-sdk'
 
 const store = (s: AnyProps) => s[walletSliceName] as IAlephZeroWallet
 
