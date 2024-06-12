@@ -251,30 +251,6 @@ function* handleInitPositionWithAZERO(action: PayloadAction<InitPositionData>): 
     )
     txs.push(tx)
 
-    const approveTx = psp22.approveTx(
-      invAddress,
-      U128MAX,
-      TESTNET_WAZERO_ADDRESS,
-      PSP22_APPROVE_OPTIONS
-    )
-    txs.push(approveTx)
-
-    const unwrapTx = invariant.withdrawAllWAZEROTx(
-      TESTNET_WAZERO_ADDRESS,
-      INVARIANT_WITHDRAW_ALL_WAZERO
-    )
-    txs.push(unwrapTx)
-
-    const resetApproveTx = psp22.approveTx(
-      invAddress,
-      0n,
-      TESTNET_WAZERO_ADDRESS,
-      PSP22_APPROVE_OPTIONS
-    )
-    txs.push(resetApproveTx)
-
-    const batchedTx = api.tx.utility.batchAll(txs)
-
     yield put(
       snackbarsActions.add({
         message: 'Signing transaction...',
@@ -284,14 +260,8 @@ function* handleInitPositionWithAZERO(action: PayloadAction<InitPositionData>): 
       })
     )
 
-    const signedBatchedTx = yield* call([batchedTx, batchedTx.signAsync], walletAddress, {
-      signer: adapter.signer as Signer
-    })
-
     closeSnackbar(loaderSigningTx)
     yield put(snackbarsActions.remove(loaderSigningTx))
-
-    const txResult = yield* call(sendTx, signedBatchedTx)
 
     yield* put(actions.setInitPositionSuccess(true))
 

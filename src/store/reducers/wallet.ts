@@ -1,4 +1,4 @@
-import { TokenAmount } from '@invariant-labs/a0-sdk'
+import { TokenAmount } from '@/sdk/OraiswapV3.types'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { PayloadType } from '@store/consts/types'
 

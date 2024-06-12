@@ -169,7 +169,7 @@ export function* handleSwapWithAZERO(action: PayloadAction<Omit<Swap, 'txid'>>):
   const loaderSigningTx = createLoaderKey()
 
   try {
-    const allTokens = yield* select(tokens)
+    
 
     yield put(
       snackbarsActions.add({
@@ -180,11 +180,9 @@ export function* handleSwapWithAZERO(action: PayloadAction<Omit<Swap, 'txid'>>):
       })
     )
 
-    const tokenX = allTokens[poolKey.tokenX]
-    const tokenY = allTokens[poolKey.tokenY]
-    const xToY = tokenFrom.toString() === poolKey.tokenX
+    
+    const xToY = tokenFrom.toString() === poolKey.token_x
 
-    const txs = []
 
     const sqrtPriceLimit = calculateSqrtPriceAfterSlippage(estimatedPriceAfterSwap, slippage, !xToY)
     let calculatedAmountIn = amountIn
@@ -192,47 +190,27 @@ export function* handleSwapWithAZERO(action: PayloadAction<Omit<Swap, 'txid'>>):
       calculatedAmountIn = calculateAmountInWithSlippage(amountIn, sqrtPriceLimit, !xToY)
     }
 
-    if (
-      (xToY && poolKey.tokenX === TESTNET_WAZERO_ADDRESS) ||
-      (!xToY && poolKey.tokenY === TESTNET_WAZERO_ADDRESS)
-    ) {
-      const azeroBalance = yield* select(balance)
-      const azeroAmountInWithSlippage =
-        azeroBalance > calculatedAmountIn ? calculatedAmountIn : azeroBalance
-      const depositTx = wazero.depositTx(
-        byAmountIn ? amountIn : azeroAmountInWithSlippage,
-        WAZERO_DEPOSIT_OPTIONS
-      )
-      txs.push(depositTx)
-    }
 
     if (xToY) {
-      const approveTx = psp22.approveTx(
-        invAddress,
-        calculatedAmountIn,
-        tokenX.address.toString(),
-        PSP22_APPROVE_OPTIONS
-      )
-      txs.push(approveTx)
+      await SingletonOraiswapV3.tokens[poolKey.token_x].increaseAllowance({
+        spender: SingletonOraiswapV3.dex.contractAddress,
+        amount: calculatedAmountIn.toString()
+      })
     } else {
-      const approveTx = psp22.approveTx(
-        invAddress,
-        calculatedAmountIn,
-        tokenY.address.toString(),
-        PSP22_APPROVE_OPTIONS
-      )
-      txs.push(approveTx)
+      await SingletonOraiswapV3.tokens[poolKey.token_y].increaseAllowance({
+        spender: SingletonOraiswapV3.dex.contractAddress,
+        amount: calculatedAmountIn.toString()
+      })
     }
 
-    const swapTx = SingletonOraiswapV3.dex.swap(
+    
+    const swapTx = await SingletonOraiswapV3.dex.swap({
       poolKey,
       xToY,
-      amountIn,
+      amount: amountIn.toString(),
       byAmountIn,
-      sqrtPriceLimit,
-      INVARIANT_SWAP_OPTIONS
-    )
-    txs.push(swapTx)
+      sqrtPriceLimit: sqrtPriceLimit.toString()
+    })
 
     // if (
     //   (!xToY && poolKey.tokenX === TESTNET_WAZERO_ADDRESS) ||

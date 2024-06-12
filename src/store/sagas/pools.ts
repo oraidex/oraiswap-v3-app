@@ -1,4 +1,5 @@
-import { PoolKey, newPoolKey, sendTx, toSqrtPrice } from '@invariant-labs/a0-sdk'
+import { PoolKey, PoolWithPoolKey } from '@/sdk/OraiswapV3.types'
+import { toSqrtPrice } from '@/wasm/oraiswap_v3_wasm'
 import { Signer } from '@polkadot/api/types'
 import { PayloadAction } from '@reduxjs/toolkit'
 import {
@@ -11,49 +12,14 @@ import {
 import { FetchTicksAndTickMaps, ListPoolsRequest, PairTokens, actions } from '@store/reducers/pools'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
 import { invariantAddress, networkType } from '@store/selectors/connection'
-import { tokens } from '@store/selectors/pools'
+import { pools, tokens } from '@store/selectors/pools'
 import { address } from '@store/selectors/wallet'
+import SingletonOraiswapV3 from '@store/services/contractSingleton'
 import { closeSnackbar } from 'notistack'
 import { all, call, put, select, spawn, takeEvery, takeLatest } from 'typed-redux-saga'
 
-export function* fetchPoolsDataForList(action: PayloadAction<ListPoolsRequest>) {
-  const walletAddress = yield* select(address)
-  const network = yield* select(networkType)
-  const invAddress = yield* select(invariantAddress)
-  const pools = yield* call(getPoolsByPoolKeys, invAddress, action.payload.poolKeys, network)
-
-  const allTokens = yield* select(tokens)
-  const unknownTokens = new Set(
-    action.payload.poolKeys.flatMap(({ tokenX, tokenY }) =>
-      [tokenX, tokenY].filter(token => !allTokens[token])
-    )
-  )
-  const knownTokens = new Set(
-    action.payload.poolKeys.flatMap(({ tokenX, tokenY }) =>
-      [tokenX, tokenY].filter(token => allTokens[token])
-    )
-  )
-
-  const unknownTokensData = yield* call(
-    getTokenDataByAddresses,
-    [...unknownTokens],
-    connection,
-    network,
-    walletAddress
-  )
-  const knownTokenBalances = yield* call(
-    getTokenBalances,
-    [...knownTokens],
-    connection,
-    network,
-    walletAddress
-  )
-  yield* put(actions.addTokens(unknownTokensData))
-  yield* put(actions.updateTokenBalances(knownTokenBalances))
-
-  console.log(yield* select(tokens))
-
-  yield* put(actions.addPoolsForList({ data: pools, listType: action.payload.listType }))
+export async function fetchPoolsDataForList(action: PayloadAction<ListPoolsRequest>) {
+  const pools = await getPoolsByPoolKeys(action.payload.poolKeys)
 }
 
 export function* handleInitPool(action: PayloadAction<PoolKey>): Generator {
@@ -69,16 +35,14 @@ export function* handleInitPool(action: PayloadAction<PoolKey>): Generator {
       })
     )
 
-    const { tokenX, tokenY, feeTier } = action.payload
+    const { token_x, token_y, fee_tier } = action.payload
 
     const network = yield* select(networkType)
     const walletAddress = yield* select(address)
 
-    const poolKey = newPoolKey(tokenX, tokenY, feeTier)
+    const poolKey: PoolKey = { token_x, token_y, fee_tier }
 
     const initSqrtPrice = toSqrtPrice(1n, 0n)
-
-    const tx = yield* call([invariant, invariant.createPoolTx], poolKey, initSqrtPrice)
 
     yield put(
       snackbarsActions.add({
@@ -89,14 +53,8 @@ export function* handleInitPool(action: PayloadAction<PoolKey>): Generator {
       })
     )
 
-    const signedTx = yield* call([tx, tx.signAsync], walletAddress, {
-      signer: adapter.signer as Signer
-    })
-
     closeSnackbar(loaderSigningTx)
     yield put(snackbarsActions.remove(loaderSigningTx))
-
-    const txResult = yield* call(sendTx, signedTx)
 
     yield put(
       snackbarsActions.add({
@@ -150,48 +108,18 @@ export function* fetchPoolData(action: PayloadAction<PoolKey>): Generator {
   }
 }
 
-export function* fetchAllPoolKeys(): Generator {
-  const api = yield* getConnection()
-  const network = yield* select(networkType)
-  const invAddress = yield* select(invariantAddress)
-
-  try {
-    const invariant = yield* call(
-      [invariantSingleton, invariantSingleton.loadInstance],
-      api,
-      network,
-      invAddress
-    )
-
-    //TODO: in the future handle more than 100 pools
-    const pools = yield* call([invariant, invariant.getPoolKeys], 100n, 0n)
-
-    yield* put(actions.setPoolKeys(pools))
-  } catch (error) {
-    yield* put(actions.setPoolKeys([]))
-    console.log(error)
-  }
+export async function fetchAllPoolKeys(): Promise<PoolWithPoolKey[]> {
+  //TODO: in the future handle more than 100 pools
+  const pools = await SingletonOraiswapV3.dex.pools({})
+  return pools
 }
 
-export function* fetchAllPoolsForPairData(action: PayloadAction<PairTokens>) {
-  const api = yield* call(getConnection)
-  const network = yield* select(networkType)
-  const invAddress = yield* select(invariantAddress)
-  const invariant = yield* call(
-    [invariantSingleton, invariantSingleton.loadInstance],
-    api,
-    network,
-    invAddress
-  )
-  const poolKeys = yield* call([invariant, invariant.getPoolKeys], 100n, 0n)
-  const filteredPoolKeys = findPairsByPoolKeys(
-    action.payload.first.toString(),
-    action.payload.second.toString(),
-    poolKeys
-  )
-  const pools = yield* call(getPools, invariant, filteredPoolKeys)
-
-  yield* put(actions.addPools(pools))
+export async function fetchAllPoolsForPairData(action: PayloadAction<PairTokens>) {
+  const pools = await SingletonOraiswapV3.dex.poolsForPair({
+    token0: action.payload.first.toString(),
+    token1: action.payload.second.toString()
+  })
+  return pools
 }
 
 export function* fetchTicksAndTickMaps(action: PayloadAction<FetchTicksAndTickMaps>) {

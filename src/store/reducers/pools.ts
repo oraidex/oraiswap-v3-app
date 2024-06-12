@@ -1,4 +1,4 @@
-import { Pool, PoolKey } from '@/sdk/OraiswapV3.types'
+import { Pool, PoolKey, PoolWithPoolKey } from '@/sdk/OraiswapV3.types'
 import {
   FeeTier,
   LiquidityTick,
@@ -16,10 +16,6 @@ import { PayloadType } from '@store/consts/types'
 import { poolKeyToString } from '@store/consts/utils'
 
 import * as R from 'remeda'
-
-export interface PoolWithPoolKey extends Pool {
-  poolKey: PoolKey
-}
 
 export interface IndexedFeeTier {
   tier: FeeTier
@@ -144,7 +140,7 @@ const poolsSlice = createSlice({
     },
     addPool(state, action: PayloadAction<PoolWithPoolKey | undefined>) {
       if (action.payload) {
-        const { poolKey } = action.payload
+        const poolKey = action.payload.pool_key
         const keyStringified = poolKeyToString(poolKey)
 
         // Check if a pool with the same PoolKey already exists
@@ -193,7 +189,7 @@ const poolsSlice = createSlice({
       const newData = action.payload.reduce(
         (acc, pool) => ({
           ...acc,
-          [poolKeyToString(pool.poolKey)]: pool
+          [poolKeyToString(pool.pool_key)]: pool
         }),
         {}
       )
@@ -205,7 +201,7 @@ const poolsSlice = createSlice({
       const newData = action.payload.data.reduce(
         (acc, pool) => ({
           ...acc,
-          [poolKeyToString(pool.poolKey)]: pool
+          [poolKeyToString(pool.pool_key)]: pool
         }),
         {}
       )

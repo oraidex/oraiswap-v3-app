@@ -2,7 +2,6 @@ import AnimatedButton, { ProgressState } from '@components/AnimatedButton/Animat
 import ChangeWalletButton from '@components/Header/HeaderButton/ChangeWalletButton'
 import ExchangeAmountInput from '@components/Inputs/ExchangeAmountInput/ExchangeAmountInput'
 import Slippage from '@components/Modals/Slippage/Slippage'
-import { PoolKey, Price, Tick, TokenAmount } from '@invariant-labs/a0-sdk'
 import { PERCENTAGE_DENOMINATOR } from '@invariant-labs/a0-sdk/target/consts'
 import { Box, Button, CardMedia, Grid, Typography } from '@mui/material'
 import { AddressOrPair } from '@polkadot/api/types'
@@ -18,10 +17,8 @@ import {
   printBigint,
   trimLeadingZeros
 } from '@store/consts/utils'
-import { PoolWithPoolKey } from '@store/reducers/pools'
 import { Swap as SwapData, actions } from '@store/reducers/swap'
 import { Status } from '@store/reducers/wallet'
-import { SwapError } from '@store/sagas/swap'
 import { SwapToken } from '@store/selectors/wallet'
 import { blurContent, unblurContent } from '@utils/uiUtils'
 import classNames from 'classnames'
@@ -30,6 +27,8 @@ import { useDispatch } from 'react-redux'
 import ExchangeRate from './ExchangeRate/ExchangeRate'
 import TransactionDetailsBox from './TransactionDetailsBox/TransactionDetailsBox'
 import useStyles from './style'
+import { PoolKey, PoolWithPoolKey, Tick, TokenAmount } from '@/sdk/OraiswapV3.types'
+import { Price } from '@/wasm/oraiswap_v3_wasm'
 
 export interface Pools {
   tokenX: AddressOrPair
@@ -281,8 +280,8 @@ export const Swap: React.FC<ISwap> = ({
   const getIsXToY = (fromToken: AddressOrPair, toToken: AddressOrPair) => {
     const swapPool = pools.find(
       pool =>
-        (fromToken === pool.poolKey.tokenX && toToken === pool.poolKey.tokenY) ||
-        (fromToken === pool.poolKey.tokenY && toToken === pool.poolKey.tokenX)
+        (fromToken === pool.pool_key.token_x && toToken === pool.pool_key.token_y) ||
+        (fromToken === pool.pool_key.token_y && toToken === pool.pool_key.token_x)
     )
     return !!swapPool
   }

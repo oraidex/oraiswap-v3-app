@@ -1,35 +1,39 @@
-import {
-  LiquidityTick,
-  Network,
-  Tickmap,
-  TokenAmount,
-  calculateSqrtPrice,
-  calculateTickDelta,
-  getMaxTick,
-  getMinTick,
-  positionToTick,
-  sqrtPriceToPrice
-} from '@invariant-labs/a0-sdk'
-import { CHUNK_SIZE, PRICE_SCALE } from '@invariant-labs/a0-sdk/target/consts'
-import { calculateLiquidityBreakpoints } from '@invariant-labs/a0-sdk/target/utils'
-import { PoolWithPoolKey } from '@store/reducers/pools'
 import { PlotTickData } from '@store/reducers/positions'
-import { SwapError } from '@store/sagas/swap'
 import SingletonOraiswapV3 from '@store/services/contractSingleton'
 import axios from 'axios'
 import { BTC, ETH, ORAI, Token, TokenPriceData, USDC, USDT, tokensPrices } from './static'
-import { Pool, PoolKey, Tick } from '@/sdk/OraiswapV3.types'
+import {
+  Liquidity,
+  LiquidityTick,
+  Pool,
+  PoolKey,
+  PoolWithPoolKey,
+  SqrtPrice,
+  Tick,
+  TokenAmount
+} from '@/sdk/OraiswapV3.types'
+import {
+  Price,
+  SwapError,
+  Tickmap,
+  calculateSqrtPrice,
+  getChunkSize,
+  getMaxTick,
+  getMinTick,
+  getPriceScale,
+  getSqrtPriceDenominator,
+  positionToTick
+} from '@/wasm/oraiswap_v3_wasm'
+import { BalanceResponse } from '@oraichain/cw-simulate/dist/modules/bank'
+
+export const CHUNK_SIZE = getChunkSize()
+export const PRICE_SCALE = getPriceScale()
+export const MAX_REF_TIME = 259058343000
+export const DEFAULT_REF_TIME = 1250000000000
+export const DEFAULT_PROOF_SIZE = 1250000000000
+export const CONCENTRATION_FACTOR = 1.00001526069123
 
 export const createLoaderKey = () => (new Date().getMilliseconds() + Math.random()).toString()
-
-export const getInvariantAddress = (network: Network): string | null => {
-  switch (network) {
-    case Network.Testnet:
-      return '5FiTccBSAH9obLA4Q33hYrL3coPm2SE276rFPVttFPFnaxnC'
-    default:
-      return null
-  }
-}
 
 export interface PrefixConfig {
   B?: number
@@ -253,22 +257,7 @@ export const getCoingeckoTokenPrice = async (id: string): Promise<CoingeckoPrice
     })
 }
 
-export const getMockedTokenPrice = (symbol: string, network: Network): TokenPriceData => {
-  const sufix = network === Network.Testnet ? '_TEST' : '_DEV'
-  const prices = tokensPrices[network]
-  switch (symbol) {
-    case 'BTC':
-      return prices[symbol + sufix]
-    case 'ETH':
-      return prices['W' + symbol + sufix]
-    case 'USDC':
-      return prices[symbol + sufix]
-    default:
-      return { price: 0 }
-  }
-}
-
-export const printBigint = (amount: TokenAmount, decimals: bigint): string => {
+export const printBigint = (amount: TokenAmount | bigint, decimals: bigint): string => {
   const parsedDecimals = Number(decimals)
   const amountString = amount.toString()
   const isNegative = amountString.length > 0 && amountString[0] === '-'
@@ -355,24 +344,18 @@ export const poolKeyToString = (poolKey: PoolKey): string => {
   )
 }
 
-export const getTokenBalances = () => {}
+export const getTokenBalances = async (tokens: string[]) => {
+  const promises: Promise<BalanceResponse>[] = []
+  tokens.map(token =>
+    SingletonOraiswapV3.tokens[token].balance({ address: SingletonOraiswapV3.dex.sender })
+  )
+  const results = await Promise.all(promises)
 
-export const getNetworkTokensList = (networkType: Network): Record<string, Token> => {
-  switch (networkType) {
-    case Network.Mainnet: {
-      return {}
-    }
-    case Network.Testnet:
-      return {
-        [ORAI.address.toString()]: ORAI,
-        [USDT.address.toString()]: USDT,
-        [USDC.address.toString()]: USDC,
-        [BTC.address.toString()]: BTC,
-        [ETH.address.toString()]: ETH,
-      }
-    default:
-      return {}
-  }
+  const tokenBalances: [string, bigint][] = []
+  tokens.map((token, index) => {
+    tokenBalances.push([token, BigInt(results[index].amount.amount)])
+  })
+  return tokenBalances
 }
 
 export const getPrimaryUnitsPrice = (
@@ -519,8 +502,8 @@ export const determinePositionTokenBlock = (
 export const findPairs = (tokenFrom: string, tokenTo: string, pairs: PoolWithPoolKey[]) => {
   return pairs.filter(
     pool =>
-      (tokenFrom === pool.poolKey.token_x && tokenTo === pool.poolKey.token_y) ||
-      (tokenFrom === pool.poolKey.token_y && tokenTo === pool.poolKey.token_x)
+      (tokenFrom === pool.pool_key.token_x && tokenTo === pool.pool_key.token_y) ||
+      (tokenFrom === pool.pool_key.token_y && tokenTo === pool.pool_key.token_x)
   )
 }
 
@@ -546,6 +529,19 @@ export const getPools = async (poolKeys: PoolKey[]): Promise<PoolWithPoolKey[]> 
   return pools.map((pool, index) => {
     return { ...pool, poolKey: poolKeys[index] }
   })
+}
+
+export const calculateTickDelta = (
+  tickSpacing: number,
+  minimumRange: number,
+  concentration: number
+) => {
+  const base = Math.pow(1.0001, -(tickSpacing / 4))
+  const logArg =
+    (1 - 1 / (concentration * CONCENTRATION_FACTOR)) /
+    Math.pow(1.0001, (-tickSpacing * minimumRange) / 4)
+
+  return Math.ceil(Math.log(logArg) / Math.log(base) / 2)
 }
 
 export const calculateConcentrationRange = (
@@ -630,6 +626,29 @@ export const calculateAmountInWithSlippage = (
   return BigInt(Math.ceil(amountIn))
 }
 
+export const sqrtPriceToPrice = (sqrtPrice: SqrtPrice | bigint): Price => {
+  return (BigInt(sqrtPrice) * BigInt(sqrtPrice)) / getSqrtPriceDenominator()
+}
+
+export interface LiquidityBreakpoint {
+  liquidity: Liquidity
+  index: bigint
+}
+
+export const calculateLiquidityBreakpoints = (
+  ticks: (Tick | LiquidityTick)[]
+): LiquidityBreakpoint[] => {
+  let currentLiquidity = 0n
+
+  return ticks.map(tick => {
+    currentLiquidity = currentLiquidity + BigInt(tick.liquidity_change) * (tick.sign ? 1n : -1n)
+    return {
+      liquidity: currentLiquidity.toString(),
+      index: BigInt(tick.index)
+    }
+  })
+}
+
 export const createLiquidityPlot = (
   rawTicks: LiquidityTick[],
   tickSpacing: bigint,
@@ -661,30 +680,31 @@ export const createLiquidityPlot = (
   }
 
   ticks.forEach((tick, i) => {
-    if (i === 0 && tick.index - tickSpacing > min) {
-      const price = calcPrice(tick.index - tickSpacing, isXtoY, tokenXDecimal, tokenYDecimal)
+    let tickIndex = BigInt(tick.index)
+    if (i === 0 && tickIndex - tickSpacing > min) {
+      const price = calcPrice(tickIndex - tickSpacing, isXtoY, tokenXDecimal, tokenYDecimal)
       ticksData.push({
         x: price,
         y: 0,
-        index: tick.index - tickSpacing
+        index: tickIndex - tickSpacing
       })
-    } else if (i > 0 && tick.index - tickSpacing > ticks[i - 1].index) {
-      const price = calcPrice(tick.index - tickSpacing, isXtoY, tokenXDecimal, tokenYDecimal)
+    } else if (i > 0 && tickIndex - tickSpacing > ticks[i - 1].index) {
+      const price = calcPrice(tickIndex - tickSpacing, isXtoY, tokenXDecimal, tokenYDecimal)
       ticksData.push({
         x: price,
         y: +printBigint(ticks[i - 1].liqudity, 12n), // TODO use constant
-        index: tick.index - tickSpacing
+        index: tickIndex - tickSpacing
       })
     }
 
-    const price = calcPrice(tick.index, isXtoY, tokenXDecimal, tokenYDecimal)
+    const price = calcPrice(tickIndex, isXtoY, tokenXDecimal, tokenYDecimal)
     ticksData.push({
       x: price,
       y: +printBigint(ticks[i].liqudity, 12n), // TODO use constant
-      index: tick.index
+      index: tickIndex
     })
   })
-  const lastTick = ticks[ticks.length - 1].index
+  const lastTick = BigInt(ticks[ticks.length - 1].index)
   if (!ticks.length) {
     const maxPrice = calcPrice(max, isXtoY, tokenXDecimal, tokenYDecimal)
 
