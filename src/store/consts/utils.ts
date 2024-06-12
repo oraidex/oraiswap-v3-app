@@ -21,12 +21,14 @@ import {
   getMaxTick,
   getMinTick,
   getPercentageDenominator,
+  getPercentageScale,
   getPriceScale,
   getSqrtPriceDenominator,
   positionToTick
 } from '@/wasm/oraiswap_v3_wasm'
 import { BalanceResponse } from '@oraichain/cw-simulate/dist/modules/bank'
 
+export const PERCENTAGE_SCALE = getPercentageScale()
 export const PERCENTAGE_DENOMINATOR = getPercentageDenominator()
 export const CHUNK_SIZE = getChunkSize()
 export const PRICE_SCALE = getPriceScale()
