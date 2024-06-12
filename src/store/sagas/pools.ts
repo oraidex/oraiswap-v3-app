@@ -56,15 +56,6 @@ export function* handleInitPool(action: PayloadAction<PoolKey>): Generator {
     closeSnackbar(loaderSigningTx)
     yield put(snackbarsActions.remove(loaderSigningTx))
 
-    yield put(
-      snackbarsActions.add({
-        message: 'Pool successfully created',
-        variant: 'success',
-        persist: false,
-        txid: txResult.hash
-      })
-    )
-
     closeSnackbar(loaderKey)
     yield put(snackbarsActions.remove(loaderKey))
   } catch (error) {
@@ -76,39 +67,22 @@ export function* handleInitPool(action: PayloadAction<PoolKey>): Generator {
   }
 }
 
-export function* fetchPoolData(action: PayloadAction<PoolKey>): Generator {
-  const api = yield* getConnection()
-  const network = yield* select(networkType)
-  const invAddress = yield* select(invariantAddress)
-  const { feeTier, tokenX, tokenY } = action.payload
+export async function fetchPoolData(action: PayloadAction<PoolKey>) {
+  const { fee_tier, token_x, token_y } = action.payload
 
   try {
-    const invariant = yield* call(
-      [invariantSingleton, invariantSingleton.loadInstance],
-      api,
-      network,
-      invAddress
-    )
-
-    const pool = yield* call([invariant, invariant.getPool], tokenX, tokenY, feeTier)
-
-    if (pool) {
-      yield* put(
-        actions.addPool({
-          ...pool,
-          poolKey: action.payload
-        })
-      )
-    } else {
-      yield* put(actions.addPool())
-    }
+    const pool = await SingletonOraiswapV3.dex.pool({
+      feeTier: fee_tier,
+      token0: token_x,
+      token1: token_y
+    })
+    return pool
   } catch (error) {
     console.log(error)
-    yield* put(actions.addPool())
   }
 }
 
-export async function fetchAllPoolKeys(): Promise<PoolWithPoolKey[]> {
+export async function fetchAllPools(): Promise<PoolWithPoolKey[]> {
   //TODO: in the future handle more than 100 pools
   const pools = await SingletonOraiswapV3.dex.pools({})
   return pools
@@ -122,39 +96,21 @@ export async function fetchAllPoolsForPairData(action: PayloadAction<PairTokens>
   return pools
 }
 
-export function* fetchTicksAndTickMaps(action: PayloadAction<FetchTicksAndTickMaps>) {
+export async function fetchTicksAndTickMaps(action: PayloadAction<FetchTicksAndTickMaps>) {
   const { tokenFrom, tokenTo, allPools } = action.payload
 
-  try {
-    const pools = findPairs(tokenFrom.toString(), tokenTo.toString(), allPools)
+  const pools = findPairs(tokenFrom.toString(), tokenTo.toString(), allPools)
 
-    const tickmapCalls = pools.map(pool =>
-      call([invariant, invariant.getFullTickmap], pool.poolKey)
+  const allTickMaps = await Promise.all(
+    pools.map(pool => SingletonOraiswapV3.getFullTickmap(pool.pool_key))
+  )
+
+  const allTicks = await Promise.all(
+    pools.map((pool, index) =>
+      SingletonOraiswapV3.getAllLiquidityTicks(pool.pool_key, allTickMaps[index])
     )
-    const allTickMaps = yield* all(tickmapCalls)
-
-    for (const [index, pool] of pools.entries()) {
-      yield* put(
-        actions.setTickMaps({
-          poolKey: pool.poolKey,
-          tickMapStructure: allTickMaps[index]
-        })
-      )
-    }
-
-    const allTicksCalls = pools.map((pool, index) =>
-      call([invariant, invariant.getAllLiquidityTicks], pool.poolKey, allTickMaps[index])
-    )
-    const allTicks = yield* all(allTicksCalls)
-
-    for (const [index, pool] of pools.entries()) {
-      yield* put(actions.setTicks({ poolKey: pool.poolKey, tickStructure: allTicks[index] }))
-    }
-
-    yield* put(actions.stopIsLoadingTicksAndTickMaps())
-  } catch (error) {
-    console.log(error)
-  }
+  )
+  return allTicks
 }
 
 export function* getPoolsDataForListHandler(): Generator {
@@ -170,7 +126,7 @@ export function* getPoolDataHandler(): Generator {
 }
 
 export function* getPoolKeysHandler(): Generator {
-  yield* takeLatest(actions.getPoolKeys, fetchAllPoolKeys)
+  yield* takeLatest(actions.getPoolKeys, fetchAllPools)
 }
 
 export function* getAllPoolsForPairDataHandler(): Generator {

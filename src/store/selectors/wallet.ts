@@ -1,4 +1,3 @@
-import { TESTNET_WAZERO_ADDRESS, TokenAmount } from '@invariant-labs/a0-sdk'
 import { AddressOrPair } from '@polkadot/api/types'
 import { BN } from '@polkadot/util'
 import { createSelector } from '@reduxjs/toolkit'
@@ -6,6 +5,7 @@ import { POOL_SAFE_TRANSACTION_FEE, SWAP_SAFE_TRANSACTION_FEE } from '@store/con
 import { IAlephZeroWallet, ITokenBalance, walletSliceName } from '@store/reducers/wallet'
 import { AnyProps, keySelectors } from './helpers'
 import { tokens } from './pools'
+import { TokenAmount } from '@/sdk/OraiswapV3.types'
 
 const store = (s: AnyProps) => s[walletSliceName] as IAlephZeroWallet
 
