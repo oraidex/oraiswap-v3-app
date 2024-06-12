@@ -224,6 +224,12 @@ export interface Pool {
   sqrt_price: SqrtPrice
   start_timestamp: number
 }
+export type ArrayOfPoolWithPoolKey = PoolWithPoolKey[]
+export interface PoolWithPoolKey {
+  pool: Pool
+  pool_key: PoolKey
+}
+
 export type ArrayOfPool = Pool[]
 export interface Position {
   fee_growth_inside_x: FeeGrowth
