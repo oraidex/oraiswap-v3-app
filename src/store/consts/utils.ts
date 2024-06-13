@@ -1,18 +1,8 @@
 import { PlotTickData } from '@store/reducers/positions'
 import SingletonOraiswapV3, { integerSafeCast } from '@store/services/contractSingleton'
 import axios from 'axios'
-import { BTC, ETH, ORAI, Token, TokenPriceData, USDC, USDT, tokensPrices } from './static'
-import {
-  Liquidity,
-  LiquidityTick,
-  Percentage,
-  Pool,
-  PoolKey,
-  PoolWithPoolKey,
-  SqrtPrice,
-  Tick,
-  TokenAmount
-} from '@/sdk/OraiswapV3.types'
+import { PoolWithPoolKey } from '../../sdk/OraiswapV3.types'
+
 import {
   Price,
   SwapError,
@@ -35,11 +25,19 @@ import {
   _newPoolKey,
   getMaxTickmapQuerySize,
   getLiquidityTicksLimit,
-  calculateTick
+  calculateTick,
+  Liquidity,
+  LiquidityTick,
+  Percentage,
+  Pool,
+  PoolKey,
+  FeeTier,
+  Position,
+  SqrtPrice,
+  Tick,
+  TokenAmount
 } from '../../wasm'
 import { BalanceResponse } from '@oraichain/cw-simulate/dist/modules/bank'
-import { FeeTier } from '@/sdk/OraiswapV3.types'
-import { Position } from '@/sdk/OraiswapV3.types'
 
 export enum Network {
   Local = 'Local',
@@ -86,14 +84,10 @@ const isObject = (value: any): boolean => {
 }
 
 export const newPoolKey = (token0: string, token1: string, feeTier: FeeTier): PoolKey => {
-  return JSON.parse(
-    JSON.stringify(
-      _newPoolKey(
-        token0,
-        token1,
-        _newFeeTier(feeTier.fee, integerSafeCast(BigInt(feeTier.tick_spacing)))
-      )
-    )
+  return _newPoolKey(
+    token0,
+    token1,
+    _newFeeTier(feeTier.fee, integerSafeCast(feeTier.tick_spacing))
   )
 }
 
