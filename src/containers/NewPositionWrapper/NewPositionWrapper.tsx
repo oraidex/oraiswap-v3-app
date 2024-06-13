@@ -1,5 +1,5 @@
 import { TokenAmount } from '@/sdk/OraiswapV3.types'
-import { _newPoolKey, calculateSqrtPrice, getLiquidityByX, getLiquidityByY } from '../../wasm'
+import { _newPoolKey, calculateSqrtPrice, getLiquidityByX, getLiquidityByY, getMinTick } from '../../wasm'
 import { ProgressState } from '@components/AnimatedButton/AnimatedButton'
 import NewPosition from '@components/NewPosition/NewPosition'
 
@@ -14,9 +14,6 @@ import {
   calcPrice,
   calcYPerXPriceBySqrtPrice,
   createPlaceholderLiquidityPlot,
-  getCoingeckoTokenPrice,
-  newPoolKey,
-  // getMockedTokenPrice,
   poolKeyToString,
   printBigint
 } from '@store/consts/utils'
@@ -221,8 +218,8 @@ export const NewPositionWrapper: React.FC<IProps> = ({
         return (
           pool.pool_key.fee_tier.fee === fee &&
           ((pool.pool_key.token_x === tokens[tokenAIndex].assetAddress &&
-            pool.pool_key.token_y === tokens[tokenBIndex].assetAddress) ||
-            (pool.pool_key.token_x === tokens[tokenBIndex].assetAddress &&
+            pool.pool_key.token_x === tokens[tokenBIndex].assetAddress) ||
+            (pool.pool_key.token_y === tokens[tokenBIndex].assetAddress &&
               pool.pool_key.token_y === tokens[tokenAIndex].assetAddress))
         )
       })
@@ -280,7 +277,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     ) {
       dispatch(
         poolsActions.getPoolData(
-          newPoolKey(
+          _newPoolKey(
             tokens[tokenAIndex].assetAddress.toString(),
             tokens[tokenBIndex].assetAddress.toString(),
             ALL_FEE_TIERS_DATA[feeIndex].tier
@@ -500,9 +497,9 @@ export const NewPositionWrapper: React.FC<IProps> = ({
             pool =>
               pool.pool_key.fee_tier.fee === fee &&
               ((pool.pool_key.token_x === tokens[tokenA].assetAddress &&
-                pool.pool_key.token_y === tokens[tokenB].assetAddress) ||
-                (pool.pool_key.token_x === tokens[tokenA].assetAddress &&
-                  pool.pool_key.token_y === tokens[tokenB].assetAddress))
+                pool.pool_key.token_x === tokens[tokenB].assetAddress) ||
+                (pool.pool_key.token_y === tokens[tokenB].assetAddress &&
+                  pool.pool_key.token_y === tokens[tokenA].assetAddress))
           )
 
           if (
@@ -542,7 +539,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
           ) {
             dispatch(
               poolsActions.getPoolData(
-                newPoolKey(
+                _newPoolKey(
                   tokens[tokenA].address.toString(),
                   tokens[tokenB].address.toString(),
                   ALL_FEE_TIERS_DATA[feeTierIndex].tier
@@ -568,7 +565,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       isXtoY={isXtoY}
       xDecimal={xDecimal}
       yDecimal={yDecimal}
-      tickSpacing={BigInt(tickSpacing)}
+      tickSpacing={BigInt(10)} 
       isWaitingForNewPool={isWaitingForNewPool}
       poolIndex={poolIndex}
       currentPairReversed={currentPairReversed}

@@ -34,7 +34,7 @@ export const HeaderWrapper: React.FC = () => {
         dispatch(walletActions.setIsBalanceLoading(true))
 
         const balance = await SingletonOraiswapV3.queryBalance()
-        dispatch(walletActions.setBalance(balance.toString()))
+        dispatch(walletActions.setBalance(BigInt(balance.toString()) as any))
         dispatch(walletActions.setStatus(Status.Initialized))
         const tokens = Object.values(FaucetTokenList)
         const balances = await getTokenBalances(tokens)

@@ -78,8 +78,14 @@ export default class SingletonOraiswapV3 {
     return tickmaps
   }
 
-  public static async getAllPool(limit?: number, startAfter?: PoolKey): Promise<any> {
-    const pools = await this.dex.pools({ limit, startAfter })
+  public static async getAllPool(limit?: number, offset?: PoolKey): Promise<any> {
+    const pools = await this.dex.client.queryContractSmart(import.meta.env.VITE_CONTRACT_ADDRESS, {
+      positions: {
+        limit,
+        offset,
+        owner_id: this.dex.sender
+      }
+    })
     return pools
   }
 
