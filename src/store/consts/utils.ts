@@ -86,11 +86,13 @@ const isObject = (value: any): boolean => {
 }
 
 export const newPoolKey = (token0: string, token1: string, feeTier: FeeTier): PoolKey => {
-  return parse(
-    _newPoolKey(
-      token0,
-      token1,
-      _newFeeTier(feeTier.fee, integerSafeCast(BigInt(feeTier.tick_spacing)))
+  return JSON.parse(
+    JSON.stringify(
+      _newPoolKey(
+        token0,
+        token1,
+        _newFeeTier(feeTier.fee, integerSafeCast(BigInt(feeTier.tick_spacing)))
+      )
     )
   )
 }

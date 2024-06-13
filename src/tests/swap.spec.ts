@@ -5,6 +5,7 @@ import fs from 'fs'
 import path from 'path'
 import * as OraiswapV3Wasm from '../wasm'
 import { OraiswapV3Client, OraiswapV3Types } from '../sdk'
+import { newPoolKey } from '@store/consts/utils'
 
 const senderAddress = 'orai1g4h64yjt0fvzv5v2j8tyfnpe5kmnetejvfgs7g'
 const bobAddress = 'orai1602dkqjvh4s7ryajnz2uwhr8vetrwr8nekpxv5'
@@ -85,11 +86,7 @@ describe('swap', () => {
     await tokenX.increaseAllowance({ amount: initialAmount, spender: dex.contractAddress })
     await tokenY.increaseAllowance({ amount: initialAmount, spender: dex.contractAddress })
 
-    let poolKey: OraiswapV3Types.PoolKey = {
-      fee_tier: feeTier,
-      token_x: tokenX.contractAddress,
-      token_y: tokenY.contractAddress
-    }
+    let poolKey = newPoolKey(tokenX.contractAddress, tokenY.contractAddress, feeTier)
 
     let lowerTickIndex = -20
     let middleTickIndex = -10
