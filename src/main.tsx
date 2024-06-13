@@ -1,14 +1,16 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import App from './App.tsx'
 import './index.css'
 
 import init from './wasm/oraiswap_v3_wasm'
 
-init().then(() => {
+;(async () => {
+  await init()
+  const App = await import('./App.tsx')
+
   ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
-      <App />
+      <App.default />
     </React.StrictMode>
   )
-})
+})()
