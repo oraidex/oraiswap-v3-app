@@ -5,7 +5,7 @@ import useStyles from './styles'
 import { ISelectNetwork } from '@store/consts/types'
 import { Button, Grid, Input, Popover, Typography } from '@mui/material'
 import DotIcon from '@mui/icons-material/FiberManualRecord'
-import { Network } from '@invariant-labs/a0-sdk'
+import { Network } from '@/store/consts/utils'
 
 export interface ISelectTestnetRPC {
   networks: ISelectNetwork[]

@@ -5,7 +5,7 @@ import ChangeWalletButton from './ChangeWalletButton'
 import SelectNetworkButton from './SelectNetworkButton'
 import SelectRPCButton from './SelectRPCButton'
 
-import { Network } from '@invariant-labs/a0-sdk'
+import { Network } from '@/store/consts/utils'
 import { action } from '@storybook/addon-actions'
 
 const meta = {

@@ -6,7 +6,7 @@ import {
   TESTNET_WAZERO_ADDRESS
 } from '@invariant-labs/a0-sdk'
 
-import { Network } from '@invariant-labs/a0-sdk/src'
+import { Network } from '@/store/consts/utils'
 import { Keyring } from '@polkadot/api'
 import { AddressOrPair } from '@polkadot/api/types'
 

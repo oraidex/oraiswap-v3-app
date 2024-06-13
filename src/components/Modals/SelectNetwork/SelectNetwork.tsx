@@ -5,7 +5,7 @@ import useStyles from './style'
 import { ISelectNetwork } from '@store/consts/types'
 import { Grid, Popover, Typography } from '@mui/material'
 import DotIcon from '@mui/icons-material/FiberManualRecordRounded'
-import { Network } from '@invariant-labs/a0-sdk'
+import { Network } from '@/store/consts/utils'
 
 export interface ISelectNetworkModal {
   networks: ISelectNetwork[]

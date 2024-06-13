@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import SelectTestnetRPC from './SelectTestnetRPC'
-import { Network } from '@invariant-labs/a0-sdk'
+import { Network } from '@/store/consts/utils'
 
 const meta = {
   title: 'Modals/SelectRPC',
