@@ -1,4 +1,4 @@
-import { AlephZeroNetworks } from '@store/consts/static'
+import { OraichainNetworks } from '@store/consts/static'
 import type { StoryObj } from '@storybook/react'
 import { fn } from '@storybook/test'
 import ChangeWalletButton from './ChangeWalletButton'
@@ -59,7 +59,7 @@ export const SelectNetwork: Story = {
     <div style={{ padding: '100px' }}>
       <SelectNetworkButton
         name={Network.Testnet}
-        networks={[{ networkType: Network.Testnet, rpc: AlephZeroNetworks.TEST }]}
+        networks={[{ networkType: Network.Testnet, rpc: OraichainNetworks.TEST }]}
         onSelect={(networkType, rpc) => action('chosen: ' + networkType + ' ' + rpc)()}
       />
     </div>
@@ -70,11 +70,11 @@ export const SelectRPC: Story = {
   render: () => (
     <div style={{ padding: '100px' }}>
       <SelectRPCButton
-        rpc={AlephZeroNetworks.TEST}
+        rpc={OraichainNetworks.TEST}
         networks={[
           {
             networkType: Network.Testnet,
-            rpc: AlephZeroNetworks.TEST,
+            rpc: OraichainNetworks.TEST,
             rpcName: 'Testnet'
           }
         ]}

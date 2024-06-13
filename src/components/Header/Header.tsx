@@ -3,11 +3,11 @@ import SelectTestnetRPC from '@components/Modals/SelectTestnetRPC/SelectTestnetR
 import NavbarButton from '@components/Navbar/Button'
 import DotIcon from '@mui/icons-material/FiberManualRecordRounded'
 import { Box, Button, CardMedia, Grid, IconButton, useMediaQuery } from '@mui/material'
-import { AddressOrPair } from '@polkadot/api-base/types'
+
 import icons from '@static/icons'
 import Hamburger from '@static/svg/Hamburger.svg'
 import { theme } from '@static/theme'
-import { AlephZeroNetworks } from '@store/consts/static'
+import { OraichainNetworks } from '@store/consts/static'
 import { blurContent, unblurContent } from '@utils/uiUtils'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
@@ -19,7 +19,7 @@ import useStyles from './style'
 import { Network } from '@store/consts/utils'
 
 export interface IHeader {
-  address: AddressOrPair
+  address: string
   onNetworkSelect: (networkType: Network, rpcAddress: string, rpcName?: string) => void
   onConnectWallet: () => void
   walletConnected: boolean
@@ -65,7 +65,7 @@ export const Header: React.FC<IHeader> = ({
   const testnetRPCs = [
     {
       networkType: Network.Testnet,
-      rpc: AlephZeroNetworks.TEST,
+      rpc: OraichainNetworks.TEST,
       rpcName: 'Aleph zero'
     }
   ]

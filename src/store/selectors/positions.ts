@@ -1,4 +1,3 @@
-import { Position } from '@invariant-labs/a0-sdk'
 import { Token } from '@store/consts/static'
 import { poolKeyToString } from '@store/consts/utils'
 import { PoolWithPoolKey } from '@store/reducers/pools'
@@ -41,15 +40,15 @@ export const positionsWithPoolsData = createSelector(
   (allPools, { list }, tokens) => {
     const poolsByKey: Record<string, PoolWithPoolKeyAndIndex> = {}
     allPools.forEach((pool, index) => {
-      poolsByKey[poolKeyToString(pool.poolKey)] = {
+      poolsByKey[poolKeyToString(pool.pool_key)] = {
         ...pool,
         poolIndex: index
       }
     })
 
     return list.map((position, index) => {
-      const tokenX = tokens.find(token => token.assetAddress === position.poolKey.tokenX)
-      const tokenY = tokens.find(token => token.assetAddress === position.poolKey.tokenY)
+      const tokenX = tokens.find(token => token.assetAddress === position.pool_key.token_x)
+      const tokenY = tokens.find(token => token.assetAddress === position.pool_key.token_y)
 
       if (!tokenX || !tokenY) {
         throw new Error(`Token not found for position: ${position}`)
@@ -57,7 +56,7 @@ export const positionsWithPoolsData = createSelector(
 
       return {
         ...position,
-        poolData: poolsByKey[poolKeyToString(position.poolKey)],
+        poolData: poolsByKey[poolKeyToString(position.pool_key)],
         tokenX,
         tokenY,
         positionIndex: index

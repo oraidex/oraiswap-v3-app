@@ -1,7 +1,7 @@
 import EventsHandlers from '@containers/EventHandlers/index'
 import FooterWrapper from '@containers/FooterWrapper'
 import HeaderWrapper from '@containers/HeaderWrapper/HeaderWrapper'
-import { Status, actions as alephZeroConnectionActions } from '@store/reducers/connection'
+import { Status, actions as oraichainConnectionActions } from '@store/reducers/connection'
 import { actions } from '@store/reducers/positions'
 import { Status as WalletStatus } from '@store/reducers/wallet'
 import { status as connectionStatus } from '@store/selectors/connection'
@@ -25,7 +25,7 @@ const RootPage: React.FC = () => {
       navigate('/swap')
     }
     // dispatch(providerActions.initProvider())
-    dispatch(alephZeroConnectionActions.initAlephZeroConnection())
+    dispatch(oraichainConnectionActions.initOraichainConnection())
   }, [dispatch])
 
   useEffect(() => {

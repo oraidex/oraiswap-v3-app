@@ -1,6 +1,5 @@
 import { EmptyPlaceholder } from '@components/EmptyPlaceholder/EmptyPlaceholder'
 import PositionDetails from '@components/PositionDetails/PositionDetails'
-// import { calculateFee, calculateTokenAmounts } from '@invariant-labs/a0-sdk'
 import { Grid } from '@mui/material'
 import loader from '@static/gif/loader.gif'
 import { TokenPriceData } from '@store/consts/static'

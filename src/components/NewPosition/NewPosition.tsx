@@ -2,7 +2,7 @@ import { ProgressState } from '@components/AnimatedButton/AnimatedButton'
 import Slippage from '@components/Modals/Slippage/Slippage'
 import { INoConnected, NoConnected } from '@components/NoConnected/NoConnected'
 import { Button, Grid, Typography } from '@mui/material'
-import { AddressOrPair } from '@polkadot/api/types'
+
 import backIcon from '@static/svg/back-arrow.svg'
 import settingIcon from '@static/svg/settings.svg'
 import { BestTier, PositionOpeningMethod, TokenPriceData } from '@store/consts/static'
@@ -57,7 +57,7 @@ export interface INewPosition {
     amount: TokenAmount,
     leftRangeTickIndex: number,
     rightRangeTickIndex: number,
-    tokenAddress: AddressOrPair
+    tokenAddress: string
   ) => TokenAmount
   feeTiers: Array<{
     feeValue: number

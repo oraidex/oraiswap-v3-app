@@ -1,6 +1,3 @@
-import { Network, sendTx } from '@invariant-labs/a0-sdk'
-import { NightlyConnectAdapter } from '@nightlylabs/wallet-selector-polkadot'
-import { AddressOrPair, Signer } from '@polkadot/api/types'
 import { PayloadAction } from '@reduxjs/toolkit'
 import { FaucetTokenList, TokenAirdropAmount } from '@store/consts/static'
 import { createLoaderKey, getTokenBalances } from '@store/consts/utils'
@@ -34,7 +31,7 @@ type FrameSystemAccountInfo = {
   providers: number
   sufficients: number
 }
-export function* getBalance(walletAddress: AddressOrPair): SagaGenerator<string> {
+export function* getBalance(walletAddress: string): SagaGenerator<string> {
   return ''
 }
 

@@ -30,7 +30,8 @@ import {
   alignTickToSpacing,
   _calculateFee,
   calculateAmountDelta,
-  calculateAmountDeltaResult
+  calculateAmountDeltaResult,
+  _newPoolKey
 } from '../../wasm'
 import { BalanceResponse } from '@oraichain/cw-simulate/dist/modules/bank'
 import { FeeTier } from '@/sdk/OraiswapV3.types'
@@ -40,6 +41,54 @@ export enum Network {
   Local = 'Local',
   Testnet = 'Testnet',
   Mainnet = 'Mainnet'
+}
+
+export const parse = (value: any) => {
+  if (isArray(value)) {
+    return value.map((element: any) => parse(element))
+  }
+
+  if (isObject(value)) {
+    const newValue: { [key: string]: any } = {}
+
+    Object.entries(value as { [key: string]: any }).forEach(([key, value]) => {
+      newValue[key] = parse(value)
+    })
+
+    return newValue
+  }
+
+  if (isBoolean(value)) {
+    return value
+  }
+
+  try {
+    return BigInt(value)
+  } catch (e) {
+    return value
+  }
+}
+
+const isBoolean = (value: any): boolean => {
+  return typeof value === 'boolean'
+}
+
+const isArray = (value: any): boolean => {
+  return Array.isArray(value)
+}
+
+const isObject = (value: any): boolean => {
+  return typeof value === 'object' && value !== null
+}
+
+export const newPoolKey = (token0: string, token1: string, feeTier: FeeTier): PoolKey => {
+  return parse(
+    _newPoolKey(
+      token0,
+      token1,
+      _newFeeTier(feeTier.fee, integerSafeCast(BigInt(feeTier.tick_spacing)))
+    )
+  )
 }
 
 export const calculateFeeTierWithLinearRatio = (tickCount: number): FeeTier => {

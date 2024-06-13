@@ -1,25 +1,19 @@
-import {
-  FEE_TIERS,
-  TESTNET_BTC_ADDRESS,
-  TESTNET_ETH_ADDRESS,
-  TESTNET_USDC_ADDRESS,
-  TESTNET_WAZERO_ADDRESS
-} from '@invariant-labs/a0-sdk'
+export const TESTNET_BTC_ADDRESS = '5FEE8ptrT6387MYHqYmyB8ChWfkEsGEDpTMDpwUh4FCYGyCi'
+export const TESTNET_ETH_ADDRESS = '5FmDoQPFS5qPMkSumdvVVekiTpsKVmL9E5DHxHEUXCdHFdYy'
+export const TESTNET_USDC_ADDRESS = '5EjKBBJMLE9R2HsXKJRw2CCMZW2q48Ps5bVAQqzsxyhH9jU5'
 
-import { Network } from '@store/consts/utils'
-import { Keyring } from '@polkadot/api'
-import { AddressOrPair } from '@polkadot/api/types'
+import { FEE_TIERS, Network } from '@store/consts/utils'
 
-export enum AlephZeroNetworks {
+export enum OraichainNetworks {
   TEST = 'wss://ws.test.azero.dev',
   DEV = 'wss://ws.dev.azero.dev'
 }
 
+export const TESTNET_DEX_ADDRESS = ''
+
 export const POSITIONS_PER_PAGE = 5
 
 export const STABLECOIN_ADDRESSES: string[] = []
-
-export const DEFAULT_PUBLICKEY = new Keyring({ type: 'ecdsa' })
 
 export type PositionOpeningMethod = 'range' | 'concentration'
 
@@ -29,7 +23,7 @@ export interface TokenPriceData {
 
 export interface Token {
   symbol: string
-  address: AddressOrPair
+  address: string
   decimals: bigint
   name: string
   logoURI: string
@@ -44,8 +38,8 @@ export const tokensPrices: Record<Network, Record<string, TokenPriceData>> = {
   [Network.Local]: {}
 }
 export interface BestTier {
-  tokenX: AddressOrPair
-  tokenY: AddressOrPair
+  tokenX: string
+  tokenY: string
   bestTierIndex: number
 }
 
@@ -117,7 +111,7 @@ export const bestTiers: Record<Network, BestTier[]> = {
   [Network.Local]: []
 }
 
-export const commonTokensForNetworks: Record<Network, AddressOrPair[]> = {
+export const commonTokensForNetworks: Record<Network, string[]> = {
   [Network.Testnet]: [],
   [Network.Mainnet]: [],
   [Network.Local]: []
@@ -125,11 +119,6 @@ export const commonTokensForNetworks: Record<Network, AddressOrPair[]> = {
 
 export const FAUCET_DEPLOYER_MNEMONIC =
   'motion ice subject actress spider rare leg fortune brown similar excess amazing'
-
-export const getFaucetDeployer = () => {
-  const keyring = new Keyring({ type: 'sr25519' })
-  return keyring.addFromUri(FAUCET_DEPLOYER_MNEMONIC)
-}
 
 export const FAUCET_TOKEN_AMOUNT = 1000n
 
@@ -196,15 +185,6 @@ export const USDC: Token = {
   logoURI:
     'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png',
   coingeckoId: 'usdc'
-}
-
-export const AZERO: Token = {
-  symbol: 'AZERO',
-  address: TESTNET_WAZERO_ADDRESS,
-  decimals: 12n,
-  name: 'Aleph Zero',
-  logoURI: 'https://assets.coingecko.com/coins/images/17212/standard/azero-logo_coingecko.png',
-  coingeckoId: 'aleph-zero'
 }
 
 export const ORAI: Token = {

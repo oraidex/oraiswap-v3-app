@@ -6,7 +6,6 @@ import { FixedSizeList as List } from 'react-window'
 import useStyles from '../style'
 import { theme } from '@static/theme'
 
-import { AddressOrPair } from '@polkadot/api/types'
 import {
   Box,
   Button,
@@ -24,7 +23,7 @@ import { SwapToken } from '@store/selectors/wallet'
 
 export interface ISelectTokenModal {
   tokens: SwapToken[]
-  commonTokens: AddressOrPair[]
+  commonTokens: string[]
   open: boolean
   handleClose: () => void
   anchorEl: HTMLButtonElement | null

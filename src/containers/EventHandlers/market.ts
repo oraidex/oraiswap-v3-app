@@ -13,7 +13,7 @@ const MarketEvents = () => {
   const allPools = useSelector(poolsArraySortedByFees)
 
   useEffect(() => {
-    // const connection = getCurrentAlephZeroConnection()
+    // const connection = getCurrentOraichainConnection()
 
     const connectEvents = () => {
       // let tokens = getNetworkTokensList(network)

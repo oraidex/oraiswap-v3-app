@@ -19,7 +19,7 @@ export const nightlyConnectAdapter = async (
         description: 'Invariant - AMM DEX provided concentrated liquidity',
         icon: 'https://invariant.app/favicon-192x192.png'
       },
-      network: 'AlephZero',
+      network: 'Oraichain',
       persistent: persisted
     },
     connectionOptions

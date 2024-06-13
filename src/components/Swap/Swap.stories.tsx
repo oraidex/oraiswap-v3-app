@@ -1,4 +1,4 @@
-import { newPoolKey } from '@invariant-labs/a0-sdk'
+import { newPoolKey } from '@store/consts/utils'
 import { Status } from '@store/reducers/wallet'
 import type { Meta, StoryObj } from '@storybook/react'
 import { fn } from '@storybook/test'
@@ -66,13 +66,13 @@ export const Primary: Story = {
       amountIn: 123 as any,
       byAmountIn: false,
       amountOut: 1114 as any,
-      poolKey: newPoolKey('0x123132423423', '0x123132423423', { fee: 1n, tickSpacing: 1n })
+      poolKey: newPoolKey('0x123132423423', '0x123132423423', { fee: 1, tick_spacing: 1 })
     },
     tickmap: {},
     tokens: [],
     walletStatus: Status.Initialized,
     simulateResult: {
-      poolKey: newPoolKey('0x123132423423', '0x123132423423', { fee: 1n, tickSpacing: 1n }),
+      poolKey: newPoolKey('0x123132423423', '0x123132423423', { fee: 1, tick_spacing: 1 }),
       amountOut: 1000000000000n,
       priceImpact: 1.23,
       targetSqrtPrice: 1000000000000000000000000n,
@@ -86,10 +86,10 @@ export const Primary: Story = {
         poolTicks={{
           pool1: [
             {
-              index: BigInt(1),
+              index: 1,
               sign: true,
-              liquidityChange: BigInt(100),
-              liquidityGross: BigInt(200),
+              liquidity_change: '100',
+              liquidity_gross: '200',
               sqrtPrice: BigInt(300),
               feeGrowthOutsideX: BigInt(400),
               feeGrowthOutsideY: BigInt(500),
@@ -98,7 +98,7 @@ export const Primary: Story = {
           ],
           pool2: [
             {
-              index: BigInt(2),
+              index: 2,
               sign: false,
               liquidityChange: BigInt(700),
               liquidityGross: BigInt(800),
@@ -117,7 +117,7 @@ export const Primary: Story = {
           amountIn: 123n,
           byAmountIn: false,
           amountOut: 1114n,
-          poolKey: newPoolKey('0x123132423423', '0x123132423423', { fee: 1n, tickSpacing: 1n })
+          poolKey: newPoolKey('0x123132423423', '0x123132423423', { fee: 1, tick_spacing: 1 })
         }}
       />
     )
