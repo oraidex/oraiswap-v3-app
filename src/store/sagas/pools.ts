@@ -1,5 +1,4 @@
-import { PoolKey, newPoolKey, sendTx, toSqrtPrice } from '@invariant-labs/a0-sdk'
-import { Signer } from '@polkadot/api/types'
+import { PoolKey } from '@/sdk/OraiswapV3.types'
 import { PayloadAction } from '@reduxjs/toolkit'
 import {
   createLoaderKey,
@@ -10,7 +9,7 @@ import {
 } from '@store/consts/utils'
 import { FetchTicksAndTickMaps, ListPoolsRequest, PairTokens, actions } from '@store/reducers/pools'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
-import { invariantAddress, networkType } from '@store/selectors/connection'
+import { dexAddress, networkType } from '@store/selectors/connection'
 import { tokens } from '@store/selectors/pools'
 import { address } from '@store/selectors/wallet'
 import { closeSnackbar } from 'notistack'
@@ -19,7 +18,7 @@ import { all, call, put, select, spawn, takeEvery, takeLatest } from 'typed-redu
 export function* fetchPoolsDataForList(action: PayloadAction<ListPoolsRequest>) {
   const walletAddress = yield* select(address)
   const network = yield* select(networkType)
-  const invAddress = yield* select(invariantAddress)
+  const invAddress = yield* select(dexAddress)
   const pools = yield* call(getPoolsByPoolKeys, invAddress, action.payload.poolKeys, network)
 
   const allTokens = yield* select(tokens)
@@ -121,7 +120,7 @@ export function* handleInitPool(action: PayloadAction<PoolKey>): Generator {
 export function* fetchPoolData(action: PayloadAction<PoolKey>): Generator {
   const api = yield* getConnection()
   const network = yield* select(networkType)
-  const invAddress = yield* select(invariantAddress)
+  const invAddress = yield* select(dexAddress)
   const { feeTier, tokenX, tokenY } = action.payload
 
   try {
@@ -153,7 +152,7 @@ export function* fetchPoolData(action: PayloadAction<PoolKey>): Generator {
 export function* fetchAllPoolKeys(): Generator {
   const api = yield* getConnection()
   const network = yield* select(networkType)
-  const invAddress = yield* select(invariantAddress)
+  const invAddress = yield* select(dexAddress)
 
   try {
     const invariant = yield* call(
@@ -176,7 +175,7 @@ export function* fetchAllPoolKeys(): Generator {
 export function* fetchAllPoolsForPairData(action: PayloadAction<PairTokens>) {
   const api = yield* call(getConnection)
   const network = yield* select(networkType)
-  const invAddress = yield* select(invariantAddress)
+  const invAddress = yield* select(dexAddress)
   const invariant = yield* call(
     [invariantSingleton, invariantSingleton.loadInstance],
     api,

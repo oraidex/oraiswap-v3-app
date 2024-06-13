@@ -10,8 +10,8 @@ import {
   getMinTick,
   positionToTick,
   _newPoolKey
-} from '../../wasm/oraiswap_v3_wasm'
-import { CHUNK_SIZE } from '@store/consts/utils'
+} from '../../wasm'
+import { CHUNK_SIZE, LIQUIDITY_TICKS_LIMIT, MAX_TICKMAP_QUERY_SIZE } from '@store/consts/utils'
 
 export const assert = (condition: boolean, message?: string) => {
   if (!condition) {

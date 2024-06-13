@@ -1,7 +1,7 @@
 import Select from '@components/Inputs/Select/Select'
 import { OutlinedButton } from '@components/OutlinedButton/OutlinedButton'
 import { Grid, Input, Tooltip, Typography } from '@mui/material'
-import { AddressOrPair } from '@polkadot/api/types'
+
 import loadingAnimation from '@static/gif/loading.gif'
 import { FormatNumberThreshold, formatNumbers, showPrefix } from '@store/consts/utils'
 import { SwapToken } from '@store/selectors/wallet'
@@ -25,7 +25,7 @@ interface IProps {
   balance?: string
   hideBalances?: boolean
   handleAddToken: (address: string) => void
-  commonTokens: AddressOrPair[]
+  commonTokens: string[]
   limit?: number
   initialHideUnknownTokensValue: boolean
   onHideUnknownTokensChange: (val: boolean) => void

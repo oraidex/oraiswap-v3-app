@@ -2,9 +2,8 @@ import React from 'react'
 
 import { Grid, Typography } from '@mui/material'
 import loadingAnimation from '@static/gif/loading.gif'
-import { printBigint } from '@store/consts/utils'
+import { PERCENTAGE_SCALE, printBigint } from '@store/consts/utils'
 import { useStyles } from './styles'
-import { PERCENTAGE_SCALE } from '@invariant-labs/a0-sdk/target/consts'
 
 interface IProps {
   open: boolean

@@ -7,8 +7,8 @@ import React, { useEffect, useState } from 'react'
 import { ILiquidityToken } from '../SinglePositionInfo/consts'
 import useStyles from './style'
 import { calcPrice, calcTicksAmountInRange, spacingMultiplicityGte } from '@store/consts/utils'
-import { getMinTick } from '@invariant-labs/a0-sdk'
 import PriceRangePlot from '@components/PriceRangePlot/PriceRangePlot'
+import { getMinTick } from '../../../wasm'
 
 export interface ISinglePositionPlot {
   data: PlotTickData[]

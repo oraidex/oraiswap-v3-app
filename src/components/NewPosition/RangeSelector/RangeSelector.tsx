@@ -1,7 +1,6 @@
 import RangeInput from '@components/Inputs/RangeInput/RangeInput'
 import PlotTypeSwitch from '@components/PlotTypeSwitch/PlotTypeSwitch'
 import PriceRangePlot from '@components/PriceRangePlot/PriceRangePlot'
-import { getMaxTick, getMinTick } from '@invariant-labs/a0-sdk'
 import { Button, Grid, Tooltip, Typography } from '@mui/material'
 import loader from '@static/gif/loader.gif'
 import activeLiquidity from '@static/svg/activeLiquidity.svg'
@@ -17,6 +16,7 @@ import { PlotTickData, TickPlotPositionData } from '@store/reducers/positions'
 import React, { useEffect, useRef, useState } from 'react'
 import ConcentrationSlider from '../ConcentrationSlider/ConcentrationSlider'
 import useStyles from './style'
+import { getMaxTick, getMinTick } from '../../../wasm'
 
 export interface IRangeSelector {
   data: PlotTickData[]

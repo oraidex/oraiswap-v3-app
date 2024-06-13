@@ -1,10 +1,14 @@
 import { Position } from '@/sdk/OraiswapV3.types'
 import { useSigningClient } from '../../../src/contexts/cosmwasm'
 import { PositionsList } from '@components/PositionsList/PositionsList'
-import { calculateTokenAmounts } from '@invariant-labs/a0-sdk'
-import { PERCENTAGE_SCALE } from '@invariant-labs/a0-sdk/src/consts'
 import { FAUCET_LIST_TOKEN, POSITIONS_PER_PAGE } from '@store/consts/static'
-import { calcYPerXPriceByTickIndex, poolKeyToString, printBigint } from '@store/consts/utils'
+import {
+  PERCENTAGE_SCALE,
+  calcYPerXPriceByTickIndex,
+  calculateTokenAmounts,
+  poolKeyToString,
+  printBigint
+} from '@store/consts/utils'
 import { actions } from '@store/reducers/positions'
 import { Status } from '@store/reducers/wallet'
 import {

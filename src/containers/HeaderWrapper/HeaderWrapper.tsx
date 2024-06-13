@@ -62,9 +62,7 @@ export const HeaderWrapper: React.FC = () => {
       onConnectWallet={connectWallet}
       landing={location.pathname.substring(1)}
       walletConnected={walletAddress.length !== 0}
-      // onFaucet={() => {
-      //   dispatch(walletActions.airdrop())
-      // }}
+      defaultTestnetRPC=''
       onDisconnectWallet={() => {
         disconnect()
       }}

@@ -1,5 +1,5 @@
 import { AnyAction, ActionCreator } from 'redux'
-import { Network } from '@invariant-labs/a0-sdk'
+import { Network } from '@store/consts/utils'
 
 interface ActionsBasicType {
   [k: string]: ActionCreator<AnyAction>

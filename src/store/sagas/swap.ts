@@ -1,17 +1,4 @@
-import {
-  TESTNET_WAZERO_ADDRESS,
-  calculatePriceImpact,
-  calculateSqrtPriceAfterSlippage,
-  sendTx,
-  simulateInvariantSwap
-} from '@invariant-labs/a0-sdk'
-import { MIN_SQRT_PRICE } from '@invariant-labs/a0-sdk/src/consts'
-import {
-  MAX_SQRT_PRICE,
-  PERCENTAGE_DENOMINATOR,
-  PERCENTAGE_SCALE
-} from '@invariant-labs/a0-sdk/target/consts'
-import { Signer } from '@polkadot/api/types'
+
 import { PayloadAction } from '@reduxjs/toolkit'
 import {
   INVARIANT_SWAP_OPTIONS,
@@ -260,9 +247,6 @@ export function* handleSwapWithAZERO(action: PayloadAction<Omit<Swap, 'txid'>>):
       })
     )
 
-    yield* call(fetchBalances, [
-      poolKey.tokenX === TESTNET_WAZERO_ADDRESS ? poolKey.tokenY : poolKey.tokenX
-    ])
 
     yield put(actions.setSwapSuccess(true))
 

@@ -1,4 +1,4 @@
-import { PoolKey, Position, SqrtPrice, Tick, TokenAmount } from '@invariant-labs/a0-sdk'
+import { PoolKey, Position, SqrtPrice, Tick, TokenAmount } from '@/sdk/OraiswapV3.types'
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { PayloadType } from '@store/consts/types'
 
