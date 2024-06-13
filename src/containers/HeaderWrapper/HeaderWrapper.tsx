@@ -34,7 +34,7 @@ export const HeaderWrapper: React.FC = () => {
         dispatch(walletActions.setIsBalanceLoading(true))
 
         const balance = await SingletonOraiswapV3.queryBalance()
-        dispatch(walletActions.setBalance(BigInt(balance.toString())))
+        dispatch(walletActions.setBalance(balance.toString()))
         dispatch(walletActions.setStatus(Status.Initialized))
         const tokens = Object.values(FaucetTokenList)
         const balances = await getTokenBalances(tokens)
@@ -62,9 +62,7 @@ export const HeaderWrapper: React.FC = () => {
       onConnectWallet={connectWallet}
       landing={location.pathname.substring(1)}
       walletConnected={walletAddress.length !== 0}
-      // onFaucet={() => {
-      //   dispatch(walletActions.airdrop())
-      // }}
+      defaultTestnetRPC=''
       onDisconnectWallet={() => {
         disconnect()
       }}

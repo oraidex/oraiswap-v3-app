@@ -31,7 +31,9 @@ import {
   _calculateFee,
   calculateAmountDelta,
   calculateAmountDeltaResult,
-  _newPoolKey
+  _newPoolKey,
+  getMaxTickmapQuerySize,
+  getLiquidityTicksLimit
 } from '../../wasm'
 import { BalanceResponse } from '@oraichain/cw-simulate/dist/modules/bank'
 import { FeeTier } from '@/sdk/OraiswapV3.types'
@@ -104,6 +106,8 @@ export const FEE_TIERS: FeeTier[] = [
   calculateFeeTierWithLinearRatio(100)
 ]
 
+export const MAX_TICKMAP_QUERY_SIZE = getMaxTickmapQuerySize()
+export const LIQUIDITY_TICKS_LIMIT = getLiquidityTicksLimit()
 export const PERCENTAGE_SCALE = getPercentageScale()
 export const PERCENTAGE_DENOMINATOR = getPercentageDenominator()
 export const CHUNK_SIZE = getChunkSize()

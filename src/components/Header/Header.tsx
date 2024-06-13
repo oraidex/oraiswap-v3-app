@@ -25,6 +25,7 @@ export interface IHeader {
   walletConnected: boolean
   landing: string
   typeOfNetwork: Network
+  defaultTestnetRPC: string
   rpc: string
   onFaucet?: () => void
   onDisconnectWallet: () => void
