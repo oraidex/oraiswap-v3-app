@@ -16,7 +16,7 @@ import SelectNetworkButton from './HeaderButton/SelectNetworkButton'
 import SelectRPCButton from './HeaderButton/SelectRPCButton'
 import useButtonStyles from './HeaderButton/style'
 import useStyles from './style'
-import { Network } from '@/store/consts/utils'
+import { Network } from '@store/consts/utils'
 
 export interface IHeader {
   address: AddressOrPair

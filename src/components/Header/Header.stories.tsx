@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { fn } from '@storybook/test'
 import Header from './Header'
 import { MemoryRouter } from 'react-router-dom'
-import { Network } from '@/store/consts/utils'
+import { Network } from '@store/consts/utils'
 
 const meta = {
   title: 'Layout/Header',

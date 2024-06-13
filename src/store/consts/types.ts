@@ -1,5 +1,5 @@
 import { AnyAction, ActionCreator } from 'redux'
-import { Network } from '@/store/consts/utils'
+import { Network } from '@store/consts/utils'
 
 interface ActionsBasicType {
   [k: string]: ActionCreator<AnyAction>

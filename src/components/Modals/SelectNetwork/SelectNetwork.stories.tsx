@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import SelectNetwork from './SelectNetwork'
-import { Network } from '@/store/consts/utils'
+import { Network } from '@store/consts/utils'
 
 const meta = {
   title: 'Modals/SelectNetwork',
