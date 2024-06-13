@@ -556,7 +556,9 @@ export function* handleClosePositionWithAZERO(action: PayloadAction<ClosePositio
 
     const txs = []
 
-    const removePositionTx = invariant.removePositionTx(positionIndex)
+    const removePositionTx = SingletonOraiswapV3.dex.removePosition({
+      index: Number(positionIndex)
+    })
     txs.push(removePositionTx)
 
     // const approveTx = psp22.approveTx(invAddress, U128MAX, TESTNET_WAZERO_ADDRESS)
@@ -568,8 +570,6 @@ export function* handleClosePositionWithAZERO(action: PayloadAction<ClosePositio
     // const resetApproveTx = psp22.approveTx(invAddress, 0n, TESTNET_WAZERO_ADDRESS)
     // txs.push(resetApproveTx)
 
-    const batchedTx = api.tx.utility.batchAll(txs)
-
     yield put(
       snackbarsActions.add({
         message: 'Signing transaction...',
@@ -578,10 +578,6 @@ export function* handleClosePositionWithAZERO(action: PayloadAction<ClosePositio
         key: loaderSigningTx
       })
     )
-
-    const signedBatchedTx = yield* call([batchedTx, batchedTx.signAsync], walletAddress, {
-      signer: adapter.signer as Signer
-    })
 
     closeSnackbar(loaderSigningTx)
     yield put(snackbarsActions.remove(loaderSigningTx))
