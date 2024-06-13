@@ -7,6 +7,7 @@ import backIcon from '@static/svg/back-arrow.svg'
 import settingIcon from '@static/svg/settings.svg'
 import { BestTier, PositionOpeningMethod, TokenPriceData } from '@store/consts/static'
 import {
+  PERCENTAGE_DENOMINATOR,
   PositionTokenBlock,
   calcPrice,
   calculateConcentrationRange,

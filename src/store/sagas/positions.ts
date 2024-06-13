@@ -16,6 +16,7 @@ import {
   deserializeTickmap,
   poolKeyToString
 } from '@store/consts/utils'
+import { calculateTokenAmountsWithSlippage } from '@invariant-labs/a0-sdk/src/utils'
 import { FetchTicksAndTickMaps, ListType, actions as poolsActions } from '@store/reducers/pools'
 import {
   ClosePositionData,
@@ -64,7 +65,7 @@ function* handleInitPosition(action: PayloadAction<InitPositionData>): Generator
     const txs = []
 
     const [xAmountWithSlippage, yAmountWithSlippage] = calculateTokenAmountsWithSlippage(
-      feeTier.tickSpacing,
+      poolKeyData.feeTier.tickSpacing,
       spotSqrtPrice,
       liquidityDelta,
       lowerTick,
@@ -73,10 +74,10 @@ function* handleInitPosition(action: PayloadAction<InitPositionData>): Generator
       true
     )
 
-    const XTokenTx: any
+    let XTokenTx: any
     txs.push(XTokenTx)
 
-    const YTokenTx: any
+    let YTokenTx: any
     txs.push(YTokenTx)
 
     if (initPool) {
@@ -90,54 +91,54 @@ function* handleInitPosition(action: PayloadAction<InitPositionData>): Generator
       yield* call(fetchAllPools)
     }
 
-    const tx = SingletonOraiswapV3.dex.createPosition(
-      poolKeyData,
-      lowerTick,
-      upperTick,
-      liquidityDelta,
-      spotSqrtPrice,
-      slippageTolerance,
-      INVARIANT_CREATE_POSITION_OPTIONS
-    )
-    txs.push(tx)
+    // const tx = SingletonOraiswapV3.dex.createPosition(
+    //   poolKeyData,
+    //   lowerTick,
+    //   upperTick,
+    //   liquidityDelta,
+    //   spotSqrtPrice,
+    //   slippageTolerance,
+    //   INVARIANT_CREATE_POSITION_OPTIONS
+    // )
+    // txs.push(tx)
 
-    const batchedTx = api.tx.utility.batchAll(txs)
+    // const batchedTx = api.tx.utility.batchAll(txs)
 
-    yield put(
-      snackbarsActions.add({
-        message: 'Signing transaction...',
-        variant: 'pending',
-        persist: true,
-        key: loaderSigningTx
-      })
-    )
+    // yield put(
+    //   snackbarsActions.add({
+    //     message: 'Signing transaction...',
+    //     variant: 'pending',
+    //     persist: true,
+    //     key: loaderSigningTx
+    //   })
+    // )
 
-    const signedBatchedTx = yield* call([batchedTx, batchedTx.signAsync], walletAddress, {
-      signer: adapter.signer as Signer
-    })
+    // const signedBatchedTx = yield* call([batchedTx, batchedTx.signAsync], walletAddress, {
+    //   signer: adapter.signer as Signer
+    // })
 
-    closeSnackbar(loaderSigningTx)
-    yield put(snackbarsActions.remove(loaderSigningTx))
+    // closeSnackbar(loaderSigningTx)
+    // yield put(snackbarsActions.remove(loaderSigningTx))
 
-    const txResult = yield* call(sendTx, signedBatchedTx)
+    // const txResult = yield* call(sendTx, signedBatchedTx)
 
-    yield* put(actions.setInitPositionSuccess(true))
+    // yield* put(actions.setInitPositionSuccess(true))
 
-    closeSnackbar(loaderCreatePosition)
-    yield put(snackbarsActions.remove(loaderCreatePosition))
+    // closeSnackbar(loaderCreatePosition)
+    // yield put(snackbarsActions.remove(loaderCreatePosition))
 
-    yield put(
-      snackbarsActions.add({
-        message: 'Position successfully created',
-        variant: 'success',
-        persist: false,
-        txid: txResult.hash
-      })
-    )
+    // yield put(
+    //   snackbarsActions.add({
+    //     message: 'Position successfully created',
+    //     variant: 'success',
+    //     persist: false,
+    //     txid: txResult.hash
+    //   })
+    // )
 
-    yield put(actions.getPositionsList())
+    // yield put(actions.getPositionsList())
 
-    yield* call(fetchBalances, [tokenX, tokenY])
+    // yield* call(fetchBalances, [tokenX, tokenY])
   } catch (error) {
     console.log(error)
 

@@ -19,7 +19,9 @@ export const addressTickerMap: { [key: string]: string } = {
   ETH: TESTNET_ETH_ADDRESS,
   USDC: TESTNET_USDC_ADDRESS,
   ORAI: 'orai',
-  USDT: 'orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh'
+  USDT: 'orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh',
+  TOKEN1: 'orai1z3zd5fk60ev5tf8slmr5tjuhp2qmhkvhcf84ajk27un5h0tgz4fql075rt',
+  TOKEN2: 'orai154a9fxn9wcyfsxnjkgm4ql4spyvhfu7j5twpzwwx2077ts0uwtps66y70s'
 }
 
 export const reversedAddressTickerMap = Object.fromEntries(

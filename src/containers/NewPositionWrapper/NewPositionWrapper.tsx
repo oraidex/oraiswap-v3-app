@@ -1,5 +1,11 @@
 import { TokenAmount } from '@/sdk/OraiswapV3.types'
-import { _newPoolKey, calculateSqrtPrice, getLiquidityByX, getLiquidityByY, getMinTick } from '../../wasm'
+import {
+  _newPoolKey,
+  calculateSqrtPrice,
+  getLiquidityByX,
+  getLiquidityByY,
+  getMinTick
+} from '../../wasm'
 import { ProgressState } from '@components/AnimatedButton/AnimatedButton'
 import NewPosition from '@components/NewPosition/NewPosition'
 
@@ -261,7 +267,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   }, [poolIndex, isXtoY, xDecimal, yDecimal, poolKey])
 
   const data = useMemo(() => {
-    if (ticksLoading) {
+    if (ticksLoading && tickSpacing) {
       return createPlaceholderLiquidityPlot(isXtoY, 10, BigInt(tickSpacing), xDecimal, yDecimal)
     }
 
@@ -565,7 +571,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       isXtoY={isXtoY}
       xDecimal={xDecimal}
       yDecimal={yDecimal}
-      tickSpacing={BigInt(10)} 
+      tickSpacing={BigInt(10)}
       isWaitingForNewPool={isWaitingForNewPool}
       poolIndex={poolIndex}
       currentPairReversed={currentPairReversed}
