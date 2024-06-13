@@ -38,7 +38,6 @@ export const HeaderWrapper: React.FC = () => {
         dispatch(walletActions.setStatus(Status.Initialized))
         const tokens = Object.values(FaucetTokenList)
         const balances = await getTokenBalances(tokens)
-        console.log({ balances })
 
         const convertedBalances = balances.map((balance, index) => ({
           address: balance[0],

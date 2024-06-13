@@ -349,9 +349,6 @@ export const poolKeyToString = (poolKey: PoolKey): string => {
 }
 
 export const getTokenBalances = async (tokens: string[]) => {
-  const promises: Promise<BalanceResponse>[] = []
-  console.log({ tokens, SingletonOraiswapV3: SingletonOraiswapV3.dex.sender })
-
   const results = await Promise.all(
     tokens.map(token => {
       if (token !== 'orai') {
@@ -364,13 +361,10 @@ export const getTokenBalances = async (tokens: string[]) => {
       }
     })
   )
-  console.log({ results })
-
   const tokenBalances: [string, bigint][] = []
   tokens.map((token, index) => {
     tokenBalances.push([token, BigInt(results[index]?.balance || results[index])])
   })
-  console.log({ tokenBalances })
   return tokenBalances
 }
 

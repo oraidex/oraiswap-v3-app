@@ -78,6 +78,11 @@ export default class SingletonOraiswapV3 {
     return tickmaps
   }
 
+  public static async getAllPool(limit?: number, startAfter?: PoolKey): Promise<any> {
+    const pools = await this.dex.pools({ limit, startAfter })
+    return pools
+  }
+
   public static async getFullTickmap(poolKey: PoolKey): Promise<Tickmap> {
     const maxTick = getMaxTick(poolKey.fee_tier.tick_spacing)
     let lowerTick = getMinTick(poolKey.fee_tier.tick_spacing)

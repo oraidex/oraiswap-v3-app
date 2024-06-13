@@ -11,7 +11,7 @@ import {
 } from '@invariant-labs/a0-sdk'
 import { AddressOrPair } from '@polkadot/api/types'
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
-import { AZERO, BTC, ETH, ORAI, Token, USDC, USDT } from '@store/consts/static'
+import { AZERO, BTC, ETH, ORAI, TOKEN1, TOKEN2, Token, USDC, USDT } from '@store/consts/static'
 import { PayloadType } from '@store/consts/types'
 import { poolKeyToString } from '@store/consts/utils'
 
@@ -70,6 +70,8 @@ export const defaultState: IPoolsStore = {
   tokens: {
     [ORAI.address.toString()]: ORAI,
     [USDT.address.toString()]: USDT,
+    [TOKEN1.address.toString()]: TOKEN1,
+    [TOKEN2.address.toString()]: TOKEN2,
     [TESTNET_BTC_ADDRESS]: BTC,
     [TESTNET_ETH_ADDRESS]: ETH,
     [TESTNET_USDC_ADDRESS]: USDC,

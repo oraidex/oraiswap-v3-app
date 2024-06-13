@@ -143,8 +143,29 @@ export const FaucetTokenList = {
   // BTC: TESTNET_BTC_ADDRESS,
   // ETH: TESTNET_ETH_ADDRESS,
   // USDC: TESTNET_USDC_ADDRESS,
+  TOKEN1: 'orai1z3zd5fk60ev5tf8slmr5tjuhp2qmhkvhcf84ajk27un5h0tgz4fql075rt',
+  TOKEN2: 'orai154a9fxn9wcyfsxnjkgm4ql4spyvhfu7j5twpzwwx2077ts0uwtps66y70s',
   ORAI: 'orai',
   USDT: 'orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh'
+}
+
+export const TOKEN1: Token = {
+  symbol: 'TOKEN1',
+  address: 'orai1z3zd5fk60ev5tf8slmr5tjuhp2qmhkvhcf84ajk27un5h0tgz4fql075rt',
+  decimals: 6n,
+  name: 'TOKEN1',
+  logoURI:
+    'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/9n4nbM75f5Ui33ZbPYXn59EwSgE8CGsHtAeTH5YFeJ9E/logo.png',
+  coingeckoId: 'tether'
+}
+export const TOKEN2: Token = {
+  symbol: 'TOKEN2',
+  address: 'orai154a9fxn9wcyfsxnjkgm4ql4spyvhfu7j5twpzwwx2077ts0uwtps66y70s',
+  decimals: 6n,
+  name: 'TOKEN2',
+  logoURI:
+    'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/9n4nbM75f5Ui33ZbPYXn59EwSgE8CGsHtAeTH5YFeJ9E/logo.png',
+  coingeckoId: 'tether'
 }
 
 export const BTC: Token = {
