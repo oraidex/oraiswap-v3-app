@@ -16,7 +16,7 @@ import { PlotTickData, TickPlotPositionData } from '@store/reducers/positions'
 import React, { useEffect, useRef, useState } from 'react'
 import ConcentrationSlider from '../ConcentrationSlider/ConcentrationSlider'
 import useStyles from './style'
-import { getMaxTick, getMinTick } from '../../../wasm/oraiswap_v3_wasm'
+import { getMaxTick, getMinTick } from '../../../wasm'
 
 export interface IRangeSelector {
   data: PlotTickData[]

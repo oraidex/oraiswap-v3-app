@@ -10,7 +10,7 @@ import {
   getMinTick,
   positionToTick,
   _newPoolKey
-} from '../../wasm/oraiswap_v3_wasm'
+} from '../../wasm'
 import { CHUNK_SIZE } from '@store/consts/utils'
 
 export const assert = (condition: boolean, message?: string) => {

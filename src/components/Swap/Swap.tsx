@@ -28,7 +28,7 @@ import ExchangeRate from './ExchangeRate/ExchangeRate'
 import TransactionDetailsBox from './TransactionDetailsBox/TransactionDetailsBox'
 import useStyles from './style'
 import { PoolKey, PoolWithPoolKey, Tick, TokenAmount } from '@/sdk/OraiswapV3.types'
-import { Price } from '@/wasm/oraiswap_v3_wasm'
+import { Price } from '@/wasm'
 
 export interface Pools {
   tokenX: string

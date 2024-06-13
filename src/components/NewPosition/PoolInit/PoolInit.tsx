@@ -12,7 +12,7 @@ import {
 } from '@store/consts/utils'
 import React, { useEffect, useMemo, useState } from 'react'
 import useStyles from './style'
-import { Price, getMaxTick, getMinTick } from '../../../wasm/oraiswap_v3_wasm'
+import { Price, getMaxTick, getMinTick } from '../../../wasm'
 
 export interface IPoolInit {
   tokenASymbol: string

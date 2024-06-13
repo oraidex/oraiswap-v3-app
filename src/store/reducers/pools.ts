@@ -6,7 +6,7 @@ import {
   PoolWithPoolKey,
   Tick
 } from '@/sdk/OraiswapV3.types'
-import { Tickmap } from '../../wasm/oraiswap_v3_wasm'
+import { Tickmap } from '../../wasm'
 
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 import {

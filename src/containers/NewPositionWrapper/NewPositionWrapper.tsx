@@ -1,10 +1,5 @@
 import { TokenAmount } from '@/sdk/OraiswapV3.types'
-import {
-  _newPoolKey,
-  calculateSqrtPrice,
-  getLiquidityByX,
-  getLiquidityByY
-} from '../../wasm/oraiswap_v3_wasm'
+import { _newPoolKey, calculateSqrtPrice, getLiquidityByX, getLiquidityByY } from '../../wasm'
 import { ProgressState } from '@components/AnimatedButton/AnimatedButton'
 import NewPosition from '@components/NewPosition/NewPosition'
 
