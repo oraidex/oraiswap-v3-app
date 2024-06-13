@@ -1,37 +1,32 @@
 import { PlotTickData } from '@store/reducers/positions'
-import SingletonOraiswapV3 from '@store/services/contractSingleton'
+import SingletonOraiswapV3, { integerSafeCast } from '@store/services/contractSingleton'
 import axios from 'axios'
-import { BTC, ETH, ORAI, Token, TokenPriceData, USDC, USDT, tokensPrices } from './static'
-import {
-  Liquidity,
-  LiquidityTick,
-  Pool,
-  PoolKey,
-  PoolWithPoolKey,
-  SqrtPrice,
-  Tick,
-  TokenAmount
-} from '@/sdk/OraiswapV3.types'
-import {
-  Price,
-  SwapError,
-  Tickmap,
-  calculateSqrtPrice,
-  getChunkSize,
-  getMaxTick,
-  getMinTick,
-  getPercentageDenominator,
-  getPercentageScale,
-  getPriceScale,
-  getSqrtPriceDenominator,
-  positionToTick
-} from '../../wasm/oraiswap_v3_wasm'
-import { BalanceResponse } from '@oraichain/cw-simulate/dist/modules/bank'
+import { FeeTier, Liquidity, LiquidityTick, Pool, PoolKey, PoolWithPoolKey, Position, SqrtPrice, Tick, TokenAmount } from '@/sdk/OraiswapV3.types'
+import { Price, SwapError, Tickmap, _calculateFee, _newFeeTier, alignTickToSpacing, calculateAmountDelta, calculateAmountDeltaResult, calculateSqrtPrice, getChunkSize, getMaxTick, getMinTick, getPercentageDenominator, getPercentageScale, getPriceScale, getSqrtPriceDenominator, positionToTick, toPercentage } from '../../wasm/oraiswap_v3_wasm'
 
-export const PERCENTAGE_SCALE = 0 // getPercentageScale()
-export const PERCENTAGE_DENOMINATOR = 0 // getPercentageDenominator()
-export const CHUNK_SIZE = 0 //getChunkSize()
-export const PRICE_SCALE = 0 //getPriceScale()
+export enum Network {
+  Local = 'Local',
+  Testnet = 'Testnet',
+  Mainnet = 'Mainnet'
+}
+
+export const calculateFeeTierWithLinearRatio = (tickCount: number): FeeTier => {
+  return _newFeeTier(tickCount * Number(toPercentage(1, 4)), tickCount)
+}
+
+export const FEE_TIERS: FeeTier[] = [
+  calculateFeeTierWithLinearRatio(1),
+  calculateFeeTierWithLinearRatio(2),
+  calculateFeeTierWithLinearRatio(5),
+  calculateFeeTierWithLinearRatio(10),
+  calculateFeeTierWithLinearRatio(30),
+  calculateFeeTierWithLinearRatio(100)
+]
+
+export const PERCENTAGE_SCALE =  getPercentageScale()
+export const PERCENTAGE_DENOMINATOR =  getPercentageDenominator()
+export const CHUNK_SIZE = getChunkSize()
+export const PRICE_SCALE = getPriceScale()
 export const MAX_REF_TIME = 259058343000
 export const DEFAULT_REF_TIME = 1250000000000
 export const DEFAULT_PROOF_SIZE = 1250000000000
@@ -126,12 +121,34 @@ export const trimZeros = (numStr: string): string => {
     .replace(/\.$/, '')
 }
 
+export const calculateFee = (
+  pool: Pool,
+  position: Position,
+  lowerTick: Tick,
+  upperTick: Tick
+): [TokenAmount, TokenAmount] => {
+  return _calculateFee(
+    lowerTick.index,
+    lowerTick.fee_growth_outside_x,
+    lowerTick.fee_growth_outside_y,
+    upperTick.index,
+    upperTick.fee_growth_outside_x,
+    upperTick.fee_growth_outside_y,
+    pool.current_tick_index,
+    pool.fee_growth_global_x,
+    pool.fee_growth_global_y,
+    position.fee_growth_inside_x,
+    position.fee_growth_inside_y,
+    position.liquidity
+  )
+}
+
 export const calcYPerXPriceByTickIndex = (
-  tickIndex: bigint,
+  tickIndex: bigint | number,
   xDecimal: bigint,
   yDecimal: bigint
 ): number => {
-  const sqrt = +printBigint(calculateSqrtPrice(tickIndex), PRICE_SCALE)
+  const sqrt = +printBigint(calculateSqrtPrice(tickIndex), BigInt(PRICE_SCALE))
 
   const proportion = sqrt * sqrt
 
@@ -142,7 +159,7 @@ export const calcYPerXPriceBySqrtPrice = (
   xDecimal: bigint,
   yDecimal: bigint
 ): number => {
-  const sqrt = +printBigint(sqrtPrice, PRICE_SCALE)
+  const sqrt = +printBigint(sqrtPrice, BigInt(PRICE_SCALE))
 
   const proportion = sqrt * sqrt
 
@@ -238,6 +255,28 @@ export const createPlaceholderLiquidityPlot = (
   return isXtoY ? ticksData : ticksData.reverse()
 }
 
+export const calculateTokenAmounts = (
+  pool: Pool,
+  position: Position
+): calculateAmountDeltaResult => {
+  return _calculateTokenAmounts(pool, position, false)
+}
+
+export const _calculateTokenAmounts = (
+  pool: Pool,
+  position: Position,
+  sign: boolean
+): calculateAmountDeltaResult => {
+  return calculateAmountDelta(
+    pool.current_tick_index,
+    pool.sqrt_price,
+    position.liquidity,
+    sign,
+    position.upper_tick_index,
+    position.lower_tick_index
+  )
+}
+
 export interface CoingeckoPriceData {
   price: number
   priceChange: number
@@ -255,8 +294,8 @@ export const getCoingeckoTokenPrice = async (id: string): Promise<CoingeckoPrice
     >(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${id}`)
     .then(res => {
       return {
-        price: res.data[0].current_price ?? 0,
-        priceChange: res.data[0].price_change_percentage_24h ?? 0
+        price: res.data[0]?.current_price ?? 0,
+        priceChange: res.data[0]?.price_change_percentage_24h ?? 0
       }
     })
 }
@@ -467,6 +506,40 @@ export const nearestTickIndex = (
   return BigInt(nearestSpacingMultiplicity(tick, Number(spacing)))
 }
 
+export const getConcentrationArray = (
+  tickSpacing: number,
+  minimumRange: number,
+  currentTick: number
+): number[] => {
+  const concentrations: number[] = []
+  let counter = 0
+  let concentration = 0
+  let lastConcentration = calculateConcentration(tickSpacing, minimumRange, counter) + 1
+  let concentrationDelta = 1
+
+  while (concentrationDelta >= 1) {
+    concentration = calculateConcentration(tickSpacing, minimumRange, counter)
+    concentrations.push(concentration)
+    concentrationDelta = lastConcentration - concentration
+    lastConcentration = concentration
+    counter++
+  }
+  concentration = Math.ceil(concentrations[concentrations.length - 1])
+
+  while (concentration > 1) {
+    concentrations.push(concentration)
+    concentration--
+  }
+  const maxTick = integerSafeCast(alignTickToSpacing(getMaxTick(1n), tickSpacing))
+  if ((minimumRange / 2) * tickSpacing > maxTick - Math.abs(currentTick)) {
+    throw new Error(String(SwapError.TickLimitReached))
+  }
+  const limitIndex =
+    (maxTick - Math.abs(currentTick) - (minimumRange / 2) * tickSpacing) / tickSpacing
+
+  return concentrations.slice(0, limitIndex)
+}
+
 export const convertBalanceToBigint = (amount: string, decimals: bigint | number): bigint => {
   const balanceString = amount.split('.')
   if (balanceString.length !== 2) {
@@ -552,6 +625,11 @@ export const calculateTickDelta = (
     Math.pow(1.0001, (-tickSpacing * minimumRange) / 4)
 
   return Math.ceil(Math.log(logArg) / Math.log(base) / 2)
+}
+
+export const calculateConcentration = (tickSpacing: number, minimumRange: number, n: number) => {
+  const concentration = 1 / (1 - Math.pow(1.0001, (-tickSpacing * (minimumRange + 2 * n)) / 4))
+  return concentration / CONCENTRATION_FACTOR
 }
 
 export const calculateConcentrationRange = (
@@ -690,7 +768,7 @@ export const createLiquidityPlot = (
   }
 
   ticks.forEach((tick, i) => {
-    let tickIndex = BigInt(tick.index)
+    const tickIndex = BigInt(tick.index)
     if (i === 0 && tickIndex - tickSpacing > min) {
       const price = calcPrice(tickIndex - tickSpacing, isXtoY, tokenXDecimal, tokenYDecimal)
       ticksData.push({

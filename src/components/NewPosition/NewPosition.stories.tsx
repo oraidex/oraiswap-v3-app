@@ -1,9 +1,9 @@
-import { newPoolKey } from '@invariant-labs/a0-sdk'
 import { poolKeyToString } from '@store/consts/utils'
 import type { Meta, StoryObj } from '@storybook/react'
 import { fn } from '@storybook/test'
 import { MemoryRouter } from 'react-router-dom'
 import NewPosition from './NewPosition'
+import { _newPoolKey } from '@wasm/oraiswap_v3_wasm'
 
 const meta = {
   title: 'PageComponent/NewPosition',
@@ -69,7 +69,7 @@ export const Primary: Story = {
     calcAmount: fn(),
     loadingTicksAndTickMaps: false,
     poolKey: poolKeyToString(
-      newPoolKey('0x123132423423', '0x123132423423', { fee: 1n, tickSpacing: 1n })
+      _newPoolKey('0x123132423423', '0x123132423423', { fee: 1n, tickSpacing: 1n })
     ),
     noConnectedBlockerProps: {
       onConnect: fn(),
@@ -80,7 +80,7 @@ export const Primary: Story = {
     return (
       <NewPosition
         midPrice={{ x: 1234, index: 23n }}
-        currentPriceSqrt={123n}
+        currentPriceSqrt={'123'}
         tickSpacing={0n}
         xDecimal={9n}
         yDecimal={12n}
@@ -123,10 +123,10 @@ export const Primary: Story = {
         addLiquidityHandler={fn()}
         canCreateNewPool={true}
         canCreateNewPosition={true}
-        calcAmount={() => 1n}
+        calcAmount={() => '1'}
         loadingTicksAndTickMaps={false}
         poolKey={poolKeyToString(
-          newPoolKey('0x123132423423', '0x123132423423', { fee: 1n, tickSpacing: 1n })
+          _newPoolKey('0x123132423423', '0x123132423423', { fee: 1n, tickSpacing: 1n })
         )}
         noConnectedBlockerProps={{
           onConnect: fn(),

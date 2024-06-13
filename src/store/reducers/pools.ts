@@ -1,21 +1,21 @@
-import { Pool, PoolKey, PoolWithPoolKey } from '@/sdk/OraiswapV3.types'
-import {
-  FeeTier,
-  LiquidityTick,
-  TESTNET_BTC_ADDRESS,
-  TESTNET_ETH_ADDRESS,
-  TESTNET_USDC_ADDRESS,
-  TESTNET_WAZERO_ADDRESS,
-  Tick,
-  Tickmap
-} from '@invariant-labs/a0-sdk'
-import { AddressOrPair } from '@polkadot/api/types'
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
-import { AZERO, BTC, ETH, ORAI, TOKEN1, TOKEN2, Token, USDC, USDT } from '@store/consts/static'
+import {
+  BTC,
+  ETH,
+  ORAI,
+  TOKEN1,
+  TOKEN2,
+  Token,
+  USDC,
+  USDT
+} from '@store/consts/static'
 import { PayloadType } from '@store/consts/types'
 import { poolKeyToString } from '@store/consts/utils'
 
 import * as R from 'remeda'
+import { FeeTier, LiquidityTick, Pool, PoolKey, PoolWithPoolKey, Tick } from '@/sdk/OraiswapV3.types'
+import { Tickmap } from '@/wasm/oraiswap_v3_wasm'
+import { TESTNET_BTC_ADDRESS, TESTNET_ETH_ADDRESS, TESTNET_USDC_ADDRESS } from '@invariant-labs/a0-sdk'
 
 export interface IndexedFeeTier {
   tier: FeeTier
@@ -61,8 +61,8 @@ export interface UpdateTickmap {
 }
 
 export interface FetchTicksAndTickMaps {
-  tokenFrom: AddressOrPair
-  tokenTo: AddressOrPair
+  tokenFrom: string
+  tokenTo: string
   allPools: PoolWithPoolKey[]
 }
 
@@ -74,8 +74,7 @@ export const defaultState: IPoolsStore = {
     [TOKEN2.address.toString()]: TOKEN2,
     [TESTNET_BTC_ADDRESS]: BTC,
     [TESTNET_ETH_ADDRESS]: ETH,
-    [TESTNET_USDC_ADDRESS]: USDC,
-    [TESTNET_WAZERO_ADDRESS]: AZERO
+    [TESTNET_USDC_ADDRESS]: USDC
   },
   pools: {},
   poolKeys: {},
@@ -87,8 +86,8 @@ export const defaultState: IPoolsStore = {
 }
 
 export interface PairTokens {
-  first: AddressOrPair
-  second: AddressOrPair
+  first: string
+  second: string
 }
 
 export enum ListType {

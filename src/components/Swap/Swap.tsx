@@ -3,7 +3,6 @@ import ChangeWalletButton from '@components/Header/HeaderButton/ChangeWalletButt
 import ExchangeAmountInput from '@components/Inputs/ExchangeAmountInput/ExchangeAmountInput'
 import Slippage from '@components/Modals/Slippage/Slippage'
 import { Box, Button, CardMedia, Grid, Typography } from '@mui/material'
-import { AddressOrPair } from '@polkadot/api/types'
 import infoIcon from '@static/svg/info.svg'
 import refreshIcon from '@static/svg/refresh.svg'
 import settingIcon from '@static/svg/settings.svg'
@@ -27,14 +26,14 @@ import { useDispatch } from 'react-redux'
 import ExchangeRate from './ExchangeRate/ExchangeRate'
 import TransactionDetailsBox from './TransactionDetailsBox/TransactionDetailsBox'
 import useStyles from './style'
-import { PoolKey, PoolWithPoolKey, Tick, TokenAmount } from '@/sdk/OraiswapV3.types'
-import { Price } from '@/wasm/oraiswap_v3_wasm'
+import { PoolKey, PoolWithPoolKey, Tick, TokenAmount } from '@sdk/OraiswapV3.types'
+import { Price } from '@wasm'
 
 export interface Pools {
-  tokenX: AddressOrPair
-  tokenY: AddressOrPair
-  tokenXReserve: AddressOrPair
-  tokenYReserve: AddressOrPair
+  tokenX: string
+  tokenY: string
+  tokenXReserve: string
+  tokenYReserve: string
   tickSpacing: number
   sqrtPrice: {
     v: TokenAmount
@@ -62,13 +61,13 @@ export interface ISwap {
     poolKey: PoolKey,
     slippage: bigint,
     knownPrice: Price,
-    tokenFrom: AddressOrPair,
-    tokenTo: AddressOrPair,
+    tokenFrom: string,
+    tokenTo: string,
     amountIn: TokenAmount,
     amountOut: TokenAmount,
     byAmountIn: boolean
   ) => void
-  onSetPair: (tokenFrom: AddressOrPair | null, tokenTo: AddressOrPair | null) => void
+  onSetPair: (tokenFrom: string | null, tokenTo: string | null) => void
   progress: ProgressState
   poolTicks: { [x: string]: Tick[] }
   isWaitingForNewPool: boolean
@@ -77,7 +76,7 @@ export interface ISwap {
   initialTokenFromIndex: number | null
   initialTokenToIndex: number | null
   handleAddToken: (address: string) => void
-  commonTokens: AddressOrPair[]
+  commonTokens: string[]
   initialHideUnknownTokensValue: boolean
   onHideUnknownTokensChange: (val: boolean) => void
   tokenFromPriceData?: TokenPriceData
@@ -277,7 +276,7 @@ export const Swap: React.FC<ISwap> = ({
     }
   }
 
-  const getIsXToY = (fromToken: AddressOrPair, toToken: AddressOrPair) => {
+  const getIsXToY = (fromToken: string, toToken: string) => {
     const swapPool = pools.find(
       pool =>
         (fromToken === pool.pool_key.token_x && toToken === pool.pool_key.token_y) ||

@@ -1,8 +1,7 @@
-import { TESTNET_INVARIANT_ADDRESS } from '@invariant-labs/a0-sdk'
-import { Network } from '@invariant-labs/a0-sdk/src'
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
-import { AlephZeroNetworks } from '@store/consts/static'
+import { OraichainNetworks } from '@store/consts/static'
 import { PayloadType } from '@store/consts/types'
+import { Network } from '@store/consts/utils'
 
 export enum Status {
   Uninitialized = 'uninitialized',
@@ -10,29 +9,27 @@ export enum Status {
   Error = 'error',
   Initialized = 'initalized'
 }
-export interface IAlephZeroConnectionStore {
+export interface IOraichainConnectionStore {
   status: Status
   message: string
   networkType: Network
   blockNumber: number
   rpcAddress: string
-  invariantAddress: string
 }
 
-export const defaultState: IAlephZeroConnectionStore = {
+export const defaultState: IOraichainConnectionStore = {
   status: Status.Uninitialized,
   message: '',
   networkType: Network.Testnet,
   blockNumber: 0,
-  rpcAddress: AlephZeroNetworks.TEST,
-  invariantAddress: TESTNET_INVARIANT_ADDRESS
+  rpcAddress: OraichainNetworks.TEST
 }
 export const connectionSliceName = 'connection'
 const connectionSlice = createSlice({
   name: connectionSliceName,
   initialState: defaultState,
   reducers: {
-    initAlephZeroConnection(state) {
+    initOraichainConnection(state) {
       state.status = Status.Init
       return state
     },

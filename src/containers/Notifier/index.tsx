@@ -38,7 +38,7 @@ const Notifier = () => {
             <button
               className={classes.button}
               onClick={() => {
-                window.open(`https://alephzero-testnet.subscan.io/extrinsic/${txid}`, '_blank')
+                window.open(`https://scan.orai.io/txs/${txid}`, '_blank')
               }}>
               <span>Details</span>
             </button>

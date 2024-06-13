@@ -1,4 +1,3 @@
-import { newPoolKey } from '@invariant-labs/a0-sdk'
 import { Status } from '@store/reducers/wallet'
 import type { Meta, StoryObj } from '@storybook/react'
 import { fn } from '@storybook/test'

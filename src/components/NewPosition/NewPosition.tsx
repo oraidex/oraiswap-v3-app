@@ -1,11 +1,7 @@
 import { ProgressState } from '@components/AnimatedButton/AnimatedButton'
 import Slippage from '@components/Modals/Slippage/Slippage'
 import { INoConnected, NoConnected } from '@components/NoConnected/NoConnected'
-import { TokenAmount, getMaxTick, getMinTick } from '@invariant-labs/a0-sdk'
-import { getConcentrationArray } from '@invariant-labs/a0-sdk/src/utils'
-import { PERCENTAGE_DENOMINATOR } from '@invariant-labs/a0-sdk/target/consts'
 import { Button, Grid, Typography } from '@mui/material'
-import { AddressOrPair } from '@polkadot/api/types'
 import backIcon from '@static/svg/back-arrow.svg'
 import settingIcon from '@static/svg/settings.svg'
 import { BestTier, PositionOpeningMethod, TokenPriceData } from '@store/consts/static'
@@ -15,6 +11,7 @@ import {
   calculateConcentrationRange,
   convertBalanceToBigint,
   determinePositionTokenBlock,
+  getConcentrationArray,
   printBigint,
   trimLeadingZeros
 } from '@store/consts/utils'
@@ -30,6 +27,8 @@ import MarketIdLabel from './MarketIdLabel/MarketIdLabel'
 import PoolInit from './PoolInit/PoolInit'
 import RangeSelector from './RangeSelector/RangeSelector'
 import useStyles from './style'
+import { TokenAmount } from '@/sdk/OraiswapV3.types'
+import { getMaxTick, getMinTick } from '@wasm/oraiswap_v3_wasm'
 
 export interface INewPosition {
   initialTokenFrom: string
@@ -57,7 +56,7 @@ export interface INewPosition {
     amount: TokenAmount,
     leftRangeTickIndex: number,
     rightRangeTickIndex: number,
-    tokenAddress: AddressOrPair
+    tokenAddress: string
   ) => TokenAmount
   feeTiers: Array<{
     feeValue: number

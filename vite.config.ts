@@ -16,6 +16,8 @@ export default defineConfig({
       '@store': '/src/store',
       '@web3': '/src/web3',
       '@utils': '/src/utils',
+      '@wasm': '/src/wasm',
+      '@sdk': '/src/sdk',
       '@/': '/src'
     }
   },

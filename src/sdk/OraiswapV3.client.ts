@@ -116,6 +116,13 @@ export interface OraiswapV3ReadOnlyInterface {
     sqrtPriceLimit: SqrtPrice
     xToY: boolean
   }) => Promise<QuoteResult>
+  quoteRoute: ({
+    amountIn,
+    swaps
+  }: {
+    amountIn: TokenAmount
+    swaps: SwapHop[]
+  }) => Promise<TokenAmount>
 }
 export class OraiswapV3QueryClient implements OraiswapV3ReadOnlyInterface {
   client: CosmWasmClient
@@ -140,6 +147,7 @@ export class OraiswapV3QueryClient implements OraiswapV3ReadOnlyInterface {
     this.liquidityTicksAmount = this.liquidityTicksAmount.bind(this)
     this.poolsForPair = this.poolsForPair.bind(this)
     this.quote = this.quote.bind(this)
+    this.quoteRoute = this.quoteRoute.bind(this)
   }
 
   protocolFee = async (): Promise<Percentage> => {
@@ -340,6 +348,20 @@ export class OraiswapV3QueryClient implements OraiswapV3ReadOnlyInterface {
       }
     })
   }
+  quoteRoute = async ({
+    amountIn,
+    swaps
+  }: {
+    amountIn: TokenAmount
+    swaps: SwapHop[]
+  }): Promise<TokenAmount> => {
+    return this.client.queryContractSmart(this.contractAddress, {
+      quote_route: {
+        amount_in: amountIn,
+        swaps
+      }
+    })
+  }
 }
 export interface OraiswapV3Interface extends OraiswapV3ReadOnlyInterface {
   contractAddress: string
@@ -424,18 +446,6 @@ export interface OraiswapV3Interface extends OraiswapV3ReadOnlyInterface {
       amountIn: TokenAmount
       expectedAmountOut: TokenAmount
       slippage: Percentage
-      swaps: SwapHop[]
-    },
-    _fee?: number | StdFee | 'auto',
-    _memo?: string,
-    _funds?: Coin[]
-  ) => Promise<ExecuteResult>
-  quoteRoute: (
-    {
-      amountIn,
-      swaps
-    }: {
-      amountIn: TokenAmount
       swaps: SwapHop[]
     },
     _fee?: number | StdFee | 'auto',
@@ -529,7 +539,6 @@ export class OraiswapV3Client extends OraiswapV3QueryClient implements OraiswapV
     this.createPosition = this.createPosition.bind(this)
     this.swap = this.swap.bind(this)
     this.swapRoute = this.swapRoute.bind(this)
-    this.quoteRoute = this.quoteRoute.bind(this)
     this.transferPosition = this.transferPosition.bind(this)
     this.claimFee = this.claimFee.bind(this)
     this.removePosition = this.removePosition.bind(this)
@@ -707,32 +716,6 @@ export class OraiswapV3Client extends OraiswapV3QueryClient implements OraiswapV
           amount_in: amountIn,
           expected_amount_out: expectedAmountOut,
           slippage,
-          swaps
-        }
-      },
-      _fee,
-      _memo,
-      _funds
-    )
-  }
-  quoteRoute = async (
-    {
-      amountIn,
-      swaps
-    }: {
-      amountIn: TokenAmount
-      swaps: SwapHop[]
-    },
-    _fee: number | StdFee | 'auto' = 'auto',
-    _memo?: string,
-    _funds?: Coin[]
-  ): Promise<ExecuteResult> => {
-    return await this.client.execute(
-      this.sender,
-      this.contractAddress,
-      {
-        quote_route: {
-          amount_in: amountIn,
           swaps
         }
       },

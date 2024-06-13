@@ -415,23 +415,23 @@ export interface AmountDeltaResult {
 }
 
 export interface SwapResult {
-    nextSqrtPrice: SqrtPrice;
-    amountIn: TokenAmount;
-    amountOut: TokenAmount;
-    feeAmount: TokenAmount;
+    next_sqrt_price: SqrtPrice;
+    amount_in: TokenAmount;
+    amount_out: TokenAmount;
+    fee_amount: TokenAmount;
 }
 
 export type calculateAmountDeltaResult = [TokenAmount, TokenAmount, boolean];
 
 export interface SwapHop {
-    poolKey: PoolKey;
-    xToY: boolean;
+    pool_key: PoolKey;
+    x_to_y: boolean;
 }
 
 export interface QuoteResult {
-    amountIn: TokenAmount;
-    amountOut: TokenAmount;
-    targetSqrtPrice: SqrtPrice;
+    amount_in: TokenAmount;
+    amount_out: TokenAmount;
+    target_sqrt_price: SqrtPrice;
     ticks: Tick[];
 }
 
@@ -449,7 +449,7 @@ export interface SingleTokenLiquidity {
 
 export interface Config {
     admin: string;
-    protocolFee: Percentage;
+    protocol_fee: Percentage;
 }
 
 export type SwapError = "NotAdmin" | "NotFeeReceiver" | "PoolAlreadyExist" | "PoolNotFound" | "TickAlreadyExist" | "InvalidTickIndexOrTickSpacing" | "PositionNotFound" | "TickNotFound" | "FeeTierNotFound" | "PoolKeyNotFound" | "AmountIsZero" | "WrongLimit" | "PriceLimitReached" | "NoGainSwap" | "InvalidTickSpacing" | "FeeTierAlreadyExist" | "PoolKeyAlreadyExist" | "UnauthorizedFeeReceiver" | "ZeroLiquidity" | "TransferError" | "TokensAreSame" | "AmountUnderMinimumAmountOut" | "InvalidFee" | "NotEmptyTickDeinitialization" | "InvalidInitTick" | "InvalidInitSqrtPrice" | "TickLimitReached";
@@ -459,9 +459,9 @@ export interface CreatePositionEvent {
     address: string;
     pool: PoolKey;
     liquidity: Liquidity;
-    lowerTick: bigint;
-    upperTick: bigint;
-    currentSqrtPrice: SqrtPrice;
+    lower_tick: bigint;
+    upper_tick: bigint;
+    current_sqrt_price: SqrtPrice;
 }
 
 export interface CrossTickEvent {
@@ -476,80 +476,80 @@ export interface RemovePositionEvent {
     address: string;
     pool: PoolKey;
     liquidity: Liquidity;
-    lowerTick: bigint;
-    upperTick: bigint;
-    currentSqrtPrice: SqrtPrice;
+    lower_tick: bigint;
+    upper_tick: bigint;
+    current_sqrt_price: SqrtPrice;
 }
 
 export interface SwapEvent {
     timestamp: bigint;
     address: string;
     pool: PoolKey;
-    amountIn: TokenAmount;
-    amountOut: TokenAmount;
+    amount_in: TokenAmount;
+    amount_out: TokenAmount;
     fee: TokenAmount;
-    startSqrtPrice: SqrtPrice;
-    targetSqrtPrice: SqrtPrice;
-    xToY: boolean;
+    start_sqrt_price: SqrtPrice;
+    target_sqrt_price: SqrtPrice;
+    x_to_y: boolean;
 }
 
 export interface FeeTier {
     fee: Percentage;
-    tickSpacing: bigint;
+    tick_spacing: bigint;
 }
 
 export interface Pool {
     liquidity: Liquidity;
-    sqrtPrice: SqrtPrice;
-    currentTickIndex: bigint;
-    feeGrowthGlobalX: FeeGrowth;
-    feeGrowthGlobalY: FeeGrowth;
-    feeProtocolTokenX: TokenAmount;
-    feeProtocolTokenY: TokenAmount;
-    startTimestamp: bigint;
-    lastTimestamp: bigint;
-    feeReceiver: string;
+    sqrt_price: SqrtPrice;
+    current_tick_index: bigint;
+    fee_growth_global_x: FeeGrowth;
+    fee_growth_global_y: FeeGrowth;
+    fee_protocol_token_x: TokenAmount;
+    fee_protocol_token_y: TokenAmount;
+    start_timestamp: bigint;
+    last_timestamp: bigint;
+    fee_receiver: string;
 }
 
 export interface PoolKey {
-    tokenX: string;
-    tokenY: string;
-    feeTier: FeeTier;
+    token_x: string;
+    token_y: string;
+    fee_tier: FeeTier;
 }
 
 export interface Position {
-    poolKey: PoolKey;
+    pool_key: PoolKey;
     liquidity: Liquidity;
-    lowerTickIndex: bigint;
-    upperTickIndex: bigint;
-    feeGrowthInsideX: FeeGrowth;
-    feeGrowthInsideY: FeeGrowth;
-    lastBlockNumber: bigint;
-    tokensOwedX: TokenAmount;
-    tokensOwedY: TokenAmount;
+    lower_tick_index: bigint;
+    upper_tick_index: bigint;
+    fee_growth_inside_x: FeeGrowth;
+    fee_growth_inside_y: FeeGrowth;
+    last_block_number: bigint;
+    tokens_owed_x: TokenAmount;
+    tokens_owed_y: TokenAmount;
 }
 
 export interface Tick {
     index: bigint;
     sign: boolean;
-    liquidityChange: Liquidity;
-    liquidityGross: Liquidity;
-    sqrtPrice: SqrtPrice;
-    feeGrowthOutsideX: FeeGrowth;
-    feeGrowthOutsideY: FeeGrowth;
-    secondsOutside: bigint;
+    liquidity_change: Liquidity;
+    liquidity_gross: Liquidity;
+    sqrt_price: SqrtPrice;
+    fee_growth_outside_x: FeeGrowth;
+    fee_growth_outside_y: FeeGrowth;
+    seconds_outside: bigint;
 }
 
 export interface PositionTick {
     index: bigint;
-    feeGrowthOutsideX: FeeGrowth;
-    feeGrowthOutsideY: FeeGrowth;
-    secondsOutside: bigint;
+    fee_growth_outside_x: FeeGrowth;
+    fee_growth_outside_y: FeeGrowth;
+    seconds_outside: bigint;
 }
 
 export interface LiquidityTick {
     index: bigint;
-    liquidityChange: Liquidity;
+    liquidity_change: Liquidity;
     sign: boolean;
 }
 
@@ -576,15 +576,15 @@ export interface Tickmap {
 export type tickIndexToPositionResult = [number, number];
 
 export interface CalculateSwapResult {
-    amountIn: TokenAmount;
-    amountOut: TokenAmount;
+    amount_in: TokenAmount;
+    amount_out: TokenAmount;
     fee: TokenAmount;
-    startSqrtPrice: SqrtPrice;
-    targetSqrtPrice: SqrtPrice;
-    crossedTicks: LiquidityTick[];
-    globalInsufficientLiquidity: boolean;
-    stateOutdated: boolean;
-    maxTicksCrossed: boolean;
+    start_sqrt_price: SqrtPrice;
+    target_sqrt_price: SqrtPrice;
+    crossed_ticks: LiquidityTick[];
+    global_insufficient_liquidity: boolean;
+    state_outdated: boolean;
+    max_ticks_crossed: boolean;
 }
 
 

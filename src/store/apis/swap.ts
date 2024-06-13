@@ -1,17 +1,5 @@
-import {
-  TESTNET_WAZERO_ADDRESS,
-  calculatePriceImpact,
-  calculateSqrtPriceAfterSlippage,
-  sendTx,
-  simulateInvariantSwap
-} from '@invariant-labs/a0-sdk'
-import { MIN_SQRT_PRICE } from '@invariant-labs/a0-sdk/src/consts'
-import {
-  MAX_SQRT_PRICE,
-  PERCENTAGE_DENOMINATOR,
-  PERCENTAGE_SCALE
-} from '@invariant-labs/a0-sdk/target/consts'
-import { Signer } from '@polkadot/api/types'
+
+
 import { PayloadAction } from '@reduxjs/toolkit'
 import {
   INVARIANT_SWAP_OPTIONS,
@@ -36,7 +24,6 @@ import { poolTicks, pools, tickMaps, tokens } from '@store/selectors/pools'
 import { address, balance } from '@store/selectors/wallet'
 import SingletonOraiswapV3 from '@store/services/contractSingleton'
 import { closeSnackbar } from 'notistack'
-import { all, call, put, select, spawn, takeEvery } from 'typed-redux-saga'
 import { fetchBalances } from './wallet'
 
 export async function handleSwap(action: PayloadAction<Omit<Swap, 'txid'>>) {
@@ -157,7 +144,7 @@ export async function handleSwap(action: PayloadAction<Omit<Swap, 'txid'>>) {
   // }
 }
 
-export function* handleSwapWithAZERO(action: PayloadAction<Omit<Swap, 'txid'>>): Generator {
+export async function handleSwapWithAZERO(action: PayloadAction<Omit<Swap, 'txid'>>) {
   const { poolKey, tokenFrom, slippage, amountIn, byAmountIn, estimatedPriceAfterSwap, tokenTo } =
     action.payload
 
@@ -260,9 +247,7 @@ export function* handleSwapWithAZERO(action: PayloadAction<Omit<Swap, 'txid'>>):
       })
     )
 
-    yield* call(fetchBalances, [
-      poolKey.tokenX === TESTNET_WAZERO_ADDRESS ? poolKey.tokenY : poolKey.tokenX
-    ])
+    
 
     yield put(actions.setSwapSuccess(true))
 
@@ -307,7 +292,7 @@ export enum SwapError {
   StateOutdated
 }
 
-export function* handleGetSimulateResult(action: PayloadAction<Simulate>) {
+export async function handleGetSimulateResult(action: PayloadAction<Simulate>) {
   try {
     const allPools = yield* select(pools)
     const allTickmaps = yield* select(tickMaps)
@@ -419,14 +404,11 @@ export function* handleGetSimulateResult(action: PayloadAction<Simulate>) {
   }
 }
 
-export function* swapHandler(): Generator {
+export async function swapHandler() {
   yield* takeEvery(actions.swap, handleSwap)
 }
 
-export function* getSimulateResultHandler(): Generator {
+export async function getSimulateResultHandler() {
   yield* takeEvery(actions.getSimulateResult, handleGetSimulateResult)
 }
 
-export function* swapSaga(): Generator {
-  yield all([swapHandler, getSimulateResultHandler].map(spawn))
-}

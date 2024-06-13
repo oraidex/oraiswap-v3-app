@@ -14,24 +14,36 @@ const client = new SimulateCosmWasmClient({
   bech32Prefix: 'orai'
 })
 
-const createToken = async (symbol: string, amount: string) => {
+const createTokens = async (...args: string[]) => {
+  let symbols = args.slice(0, -1)
+  const amount = args[symbols.length]
   // init airi token
-  const res = await oraidexArtifacts.deployContract(
-    client,
-    senderAddress,
-    {
-      mint: {
-        minter: senderAddress
-      },
-      decimals: 6,
-      symbol,
-      name: symbol,
-      initial_balances: [{ address: senderAddress, amount }]
-    } as OraiswapTokenTypes.InstantiateMsg,
-    'token',
-    'oraiswap_token'
+  const list = await Promise.all(
+    symbols.map(symbol =>
+      oraidexArtifacts.deployContract(
+        client,
+        senderAddress,
+
+        {
+          mint: {
+            minter: senderAddress
+          },
+          decimals: 6,
+          symbol,
+          name: symbol,
+          initial_balances: [{ address: senderAddress, amount }]
+        } as OraiswapTokenTypes.InstantiateMsg,
+        'token',
+        'oraiswap_token'
+      )
+    )
   )
-  return new OraiswapTokenClient(client, senderAddress, res.contractAddress)
+
+  // sorted by contract address
+  return list
+    .map(res => res.contractAddress)
+    .sort()
+    .map(address => new OraiswapTokenClient(client, senderAddress, address))
 }
 
 describe('swap', () => {
@@ -71,8 +83,7 @@ describe('swap', () => {
     let initSqrtPrice = OraiswapV3Wasm.calculateSqrtPrice(initTick)
 
     let initialAmount = (1e10).toString()
-    let tokenX = await createToken('tokenx', initialAmount)
-    let tokenY = await createToken('tokeny', initialAmount)
+    let [tokenX, tokenY] = await createTokens('tokenx', 'tokeny', initialAmount)
 
     res = await dex.createPool({
       feeTier,
@@ -194,5 +205,175 @@ describe('swap', () => {
     expect(lowerTickBit).toBeTruthy()
     expect(middleTickBit).toBeTruthy()
     expect(upperTickBit).toBeTruthy()
+  })
+
+  it('test_swap_route', async () => {
+    let initial_amount = (1e10).toString()
+
+    let [token_x, token_y, token_z] = await createTokens(
+      'tokenx',
+      'tokeny',
+      'tokenz',
+      initial_amount
+    )
+
+    await token_x.increaseAllowance({
+      amount: '18446744073709551615',
+      spender: dex.contractAddress
+    })
+    await token_y.increaseAllowance({
+      amount: '18446744073709551615',
+      spender: dex.contractAddress
+    })
+    await token_z.increaseAllowance({
+      amount: '18446744073709551615',
+      spender: dex.contractAddress
+    })
+
+    let amount = 1000
+
+    await token_x.mint({ amount: amount.toString(), recipient: bobAddress })
+    token_x.sender = bobAddress
+    await token_x.increaseAllowance({ amount: amount.toString(), spender: dex.contractAddress })
+    token_y.sender = bobAddress
+    await token_y.increaseAllowance({
+      amount: '18446744073709551615',
+      spender: dex.contractAddress
+    })
+
+    let feeTier: OraiswapV3Types.FeeTier = { fee: protocol_fee, tick_spacing: 1 }
+
+    await dex.addFeeTier({ feeTier })
+
+    let init_tick = 0
+    let init_sqrt_price = OraiswapV3Wasm.calculateSqrtPrice(init_tick)
+
+    await dex.createPool({
+      feeTier,
+      initSqrtPrice: init_sqrt_price.toString(),
+      initTick: init_tick,
+      token0: token_x.contractAddress,
+      token1: token_y.contractAddress
+    })
+
+    await dex.createPool({
+      feeTier,
+      initSqrtPrice: init_sqrt_price.toString(),
+      initTick: init_tick,
+      token0: token_y.contractAddress,
+      token1: token_z.contractAddress
+    })
+
+    let poolKey1 = OraiswapV3Wasm._newPoolKey(
+      token_x.contractAddress,
+      token_y.contractAddress,
+      feeTier
+    )
+    let poolKey2 = OraiswapV3Wasm._newPoolKey(
+      token_y.contractAddress,
+      token_z.contractAddress,
+      feeTier
+    )
+
+    let liquidity_delta = 2n ** 63n - 1n
+
+    let pool_1 = await dex.pool({
+      feeTier,
+      token0: token_x.contractAddress,
+      token1: token_y.contractAddress
+    })
+
+    let slippage_limit_lower = pool_1.sqrt_price
+    let slippage_limit_upper = pool_1.sqrt_price
+
+    await dex.createPosition({
+      poolKey: poolKey1,
+      lowerTick: -1,
+      upperTick: 1,
+      liquidityDelta: liquidity_delta.toString(),
+      slippageLimitLower: slippage_limit_lower,
+      slippageLimitUpper: slippage_limit_upper
+    })
+
+    let pool_2 = await dex.pool({
+      feeTier,
+      token0: token_y.contractAddress,
+      token1: token_z.contractAddress
+    })
+
+    slippage_limit_lower = pool_2.sqrt_price
+    slippage_limit_upper = pool_2.sqrt_price
+
+    await dex.createPosition({
+      poolKey: poolKey2,
+      lowerTick: -1,
+      upperTick: 1,
+      liquidityDelta: liquidity_delta.toString(),
+      slippageLimitLower: slippage_limit_lower,
+      slippageLimitUpper: slippage_limit_upper
+    })
+
+    let amount_in = 1000n
+    let slippage = 0n
+    let swaps: OraiswapV3Types.SwapHop[] = [
+      {
+        pool_key: poolKey1,
+        x_to_y: true
+      },
+      {
+        pool_key: poolKey2,
+        x_to_y: true
+      }
+    ]
+
+    let expected_token_amount = await dex.quoteRoute({ amountIn: amount_in.toString(), swaps })
+
+    dex.sender = bobAddress
+    await dex.swapRoute({
+      amountIn: amount_in.toString(),
+      expectedAmountOut: expected_token_amount,
+      slippage: Number(slippage),
+      swaps
+    })
+
+    let bob_amount_x = (await token_x.balance({ address: bobAddress })).balance
+    let bob_amount_y = (await token_y.balance({ address: bobAddress })).balance
+    let bob_amount_z = (await token_z.balance({ address: bobAddress })).balance
+
+    expect(bob_amount_x).toEqual('0')
+    expect(bob_amount_y).toEqual('0')
+    expect(bob_amount_z).toEqual('986')
+
+    let pool_1_after = await dex.pool({
+      token0: token_x.contractAddress,
+      token1: token_y.contractAddress,
+      feeTier
+    })
+    expect(pool_1_after.fee_protocol_token_x).toEqual('1')
+    expect(pool_1_after.fee_protocol_token_y).toEqual('0')
+
+    let pool_2_after = await dex.pool({
+      token0: token_y.contractAddress,
+      token1: token_z.contractAddress,
+      feeTier
+    })
+    expect(pool_2_after.fee_protocol_token_x).toEqual('1')
+    expect(pool_2_after.fee_protocol_token_y).toEqual('0')
+
+    let alice_amount_x_before = Number((await token_x.balance({ address: senderAddress })).balance)
+    let alice_amount_y_before = Number((await token_y.balance({ address: senderAddress })).balance)
+    let alice_amount_z_before = Number((await token_z.balance({ address: senderAddress })).balance)
+
+    dex.sender = senderAddress
+    await dex.claimFee({ index: 0 })
+    await dex.claimFee({ index: 1 })
+
+    let alice_amount_x_after = Number((await token_x.balance({ address: senderAddress })).balance)
+    let alice_amount_y_after = Number((await token_y.balance({ address: senderAddress })).balance)
+    let alice_amount_z_after = Number((await token_z.balance({ address: senderAddress })).balance)
+
+    expect(alice_amount_x_after - alice_amount_x_before).toEqual(4)
+    expect(alice_amount_y_after - alice_amount_y_before).toEqual(4)
+    expect(alice_amount_z_after - alice_amount_z_before).toEqual(0)
   })
 })

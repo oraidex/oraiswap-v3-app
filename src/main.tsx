@@ -1,10 +1,9 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import './index.css'
+import init from './wasm'
 
-import init from './wasm/oraiswap_v3_wasm'
-
-;(async () => {
+const render = async () => {
   await init()
   const App = await import('./App.tsx')
 
@@ -13,4 +12,6 @@ import init from './wasm/oraiswap_v3_wasm'
       <App.default />
     </React.StrictMode>
   )
-})()
+}
+
+render()

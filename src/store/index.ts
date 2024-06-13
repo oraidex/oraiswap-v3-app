@@ -1,9 +1,6 @@
-import createSagaMiddleware from 'redux-saga'
-
 import { configureStore, isPlain } from '@reduxjs/toolkit'
 
 import combinedReducers from './reducers'
-import rootSaga from './sagas'
 
 const isSerializable = (value: any) => {
   return typeof value === 'bigint' || isPlain(value)
@@ -15,11 +12,6 @@ const getEntries = (value: any) => {
 }
 
 const configureAppStore = (initialState = {}) => {
-  const reduxSagaMonitorOptions = {}
-  const sagaMiddleware = createSagaMiddleware(reduxSagaMonitorOptions)
-
-  const middleware = [sagaMiddleware]
-
   const store = configureStore({
     reducer: combinedReducers,
     middleware: getDefaultMiddleware =>
@@ -29,7 +21,7 @@ const configureAppStore = (initialState = {}) => {
           getEntries,
           ignoredActions: ['positions/closePosition', 'pools/setTickMaps']
         }
-      }).concat(middleware),
+      }),
     preloadedState: initialState,
     // devTools: process.env.NODE_ENV !== "production",
     devTools: {
@@ -40,7 +32,6 @@ const configureAppStore = (initialState = {}) => {
     }
   })
 
-  sagaMiddleware.run(rootSaga)
   return store
 }
 

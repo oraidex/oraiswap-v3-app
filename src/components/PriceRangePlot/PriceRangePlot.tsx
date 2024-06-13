@@ -347,7 +347,7 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
         yDecimal
       )
       onChangeRange?.(
-        leftRange.index,
+        BigInt(leftRange.index),
         isXtoY
           ? BigInt(Math.max(Number(leftRange.index + tickSpacing), Number(nearest)))
           : BigInt(Math.min(Number(leftRange.index - tickSpacing), Number(nearest)))

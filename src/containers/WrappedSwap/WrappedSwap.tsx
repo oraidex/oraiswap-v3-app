@@ -1,6 +1,5 @@
 import { ProgressState } from '@components/AnimatedButton/AnimatedButton'
 import { Swap } from '@components/Swap/Swap'
-import { AddressOrPair } from '@polkadot/api/types'
 import { TokenPriceData, commonTokensForNetworks } from '@store/consts/static'
 import { getCoingeckoTokenPrice } from '@store/consts/utils'
 import { actions as poolsActions } from '@store/reducers/pools'
@@ -35,8 +34,8 @@ export const WrappedSwap = () => {
   const swapSimulateResult = useSelector(simulateResult)
 
   const [progress, setProgress] = useState<ProgressState>('none')
-  const [tokenFrom, setTokenFrom] = useState<AddressOrPair | null>(null)
-  const [tokenTo, setTokenTo] = useState<AddressOrPair | null>(null)
+  const [tokenFrom, setTokenFrom] = useState<string | null>(null)
+  const [tokenTo, setTokenTo] = useState<string | null>(null)
 
   useEffect(() => {
     let timeoutId1: NodeJS.Timeout
@@ -137,19 +136,15 @@ export const WrappedSwap = () => {
 
     const id = tokensDict[tokenFrom.toString()].coingeckoId ?? ''
 
-    // if (id.length) {
-    //   setPriceFromLoading(true)
-    //   getCoingeckoTokenPrice(id)
-    //     .then(data => setTokenFromPriceData(data))
-    //     .catch(() =>
-    //       setTokenFromPriceData(
-    //         getMockedTokenPrice(tokensDict[tokenFrom.toString()].symbol, network)
-    //       )
-    //     )
-    //     .finally(() => setPriceFromLoading(false))
-    // } else {
-    //   setTokenFromPriceData(undefined)
-    // }
+    if (id.length) {
+      setPriceFromLoading(true)
+      getCoingeckoTokenPrice(id)
+        .then(data => setTokenFromPriceData(data))
+
+        .finally(() => setPriceFromLoading(false))
+    } else {
+      setTokenFromPriceData(undefined)
+    }
   }, [tokenFrom])
 
   const [tokenToPriceData, setTokenToPriceData] = useState<TokenPriceData | undefined>(undefined)
@@ -160,17 +155,15 @@ export const WrappedSwap = () => {
     }
 
     const id = tokensDict[tokenTo.toString()].coingeckoId ?? ''
-    // if (id.length) {
-    //   setPriceToLoading(true)
-    //   getCoingeckoTokenPrice(id)
-    //     .then(data => setTokenToPriceData(data))
-    //     .catch(() =>
-    //       setTokenToPriceData(getMockedTokenPrice(tokensDict[tokenTo.toString()].symbol, network))
-    //     )
-    //     .finally(() => setPriceToLoading(false))
-    // } else {
-    //   setTokenToPriceData(undefined)
-    // }
+    if (id.length) {
+      setPriceToLoading(true)
+      getCoingeckoTokenPrice(id)
+        .then(data => setTokenToPriceData(data))
+
+        .finally(() => setPriceToLoading(false))
+    } else {
+      setTokenToPriceData(undefined)
+    }
   }, [tokenTo])
 
   const initialSlippage = localStorage.getItem('INVARIANT_SWAP_SLIPPAGE') ?? '1'
@@ -199,33 +192,27 @@ export const WrappedSwap = () => {
 
     const idTo = tokensDict[tokenTo.toString()].coingeckoId ?? ''
 
-    // if (idTo.length) {
-    //   setPriceToLoading(true)
-    //   getCoingeckoTokenPrice(idTo)
-    //     .then(data => setTokenToPriceData(data))
-    //     .catch(() =>
-    //       setTokenToPriceData(getMockedTokenPrice(tokensDict[tokenTo.toString()].symbol, network))
-    //     )
-    //     .finally(() => setPriceToLoading(false))
-    // } else {
-    //   setTokenToPriceData(undefined)
-    // }
+    if (idTo.length) {
+      setPriceToLoading(true)
+      getCoingeckoTokenPrice(idTo)
+        .then(data => setTokenToPriceData(data))
+
+        .finally(() => setPriceToLoading(false))
+    } else {
+      setTokenToPriceData(undefined)
+    }
 
     const idFrom = tokensDict[tokenFrom.toString()].coingeckoId ?? ''
 
-    // if (idFrom.length) {
-    //   setPriceFromLoading(true)
-    //   getCoingeckoTokenPrice(idFrom)
-    //     .then(data => setTokenFromPriceData(data))
-    //     .catch(() =>
-    //       setTokenFromPriceData(
-    //         getMockedTokenPrice(tokensDict[tokenFrom.toString()].symbol, network)
-    //       )
-    //     )
-    //     .finally(() => setPriceFromLoading(false))
-    // } else {
-    //   setTokenFromPriceData(undefined)
-    // }
+    if (idFrom.length) {
+      setPriceFromLoading(true)
+      getCoingeckoTokenPrice(idFrom)
+        .then(data => setTokenFromPriceData(data))
+
+        .finally(() => setPriceFromLoading(false))
+    } else {
+      setTokenFromPriceData(undefined)
+    }
   }
 
   return (

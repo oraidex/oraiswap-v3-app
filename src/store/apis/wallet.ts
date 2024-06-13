@@ -1,8 +1,5 @@
-import { Network, sendTx } from '@invariant-labs/a0-sdk'
-import { NightlyConnectAdapter } from '@nightlylabs/wallet-selector-polkadot'
-import { AddressOrPair, Signer } from '@polkadot/api/types'
 import { PayloadAction } from '@reduxjs/toolkit'
-import { FaucetTokenList, TokenAirdropAmount } from '@store/consts/static'
+import { TokenAirdropAmount } from '@store/consts/static'
 import { createLoaderKey, getTokenBalances } from '@store/consts/utils'
 import { actions as positionsActions } from '@store/reducers/positions'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
@@ -11,16 +8,6 @@ import { networkType } from '@store/selectors/connection'
 import { address, status } from '@store/selectors/wallet'
 
 import { closeSnackbar } from 'notistack'
-import {
-  SagaGenerator,
-  all,
-  call,
-  put,
-  select,
-  spawn,
-  takeLatest,
-  takeLeading
-} from 'typed-redux-saga'
 
 type FrameSystemAccountInfo = {
   data: {
@@ -34,11 +21,11 @@ type FrameSystemAccountInfo = {
   providers: number
   sufficients: number
 }
-export function* getBalance(walletAddress: AddressOrPair): SagaGenerator<string> {
+export async function getBalance(walletAddress: strinitg) {
   return ''
 }
 
-export function* handleBalance(): Generator {
+export async function handleBalance() {
   // const wallet = yield* call(getWallet)
   // yield* put(actions.setAddress(wallet.))
   // yield* put(actions.setIsBalanceLoading(true))
@@ -48,7 +35,7 @@ export function* handleBalance(): Generator {
   // yield* put(actions.setIsBalanceLoading(false))
 }
 
-// export function* fetchTokensAccounts(): Generator {
+// export async function fetchTokensAccounts() {
 //   const connection = yield* call(getConnection)
 //   const wallet = yield* call(getWallet)
 //   const tokensAccounts = yield* call(
@@ -86,13 +73,13 @@ export function* handleBalance(): Generator {
 //   yield* put(poolsActions.addTokens(unknownTokens))
 // }
 
-// export function* getToken(tokenAddress: PublicKey): SagaGenerator<Token> {
+// export async function getToken(tokenAddress: PublicKey): SagaGenerator<Token> {
 //   const connection = yield* call(getConnection)
 //   const token = new Token(connection, tokenAddress, TOKEN_PROGRAM_ID, new Account())
 //   return token
 // }
 
-// export function* handleAirdrop(): Generator {
+// export async function handleAirdrop() {
 //   const walletAddress = yield* select(address)
 
 //   if (!walletAddress) {
@@ -172,7 +159,7 @@ export function* handleBalance(): Generator {
 //   }
 // }
 
-// export function* setEmptyAccounts(collateralsAddresses: PublicKey[]): Generator {
+// export async function setEmptyAccounts(collateralsAddresses: PublicKey[]) {
 //   const tokensAccounts = yield* select(accounts)
 //   const acc: PublicKey[] = []
 //   for (const collateral of collateralsAddresses) {
@@ -189,10 +176,10 @@ export function* handleBalance(): Generator {
 //   }
 // }
 
-// export function* getCollateralTokenAirdrop(
+// export async function getCollateralTokenAirdrop(
 //   collateralsAddresses: PublicKey[],
 //   collateralsQuantities: number[]
-// ): Generator {
+// ) {
 //   const wallet = yield* call(getWallet)
 //   const instructions: TransactionInstruction[] = []
 //   yield* call(setEmptyAccounts, collateralsAddresses)
@@ -220,53 +207,38 @@ export function* handleBalance(): Generator {
 //     skipPreflight: true
 //   })
 // }
-// export function* getTokenProgram(pubKey: PublicKey): SagaGenerator<number> {
+// export async function getTokenProgram(pubKey: PublicKey): SagaGenerator<number> {
 //   const connection = yield* call(getConnection)
 //   const balance = yield* call(, pubKey)
 //   return balance
 // }
 
-export function* fetchSelectedTokensBalances(action: PayloadAction<string[]>): Generator {
+export async function fetchSelectedTokensBalances(action: PayloadAction<string[]>) {
   const tokens = action.payload
-  const balances = yield* call(getTokenBalances, tokens)
+  const balances = yield * call(getTokenBalances, tokens)
 
   const convertedBalances: ITokenBalance[] = balances.map(balance => ({
     address: balance[0],
     balance: balance[1]
   }))
 
-  yield* put(actions.addTokenBalances(convertedBalances))
+  yield * put(actions.addTokenBalances(convertedBalances))
 }
 
-export function* fetchTokensBalances(): Generator {
-  const tokens = Object.values(FaucetTokenList)
-  const balances = yield* call(getTokenBalances, tokens)
+export async function fetchTokensBalances() {
+  const tokens = Object.values([])
+  const balances = yield * call(getTokenBalances, tokens)
 
   const convertedBalances: ITokenBalance[] = balances.map(balance => ({
     address: balance[0],
     balance: balance[1]
   }))
 
-  yield* put(actions.addTokenBalances(convertedBalances))
+  yield * put(actions.addTokenBalances(convertedBalances))
 }
 
-export function* init(): Generator {
+export async function init() {
   try {
-    yield* put(actions.setStatus(Status.Init))
-
-    const walletAdapter = yield* call(getWallet)
-    yield* call([walletAdapter, walletAdapter.connect])
-    const accounts = yield* call([walletAdapter.accounts, walletAdapter.accounts.get])
-
-    yield* put(actions.setAddress(accounts[0].address))
-    yield* put(actions.setIsBalanceLoading(true))
-
-    const balance = yield* call(getBalance, accounts[0].address)
-
-    yield* put(actions.setBalance(BigInt(balance)))
-    yield* put(actions.setStatus(Status.Initialized))
-    yield* call(fetchTokensBalances)
-    yield* put(actions.setIsBalanceLoading(false))
   } catch (error) {
     console.log(error)
   }
@@ -276,89 +248,71 @@ export const sleep = (ms: number) => {
   return new Promise(resolve => setTimeout(resolve, ms))
 }
 
-export function* handleConnect(): Generator {
+export async function handleConnect() {
   console.log('connect')
-  const walletStatus = yield* select(status)
+  const walletStatus = yield * select(status)
   if (walletStatus === Status.Initialized) {
-    yield* put(
-      snackbarsActions.add({
-        message: 'Wallet already connected.',
-        variant: 'info',
-        persist: false
-      })
-    )
+    yield *
+      put(
+        snackbarsActions.add({
+          message: 'Wallet already connected.',
+          variant: 'info',
+          persist: false
+        })
+      )
     return
   }
-  yield* call(init)
+  yield * call(init)
 }
 
-export function* handleDisconnect(): Generator {
+export async function handleDisconnect() {
   try {
     // yield* call(disconnectWallet)
-    yield* put(actions.resetState())
+    yield * put(actions.resetState())
 
-    yield* put(positionsActions.setPositionsList([]))
-    yield* put(
-      positionsActions.setCurrentPositionTicks({
-        lowerTick: undefined,
-        upperTick: undefined
-      })
-    )
+    yield * put(positionsActions.setPositionsList([]))
+    yield *
+      put(
+        positionsActions.setCurrentPositionTicks({
+          lowerTick: undefined,
+          upperTick: undefined
+        })
+      )
   } catch (error) {
     console.log(error)
   }
 }
 
-export function* fetchBalances(tokens: string[]): Generator {
-  const balance = yield* call(getBalance, walletAddress)
-  yield* put(walletActions.setBalance(BigInt(balance)))
+export async function fetchBalances(tokens: string[]) {}
 
-  const tokenBalances = yield* call(getTokenBalances, tokens, api, network, walletAddress)
-  yield* put(
-    walletActions.addTokenBalances(
-      tokenBalances.map(([address, balance]) => {
-        return {
-          address,
-          balance
-        }
-      })
-    )
-  )
-}
-
-export function* connectHandler(): Generator {
+export async function connectHandler() {
   yield takeLatest(actions.connect, handleConnect)
 }
 
-export function* disconnectHandler(): Generator {
+export async function disconnectHandler() {
   yield takeLatest(actions.disconnect, handleDisconnect)
 }
 
-export function* airdropSaga(): Generator {
-  yield takeLeading(actions.airdrop, handleAirdrop)
-}
-
-export function* initSaga(): Generator {
+export async function initSaga() {
   yield takeLeading(actions.initWallet, init)
 }
 
-// export function* handleBalanceSaga(): Generator {
+// export async function handleBalanceSaga() {
 //   yield takeLeading(actions.getBalance, handleBalance)
 // }
 
-export function* handleFetchTokensBalances(): Generator {
+export async function handleFetchTokensBalances() {
   yield takeLeading(actions.getTokens, fetchTokensBalances)
 }
 
-export function* handleFetchSelectedTokensBalances(): Generator {
+export async function handleFetchSelectedTokensBalances() {
   yield takeLeading(actions.getSelectedTokens, fetchSelectedTokensBalances)
 }
 
-export function* walletSaga(): Generator {
+export async function walletSaga() {
   yield all(
     [
       initSaga,
-      airdropSaga,
       connectHandler,
       disconnectHandler,
       handleFetchTokensBalances,

@@ -1,5 +1,5 @@
-import { PoolKey, newPoolKey, sendTx, toSqrtPrice } from '@invariant-labs/a0-sdk'
-import { Signer } from '@polkadot/api/types'
+import { PoolKey, PoolWithPoolKey } from '@sdk/OraiswapV3.types'
+import { toSqrtPrice } from '@wasm'
 import { PayloadAction } from '@reduxjs/toolkit'
 import {
   createLoaderKey,
@@ -14,7 +14,6 @@ import { invariantAddress, networkType } from '@store/selectors/connection'
 import { tokens } from '@store/selectors/pools'
 import { address } from '@store/selectors/wallet'
 import { closeSnackbar } from 'notistack'
-import { all, call, put, select, spawn, takeEvery, takeLatest } from 'typed-redux-saga'
 
 export function* fetchPoolsDataForList(action: PayloadAction<ListPoolsRequest>) {
   const walletAddress = yield* select(address)
@@ -56,7 +55,7 @@ export function* fetchPoolsDataForList(action: PayloadAction<ListPoolsRequest>) 
   yield* put(actions.addPoolsForList({ data: pools, listType: action.payload.listType }))
 }
 
-export function* handleInitPool(action: PayloadAction<PoolKey>): Generator {
+export async function handleInitPool(action: PayloadAction<PoolKey>) {
   const loaderKey = createLoaderKey()
   const loaderSigningTx = createLoaderKey()
   try {
@@ -71,8 +70,8 @@ export function* handleInitPool(action: PayloadAction<PoolKey>): Generator {
 
     const { tokenX, tokenY, feeTier } = action.payload
 
-    const network = yield* select(networkType)
-    const walletAddress = yield* select(address)
+    const network = yield * select(networkType)
+    const walletAddress = yield * select(address)
 
     const poolKey = newPoolKey(tokenX, tokenY, feeTier)
 
@@ -229,39 +228,26 @@ export function* fetchTicksAndTickMaps(action: PayloadAction<FetchTicksAndTickMa
   }
 }
 
-export function* getPoolsDataForListHandler(): Generator {
-  yield* takeEvery(actions.getPoolsDataForList, fetchPoolsDataForList)
+export async function getPoolsDataForListHandler() {
+  yield * takeEvery(actions.getPoolsDataForList, fetchPoolsDataForList)
 }
 
-export function* initPoolHandler(): Generator {
-  yield* takeLatest(actions.initPool, handleInitPool)
+export async function initPoolHandler() {
+  yield * takeLatest(actions.initPool, handleInitPool)
 }
 
-export function* getPoolDataHandler(): Generator {
-  yield* takeLatest(actions.getPoolData, fetchPoolData)
+export async function getPoolDataHandler() {
+  yield * takeLatest(actions.getPoolData, fetchPoolData)
 }
 
-export function* getPoolKeysHandler(): Generator {
-  yield* takeLatest(actions.getPoolKeys, fetchAllPoolKeys)
+export async function getPoolKeysHandler() {
+  yield * takeLatest(actions.getPoolKeys, fetchAllPools)
 }
 
-export function* getAllPoolsForPairDataHandler(): Generator {
-  yield* takeLatest(actions.getAllPoolsForPairData, fetchAllPoolsForPairData)
+export async function getAllPoolsForPairDataHandler() {
+  yield * takeLatest(actions.getAllPoolsForPairData, fetchAllPoolsForPairData)
 }
 
-export function* getTicksAndTickMapsHandler(): Generator {
-  yield* takeEvery(actions.getTicksAndTickMaps, fetchTicksAndTickMaps)
-}
-
-export function* poolsSaga(): Generator {
-  yield all(
-    [
-      initPoolHandler,
-      getPoolDataHandler,
-      getPoolKeysHandler,
-      getPoolsDataForListHandler,
-      getAllPoolsForPairDataHandler,
-      getTicksAndTickMapsHandler
-    ].map(spawn)
-  )
+export async function getTicksAndTickMapsHandler() {
+  yield * takeEvery(actions.getTicksAndTickMaps, fetchTicksAndTickMaps)
 }

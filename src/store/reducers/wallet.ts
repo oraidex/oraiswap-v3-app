@@ -1,4 +1,4 @@
-import { TokenAmount } from '@/sdk/OraiswapV3.types'
+import { TokenAmount } from '@sdk/OraiswapV3.types'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { PayloadType } from '@store/consts/types'
 
@@ -28,7 +28,7 @@ export interface ITokenBalance {
 //   token?: PublicKey
 //   error?: string
 // }
-export interface IAlephZeroWallet {
+export interface IOraichainWallet {
   status: Status
   address: string
   balance: TokenAmount
@@ -36,7 +36,7 @@ export interface IAlephZeroWallet {
   balanceLoading: boolean
 }
 
-export const defaultState: IAlephZeroWallet = {
+export const defaultState: IOraichainWallet = {
   status: Status.Uninitialized,
   address: '',
   balance: 0n,

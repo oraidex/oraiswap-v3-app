@@ -1,14 +1,10 @@
-import { AddressOrPair } from '@polkadot/api/types'
-import { BN } from '@polkadot/util'
 import { createSelector } from '@reduxjs/toolkit'
-import { POOL_SAFE_TRANSACTION_FEE, SWAP_SAFE_TRANSACTION_FEE } from '@store/consts/static'
-import { IAlephZeroWallet, ITokenBalance, walletSliceName } from '@store/reducers/wallet'
+import { IOraichainWallet, ITokenBalance, walletSliceName } from '@store/reducers/wallet'
 import { AnyProps, keySelectors } from './helpers'
 import { tokens } from './pools'
 import { TokenAmount } from '@/sdk/OraiswapV3.types'
-import { TESTNET_WAZERO_ADDRESS } from '@invariant-labs/a0-sdk'
 
-const store = (s: AnyProps) => s[walletSliceName] as IAlephZeroWallet
+const store = (s: AnyProps) => s[walletSliceName] as IOraichainWallet
 
 export const { address, balance, tokensBalances, status, balanceLoading } = keySelectors(store, [
   'address',
@@ -33,7 +29,7 @@ export const { address, balance, tokensBalances, status, balanceLoading } = keyS
 //     }
 //   })
 
-export const tokenBalance = (tokenAddress: AddressOrPair) =>
+export const tokenBalance = (tokenAddress: string) =>
   createSelector(tokensBalances, tokensAccounts => {
     if (tokensAccounts[tokenAddress.toString()]) {
       return tokensAccounts[tokenAddress.toString()]
@@ -51,7 +47,7 @@ export interface SwapToken {
   balance: TokenAmount
   decimals: bigint
   symbol: string
-  assetAddress: AddressOrPair
+  assetAddress: string
   name: string
   logoURI: string
   isUnknown?: boolean
@@ -62,14 +58,11 @@ export const swapTokens = createSelector(
   tokensBalances,
   tokens,
   balance,
-  (allAccounts, tokens, a0Balance) => {
+  (allAccounts, tokens) => {
     return Object.values(tokens).map(token => ({
       ...token,
       assetAddress: token.address,
-      balance:
-        token.address.toString() === TESTNET_WAZERO_ADDRESS
-          ? BigInt(Math.max(Number(a0Balance - SWAP_SAFE_TRANSACTION_FEE), 0))
-          : allAccounts[token.address.toString()]?.balance ?? 0n
+      balance: allAccounts[token.address.toString()]?.balance ?? 0n
     }))
   }
 )
@@ -78,14 +71,11 @@ export const poolTokens = createSelector(
   tokensBalances,
   tokens,
   balance,
-  (allAccounts, tokens, a0Balance) => {
+  (allAccounts, tokens) => {
     return Object.values(tokens).map(token => ({
       ...token,
       assetAddress: token.address,
-      balance:
-        token.address.toString() === TESTNET_WAZERO_ADDRESS
-          ? BigInt(Math.max(Number(a0Balance - POOL_SAFE_TRANSACTION_FEE), 0))
-          : allAccounts[token.address.toString()]?.balance ?? 0n
+      balance: allAccounts[token.address.toString()]?.balance ?? 0n
     }))
   }
 )
@@ -94,16 +84,13 @@ export const swapTokensDict = createSelector(
   tokensBalances,
   tokens,
   balance,
-  (allAccounts, tokens, a0Balance) => {
+  (allAccounts, tokens) => {
     const swapTokens: Record<string, SwapToken> = {}
     Object.entries(tokens).forEach(([key, val]) => {
       swapTokens[key] = {
         ...val,
         assetAddress: val.address,
-        balance:
-          val.address.toString() === TESTNET_WAZERO_ADDRESS
-            ? BigInt(a0Balance)
-            : allAccounts[val.address.toString()]?.balance ?? BigInt(0)
+        balance: allAccounts[val.address.toString()]?.balance.toString() ?? BigInt(0).toString()
       }
     })
 
@@ -142,11 +129,11 @@ export const canCreateNewPosition = () =>
 
 export type TokenBalances = ITokenBalance & {
   symbol: string
-  usdValue: BN
+  usdValue: bigint
   assetDecimals: number
 }
 
-export const alephZeroWalletSelectors = {
+export const oraichainWalletSelectors = {
   address,
   balance,
   tokensBalances,
@@ -154,4 +141,4 @@ export const alephZeroWalletSelectors = {
   tokenBalance,
   balanceLoading
 }
-export default alephZeroWalletSelectors
+export default oraichainWalletSelectors
