@@ -225,6 +225,8 @@ export const USDT: Token = {
   coingeckoId: 'tether'
 }
 
+export const FAUCET_LIST_TOKEN = [TOKEN1, TOKEN2, ORAI, USDT]
+
 export const DEFAULT_INVARIANT_OPTIONS = {
   storageDepositLimit: null,
   refTime: 100000000000,
