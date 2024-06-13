@@ -5,6 +5,7 @@ import { BTC, ETH, ORAI, Token, TokenPriceData, USDC, USDT, tokensPrices } from 
 import {
   Liquidity,
   LiquidityTick,
+  Percentage,
   Pool,
   PoolKey,
   PoolWithPoolKey,
@@ -33,7 +34,8 @@ import {
   calculateAmountDeltaResult,
   _newPoolKey,
   getMaxTickmapQuerySize,
-  getLiquidityTicksLimit
+  getLiquidityTicksLimit,
+  calculateTick
 } from '../../wasm'
 import { BalanceResponse } from '@oraichain/cw-simulate/dist/modules/bank'
 import { FeeTier } from '@/sdk/OraiswapV3.types'
@@ -900,4 +902,81 @@ export const createLiquidityPlot = (
   }
 
   return isXtoY ? ticksData : ticksData.reverse()
+}
+
+const sqrt = (value: bigint): bigint => {
+  if (value < 0n) {
+    throw 'square root of negative numbers is not supported'
+  }
+
+  if (value < 2n) {
+    return value
+  }
+
+  return newtonIteration(value, 1n)
+}
+
+const newtonIteration = (n: bigint, x0: bigint): bigint => {
+  const x1 = (n / x0 + x0) >> 1n
+  if (x0 === x1 || x0 === x1 - 1n) {
+    return x0
+  }
+  return newtonIteration(n, x1)
+}
+
+export const priceToSqrtPrice = (price: Price): bigint => {
+  return sqrt(price * getSqrtPriceDenominator())
+}
+
+export const calculateSqrtPriceAfterSlippage = (
+  sqrtPrice: SqrtPrice,
+  slippage: Percentage,
+  up: boolean
+): bigint => {
+  if (slippage === 0) {
+    return BigInt(sqrtPrice)
+  }
+
+  const multiplier = getPercentageDenominator() + BigInt(up ? slippage : -slippage)
+  const price = sqrtPriceToPrice(sqrtPrice)
+  const priceWithSlippage = price * multiplier * getPercentageDenominator()
+  const sqrtPriceWithSlippage = priceToSqrtPrice(priceWithSlippage) / getPercentageDenominator()
+
+  return sqrtPriceWithSlippage
+}
+
+export const calculateTokenAmountsWithSlippage = (
+  tickSpacing: bigint,
+  currentSqrtPrice: SqrtPrice,
+  liquidity: Liquidity,
+  lowerTickIndex: bigint,
+  upperTickIndex: bigint,
+  slippage: Percentage,
+  roundingUp: boolean
+): [bigint, bigint] => {
+  const lowerBound = calculateSqrtPriceAfterSlippage(currentSqrtPrice, slippage, false)
+  const upperBound = calculateSqrtPriceAfterSlippage(currentSqrtPrice, slippage, true)
+
+  const currentTickIndex = calculateTick(currentSqrtPrice, tickSpacing)
+
+  const [lowerX, lowerY] = calculateAmountDelta(
+    currentTickIndex,
+    lowerBound,
+    liquidity,
+    roundingUp,
+    upperTickIndex,
+    lowerTickIndex
+  )
+  const [upperX, upperY] = calculateAmountDelta(
+    currentTickIndex,
+    upperBound,
+    liquidity,
+    roundingUp,
+    upperTickIndex,
+    lowerTickIndex
+  )
+
+  const x = lowerX > upperX ? lowerX : upperX
+  const y = lowerY > upperY ? lowerY : upperY
+  return [x, y]
 }
