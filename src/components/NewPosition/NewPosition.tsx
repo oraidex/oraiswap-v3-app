@@ -529,7 +529,7 @@ export const NewPosition: React.FC<INewPosition> = ({
               tokenBIndex !== null &&
               !isWaitingForNewPool &&
               determinePositionTokenBlock(
-                currentPriceSqrt,
+                BigInt(currentPriceSqrt),
                 BigInt(Math.min(Number(leftRange), Number(rightRange))),
                 BigInt(Math.max(Number(leftRange), Number(rightRange))),
                 isXtoY

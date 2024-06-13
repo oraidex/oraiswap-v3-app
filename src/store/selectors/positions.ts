@@ -1,11 +1,11 @@
 import { Token } from '@store/consts/static'
 import { poolKeyToString } from '@store/consts/utils'
-import { PoolWithPoolKey } from '@store/reducers/pools'
 import { createSelector } from 'reselect'
 import { IPositionsStore, positionsSliceName } from '../reducers/positions'
 import { AnyProps, keySelectors } from './helpers'
 import { poolsArraySortedByFees } from './pools'
 import { swapTokens } from './wallet'
+import { PoolWithPoolKey, Position } from '@/sdk/OraiswapV3.types'
 
 const store = (s: AnyProps) => s[positionsSliceName] as IPositionsStore
 
