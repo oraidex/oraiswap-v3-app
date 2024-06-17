@@ -3,7 +3,6 @@ import SingletonOraiswapV3, { integerSafeCast } from '@store/services/contractSi
 import axios from 'axios'
 
 import {
-  SwapError,
   Tickmap,
   calculateSqrtPrice,
   getChunkSize,
@@ -32,7 +31,12 @@ import {
   FeeTier,
   Position,
   SqrtPrice,
-  TokenAmount
+  TokenAmount,
+  SwapError,
+  getGlobalMaxSqrtPrice,
+  getGlobalMinSqrtPrice,
+  CalculateSwapResult,
+  simulateSwap
 } from '../../wasm'
 import { Token } from './static'
 import { PoolWithPoolKey, Tick } from '@/sdk/OraiswapV3.types'
@@ -98,6 +102,8 @@ export const FEE_TIERS: FeeTier[] = [
   calculateFeeTierWithLinearRatio(100)
 ]
 
+export const MAX_SQRT_PRICE = getGlobalMaxSqrtPrice()
+export const MIN_SQRT_PRICE = getGlobalMinSqrtPrice()
 export const MAX_TICKMAP_QUERY_SIZE = getMaxTickmapQuerySize()
 export const LIQUIDITY_TICKS_LIMIT = getLiquidityTicksLimit()
 export const PERCENTAGE_SCALE = getPercentageScale()
@@ -1079,4 +1085,18 @@ export const calculateTokenAmountsWithSlippage = (
   const x = lowerX > upperX ? lowerX : upperX
   const y = lowerY > upperY ? lowerY : upperY
   return [x, y]
+}
+
+export const calculatePriceImpact = (
+  startingSqrtPrice: bigint,
+  endingSqrtPrice: bigint
+): bigint => {
+  const startingPrice = startingSqrtPrice * startingSqrtPrice
+  const endingPrice = endingSqrtPrice * endingSqrtPrice
+  const diff = startingPrice - endingPrice
+
+  const nominator = diff > 0n ? diff : -diff
+  const denominator = startingPrice > endingPrice ? startingPrice : endingPrice
+
+  return (nominator * getPercentageDenominator()) / denominator
 }

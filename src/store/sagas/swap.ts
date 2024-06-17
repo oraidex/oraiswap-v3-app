@@ -9,7 +9,13 @@ import {
   WAZERO_WITHDRAW_OPTIONS
 } from '@store/consts/static'
 import {
+  MAX_SQRT_PRICE,
+  MIN_SQRT_PRICE,
+  PERCENTAGE_DENOMINATOR,
+  PERCENTAGE_SCALE,
   calculateAmountInWithSlippage,
+  calculatePriceImpact,
+  calculateSqrtPriceAfterSlippage,
   createLoaderKey,
   deserializeTickmap,
   findPairs,
@@ -25,6 +31,7 @@ import SingletonOraiswapV3 from '@store/services/contractSingleton'
 import { closeSnackbar } from 'notistack'
 import { all, call, put, select, spawn, takeEvery } from 'typed-redux-saga'
 import { fetchBalances } from './wallet'
+import { SwapError, simulateSwap } from '../../wasm/oraiswap_v3_wasm'
 
 export async function handleSwap(action: PayloadAction<Omit<Swap, 'txid'>>) {
   const { poolKey, tokenFrom, slippage, amountIn, byAmountIn, estimatedPriceAfterSwap, tokenTo } =
@@ -283,13 +290,6 @@ export function* handleSwapWithAZERO(action: PayloadAction<Omit<Swap, 'txid'>>):
   }
 }
 
-export enum SwapError {
-  InsufficientLiquidity,
-  AmountIsZero,
-  NoRouteFound,
-  MaxTicksCrossed,
-  StateOutdated
-}
 
 export function* handleGetSimulateResult(action: PayloadAction<Simulate>) {
   try {
@@ -337,17 +337,17 @@ export function* handleGetSimulateResult(action: PayloadAction<Simulate>) {
     const errors = []
 
     for (const pool of filteredPools) {
-      const xToY = fromToken.toString() === pool.poolKey.token_x
+      const xToY = fromToken.toString() === pool.pool_key.token_x
 
       try {
-        const result = simulateInvariantSwap(
-          deserializeTickmap(allTickmaps[poolKeyToString(pool.poolKey)]),
-          pool.poolKey.fee_tier,
-          allPools[poolKeyToString(pool.poolKey)],
-          allTicks[poolKeyToString(pool.poolKey)],
+        const result = simulateSwap(
+          deserializeTickmap(allTickmaps[poolKeyToString(pool.pool_key)]),
+          pool.pool_key.fee_tier,
+          allPools[poolKeyToString(pool.pool_key)],
+          allTicks[poolKeyToString(pool.pool_key)],
           xToY,
           byAmountIn
-            ? amount - (amount * pool.poolKey.fee_tier.fee) / PERCENTAGE_DENOMINATOR
+            ? amount - (amount * BigInt(pool.pool_key.fee_tier.fee)) / PERCENTAGE_DENOMINATOR
             : amount,
           byAmountIn,
           xToY ? MIN_SQRT_PRICE : MAX_SQRT_PRICE
@@ -377,9 +377,9 @@ export function* handleGetSimulateResult(action: PayloadAction<Simulate>) {
 
         if (calculatedAmountOut > amountOut) {
           amountOut = calculatedAmountOut
-          poolKey = pool.poolKey
+          poolKey = pool.pool_key
           priceImpact = +printBigint(
-            calculatePriceImpact(pool.sqrt_price, result.targetSqrtPrice),
+            calculatePriceImpact(BigInt(pool.pool.sqrt_price), BigInt(result.targetSqrtPrice)),
             PERCENTAGE_SCALE
           )
           targetSqrtPrice = result.targetSqrtPrice
