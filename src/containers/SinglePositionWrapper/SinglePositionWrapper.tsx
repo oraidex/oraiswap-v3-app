@@ -10,7 +10,7 @@ import {
   calculateTokenAmounts,
   createPlaceholderLiquidityPlot,
   getCoingeckoTokenPrice,
-  // getMockedTokenPrice,
+  getMockedTokenPrice,
   poolKeyToString,
   printBigint
 } from '@store/consts/utils'
@@ -66,8 +66,8 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
     if (position?.tokenX && position.tokenY) {
       dispatch(
         poolsActions.getTicksAndTickMaps({
-          tokenFrom: position.tokenX.address,
-          tokenTo: position.tokenY.address,
+          tokenFrom: position.tokenX.assetAddress,
+          tokenTo: position.tokenY.assetAddress,
           allPools
         })
       )
@@ -248,26 +248,26 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
     }
 
     const xId = position.tokenX.coingeckoId ?? ''
-    // if (xId.length) {
-    //   getCoingeckoTokenPrice(xId)
-    //     .then(data => setTokenXPriceData(data))
-    //     .catch(() =>
-    //       setTokenXPriceData(getMockedTokenPrice(position.tokenX.symbol, currentNetwork))
-    //     )
-    // } else {
-    //   setTokenXPriceData(undefined)
-    // }
+    if (xId.length) {
+      getCoingeckoTokenPrice(xId)
+        .then(data => setTokenXPriceData(data))
+        .catch(() =>
+          setTokenXPriceData(getMockedTokenPrice(position.tokenX.symbol, currentNetwork))
+        )
+    } else {
+      setTokenXPriceData(undefined)
+    }
 
     const yId = position.tokenY.coingeckoId ?? ''
-    // if (yId.length) {
-    //   getCoingeckoTokenPrice(yId)
-    //     .then(data => setTokenYPriceData(data))
-    //     .catch(() =>
-    //       setTokenYPriceData(getMockedTokenPrice(position.tokenY.symbol, currentNetwork))
-    //     )
-    // } else {
-    //   setTokenYPriceData(undefined)
-    // }
+    if (yId.length) {
+      getCoingeckoTokenPrice(yId)
+        .then(data => setTokenYPriceData(data))
+        .catch(() =>
+          setTokenYPriceData(getMockedTokenPrice(position.tokenY.symbol, currentNetwork))
+        )
+    } else {
+      setTokenYPriceData(undefined)
+    }
   }, [position])
 
   const copyPoolAddressHandler = (message: string, variant: VariantType) => {
