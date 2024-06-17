@@ -1,9 +1,10 @@
-import { FeeTier, TokenAmount } from '@/sdk/OraiswapV3.types'
+import { FeeTier } from '@/sdk/OraiswapV3.types'
 import {
+  TokenAmount,
   _newPoolKey,
   calculateSqrtPrice,
   getLiquidityByX,
-  getLiquidityByY,
+  getLiquidityByY
 } from '../../wasm'
 import { ProgressState } from '@components/AnimatedButton/AnimatedButton'
 import NewPosition from '@components/NewPosition/NewPosition'
@@ -468,8 +469,6 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     const lowerTick = BigInt(Math.min(left, right))
     const upperTick = BigInt(Math.max(left, right))
 
-    console.log({ lowerTick, upperTick, byX, amount })
-
     try {
       if (byX) {
         const { amount: tokenYAmount, l: positionLiquidity } = getLiquidityByX(
@@ -477,7 +476,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
           lowerTick,
           upperTick,
           poolsData[poolKey]
-            ? poolsData[poolKey].pool.sqrt_price
+            ? BigInt(poolsData[poolKey].pool.sqrt_price)
             : calculateSqrtPrice(midPrice.index),
           true
         )
@@ -494,7 +493,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
         lowerTick,
         upperTick,
         poolsData[poolKey]
-          ? poolsData[poolKey].pool.sqrt_price
+          ? BigInt(poolsData[poolKey].pool.sqrt_price)
           : calculateSqrtPrice(midPrice.index),
         true
       )
@@ -506,11 +505,11 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       return tokenXAmount
     } catch (error) {
       const result = (byX ? getLiquidityByY : getLiquidityByX)(
-        amount,
+        BigInt(amount),
         lowerTick,
         upperTick,
         poolsData[poolKey]
-          ? poolsData[poolKey].pool.sqrt_price
+          ? BigInt(poolsData[poolKey].pool.sqrt_price)
           : calculateSqrtPrice(midPrice.index),
         true
       )
@@ -623,7 +622,9 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       initialIsDiscreteValue={initialIsDiscreteValue}
       onDiscreteChange={setIsDiscreteValue}
       currentPriceSqrt={
-        poolsData[poolKey] ? poolsData[poolKey].pool.sqrt_price : calculateSqrtPrice(midPrice.index)
+        poolsData[poolKey]
+          ? BigInt(poolsData[poolKey].pool.sqrt_price)
+          : calculateSqrtPrice(midPrice.index)
       }
       canCreateNewPool={canUserCreateNewPool}
       canCreateNewPosition={canUserCreateNewPosition}
@@ -677,11 +678,11 @@ export const NewPositionWrapper: React.FC<IProps> = ({
             upperTick: upperTickIndex,
             liquidityDelta: liquidityRef.current,
             spotSqrtPrice: poolsData[poolKey]
-              ? poolsData[poolKey].pool.sqrt_price
+              ? BigInt(poolsData[poolKey].pool.sqrt_price)
               : calculateSqrtPrice(midPrice.index),
             slippageTolerance: slippage,
-            tokenXAmount: xAmount,
-            tokenYAmount: yAmount,
+            tokenXAmount: BigInt(xAmount),
+            tokenYAmount: BigInt(yAmount),
             initPool: poolKey === ''
           })
         )

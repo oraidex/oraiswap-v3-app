@@ -29,8 +29,7 @@ import MarketIdLabel from './MarketIdLabel/MarketIdLabel'
 import PoolInit from './PoolInit/PoolInit'
 import RangeSelector from './RangeSelector/RangeSelector'
 import useStyles from './style'
-import { TokenAmount } from '@/sdk/OraiswapV3.types'
-import { Price, getMaxTick, getMinTick } from '../../wasm'
+import { Price, TokenAmount, getMaxTick, getMinTick } from '../../wasm'
 
 export interface INewPosition {
   initialTokenFrom: string
@@ -266,7 +265,7 @@ export const NewPosition: React.FC<INewPosition> = ({
     ) {
       const deposit = tokenADeposit
       const amount = getOtherTokenAmount(
-        convertBalanceToBigint(deposit, Number(tokens[tokenAIndex].decimals)).toString(),
+        convertBalanceToBigint(deposit, Number(tokens[tokenAIndex].decimals)),
         Number(leftRange),
         Number(rightRange),
         true
@@ -285,7 +284,7 @@ export const NewPosition: React.FC<INewPosition> = ({
     ) {
       const deposit = tokenBDeposit
       const amount = getOtherTokenAmount(
-        convertBalanceToBigint(deposit, Number(tokens[tokenBIndex].decimals)).toString(),
+        convertBalanceToBigint(deposit, Number(tokens[tokenBIndex].decimals)),
         Number(leftRange),
         Number(rightRange),
         false
@@ -307,7 +306,7 @@ export const NewPosition: React.FC<INewPosition> = ({
     if (tokenAIndex !== null && (isXtoY ? rightRange > convertedMid : rightRange < convertedMid)) {
       const deposit = tokenADeposit
       const amount = getOtherTokenAmount(
-        convertBalanceToBigint(deposit, Number(tokens[tokenAIndex].decimals)).toString(),
+        convertBalanceToBigint(deposit, Number(tokens[tokenAIndex].decimals)),
         Number(leftRange),
         Number(rightRange),
         true
@@ -321,7 +320,7 @@ export const NewPosition: React.FC<INewPosition> = ({
     if (tokenBIndex !== null && (isXtoY ? leftRange < convertedMid : leftRange > convertedMid)) {
       const deposit = tokenBDeposit
       const amount = getOtherTokenAmount(
-        convertBalanceToBigint(deposit, Number(tokens[tokenBIndex].decimals)).toString(),
+        convertBalanceToBigint(deposit, Number(tokens[tokenBIndex].decimals)),
         Number(leftRange),
         Number(rightRange),
         false
@@ -500,11 +499,11 @@ export const NewPosition: React.FC<INewPosition> = ({
                 leftRange,
                 rightRange,
                 isXtoY
-                  ? convertBalanceToBigint(tokenADeposit, tokenADecimals).toString()
-                  : convertBalanceToBigint(tokenBDeposit, tokenBDecimals).toString(),
+                  ? convertBalanceToBigint(tokenADeposit, tokenADecimals)
+                  : convertBalanceToBigint(tokenBDeposit, tokenBDecimals),
                 isXtoY
-                  ? convertBalanceToBigint(tokenBDeposit, tokenBDecimals).toString()
-                  : convertBalanceToBigint(tokenADeposit, tokenADecimals).toString(),
+                  ? convertBalanceToBigint(tokenBDeposit, tokenBDecimals)
+                  : convertBalanceToBigint(tokenADeposit, tokenADecimals),
                 BigInt(+slippTolerance * Number(PERCENTAGE_DENOMINATOR)) / 100n
               )
             }
@@ -519,7 +518,7 @@ export const NewPosition: React.FC<INewPosition> = ({
               setTokenADeposit(value)
               setTokenBDeposit(
                 getOtherTokenAmount(
-                  convertBalanceToBigint(value, tokens[tokenAIndex].decimals).toString(),
+                  convertBalanceToBigint(value, tokens[tokenAIndex].decimals),
                   Number(leftRange),
                   Number(rightRange),
                   true
@@ -549,7 +548,7 @@ export const NewPosition: React.FC<INewPosition> = ({
               setTokenBDeposit(value)
               setTokenADeposit(
                 getOtherTokenAmount(
-                  convertBalanceToBigint(value, Number(tokens[tokenBIndex].decimals)).toString(),
+                  convertBalanceToBigint(value, Number(tokens[tokenBIndex].decimals)),
                   Number(leftRange),
                   Number(rightRange),
                   false

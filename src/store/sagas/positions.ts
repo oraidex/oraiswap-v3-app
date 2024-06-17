@@ -54,6 +54,8 @@ function* handleInitPosition(action: PayloadAction<InitPositionData>): Generator
       })
     )
 
+    console.log({ slippageTolerance: slippageTolerance * BigInt(1e14) })
+
     const txs = []
     const [xAmountWithSlippage, yAmountWithSlippage] = calculateTokenAmountsWithSlippage(
       BigInt(poolKeyData.fee_tier.tick_spacing),
@@ -89,23 +91,15 @@ function* handleInitPosition(action: PayloadAction<InitPositionData>): Generator
     //   txs.push(createPoolTx)
     //   // yield* call(fetchAllPools)
     // }
-    console.log({
-      liquidityDelta: liquidityDelta.toString(),
-      lowerTick: Number(lowerTick),
-      poolKey: poolKeyData,
-      slippageLimitLower: xAmountWithSlippage.toString(),
-      slippageLimitUpper: yAmountWithSlippage.toString(),
-      upperTick: Number(upperTick)
-    })
 
     const tx = yield SingletonOraiswapV3.dex.createPosition({
       liquidityDelta: liquidityDelta.toString(),
       lowerTick: Number(lowerTick),
       poolKey: poolKeyData,
-      // slippageLimitLower: xAmountWithSlippage.toString(),
-      // slippageLimitUpper: yAmountWithSlippage.toString(),
-      slippageLimitLower: '557153061',
-      slippageLimitUpper: '240282366920938463463374607431768211455',
+      slippageLimitLower: xAmountWithSlippage.toString(),
+      slippageLimitUpper: yAmountWithSlippage.toString(),
+      // slippageLimitLower: '557153061',
+      // slippageLimitUpper: '240282366920938463463374607431768211455',
       upperTick: Number(upperTick)
     })
     txs.push(tx)
@@ -246,7 +240,7 @@ export function* handleGetCurrentPlotTicks(
       const data = createPlaceholderLiquidityPlot(
         action.payload.isXtoY,
         0,
-        poolKey.feeTier.tickSpacing,
+        BigInt(poolKey.fee_tier.tick_spacing),
         xDecimal,
         yDecimal
       )
@@ -256,7 +250,7 @@ export function* handleGetCurrentPlotTicks(
 
     const ticksData = createLiquidityPlot(
       rawTicks,
-      poolKey.feeTier.tickSpacing,
+      BigInt(poolKey.fee_tier.tick_spacing),
       isXtoY,
       xDecimal,
       yDecimal
@@ -267,7 +261,7 @@ export function* handleGetCurrentPlotTicks(
     const data = createPlaceholderLiquidityPlot(
       action.payload.isXtoY,
       10,
-      poolKey.feeTier.tickSpacing,
+      BigInt(poolKey.fee_tier.tick_spacing),
       xDecimal,
       yDecimal
     )
