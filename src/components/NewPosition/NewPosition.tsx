@@ -7,6 +7,7 @@ import backIcon from '@static/svg/back-arrow.svg'
 import settingIcon from '@static/svg/settings.svg'
 import { BestTier, PositionOpeningMethod, TokenPriceData } from '@store/consts/static'
 import {
+  PERCENTAGE_DENOMINATOR,
   PositionTokenBlock,
   calcPrice,
   calculateConcentrationRange,
@@ -29,7 +30,7 @@ import PoolInit from './PoolInit/PoolInit'
 import RangeSelector from './RangeSelector/RangeSelector'
 import useStyles from './style'
 import { TokenAmount } from '@/sdk/OraiswapV3.types'
-import { getMaxTick, getMinTick } from '../../wasm'
+import { Price, getMaxTick, getMinTick } from '../../wasm'
 
 export interface INewPosition {
   initialTokenFrom: string
@@ -265,7 +266,7 @@ export const NewPosition: React.FC<INewPosition> = ({
     ) {
       const deposit = tokenADeposit
       const amount = getOtherTokenAmount(
-        convertBalanceToBigint(deposit, Number(tokens[tokenAIndex].decimals)),
+        convertBalanceToBigint(deposit, Number(tokens[tokenAIndex].decimals)).toString(),
         Number(leftRange),
         Number(rightRange),
         true
@@ -284,7 +285,7 @@ export const NewPosition: React.FC<INewPosition> = ({
     ) {
       const deposit = tokenBDeposit
       const amount = getOtherTokenAmount(
-        convertBalanceToBigint(deposit, Number(tokens[tokenBIndex].decimals)),
+        convertBalanceToBigint(deposit, Number(tokens[tokenBIndex].decimals)).toString(),
         Number(leftRange),
         Number(rightRange),
         false
@@ -297,15 +298,16 @@ export const NewPosition: React.FC<INewPosition> = ({
     }
   }
 
-  const onChangeMidPrice = (mid: bigint) => {
+  const onChangeMidPrice = (mid: Price) => {
+    const convertedMid = BigInt(mid)
     setMidPrice({
-      index: mid,
-      x: calcPrice(mid, isXtoY, xDecimal, yDecimal)
+      index: convertedMid,
+      x: calcPrice(convertedMid, isXtoY, xDecimal, yDecimal)
     })
-    if (tokenAIndex !== null && (isXtoY ? rightRange > mid : rightRange < mid)) {
+    if (tokenAIndex !== null && (isXtoY ? rightRange > convertedMid : rightRange < convertedMid)) {
       const deposit = tokenADeposit
       const amount = getOtherTokenAmount(
-        convertBalanceToBigint(deposit, Number(tokens[tokenAIndex].decimals)),
+        convertBalanceToBigint(deposit, Number(tokens[tokenAIndex].decimals)).toString(),
         Number(leftRange),
         Number(rightRange),
         true
@@ -316,10 +318,10 @@ export const NewPosition: React.FC<INewPosition> = ({
         return
       }
     }
-    if (tokenBIndex !== null && (isXtoY ? leftRange < mid : leftRange > mid)) {
+    if (tokenBIndex !== null && (isXtoY ? leftRange < convertedMid : leftRange > convertedMid)) {
       const deposit = tokenBDeposit
       const amount = getOtherTokenAmount(
-        convertBalanceToBigint(deposit, Number(tokens[tokenBIndex].decimals)),
+        convertBalanceToBigint(deposit, Number(tokens[tokenBIndex].decimals)).toString(),
         Number(leftRange),
         Number(rightRange),
         false
@@ -498,11 +500,11 @@ export const NewPosition: React.FC<INewPosition> = ({
                 leftRange,
                 rightRange,
                 isXtoY
-                  ? convertBalanceToBigint(tokenADeposit, tokenADecimals)
-                  : convertBalanceToBigint(tokenBDeposit, tokenBDecimals),
+                  ? convertBalanceToBigint(tokenADeposit, tokenADecimals).toString()
+                  : convertBalanceToBigint(tokenBDeposit, tokenBDecimals).toString(),
                 isXtoY
-                  ? convertBalanceToBigint(tokenBDeposit, tokenBDecimals)
-                  : convertBalanceToBigint(tokenADeposit, tokenADecimals),
+                  ? convertBalanceToBigint(tokenBDeposit, tokenBDecimals).toString()
+                  : convertBalanceToBigint(tokenADeposit, tokenADecimals).toString(),
                 BigInt(+slippTolerance * Number(PERCENTAGE_DENOMINATOR)) / 100n
               )
             }
@@ -517,7 +519,7 @@ export const NewPosition: React.FC<INewPosition> = ({
               setTokenADeposit(value)
               setTokenBDeposit(
                 getOtherTokenAmount(
-                  convertBalanceToBigint(value, tokens[tokenAIndex].decimals),
+                  convertBalanceToBigint(value, tokens[tokenAIndex].decimals).toString(),
                   Number(leftRange),
                   Number(rightRange),
                   true
@@ -547,7 +549,7 @@ export const NewPosition: React.FC<INewPosition> = ({
               setTokenBDeposit(value)
               setTokenADeposit(
                 getOtherTokenAmount(
-                  convertBalanceToBigint(value, Number(tokens[tokenBIndex].decimals)),
+                  convertBalanceToBigint(value, Number(tokens[tokenBIndex].decimals)).toString(),
                   Number(leftRange),
                   Number(rightRange),
                   false
@@ -559,7 +561,7 @@ export const NewPosition: React.FC<INewPosition> = ({
               tokenBIndex !== null &&
               !isWaitingForNewPool &&
               determinePositionTokenBlock(
-                currentPriceSqrt,
+                BigInt(currentPriceSqrt),
                 BigInt(Math.min(Number(leftRange), Number(rightRange))),
                 BigInt(Math.max(Number(leftRange), Number(rightRange))),
                 isXtoY

@@ -4,7 +4,6 @@ import {
   calculateSqrtPrice,
   getLiquidityByX,
   getLiquidityByY,
-  getMinTick
 } from '../../wasm'
 import { ProgressState } from '@components/AnimatedButton/AnimatedButton'
 import NewPosition from '@components/NewPosition/NewPosition'
@@ -20,6 +19,8 @@ import {
   calcPrice,
   calcYPerXPriceBySqrtPrice,
   createPlaceholderLiquidityPlot,
+  getCoingeckoTokenPrice,
+  getMockedTokenPrice,
   poolKeyToString,
   printBigint
 } from '@store/consts/utils'
@@ -414,17 +415,17 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     }
 
     const id = tokens[tokenAIndex].coingeckoId ?? ''
-    // if (id.length) {
-    //   setPriceALoading(true)
-    //   getCoingeckoTokenPrice(id)
-    //     .then(data => setTokenAPriceData(data))
-    //     .catch(() =>
-    //       setTokenAPriceData(getMockedTokenPrice(tokens[tokenAIndex].symbol, currentNetwork))
-    //     )
-    //     .finally(() => setPriceALoading(false))
-    // } else {
-    //   setTokenAPriceData(undefined)
-    // }
+    if (id.length) {
+      setPriceALoading(true)
+      getCoingeckoTokenPrice(id)
+        .then(data => setTokenAPriceData(data))
+        .catch(() =>
+          setTokenAPriceData(getMockedTokenPrice(tokens[tokenAIndex].symbol, currentNetwork))
+        )
+        .finally(() => setPriceALoading(false))
+    } else {
+      setTokenAPriceData(undefined)
+    }
   }, [tokenAIndex])
 
   const [tokenBPriceData, setTokenBPriceData] = useState<TokenPriceData | undefined>(undefined)
@@ -436,17 +437,17 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     }
 
     const id = tokens[tokenBIndex].coingeckoId ?? ''
-    // if (id.length) {
-    //   setPriceBLoading(true)
-    //   getCoingeckoTokenPrice(id)
-    //     .then(data => setTokenBPriceData(data))
-    //     .catch(() =>
-    //       setTokenBPriceData(getMockedTokenPrice(tokens[tokenBIndex].symbol, currentNetwork))
-    //     )
-    //     .finally(() => setPriceBLoading(false))
-    // } else {
-    //   setTokenBPriceData(undefined)
-    // }
+    if (id.length) {
+      setPriceBLoading(true)
+      getCoingeckoTokenPrice(id)
+        .then(data => setTokenBPriceData(data))
+        .catch(() =>
+          setTokenBPriceData(getMockedTokenPrice(tokens[tokenBIndex].symbol, currentNetwork))
+        )
+        .finally(() => setPriceBLoading(false))
+    } else {
+      setTokenBPriceData(undefined)
+    }
   }, [tokenBIndex])
 
   const initialSlippage = localStorage.getItem('INVARIANT_NEW_POSITION_SLIPPAGE') ?? '1'
@@ -466,6 +467,8 @@ export const NewPositionWrapper: React.FC<IProps> = ({
 
     const lowerTick = BigInt(Math.min(left, right))
     const upperTick = BigInt(Math.max(left, right))
+
+    console.log({ lowerTick, upperTick, byX, amount })
 
     try {
       if (byX) {

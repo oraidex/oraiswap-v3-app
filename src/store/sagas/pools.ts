@@ -31,6 +31,8 @@ export function* fetchPoolsDataForList(action: PayloadAction<ListPoolsRequest>) 
   console.log('fetchPoolsDataForList', action.payload)
   const pools = yield* call(getPoolsByPoolKeys, action.payload.poolKeys)
 
+  console.log('pools', pools)
+
   const allTokens = yield* select(tokens)
   const unknownTokens = new Set(
     action.payload.poolKeys.flatMap(({ token_x, token_y }) =>
@@ -170,8 +172,12 @@ export function* fetchAllPoolsForPairData(action: PayloadAction<PairTokens>) {
 export function* fetchTicksAndTickMaps(action: PayloadAction<FetchTicksAndTickMaps>) {
   const { tokenFrom, tokenTo, allPools } = action.payload
 
+  console.log('fetchTicksAndTickMaps', tokenFrom, tokenTo)
+
   try {
     const pools = findPairs(tokenFrom.toString(), tokenTo.toString(), allPools)
+
+    console.log('pools to fetch tick and tickmap', pools)
 
     const tickmapCalls = pools.map(pool => call(getFullTickmap, pool.pool_key))
 
