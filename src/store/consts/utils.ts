@@ -84,11 +84,7 @@ const isObject = (value: any): boolean => {
 }
 
 export const newPoolKey = (token0: string, token1: string, feeTier: FeeTier): PoolKey => {
-  return _newPoolKey(
-    token0,
-    token1,
-    _newFeeTier(feeTier.fee, integerSafeCast(feeTier.tick_spacing))
-  )
+  return _newPoolKey(token0, token1, _newFeeTier(feeTier.fee, feeTier.tick_spacing))
 }
 
 export const calculateFeeTierWithLinearRatio = (tickCount: number): FeeTier => {
@@ -446,15 +442,15 @@ export const parseFeeToPathFee = (fee: bigint): string => {
   return parsedFee.slice(0, parsedFee.length - 2) + '_' + parsedFee.slice(parsedFee.length - 2)
 }
 
-export const getPoolsByPoolKeys = async (poolKeys: PoolKey[]): Promise<Pool[]> => {
+export const getPoolsByPoolKeys = async (poolKeys: PoolKey[]): Promise<PoolWithPoolKey[]> => {
   const promises = poolKeys.map(({ token_x, token_y, fee_tier }) =>
     SingletonOraiswapV3.dex.pool({ token0: token_x, token1: token_y, feeTier: fee_tier })
   )
   const pools = await Promise.all(promises)
 
   return pools.map((pool, index) => ({
-    ...pool,
-    poolKey: poolKeys[index]
+    pool,
+    pool_key: poolKeys[index]
   }))
 }
 
@@ -797,7 +793,7 @@ export const calculateAmountInWithSlippage = (
   return BigInt(Math.ceil(amountIn))
 }
 
-export const sqrtPriceToPrice = (sqrtPrice: SqrtPrice | bigint): Price => {
+export const sqrtPriceToPrice = (sqrtPrice: SqrtPrice | bigint): bigint => {
   return (BigInt(sqrtPrice) * BigInt(sqrtPrice)) / getSqrtPriceDenominator()
 }
 
@@ -926,7 +922,7 @@ const newtonIteration = (n: bigint, x0: bigint): bigint => {
   return newtonIteration(n, x1)
 }
 
-export const priceToSqrtPrice = (price: Price): bigint => {
+export const priceToSqrtPrice = (price: bigint): bigint => {
   return sqrt(price * getSqrtPriceDenominator())
 }
 

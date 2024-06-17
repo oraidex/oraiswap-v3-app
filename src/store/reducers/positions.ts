@@ -1,4 +1,4 @@
-import { PoolKey, Position, SqrtPrice, Tick, TokenAmount } from '@/sdk/OraiswapV3.types'
+import { Liquidity, PoolKey, Position, SqrtPrice, Tick, TokenAmount } from '../../wasm'
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { PayloadType } from '@store/consts/types'
 
@@ -40,7 +40,7 @@ export interface InitPositionData {
   poolKeyData: PoolKey
   lowerTick: bigint
   upperTick: bigint
-  liquidityDelta: bigint
+  liquidityDelta: Liquidity
   spotSqrtPrice: SqrtPrice
   slippageTolerance: bigint
   tokenXAmount: TokenAmount
