@@ -28,8 +28,7 @@ import { closeSnackbar } from 'notistack'
 import { all, call, fork, join, put, select, spawn, takeEvery, takeLatest } from 'typed-redux-saga'
 import { fetchTicksAndTickMaps } from './pools'
 import { fetchBalances } from './wallet'
-import * as OraiswapV3Wasm from '../../wasm'
-import { PoolKey } from '../../wasm'
+import { PoolKey, calculateSqrtPrice } from '@wasm'
 
 function* handleInitPosition(action: PayloadAction<InitPositionData>): Generator {
   const {
@@ -77,7 +76,7 @@ function* handleInitPosition(action: PayloadAction<InitPositionData>): Generator
     txs.push(YTokenTx)
     let initTick = 0
 
-    let initSqrtPrice = OraiswapV3Wasm.calculateSqrtPrice(BigInt(initTick))
+    let initSqrtPrice = calculateSqrtPrice(BigInt(initTick))
 
     // if (initPool) {
     //   const createPoolTx = yield SingletonOraiswapV3.dex.createPool(

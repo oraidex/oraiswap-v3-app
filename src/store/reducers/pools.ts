@@ -1,5 +1,5 @@
 import { PoolWithPoolKey } from '@/sdk/OraiswapV3.types'
-import { FeeTier, LiquidityTick, Pool, PoolKey, Tick, Tickmap } from '../../wasm'
+import { FeeTier, LiquidityTick, Pool, PoolKey, Tick, Tickmap } from '@wasm'
 
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { ORAI, TOKEN1, TOKEN2, Token, USDT } from '@store/consts/static'

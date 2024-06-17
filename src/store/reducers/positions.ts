@@ -1,4 +1,4 @@
-import { Liquidity, PoolKey, Position, SqrtPrice, Tick, TokenAmount } from '../../wasm'
+import { Liquidity, PoolKey, Position, SqrtPrice, Tick, TokenAmount } from '@wasm'
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { PayloadType } from '@store/consts/types'
 

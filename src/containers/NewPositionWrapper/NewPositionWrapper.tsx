@@ -5,7 +5,7 @@ import {
   calculateSqrtPrice,
   getLiquidityByX,
   getLiquidityByY
-} from '../../wasm'
+} from '@wasm'
 import { ProgressState } from '@components/AnimatedButton/AnimatedButton'
 import NewPosition from '@components/NewPosition/NewPosition'
 
