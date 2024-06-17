@@ -815,26 +815,18 @@ export const getAllLiquidityTicks = async (
 ): Promise<LiquidityTick[]> => {
   const ticks: number[] = []
 
-  const testTickMap: Tickmap = {
-    bitmap: new Map<bigint, bigint>([
-      [3465n, 281474976710656n],
-      [3466n, 16n]
-    ])
-  }
-
-  testTickMap.bitmap.forEach((chunk, chunkIndex) => {
+  tickmap.bitmap.forEach((chunk, chunkIndex) => {
     console.log({ chunkIndex, chunk })
     for (let i = 0; i < 64; i++) {
+      console.log(chunk, Number(chunk) & (1 << i))
       if ((Number(chunk) & (1 << i)) !== 0) {
         console.log({ chunkIndex, i, tickSpacing: 1 })
-        console.log("posToTick", positionToTick(chunkIndex, i, 1))
+        console.log('posToTick', positionToTick(chunkIndex, i, 1))
         const tickIndex = positionToTick(chunkIndex, i, 1)
         ticks.push(Number(tickIndex.toString()))
       }
     }
   })
-
-  console.log({ ticks })
 
   return SingletonOraiswapV3.dex.liquidityTicks({ poolKey, tickIndexes: ticks })
 }
