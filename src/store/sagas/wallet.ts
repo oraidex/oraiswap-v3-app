@@ -308,11 +308,10 @@ export function* handleDisconnect(): Generator {
 }
 
 export function* fetchBalances(tokens: string[]): Generator {
-  const walletAddress = yield* select(address)
   const balance = yield* call(getBalance, SingletonOraiswapV3.dex.sender)
   yield* put(walletActions.setBalance(balance))
 
-  const tokenBalances = yield* call(getTokenBalances, tokens, api, Network, walletAddress)
+  const tokenBalances = yield* call(getTokenBalances, tokens)
   yield* put(
     walletActions.addTokenBalances(
       tokenBalances.map(([address, balance]) => {
