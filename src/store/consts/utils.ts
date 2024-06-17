@@ -3,7 +3,6 @@ import SingletonOraiswapV3, { integerSafeCast } from '@store/services/contractSi
 import axios from 'axios'
 
 import {
-  Price,
   SwapError,
   Tickmap,
   calculateSqrtPrice,
@@ -83,12 +82,7 @@ const isObject = (value: any): boolean => {
 }
 
 export const newPoolKey = (token0: string, token1: string, feeTier: FeeTier): PoolKey => {
-  return _newPoolKey(
-    token0,
-    token1,
-    // _newFeeTier(feeTier.fee, integerSafeCast(feeTier.tick_spacing))
-    _newFeeTier(feeTier.fee, BigInt(feeTier.tick_spacing))
-  )
+  return _newPoolKey(token0, token1, _newFeeTier(feeTier.fee, feeTier.tick_spacing))
 }
 
 export const calculateFeeTierWithLinearRatio = (tickCount: number): FeeTier => {
@@ -519,6 +513,10 @@ export const getPoolKeys = async (): Promise<PoolKey[]> => {
   const poolKeys: PoolKey[] = pools.map(pool => pool.pool_key)
   console.log('poolKeys', poolKeys)
   return poolKeys
+  // return pools.map((pool, index) => ({
+  //   pool,
+  //   pool_key: poolKeys[index]
+  // }))
 }
 
 export const poolKeyToString = (poolKey: PoolKey): string => {
@@ -880,8 +878,8 @@ export const calculateAmountInWithSlippage = (
   return BigInt(Math.ceil(amountIn))
 }
 
-export const sqrtPriceToPrice = (sqrtPrice: SqrtPrice | bigint): Price => {
-  return ((BigInt(sqrtPrice) * BigInt(sqrtPrice)) / getSqrtPriceDenominator()).toString()
+export const sqrtPriceToPrice = (sqrtPrice: SqrtPrice | bigint): bigint => {
+  return (BigInt(sqrtPrice) * BigInt(sqrtPrice)) / getSqrtPriceDenominator()
 }
 
 export interface LiquidityBreakpoint {
@@ -1009,8 +1007,8 @@ const newtonIteration = (n: bigint, x0: bigint): bigint => {
   return newtonIteration(n, x1)
 }
 
-export const priceToSqrtPrice = (price: Price): bigint => {
-  return sqrt(BigInt(price) * getSqrtPriceDenominator())
+export const priceToSqrtPrice = (price: bigint): bigint => {
+  return sqrt(price * getSqrtPriceDenominator())
 }
 
 export const calculateSqrtPriceAfterSlippage = (
@@ -1025,7 +1023,7 @@ export const calculateSqrtPriceAfterSlippage = (
   const multiplier = getPercentageDenominator() + BigInt(up ? slippage : -slippage)
   const price = sqrtPriceToPrice(sqrtPrice)
   const priceWithSlippage = BigInt(price) * multiplier * getPercentageDenominator()
-  const sqrtPriceWithSlippage = priceToSqrtPrice(priceWithSlippage.toString()) / getPercentageDenominator()
+  const sqrtPriceWithSlippage = priceToSqrtPrice(priceWithSlippage) / getPercentageDenominator()
 
   return sqrtPriceWithSlippage
 }

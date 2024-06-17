@@ -454,45 +454,6 @@ export interface Config {
 
 export type SwapError = "NotAdmin" | "NotFeeReceiver" | "PoolAlreadyExist" | "PoolNotFound" | "TickAlreadyExist" | "InvalidTickIndexOrTickSpacing" | "PositionNotFound" | "TickNotFound" | "FeeTierNotFound" | "PoolKeyNotFound" | "AmountIsZero" | "WrongLimit" | "PriceLimitReached" | "NoGainSwap" | "InvalidTickSpacing" | "FeeTierAlreadyExist" | "PoolKeyAlreadyExist" | "UnauthorizedFeeReceiver" | "ZeroLiquidity" | "TransferError" | "TokensAreSame" | "AmountUnderMinimumAmountOut" | "InvalidFee" | "NotEmptyTickDeinitialization" | "InvalidInitTick" | "InvalidInitSqrtPrice" | "TickLimitReached";
 
-export interface CreatePositionEvent {
-    timestamp: string;
-    address: string;
-    pool: PoolKey;
-    liquidity: Liquidity;
-    lower_tick: number;
-    upper_tick: number;
-    current_sqrt_price: SqrtPrice;
-}
-
-export interface CrossTickEvent {
-    timestamp: string;
-    address: string;
-    pool: PoolKey;
-    indexes: number[];
-}
-
-export interface RemovePositionEvent {
-    timestamp: string;
-    address: string;
-    pool: PoolKey;
-    liquidity: Liquidity;
-    lower_tick: number;
-    upper_tick: number;
-    current_sqrt_price: SqrtPrice;
-}
-
-export interface SwapEvent {
-    timestamp: string;
-    address: string;
-    pool: PoolKey;
-    amount_in: TokenAmount;
-    amount_out: TokenAmount;
-    fee: TokenAmount;
-    start_sqrt_price: SqrtPrice;
-    target_sqrt_price: SqrtPrice;
-    x_to_y: boolean;
-}
-
 export interface FeeTier {
     fee: Percentage;
     tick_spacing: number;
@@ -506,8 +467,8 @@ export interface Pool {
     fee_growth_global_y: FeeGrowth;
     fee_protocol_token_x: TokenAmount;
     fee_protocol_token_y: TokenAmount;
-    start_timestamp: string;
-    last_timestamp: string;
+    start_timestamp: number;
+    last_timestamp: number;
     fee_receiver: string;
 }
 
@@ -524,7 +485,7 @@ export interface Position {
     upper_tick_index: number;
     fee_growth_inside_x: FeeGrowth;
     fee_growth_inside_y: FeeGrowth;
-    last_block_number: string;
+    last_block_number: number;
     tokens_owed_x: TokenAmount;
     tokens_owed_y: TokenAmount;
 }
@@ -537,14 +498,14 @@ export interface Tick {
     sqrt_price: SqrtPrice;
     fee_growth_outside_x: FeeGrowth;
     fee_growth_outside_y: FeeGrowth;
-    seconds_outside: string;
+    seconds_outside: number;
 }
 
 export interface PositionTick {
     index: number;
     fee_growth_outside_x: FeeGrowth;
     fee_growth_outside_y: FeeGrowth;
-    seconds_outside: string;
+    seconds_outside: number;
 }
 
 export interface LiquidityTick {
