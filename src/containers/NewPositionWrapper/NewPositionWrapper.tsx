@@ -469,16 +469,6 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     const lowerTick = BigInt(Math.min(left, right))
     const upperTick = BigInt(Math.max(left, right))
 
-    console.log({
-      amount,
-      lowerTick,
-      upperTick,
-      byX,
-      key: poolsData[poolKey]
-        ? poolsData[poolKey].pool.sqrt_price
-        : calculateSqrtPrice(midPrice.index)
-    })
-
     try {
       if (byX) {
         const { amount: tokenYAmount, l: positionLiquidity } = getLiquidityByX(
@@ -515,11 +505,11 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       return tokenXAmount
     } catch (error) {
       const result = (byX ? getLiquidityByY : getLiquidityByX)(
-        amount,
+        BigInt(amount),
         lowerTick,
         upperTick,
         poolsData[poolKey]
-          ? poolsData[poolKey].pool.sqrt_price
+          ? BigInt(poolsData[poolKey].pool.sqrt_price)
           : calculateSqrtPrice(midPrice.index),
         true
       )
@@ -632,7 +622,9 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       initialIsDiscreteValue={initialIsDiscreteValue}
       onDiscreteChange={setIsDiscreteValue}
       currentPriceSqrt={
-        poolsData[poolKey] ? poolsData[poolKey].pool.sqrt_price : calculateSqrtPrice(midPrice.index)
+        poolsData[poolKey]
+          ? BigInt(poolsData[poolKey].pool.sqrt_price)
+          : calculateSqrtPrice(midPrice.index)
       }
       canCreateNewPool={canUserCreateNewPool}
       canCreateNewPosition={canUserCreateNewPosition}
@@ -686,11 +678,11 @@ export const NewPositionWrapper: React.FC<IProps> = ({
             upperTick: upperTickIndex,
             liquidityDelta: liquidityRef.current,
             spotSqrtPrice: poolsData[poolKey]
-              ? poolsData[poolKey].pool.sqrt_price
+              ? BigInt(poolsData[poolKey].pool.sqrt_price)
               : calculateSqrtPrice(midPrice.index),
             slippageTolerance: slippage,
-            tokenXAmount: xAmount,
-            tokenYAmount: yAmount,
+            tokenXAmount: BigInt(xAmount),
+            tokenYAmount: BigInt(yAmount),
             initPool: poolKey === ''
           })
         )

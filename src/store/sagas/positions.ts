@@ -55,6 +55,8 @@ function* handleInitPosition(action: PayloadAction<InitPositionData>): Generator
       })
     )
 
+    console.log({ slippageTolerance: slippageTolerance * BigInt(1e14) })
+
     const txs = []
     const [xAmountWithSlippage, yAmountWithSlippage] = calculateTokenAmountsWithSlippage(
       BigInt(poolKeyData.fee_tier.tick_spacing),
@@ -90,23 +92,15 @@ function* handleInitPosition(action: PayloadAction<InitPositionData>): Generator
     //   txs.push(createPoolTx)
     //   // yield* call(fetchAllPools)
     // }
-    console.log({
-      liquidityDelta: liquidityDelta.toString(),
-      lowerTick: Number(lowerTick),
-      poolKey: poolKeyData,
-      slippageLimitLower: xAmountWithSlippage.toString(),
-      slippageLimitUpper: yAmountWithSlippage.toString(),
-      upperTick: Number(upperTick)
-    })
 
     const tx = yield SingletonOraiswapV3.dex.createPosition({
       liquidityDelta: liquidityDelta.toString(),
       lowerTick: Number(lowerTick),
       poolKey: poolKeyData,
-      // slippageLimitLower: xAmountWithSlippage.toString(),
-      // slippageLimitUpper: yAmountWithSlippage.toString(),
-      slippageLimitLower: '557153061',
-      slippageLimitUpper: '240282366920938463463374607431768211455',
+      slippageLimitLower: xAmountWithSlippage.toString(),
+      slippageLimitUpper: yAmountWithSlippage.toString(),
+      // slippageLimitLower: '557153061',
+      // slippageLimitUpper: '240282366920938463463374607431768211455',
       upperTick: Number(upperTick)
     })
     txs.push(tx)
