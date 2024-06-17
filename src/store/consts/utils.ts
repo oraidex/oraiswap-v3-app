@@ -24,7 +24,6 @@ import {
   getLiquidityTicksLimit,
   calculateTick,
   Liquidity,
-  LiquidityTick,
   Percentage,
   Pool,
   PoolKey,
@@ -40,7 +39,7 @@ import {
   simulateSwap
 } from '../../wasm'
 import { Token, TokenPriceData } from './static'
-import { PoolWithPoolKey, Tick } from '@/sdk/OraiswapV3.types'
+import { LiquidityTick, PoolWithPoolKey, Tick } from '@/sdk/OraiswapV3.types'
 
 export enum Network {
   Local = 'Local',
@@ -815,18 +814,14 @@ export const getAllLiquidityTicks = async (
 ): Promise<LiquidityTick[]> => {
   const ticks: number[] = []
 
-  tickmap.bitmap.forEach((chunk, chunkIndex) => {
-    console.log({ chunkIndex, chunk })
+  for (const [chunkIndex, chunk] of tickmap.bitmap.entries()) {
     for (let i = 0; i < 64; i++) {
-      console.log(chunk, Number(chunk) & (1 << i))
-      if ((Number(chunk) & (1 << i)) !== 0) {
-        console.log({ chunkIndex, i, tickSpacing: 1 })
-        console.log('posToTick', positionToTick(chunkIndex, i, 1))
-        const tickIndex = positionToTick(chunkIndex, i, 1)
+      if ((chunk & (1n << BigInt(i))) != 0n) {
+        const tickIndex = positionToTick(Number(chunkIndex), i, poolKey.fee_tier.tick_spacing)
         ticks.push(Number(tickIndex.toString()))
       }
     }
-  })
+  }
 
   return SingletonOraiswapV3.dex.liquidityTicks({ poolKey, tickIndexes: ticks })
 }
@@ -955,7 +950,7 @@ export const calculateLiquidityBreakpoints = (
   return ticks.map(tick => {
     currentLiquidity = currentLiquidity + BigInt(tick.liquidity_change) * (tick.sign ? 1n : -1n)
     return {
-      liquidity: currentLiquidity.toString(),
+      liquidity: currentLiquidity,
       index: BigInt(tick.index)
     }
   })

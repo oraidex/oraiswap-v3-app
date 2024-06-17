@@ -1,9 +1,10 @@
-import { FeeTier, TokenAmount } from '@/sdk/OraiswapV3.types'
+import { FeeTier } from '@/sdk/OraiswapV3.types'
 import {
+  TokenAmount,
   _newPoolKey,
   calculateSqrtPrice,
   getLiquidityByX,
-  getLiquidityByY,
+  getLiquidityByY
 } from '../../wasm'
 import { ProgressState } from '@components/AnimatedButton/AnimatedButton'
 import NewPosition from '@components/NewPosition/NewPosition'
@@ -468,7 +469,15 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     const lowerTick = BigInt(Math.min(left, right))
     const upperTick = BigInt(Math.max(left, right))
 
-    console.log({ lowerTick, upperTick, byX, amount })
+    console.log({
+      amount,
+      lowerTick,
+      upperTick,
+      byX,
+      key: poolsData[poolKey]
+        ? poolsData[poolKey].pool.sqrt_price
+        : calculateSqrtPrice(midPrice.index)
+    })
 
     try {
       if (byX) {
@@ -477,7 +486,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
           lowerTick,
           upperTick,
           poolsData[poolKey]
-            ? poolsData[poolKey].pool.sqrt_price
+            ? BigInt(poolsData[poolKey].pool.sqrt_price)
             : calculateSqrtPrice(midPrice.index),
           true
         )
@@ -494,7 +503,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
         lowerTick,
         upperTick,
         poolsData[poolKey]
-          ? poolsData[poolKey].pool.sqrt_price
+          ? BigInt(poolsData[poolKey].pool.sqrt_price)
           : calculateSqrtPrice(midPrice.index),
         true
       )

@@ -5,6 +5,7 @@ import {
   createLoaderKey,
   createPlaceholderLiquidityPlot,
   deserializeTickmap,
+  getAllLiquidityTicks,
   getTick,
   poolKeyToString
 } from '@store/consts/utils'
@@ -238,7 +239,7 @@ export function* handleGetCurrentPlotTicks(
     }
 
     const rawTicks = yield* call(
-      [invariant, invariant.getAllLiquidityTicks],
+      getAllLiquidityTicks,
       poolKey,
       deserializeTickmap(allTickmaps[poolKeyToString(poolKey)])
     )
@@ -246,7 +247,7 @@ export function* handleGetCurrentPlotTicks(
       const data = createPlaceholderLiquidityPlot(
         action.payload.isXtoY,
         0,
-        poolKey.feeTier.tickSpacing,
+        BigInt(poolKey.fee_tier.tick_spacing),
         xDecimal,
         yDecimal
       )
@@ -256,7 +257,7 @@ export function* handleGetCurrentPlotTicks(
 
     const ticksData = createLiquidityPlot(
       rawTicks,
-      poolKey.feeTier.tickSpacing,
+      BigInt(poolKey.fee_tier.tick_spacing),
       isXtoY,
       xDecimal,
       yDecimal
@@ -267,7 +268,7 @@ export function* handleGetCurrentPlotTicks(
     const data = createPlaceholderLiquidityPlot(
       action.payload.isXtoY,
       10,
-      poolKey.feeTier.tickSpacing,
+      BigInt(poolKey.fee_tier.tick_spacing),
       xDecimal,
       yDecimal
     )
