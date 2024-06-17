@@ -6,16 +6,10 @@ import {
   PoolWithPoolKey,
   Tick
 } from '@/sdk/OraiswapV3.types'
-import { Tickmap } from '../../wasm'
+import { Tickmap } from '@wasm'
 
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
-import {
-  ORAI,
-  TOKEN1,
-  TOKEN2,
-  Token,
-  USDT
-} from '@store/consts/static'
+import { ORAI, TOKEN1, TOKEN2, Token, USDT } from '@store/consts/static'
 import { PayloadType } from '@store/consts/types'
 import { poolKeyToString } from '@store/consts/utils'
 
@@ -75,7 +69,7 @@ export const defaultState: IPoolsStore = {
     [ORAI.address.toString()]: ORAI,
     [USDT.address.toString()]: USDT,
     [TOKEN1.address.toString()]: TOKEN1,
-    [TOKEN2.address.toString()]: TOKEN2,
+    [TOKEN2.address.toString()]: TOKEN2
     // [TESTNET_BTC_ADDRESS]: BTC,
     // [TESTNET_ETH_ADDRESS]: ETH,
     // [TESTNET_USDC_ADDRESS]: USDC

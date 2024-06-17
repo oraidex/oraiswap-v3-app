@@ -15,6 +15,7 @@ export default defineConfig({
       '@static': '/src/static',
       '@store': '/src/store',
       '@wasm': '/src/wasm',
+      '@skd': '/src/sdk',
       '@web3': '/src/web3',
       '@utils': '/src/utils',
       '@/': '/src'

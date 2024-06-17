@@ -3,9 +3,9 @@ import { OraiswapTokenClient, OraiswapTokenTypes } from '@oraichain/oraidex-cont
 import * as oraidexArtifacts from '@oraichain/oraidex-contracts-build'
 import fs from 'fs'
 import path from 'path'
-import * as OraiswapV3Wasm from '../wasm'
 import { OraiswapV3Client, OraiswapV3Types } from '../sdk'
 import { newPoolKey } from '@store/consts/utils'
+import { calculateSqrtPrice, getGlobalMinSqrtPrice, toPercentage } from '@wasm'
 
 const senderAddress = 'orai1g4h64yjt0fvzv5v2j8tyfnpe5kmnetejvfgs7g'
 const bobAddress = 'orai1602dkqjvh4s7ryajnz2uwhr8vetrwr8nekpxv5'
@@ -38,7 +38,7 @@ const createToken = async (symbol: string, amount: string) => {
 
 describe('swap', () => {
   // decimals: 12 + scale 3 = e9
-  let protocol_fee = Number(OraiswapV3Wasm.toPercentage(6, 3))
+  let protocol_fee = Number(toPercentage(6, 3))
 
   let dex: OraiswapV3Client
 
@@ -71,7 +71,7 @@ describe('swap', () => {
     console.log(res)
     let initTick = 0
 
-    let initSqrtPrice = OraiswapV3Wasm.calculateSqrtPrice(initTick)
+    let initSqrtPrice = calculateSqrtPrice(initTick)
 
     let initialAmount = (1e10).toString()
     let tokenX = await createToken('tokenx', initialAmount)
@@ -123,18 +123,18 @@ describe('swap', () => {
     })
     expect(pool.liquidity).toEqual(liquidityDelta)
     let amount = 1000n
-    let swapAmount: OraiswapV3Types.TokenAmount = amount.toString()
+    let swapAmount = amount.toString()
     await tokenX.mint({ amount: swapAmount, recipient: bobAddress })
     tokenX.sender = bobAddress
     await tokenX.increaseAllowance({ amount: swapAmount, spender: dex.contractAddress })
 
-    let slippage = OraiswapV3Wasm.getGlobalMinSqrtPrice().toString()
+    let sqrtPriceLimit = getGlobalMinSqrtPrice().toString()
 
     //simulate price from
     let { target_sqrt_price: targetSqrtPrice } = await dex.quote({
       amount: swapAmount,
       poolKey,
-      sqrtPriceLimit: slippage,
+      sqrtPriceLimit,
       byAmountIn: true,
       xToY: true
     })

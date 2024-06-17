@@ -38,7 +38,7 @@ import {
   getGlobalMinSqrtPrice,
   CalculateSwapResult,
   simulateSwap
-} from '../../wasm'
+} from '@wasm'
 import { Token, TokenPriceData } from './static'
 import { PoolWithPoolKey, Tick } from '@/sdk/OraiswapV3.types'
 
@@ -63,7 +63,7 @@ export const parse = (value: any) => {
     return newValue
   }
 
-  if (isBoolean(value)) {
+  if (isBoolean(value) || isNumber(value)) {
     return value
   }
 
@@ -76,6 +76,10 @@ export const parse = (value: any) => {
 
 const isBoolean = (value: any): boolean => {
   return typeof value === 'boolean'
+}
+
+const isNumber = (value: any): boolean => {
+  return typeof value === 'number'
 }
 
 const isArray = (value: any): boolean => {

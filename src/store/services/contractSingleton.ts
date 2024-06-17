@@ -9,12 +9,13 @@ import {
   _newPoolKey,
   PoolKey,
   LiquidityTick
-} from '../../wasm'
+} from '@wasm'
 import {
   CHUNK_SIZE,
   LIQUIDITY_TICKS_LIMIT,
   MAX_TICKMAP_QUERY_SIZE,
-  TokenDataOnChain
+  TokenDataOnChain,
+  parse
 } from '@store/consts/utils'
 import { ArrayOfTupleOfUint16AndUint64 } from '@/sdk/OraiswapV3.types'
 
@@ -186,10 +187,12 @@ export default class SingletonOraiswapV3 {
     const promises: Promise<LiquidityTick[]>[] = []
     for (let i = 0; i < tickIndexes.length; i += tickLimit) {
       promises.push(
-        this.dex.liquidityTicks({
-          poolKey,
-          tickIndexes: tickIndexes.slice(i, i + tickLimit).map(Number)
-        })
+        this.dex
+          .liquidityTicks({
+            poolKey,
+            tickIndexes: tickIndexes.slice(i, i + tickLimit).map(Number)
+          })
+          .then(parse)
       )
     }
 
