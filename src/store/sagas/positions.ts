@@ -365,10 +365,11 @@ export function* handleClaimFeeWithAZERO(action: PayloadAction<HandleClaimFee>) 
       })
     )
 
-    const psp22 = yield* call([psp22Singleton, psp22Singleton.loadInstance], api, network)
+    // const psp22 = yield* call([psp22Singleton, psp22Singleton.loadInstance], api, network)
 
     const txs = []
-    const claimTx = invariant.claimFeeTx(index, INVARIANT_CLAIM_FEE_OPTIONS)
+    // const claimTx = invariant.claimFeeTx(index, INVARIANT_CLAIM_FEE_OPTIONS)
+    const claimTx = yield SingletonOraiswapV3.dex.claimFee(Number(action.payload))
     txs.push(claimTx)
 
     // const approveTx = psp22.approveTx(
@@ -446,13 +447,11 @@ export function* handleClaimFeeWithAZERO(action: PayloadAction<HandleClaimFee>) 
 }
 
 export function* handleGetSinglePosition(action: PayloadAction<bigint>) {
-  // const invAddress = yield* select(dexAddress)
   const walletAddress = yield* select(address)
   const position = yield SingletonOraiswapV3.dex.position({
     index: Number(action.payload),
     ownerId: walletAddress
   })
-
   yield* put(
     actions.setSinglePosition({
       index: action.payload,
@@ -486,8 +485,7 @@ export function* handleClosePosition(action: PayloadAction<ClosePositionData>) {
         key: loaderKey
       })
     )
-
-    const tx = invariant.removePositionTx(positionIndex, INVARIANT_REMOVE_POSITION_OPTIONS)
+    const tx = yield SingletonOraiswapV3.dex.removePosition({ index: Number(positionIndex) })
 
     yield put(
       snackbarsActions.add({
@@ -498,14 +496,14 @@ export function* handleClosePosition(action: PayloadAction<ClosePositionData>) {
       })
     )
 
-    const signedTx = yield* call([tx, tx.signAsync], walletAddress, {
-      signer: adapter.signer as Signer
-    })
+    // const signedTx = yield* call([tx, tx.signAsync], walletAddress, {
+    //   signer: adapter.signer as Signer
+    // })
 
     closeSnackbar(loaderSigningTx)
     yield put(snackbarsActions.remove(loaderSigningTx))
 
-    const txResult = yield* call(sendTx, signedTx)
+    // const txResult = yield* call(sendTx, signedTx)
 
     closeSnackbar(loaderKey)
     yield put(snackbarsActions.remove(loaderKey))
@@ -514,7 +512,7 @@ export function* handleClosePosition(action: PayloadAction<ClosePositionData>) {
         message: 'Position successfully removed',
         variant: 'success',
         persist: false,
-        txid: txResult.hash
+        txid: tx.transactionHash
       })
     )
 
