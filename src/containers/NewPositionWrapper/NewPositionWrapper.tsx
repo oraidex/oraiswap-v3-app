@@ -303,7 +303,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   }, [poolIndex, isXtoY, xDecimal, yDecimal, poolKey])
 
   const data = useMemo(() => {
-    if (ticksLoading) {
+    if (ticksLoading && tickSpacing) {
       return createPlaceholderLiquidityPlot(isXtoY, 10, BigInt(tickSpacing), xDecimal, yDecimal)
     }
 

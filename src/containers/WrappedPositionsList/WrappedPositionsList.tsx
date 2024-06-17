@@ -39,7 +39,7 @@ export const WrappedPositionsList: React.FC = () => {
     ;(async () => {
       if (signingClient && walletAddress && !list.length) {
         SingletonOraiswapV3.load(signingClient, walletAddress)
-        const pools = await SingletonOraiswapV3.getAllPool()
+        const pools = await SingletonOraiswapV3.getAllPosition()
         const poolsByKey: Record<string, PoolWithPoolKeyAndIndex> = {}
         pools.forEach((pool: any, index: number) => {
           poolsByKey[poolKeyToString(pool.pool_key)] = {

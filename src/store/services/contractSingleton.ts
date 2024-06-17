@@ -10,7 +10,12 @@ import {
   PoolKey,
   LiquidityTick
 } from '../../wasm'
-import { CHUNK_SIZE, LIQUIDITY_TICKS_LIMIT, MAX_TICKMAP_QUERY_SIZE, TokenDataOnChain } from '@store/consts/utils'
+import {
+  CHUNK_SIZE,
+  LIQUIDITY_TICKS_LIMIT,
+  MAX_TICKMAP_QUERY_SIZE,
+  TokenDataOnChain
+} from '@store/consts/utils'
 import { ArrayOfTupleOfUint16AndUint64 } from '@/sdk/OraiswapV3.types'
 
 export const assert = (condition: boolean, message?: string) => {
@@ -79,33 +84,38 @@ export default class SingletonOraiswapV3 {
   }
 
   public static async getTokensInfo(tokens: string[]): Promise<TokenDataOnChain[]> {
-    return await Promise.all(tokens.map(async token => {
-      const queryClient = new OraiswapTokenQueryClient(this.dex.client, token);
-      const balance = await queryClient.balance({ address: this.dex.sender});
-      const tokenInfo = await queryClient.tokenInfo();
-      const symbol = tokenInfo.symbol;
-      const decimals = tokenInfo.decimals;  
-      const name = tokenInfo.name;
+    return await Promise.all(
+      tokens.map(async token => {
+        const queryClient = new OraiswapTokenQueryClient(this.dex.client, token)
+        const balance = await queryClient.balance({ address: this.dex.sender })
+        const tokenInfo = await queryClient.tokenInfo()
+        const symbol = tokenInfo.symbol
+        const decimals = tokenInfo.decimals
+        const name = tokenInfo.name
 
-      return {
-        address: token,
-        balance: BigInt(balance.balance),
-        symbol: symbol,
-        decimals: BigInt(decimals),
-        name: name,
-      }
-    }));
+        return {
+          address: token,
+          balance: BigInt(balance.balance),
+          symbol: symbol,
+          decimals: BigInt(decimals),
+          name: name
+        }
+      })
+    )
   }
 
-  public static async getAllPool(limit?: number, offset?: PoolKey): Promise<any> {
-    const pools = await this.dex.client.queryContractSmart(import.meta.env.VITE_CONTRACT_ADDRESS, {
-      positions: {
-        limit,
-        offset,
-        owner_id: this.dex.sender
+  public static async getAllPosition(limit?: number, offset?: PoolKey): Promise<any> {
+    const position = await this.dex.client.queryContractSmart(
+      import.meta.env.VITE_CONTRACT_ADDRESS,
+      {
+        positions: {
+          limit,
+          offset,
+          owner_id: this.dex.sender
+        }
       }
-    })
-    return pools
+    )
+    return position
   }
 
   public static async getFullTickmap(poolKey: PoolKey): Promise<Tickmap> {

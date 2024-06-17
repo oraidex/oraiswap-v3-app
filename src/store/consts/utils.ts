@@ -351,6 +351,15 @@ export const _calculateTokenAmounts = (
   position: Position,
   sign: boolean
 ): calculateAmountDeltaResult => {
+  console.log({
+    current_tick_index: pool.current_tick_index,
+    sqrt_price: pool.sqrt_price,
+    liquidity: position.liquidity,
+    sign,
+    upper_tick_index: position.upper_tick_index,
+    lower_tick_index: position.lower_tick_index
+  })
+
   return calculateAmountDelta(
     pool.current_tick_index,
     pool.sqrt_price,
@@ -939,6 +948,13 @@ export interface LiquidityBreakpoint {
   index: bigint
 }
 
+export const getTick = async (ind: bigint, poolKey: PoolKey): Promise<Tick> => {
+  return await SingletonOraiswapV3.dex.tick({
+    index: Number(ind),
+    key: poolKey
+  })
+}
+
 export const calculateLiquidityBreakpoints = (
   ticks: (Tick | LiquidityTick)[]
 ): LiquidityBreakpoint[] => {
@@ -1102,6 +1118,7 @@ export const calculateTokenAmountsWithSlippage = (
     upperTickIndex,
     lowerTickIndex
   )
+
   const [upperX, upperY] = calculateAmountDelta(
     currentTickIndex,
     upperBound,
