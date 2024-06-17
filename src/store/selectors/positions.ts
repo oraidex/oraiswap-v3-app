@@ -6,7 +6,7 @@ import { AnyProps, keySelectors } from './helpers'
 import { poolsArraySortedByFees } from './pools'
 import { swapTokens } from './wallet'
 import { PoolWithPoolKey } from '@/sdk/OraiswapV3.types'
-import { Position } from '@/wasm/oraiswap_v3_wasm'
+import { Position } from '@wasm'
 
 const store = (s: AnyProps) => s[positionsSliceName] as IPositionsStore
 

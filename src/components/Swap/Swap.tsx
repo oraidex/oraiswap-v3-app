@@ -27,7 +27,7 @@ import { useDispatch } from 'react-redux'
 import ExchangeRate from './ExchangeRate/ExchangeRate'
 import TransactionDetailsBox from './TransactionDetailsBox/TransactionDetailsBox'
 import useStyles from './style'
-import { PoolKey, Price, SwapError, Tick, TokenAmount } from '@/wasm'
+import { PoolKey, Price, SwapError, Tick, TokenAmount } from '@wasm'
 import { PoolWithPoolKey } from '@/sdk/OraiswapV3.types'
 
 export interface Pools {

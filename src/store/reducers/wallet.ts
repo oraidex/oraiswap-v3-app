@@ -1,4 +1,4 @@
-import { TokenAmount } from '@/wasm/oraiswap_v3_wasm'
+import { TokenAmount } from '@wasm'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { PayloadType } from '@store/consts/types'
 

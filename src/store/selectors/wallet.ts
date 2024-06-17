@@ -2,7 +2,7 @@ import { createSelector } from '@reduxjs/toolkit'
 import { IOraichainWallet, ITokenBalance, walletSliceName } from '@store/reducers/wallet'
 import { AnyProps, keySelectors } from './helpers'
 import { tokens } from './pools'
-import { TokenAmount } from '@/wasm/oraiswap_v3_wasm'
+import { TokenAmount } from '@wasm'
 
 const store = (s: AnyProps) => s[walletSliceName] as IOraichainWallet
 
