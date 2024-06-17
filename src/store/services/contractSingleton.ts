@@ -1,5 +1,5 @@
-import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
-import { OraiswapV3Client } from '../../sdk'
+import { CosmWasmClient, SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
+import { OraiswapV3Client, OraiswapV3QueryClient } from '../../sdk'
 import { OraiswapTokenClient, OraiswapTokenQueryClient } from '@oraichain/oraidex-contracts-sdk'
 import {
   Tickmap,
@@ -7,7 +7,6 @@ import {
   getMinTick,
   _newPoolKey,
   PoolKey,
-  // LiquidityTick
 } from '@wasm'
 import {
   CHUNK_SIZE,
@@ -15,7 +14,7 @@ import {
   TokenDataOnChain,
   // parse
 } from '@store/consts/utils'
-import { ArrayOfTupleOfUint16AndUint64 } from '@/sdk/OraiswapV3.types'
+import { ArrayOfTupleOfUint16AndUint64, PoolWithPoolKey } from '@/sdk/OraiswapV3.types'
 
 export const assert = (condition: boolean, message?: string) => {
   if (!condition) {
@@ -101,6 +100,12 @@ export default class SingletonOraiswapV3 {
         }
       })
     )
+  }
+
+  public static async getPools(): Promise<PoolWithPoolKey[]> {
+    const client = await CosmWasmClient.connect(import.meta.env.VITE_CHAIN_RPC_ENDPOINT)
+    const queryClient = new OraiswapV3QueryClient(client, import.meta.env.VITE_CONTRACT_ADDRESS)
+    return await queryClient.pools({})
   }
 
   public static async getAllPosition(limit?: number, offset?: PoolKey): Promise<any> {
