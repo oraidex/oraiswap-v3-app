@@ -1,4 +1,4 @@
-import { PoolKey } from '@/sdk/OraiswapV3.types'
+import { PoolKey } from '../../sdk/OraiswapV3.types'
 
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { PayloadType } from '@store/consts/types'
@@ -6,8 +6,8 @@ import { SimulateResult } from '@store/consts/utils'
 
 export interface Swap {
   poolKey?: PoolKey
-  slippage: bigint
-  estimatedPriceAfterSwap: bigint
+  slippage: number
+  estimatedPriceAfterSwap: string
   tokenFrom: string
   tokenTo: string
   amountIn: bigint
@@ -32,8 +32,8 @@ export interface ISwapStore {
 
 export const defaultState: ISwapStore = {
   swap: {
-    slippage: 0n,
-    estimatedPriceAfterSwap: 0n,
+    slippage: 0,
+    estimatedPriceAfterSwap: '0',
     tokenFrom: '',
     tokenTo: '',
     amountIn: 0n,

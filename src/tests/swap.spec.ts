@@ -38,7 +38,7 @@ const createToken = async (symbol: string, amount: string) => {
 
 describe('swap', () => {
   // decimals: 12 + scale 3 = e9
-  let protocol_fee = Number(OraiswapV3Wasm.toPercentage(6, 3).toString())
+  let protocol_fee = Number(OraiswapV3Wasm.toPercentage(6, 3))
 
   let dex: OraiswapV3Client
 
