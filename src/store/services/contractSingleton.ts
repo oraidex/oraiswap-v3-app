@@ -1,17 +1,17 @@
 import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 import { OraiswapV3Client } from '../../sdk'
-import { OraiswapTokenClient } from '@oraichain/oraidex-contracts-sdk'
-import { ArrayOfTupleOfUint16AndUint64, LiquidityTick, PoolKey } from '../../sdk/OraiswapV3.types'
+import { OraiswapTokenClient, OraiswapTokenQueryClient } from '@oraichain/oraidex-contracts-sdk'
 import {
   Tickmap,
-  getLiquidityTicksLimit,
   getMaxTick,
-  getMaxTickmapQuerySize,
   getMinTick,
   positionToTick,
-  _newPoolKey
+  _newPoolKey,
+  PoolKey,
+  LiquidityTick
 } from '../../wasm'
-import { CHUNK_SIZE, LIQUIDITY_TICKS_LIMIT, MAX_TICKMAP_QUERY_SIZE } from '@store/consts/utils'
+import { CHUNK_SIZE, LIQUIDITY_TICKS_LIMIT, MAX_TICKMAP_QUERY_SIZE, TokenDataOnChain } from '@store/consts/utils'
+import { ArrayOfTupleOfUint16AndUint64 } from '@/sdk/OraiswapV3.types'
 
 export const assert = (condition: boolean, message?: string) => {
   if (!condition) {
@@ -76,6 +76,25 @@ export default class SingletonOraiswapV3 {
       poolKey
     })
     return tickmaps
+  }
+
+  public static async getTokensInfo(tokens: string[]): Promise<TokenDataOnChain[]> {
+    return await Promise.all(tokens.map(async token => {
+      const queryClient = new OraiswapTokenQueryClient(this.dex.client, token);
+      const balance = await queryClient.balance({ address: this.dex.sender});
+      const tokenInfo = await queryClient.tokenInfo();
+      const symbol = tokenInfo.symbol;
+      const decimals = tokenInfo.decimals;  
+      const name = tokenInfo.name;
+
+      return {
+        address: token,
+        balance: BigInt(balance.balance),
+        symbol: symbol,
+        decimals: BigInt(decimals),
+        name: name,
+      }
+    }));
   }
 
   public static async getAllPool(limit?: number, offset?: PoolKey): Promise<any> {
