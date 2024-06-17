@@ -6,6 +6,7 @@ import { actions as snackbarsActions } from '@store/reducers/snackbars'
 import { ITokenBalance, Status, actions, actions as walletActions } from '@store/reducers/wallet'
 import { networkType } from '@store/selectors/connection'
 import { address, status } from '@store/selectors/wallet'
+import SingletonOraiswapV3 from '@store/services/contractSingleton'
 
 import { closeSnackbar } from 'notistack'
 import {
@@ -260,7 +261,7 @@ export function* init(): Generator {
 
     const balance = yield* call(getBalance, accounts[0].address)
 
-    yield* put(actions.setBalance(BigInt(balance)))
+    yield* put(actions.setBalance(balance))
     yield* put(actions.setStatus(Status.Initialized))
     yield* call(fetchTokensBalances)
     yield* put(actions.setIsBalanceLoading(false))
@@ -307,8 +308,8 @@ export function* handleDisconnect(): Generator {
 }
 
 export function* fetchBalances(tokens: string[]): Generator {
-  const balance = yield* call(getBalance, walletAddress)
-  yield* put(walletActions.setBalance(BigInt(balance)))
+  const balance = yield* call(getBalance, SingletonOraiswapV3.dex.sender)
+  yield* put(walletActions.setBalance(balance))
 
   const tokenBalances = yield* call(getTokenBalances, tokens, api, network, walletAddress)
   yield* put(
