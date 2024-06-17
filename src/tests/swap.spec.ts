@@ -123,18 +123,18 @@ describe('swap', () => {
     })
     expect(pool.liquidity).toEqual(liquidityDelta)
     let amount = 1000n
-    let swapAmount: OraiswapV3Types.TokenAmount = amount.toString()
+    let swapAmount = amount.toString()
     await tokenX.mint({ amount: swapAmount, recipient: bobAddress })
     tokenX.sender = bobAddress
     await tokenX.increaseAllowance({ amount: swapAmount, spender: dex.contractAddress })
 
-    let slippage = OraiswapV3Wasm.getGlobalMinSqrtPrice().toString()
+    let sqrtPriceLimit = OraiswapV3Wasm.getGlobalMinSqrtPrice().toString()
 
     //simulate price from
     let { target_sqrt_price: targetSqrtPrice } = await dex.quote({
       amount: swapAmount,
       poolKey,
-      sqrtPriceLimit: slippage,
+      sqrtPriceLimit,
       byAmountIn: true,
       xToY: true
     })
