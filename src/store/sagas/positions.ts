@@ -1,15 +1,5 @@
 import { PayloadAction } from '@reduxjs/toolkit'
 import {
-  INVARIANT_CLAIM_FEE_OPTIONS,
-  INVARIANT_CREATE_POOL_OPTIONS,
-  INVARIANT_CREATE_POSITION_OPTIONS,
-  INVARIANT_REMOVE_POSITION_OPTIONS,
-  INVARIANT_WITHDRAW_ALL_WAZERO,
-  PSP22_APPROVE_OPTIONS,
-  U128MAX,
-  WAZERO_DEPOSIT_OPTIONS
-} from '@store/consts/static'
-import {
   calculateTokenAmountsWithSlippage,
   createLiquidityPlot,
   createLoaderKey,
@@ -27,7 +17,6 @@ import {
   actions
 } from '@store/reducers/positions'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
-import { actions as walletActions } from '@store/reducers/wallet'
 import { dexAddress, networkType } from '@store/selectors/connection'
 import { poolsArraySortedByFees, tickMaps, tokens } from '@store/selectors/pools'
 import { address } from '@store/selectors/wallet'

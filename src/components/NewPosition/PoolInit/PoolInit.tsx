@@ -67,7 +67,7 @@ export const PoolInit: React.FC<IPoolInit> = ({
       yDecimal
     )
 
-    onChangeMidPrice(BigInt(tickIndex))
+    onChangeMidPrice(tickIndex.toString())
   }, [midPriceInput])
 
   const setLeftInputValues = (val: string) => {

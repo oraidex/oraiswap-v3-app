@@ -14,7 +14,7 @@ import {
   toPercentage,
   getSqrtPriceDenominator,
   _newFeeTier,
-  positionToTick,
+  // positionToTick,
   alignTickToSpacing,
   _calculateFee,
   calculateAmountDelta,
@@ -32,13 +32,14 @@ import {
   Position,
   SqrtPrice,
   TokenAmount,
+  positionToTick,
   SwapError,
   getGlobalMaxSqrtPrice,
   getGlobalMinSqrtPrice,
   CalculateSwapResult,
   simulateSwap
 } from '../../wasm'
-import { Token } from './static'
+import { Token, TokenPriceData } from './static'
 import { PoolWithPoolKey, Tick } from '@/sdk/OraiswapV3.types'
 
 export enum Network {
@@ -390,6 +391,34 @@ export const getCoingeckoTokenPrice = async (id: string): Promise<CoingeckoPrice
         priceChange: res.data[0]?.price_change_percentage_24h ?? 0
       }
     })
+}
+
+export const tokensPrices: Record<Network, Record<string, TokenPriceData>> = {
+  [Network.Testnet]: {
+    ORAI_TEST: { price: 16.5 },
+    USDT_TEST: { price: 1 },
+    TOKEN1_TEST: { price: 2 },
+    TOKEN2_TEST: { price: 2 }
+  },
+  [Network.Mainnet]: {},
+  [Network.Local]: {}
+}
+
+export const getMockedTokenPrice = (symbol: string, network: Network): TokenPriceData => {
+  const sufix = network === Network.Testnet ? '_TEST' : '_DEV'
+  const prices = tokensPrices[network]
+  switch (symbol) {
+    case 'ORAI':
+      return prices[symbol + sufix]
+    case 'USDT':
+      return prices['W' + symbol + sufix]
+    case 'TOKEN1':
+      return prices[symbol + sufix]
+    case 'TOKEN2':
+      return prices[symbol + sufix]
+    default:
+      return { price: 0 }
+  }
 }
 
 export const printBigint = (amount: TokenAmount | bigint, decimals: bigint): string => {
@@ -774,7 +803,10 @@ export const getPools = async (poolKeys: PoolKey[]): Promise<PoolWithPoolKey[]> 
 }
 
 export const getFullTickmap = async (poolKey: PoolKey): Promise<Tickmap> => {
-  return SingletonOraiswapV3.getFullTickmap(poolKey)
+  console.log('getFullTickmap', poolKey)
+  const tickmap = await SingletonOraiswapV3.getFullTickmap(poolKey)
+  console.log('tickmap', tickmap)
+  return tickmap
 }
 
 export const getAllLiquidityTicks = async (
@@ -782,14 +814,20 @@ export const getAllLiquidityTicks = async (
   tickmap: Tickmap
 ): Promise<LiquidityTick[]> => {
   const ticks: number[] = []
-  tickmap.bitmap.forEach((chunkIndex, chunk) => {
+
+  tickmap.bitmap.forEach((chunk, chunkIndex) => {
+    console.log({ chunkIndex, chunk })
     for (let i = 0; i < 64; i++) {
-      if (chunk && 1 << i !== 0) {
-        const tickIndex = positionToTick(chunkIndex, i, poolKey.fee_tier.tick_spacing)
-        ticks.push(Number(tickIndex))
+      console.log(chunk, Number(chunk) & (1 << i))
+      if ((Number(chunk) & (1 << i)) !== 0) {
+        console.log({ chunkIndex, i, tickSpacing: 1 })
+        console.log('posToTick', positionToTick(chunkIndex, i, 1))
+        const tickIndex = positionToTick(chunkIndex, i, 1)
+        ticks.push(Number(tickIndex.toString()))
       }
     }
   })
+
   return SingletonOraiswapV3.dex.liquidityTicks({ poolKey, tickIndexes: ticks })
 }
 
@@ -856,20 +894,20 @@ export const getAllTicks = (poolKey: PoolKey, ticks: bigint[]): Promise<Tick[]> 
   return Promise.all(promises)
 }
 
-export const tickmapToArray = (tickmap: Tickmap, tickSpacing: bigint): bigint[] => {
-  const ticks = []
+// export const tickmapToArray = (tickmap: Tickmap, tickSpacing: bigint): bigint[] => {
+//   const ticks = []
 
-  for (const [chunkIndex, chunk] of tickmap.bitmap.entries()) {
-    for (let bit = 0n; bit < CHUNK_SIZE; bit++) {
-      const checkedBit = chunk & (1n << bit)
-      if (checkedBit) {
-        ticks.push(positionToTick(chunkIndex, bit, tickSpacing))
-      }
-    }
-  }
+//   for (const [chunkIndex, chunk] of tickmap.bitmap.entries()) {
+//     for (let bit = 0n; bit < CHUNK_SIZE; bit++) {
+//       const checkedBit = chunk & (1n << bit)
+//       if (checkedBit) {
+//         ticks.push(positionToTick(chunkIndex, bit, tickSpacing))
+//       }
+//     }
+//   }
 
-  return ticks
-}
+//   return ticks
+// }
 
 export const deserializeTickmap = (serializedTickmap: string): Tickmap => {
   const deserializedMap: Map<string, string> = new Map(JSON.parse(serializedTickmap))
