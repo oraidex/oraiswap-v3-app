@@ -1,20 +1,8 @@
 import { PlotTickData } from '@store/reducers/positions'
 import SingletonOraiswapV3, { integerSafeCast } from '@store/services/contractSingleton'
 import axios from 'axios'
-import { BTC, ETH, ORAI, Token, TokenPriceData, USDC, USDT, tokensPrices } from './static'
+
 import {
-  Liquidity,
-  LiquidityTick,
-  Percentage,
-  Pool,
-  PoolKey,
-  PoolWithPoolKey,
-  SqrtPrice,
-  Tick,
-  TokenAmount
-} from '@/sdk/OraiswapV3.types'
-import {
-  Price,
   SwapError,
   Tickmap,
   calculateSqrtPrice,
@@ -35,11 +23,19 @@ import {
   _newPoolKey,
   getMaxTickmapQuerySize,
   getLiquidityTicksLimit,
-  calculateTick
+  calculateTick,
+  Liquidity,
+  LiquidityTick,
+  Percentage,
+  Pool,
+  PoolKey,
+  FeeTier,
+  Position,
+  SqrtPrice,
+  TokenAmount
 } from '../../wasm'
-import { BalanceResponse } from '@oraichain/cw-simulate/dist/modules/bank'
-import { FeeTier } from '@/sdk/OraiswapV3.types'
-import { Position } from '@/sdk/OraiswapV3.types'
+import { Token } from './static'
+import { PoolWithPoolKey, Tick } from '@/sdk/OraiswapV3.types'
 
 export enum Network {
   Local = 'Local',
@@ -86,13 +82,7 @@ const isObject = (value: any): boolean => {
 }
 
 export const newPoolKey = (token0: string, token1: string, feeTier: FeeTier): PoolKey => {
-  return parse(
-    _newPoolKey(
-      token0,
-      token1,
-      _newFeeTier(feeTier.fee, integerSafeCast(BigInt(feeTier.tick_spacing)))
-    )
-  )
+  return _newPoolKey(token0, token1, _newFeeTier(feeTier.fee, feeTier.tick_spacing))
 }
 
 export const calculateFeeTierWithLinearRatio = (tickCount: number): FeeTier => {
@@ -354,6 +344,15 @@ export const _calculateTokenAmounts = (
   position: Position,
   sign: boolean
 ): calculateAmountDeltaResult => {
+  console.log({
+    current_tick_index: pool.current_tick_index,
+    sqrt_price: pool.sqrt_price,
+    liquidity: position.liquidity,
+    sign,
+    upper_tick_index: position.upper_tick_index,
+    lower_tick_index: position.lower_tick_index
+  })
+
   return calculateAmountDelta(
     pool.current_tick_index,
     pool.sqrt_price,
@@ -450,16 +449,83 @@ export const parseFeeToPathFee = (fee: bigint): string => {
   return parsedFee.slice(0, parsedFee.length - 2) + '_' + parsedFee.slice(parsedFee.length - 2)
 }
 
-export const getPoolsByPoolKeys = async (poolKeys: PoolKey[]): Promise<Pool[]> => {
+export const getPoolsByPoolKeys = async (poolKeys: PoolKey[]): Promise<PoolWithPoolKey[]> => {
   const promises = poolKeys.map(({ token_x, token_y, fee_tier }) =>
     SingletonOraiswapV3.dex.pool({ token0: token_x, token1: token_y, feeTier: fee_tier })
   )
   const pools = await Promise.all(promises)
 
-  return pools.map((pool, index) => ({
-    ...pool,
-    poolKey: poolKeys[index]
-  }))
+  return pools.map((pool, index) => {
+    const poolWithPoolKey: PoolWithPoolKey = {
+      pool,
+      pool_key: poolKeys[index]
+    }
+    return poolWithPoolKey
+  })
+}
+
+export type TokenDataOnChain = {
+  symbol: string
+  address: string
+  name: string
+  decimals: bigint
+  balance: bigint
+}
+
+export const getTokenDataByAddresses = async (tokens: string[]): Promise<Record<string, Token>> => {
+  const tokenInfos: TokenDataOnChain[] = await SingletonOraiswapV3.getTokensInfo(tokens)
+
+  const newTokens: Record<string, Token> = {}
+  tokenInfos.forEach(token => {
+    newTokens[token.address] = {
+      symbol: token.symbol ? (token.symbol as string) : 'UNKNOWN',
+      address: token.address,
+      name: token.name ? (token.name as string) : '',
+      decimals: token.decimals as bigint,
+      balance: token.balance as bigint,
+      logoURI: '/unknownToken.svg',
+      isUnknown: true
+    }
+  })
+  return newTokens
+}
+
+export const createPoolTx = async (
+  poolKey: PoolKey,
+  initSqrtPrice: string,
+  initTick: number
+): Promise<string> => {
+  return (
+    await SingletonOraiswapV3.dex.createPool({
+      feeTier: poolKey.fee_tier,
+      initSqrtPrice,
+      initTick,
+      token0: poolKey.token_x,
+      token1: poolKey.token_y
+    })
+  ).transactionHash
+}
+
+export const getPool = async (poolKey: PoolKey): Promise<PoolWithPoolKey> => {
+  return {
+    pool: await SingletonOraiswapV3.dex.pool({
+      token0: poolKey.token_x,
+      token1: poolKey.token_y,
+      feeTier: poolKey.fee_tier
+    }),
+    pool_key: poolKey
+  }
+}
+
+export const getPoolKeys = async (): Promise<PoolKey[]> => {
+  const pools = await SingletonOraiswapV3.dex.pools({})
+  const poolKeys: PoolKey[] = pools.map(pool => pool.pool_key)
+  console.log('poolKeys', poolKeys)
+  return poolKeys
+  // return pools.map((pool, index) => ({
+  //   pool,
+  //   pool_key: poolKeys[index]
+  // }))
 }
 
 export const poolKeyToString = (poolKey: PoolKey): string => {
@@ -701,6 +767,26 @@ export const getPools = async (poolKeys: PoolKey[]): Promise<PoolWithPoolKey[]> 
   })
 }
 
+export const getFullTickmap = async (poolKey: PoolKey): Promise<Tickmap> => {
+  return SingletonOraiswapV3.getFullTickmap(poolKey)
+}
+
+export const getAllLiquidityTicks = async (
+  poolKey: PoolKey,
+  tickmap: Tickmap
+): Promise<LiquidityTick[]> => {
+  const ticks: number[] = []
+  tickmap.bitmap.forEach((chunkIndex, chunk) => {
+    for (let i = 0; i < 64; i++) {
+      if (chunk && 1 << i !== 0) {
+        const tickIndex = positionToTick(chunkIndex, i, poolKey.fee_tier.tick_spacing)
+        ticks.push(Number(tickIndex))
+      }
+    }
+  })
+  return SingletonOraiswapV3.dex.liquidityTicks({ poolKey, tickIndexes: ticks })
+}
+
 export const calculateTickDelta = (
   tickSpacing: number,
   minimumRange: number,
@@ -801,13 +887,20 @@ export const calculateAmountInWithSlippage = (
   return BigInt(Math.ceil(amountIn))
 }
 
-export const sqrtPriceToPrice = (sqrtPrice: SqrtPrice | bigint): Price => {
+export const sqrtPriceToPrice = (sqrtPrice: SqrtPrice | bigint): bigint => {
   return (BigInt(sqrtPrice) * BigInt(sqrtPrice)) / getSqrtPriceDenominator()
 }
 
 export interface LiquidityBreakpoint {
   liquidity: Liquidity
   index: bigint
+}
+
+export const getTick = async (ind: bigint, poolKey: PoolKey): Promise<Tick> => {
+  return await SingletonOraiswapV3.dex.tick({
+    index: Number(ind),
+    key: poolKey
+  })
 }
 
 export const calculateLiquidityBreakpoints = (
@@ -855,7 +948,7 @@ export const createLiquidityPlot = (
   }
 
   ticks.forEach((tick, i) => {
-    let tickIndex = BigInt(tick.index)
+    const tickIndex = BigInt(tick.index)
     if (i === 0 && tickIndex - tickSpacing > min) {
       const price = calcPrice(tickIndex - tickSpacing, isXtoY, tokenXDecimal, tokenYDecimal)
       ticksData.push({
@@ -930,7 +1023,7 @@ const newtonIteration = (n: bigint, x0: bigint): bigint => {
   return newtonIteration(n, x1)
 }
 
-export const priceToSqrtPrice = (price: Price): bigint => {
+export const priceToSqrtPrice = (price: bigint): bigint => {
   return sqrt(price * getSqrtPriceDenominator())
 }
 
@@ -945,7 +1038,7 @@ export const calculateSqrtPriceAfterSlippage = (
 
   const multiplier = getPercentageDenominator() + BigInt(up ? slippage : -slippage)
   const price = sqrtPriceToPrice(sqrtPrice)
-  const priceWithSlippage = price * multiplier * getPercentageDenominator()
+  const priceWithSlippage = BigInt(price) * multiplier * getPercentageDenominator()
   const sqrtPriceWithSlippage = priceToSqrtPrice(priceWithSlippage) / getPercentageDenominator()
 
   return sqrtPriceWithSlippage
@@ -973,6 +1066,7 @@ export const calculateTokenAmountsWithSlippage = (
     upperTickIndex,
     lowerTickIndex
   )
+
   const [upperX, upperY] = calculateAmountDelta(
     currentTickIndex,
     upperBound,

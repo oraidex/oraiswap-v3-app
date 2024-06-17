@@ -10,13 +10,14 @@ import {
   WAZERO_DEPOSIT_OPTIONS
 } from '@store/consts/static'
 import {
+  calculateTokenAmountsWithSlippage,
   createLiquidityPlot,
   createLoaderKey,
   createPlaceholderLiquidityPlot,
   deserializeTickmap,
+  getTick,
   poolKeyToString
 } from '@store/consts/utils'
-import { calculateTokenAmountsWithSlippage } from '@invariant-labs/a0-sdk/src/utils'
 import { FetchTicksAndTickMaps, ListType, actions as poolsActions } from '@store/reducers/pools'
 import {
   ClosePositionData,
@@ -33,8 +34,10 @@ import { address } from '@store/selectors/wallet'
 import SingletonOraiswapV3 from '@store/services/contractSingleton'
 import { closeSnackbar } from 'notistack'
 import { all, call, fork, join, put, select, spawn, takeEvery, takeLatest } from 'typed-redux-saga'
-import { fetchAllPools, fetchTicksAndTickMaps } from './pools'
+import { fetchTicksAndTickMaps } from './pools'
 import { fetchBalances } from './wallet'
+import * as OraiswapV3Wasm from '../../wasm'
+import { PoolKey } from '../../wasm'
 
 function* handleInitPosition(action: PayloadAction<InitPositionData>): Generator {
   const {
@@ -63,14 +66,13 @@ function* handleInitPosition(action: PayloadAction<InitPositionData>): Generator
     )
 
     const txs = []
-
     const [xAmountWithSlippage, yAmountWithSlippage] = calculateTokenAmountsWithSlippage(
-      poolKeyData.feeTier.tickSpacing,
+      BigInt(poolKeyData.fee_tier.tick_spacing),
       spotSqrtPrice,
       liquidityDelta,
       lowerTick,
       upperTick,
-      slippageTolerance,
+      Number(slippageTolerance),
       true
     )
 
@@ -79,66 +81,83 @@ function* handleInitPosition(action: PayloadAction<InitPositionData>): Generator
 
     let YTokenTx: any
     txs.push(YTokenTx)
+    let initTick = 0
 
-    if (initPool) {
-      const createPoolTx = SingletonOraiswapV3.dex.createPool(
-        poolKeyData,
-        spotSqrtPrice,
-        INVARIANT_CREATE_POOL_OPTIONS
-      )
-      txs.push(createPoolTx)
+    let initSqrtPrice = OraiswapV3Wasm.calculateSqrtPrice(BigInt(initTick))
 
-      yield* call(fetchAllPools)
-    }
+    // if (initPool) {
+    //   const createPoolTx = yield SingletonOraiswapV3.dex.createPool(
+    //     {
+    //       feeTier: poolKeyData.fee_tier,
+    //       initSqrtPrice: initSqrtPrice.toString(),
+    //       initTick,
+    //       token0: poolKeyData.token_x,
+    //       token1: poolKeyData.token_y
+    //     },
+    //     'auto',
+    //     ''
+    //   )
+    //   txs.push(createPoolTx)
+    //   // yield* call(fetchAllPools)
+    // }
+    console.log({
+      liquidityDelta: liquidityDelta.toString(),
+      lowerTick: Number(lowerTick),
+      poolKey: poolKeyData,
+      slippageLimitLower: xAmountWithSlippage.toString(),
+      slippageLimitUpper: yAmountWithSlippage.toString(),
+      upperTick: Number(upperTick)
+    })
 
-    // const tx = SingletonOraiswapV3.dex.createPosition(
-    //   poolKeyData,
-    //   lowerTick,
-    //   upperTick,
-    //   liquidityDelta,
-    //   spotSqrtPrice,
-    //   slippageTolerance,
-    //   INVARIANT_CREATE_POSITION_OPTIONS
-    // )
-    // txs.push(tx)
+    const tx = yield SingletonOraiswapV3.dex.createPosition({
+      liquidityDelta: liquidityDelta.toString(),
+      lowerTick: Number(lowerTick),
+      poolKey: poolKeyData,
+      // slippageLimitLower: xAmountWithSlippage.toString(),
+      // slippageLimitUpper: yAmountWithSlippage.toString(),
+      slippageLimitLower: '557153061',
+      slippageLimitUpper: '240282366920938463463374607431768211455',
+      upperTick: Number(upperTick)
+    })
+    txs.push(tx)
 
     // const batchedTx = api.tx.utility.batchAll(txs)
 
-    // yield put(
-    //   snackbarsActions.add({
-    //     message: 'Signing transaction...',
-    //     variant: 'pending',
-    //     persist: true,
-    //     key: loaderSigningTx
-    //   })
-    // )
+    yield put(
+      snackbarsActions.add({
+        message: 'Signing transaction...',
+        variant: 'pending',
+        persist: true,
+        key: loaderSigningTx
+      })
+    )
 
     // const signedBatchedTx = yield* call([batchedTx, batchedTx.signAsync], walletAddress, {
     //   signer: adapter.signer as Signer
     // })
 
-    // closeSnackbar(loaderSigningTx)
-    // yield put(snackbarsActions.remove(loaderSigningTx))
+    closeSnackbar(loaderSigningTx)
+    yield put(snackbarsActions.remove(loaderSigningTx))
 
     // const txResult = yield* call(sendTx, signedBatchedTx)
 
-    // yield* put(actions.setInitPositionSuccess(true))
+    yield* put(actions.setInitPositionSuccess(true))
 
-    // closeSnackbar(loaderCreatePosition)
-    // yield put(snackbarsActions.remove(loaderCreatePosition))
+    closeSnackbar(loaderCreatePosition)
+    yield put(snackbarsActions.remove(loaderCreatePosition))
 
-    // yield put(
-    //   snackbarsActions.add({
-    //     message: 'Position successfully created',
-    //     variant: 'success',
-    //     persist: false,
-    //     txid: txResult.hash
-    //   })
-    // )
+    yield put(
+      snackbarsActions.add({
+        message: 'Position successfully created',
+        variant: 'success',
+        persist: false,
+        txid: ''
+      })
+    )
 
-    // yield put(actions.getPositionsList())
+    yield put(actions.getPositionsList())
 
-    // yield* call(fetchBalances, [tokenX, tokenY])
+    yield* call(fetchBalances, [poolKeyData.token_x, poolKeyData.token_y])
   } catch (error) {
     console.log(error)
 
@@ -178,20 +197,9 @@ export async function handleGetPositionsList() {
 
 export function* handleGetCurrentPositionTicks(action: PayloadAction<GetPositionTicks>) {
   const { poolKey, lowerTickIndex, upperTickIndex } = action.payload
-  const api = yield* getConnection()
-  const network = yield* select(networkType)
-  const invAddress = yield* select(dexAddress)
-
-  const invariant = yield* call(
-    [invariantSingleton, invariantSingleton.loadInstance],
-    api,
-    network,
-    invAddress
-  )
-
   const [lowerTick, upperTick] = yield* all([
-    call([invariant, invariant.getTick], poolKey, lowerTickIndex),
-    call([invariant, invariant.getTick], poolKey, upperTickIndex)
+    call(getTick, lowerTickIndex, poolKey),
+    call(getTick, upperTickIndex, poolKey)
   ])
 
   yield put(
@@ -206,30 +214,30 @@ export function* handleGetCurrentPlotTicks(
   action: PayloadAction<{ poolKey: PoolKey; isXtoY: boolean }>
 ): Generator {
   const { poolKey, isXtoY } = action.payload
-  const api = yield* getConnection()
-  const network = yield* select(networkType)
-  const invAddress = yield* select(dexAddress)
+  // const api = yield* getConnection()
+  // const network = yield* select(networkType)
+  // const invAddress = yield* select(dexAddress)
   let allTickmaps = yield* select(tickMaps)
   const allTokens = yield* select(tokens)
   const allPools = yield* select(poolsArraySortedByFees)
 
-  const xDecimal = allTokens[poolKey.tokenX].decimals
-  const yDecimal = allTokens[poolKey.tokenY].decimals
+  const xDecimal = allTokens[poolKey.token_x].decimals
+  const yDecimal = allTokens[poolKey.token_y].decimals
 
   try {
-    const invariant = yield* call(
-      [invariantSingleton, invariantSingleton.loadInstance],
-      api,
-      network,
-      invAddress
-    )
+    // const invariant = yield* call(
+    //   [invariantSingleton, invariantSingleton.loadInstance],
+    //   api,
+    //   network,
+    //   invAddress
+    // )
 
     if (!allTickmaps[poolKeyToString(poolKey)]) {
       const fetchTicksAndTickMapsAction: PayloadAction<FetchTicksAndTickMaps> = {
         type: poolsActions.getTicksAndTickMaps.type,
         payload: {
-          tokenFrom: allTokens[poolKey.tokenX].address,
-          tokenTo: allTokens[poolKey.tokenY].address,
+          tokenFrom: allTokens[poolKey.token_x].address,
+          tokenTo: allTokens[poolKey.token_y].address,
           allPools
         }
       }
@@ -449,9 +457,13 @@ export function* handleClaimFeeWithAZERO(action: PayloadAction<HandleClaimFee>) 
 }
 
 export function* handleGetSinglePosition(action: PayloadAction<bigint>) {
-  const invAddress = yield* select(dexAddress)
+  // const invAddress = yield* select(dexAddress)
+  const walletAddress = yield* select(address)
+  const position = yield SingletonOraiswapV3.dex.position({
+    index: Number(action.payload),
+    ownerId: walletAddress
+  })
 
-  const position = yield* call([invariant, invariant.getPosition], walletAddress, action.payload)
   yield* put(
     actions.setSinglePosition({
       index: action.payload,

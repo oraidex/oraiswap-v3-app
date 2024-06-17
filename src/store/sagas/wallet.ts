@@ -1,6 +1,6 @@
 import { PayloadAction } from '@reduxjs/toolkit'
 import { FaucetTokenList, TokenAirdropAmount } from '@store/consts/static'
-import { createLoaderKey, getTokenBalances } from '@store/consts/utils'
+import { Network, createLoaderKey, getTokenBalances } from '@store/consts/utils'
 import { actions as positionsActions } from '@store/reducers/positions'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
 import { ITokenBalance, Status, actions, actions as walletActions } from '@store/reducers/wallet'
@@ -307,10 +307,11 @@ export function* handleDisconnect(): Generator {
 }
 
 export function* fetchBalances(tokens: string[]): Generator {
+  const walletAddress = yield* select(address)
   const balance = yield* call(getBalance, walletAddress)
   yield* put(walletActions.setBalance(BigInt(balance)))
 
-  const tokenBalances = yield* call(getTokenBalances, tokens, api, network, walletAddress)
+  const tokenBalances = yield* call(getTokenBalances, tokens, api, Network, walletAddress)
   yield* put(
     walletActions.addTokenBalances(
       tokenBalances.map(([address, balance]) => {
@@ -331,9 +332,9 @@ export function* disconnectHandler(): Generator {
   yield takeLatest(actions.disconnect, handleDisconnect)
 }
 
-export function* airdropSaga(): Generator {
-  yield takeLeading(actions.airdrop, handleAirdrop)
-}
+// export function* airdropSaga(): Generator {
+//   yield takeLeading(actions.airdrop, handleAirdrop)
+// }
 
 export function* initSaga(): Generator {
   yield takeLeading(actions.initWallet, init)
@@ -355,7 +356,7 @@ export function* walletSaga(): Generator {
   yield all(
     [
       initSaga,
-      airdropSaga,
+      // airdropSaga,
       connectHandler,
       disconnectHandler,
       handleFetchTokensBalances,

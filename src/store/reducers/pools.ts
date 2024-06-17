@@ -10,16 +10,10 @@ import { Tickmap } from '../../wasm'
 
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 import {
-  BTC,
-  ETH,
   ORAI,
-  TESTNET_BTC_ADDRESS,
-  TESTNET_ETH_ADDRESS,
-  TESTNET_USDC_ADDRESS,
   TOKEN1,
   TOKEN2,
   Token,
-  USDC,
   USDT
 } from '@store/consts/static'
 import { PayloadType } from '@store/consts/types'
@@ -82,9 +76,9 @@ export const defaultState: IPoolsStore = {
     [USDT.address.toString()]: USDT,
     [TOKEN1.address.toString()]: TOKEN1,
     [TOKEN2.address.toString()]: TOKEN2,
-    [TESTNET_BTC_ADDRESS]: BTC,
-    [TESTNET_ETH_ADDRESS]: ETH,
-    [TESTNET_USDC_ADDRESS]: USDC
+    // [TESTNET_BTC_ADDRESS]: BTC,
+    // [TESTNET_ETH_ADDRESS]: ETH,
+    // [TESTNET_USDC_ADDRESS]: USDC
   },
   pools: {},
   poolKeys: {},
@@ -121,9 +115,11 @@ const poolsSlice = createSlice({
   initialState: defaultState,
   reducers: {
     initPool(state, _action: PayloadAction<PoolKey>) {
+      console.log('initPool')
       return state
     },
     addTokens(state, action: PayloadAction<Record<string, Token>>) {
+      console.log('addTokens')
       state.tokens = {
         ...state.tokens,
         ...action.payload
@@ -131,6 +127,7 @@ const poolsSlice = createSlice({
       return state
     },
     updateTokenBalances(state, action: PayloadAction<[string, bigint][]>) {
+      console.log('updateTokenBalances')
       action.payload.map(pair => {
         state.tokens[pair[0]] = {
           ...state.tokens[pair[0]],
@@ -140,6 +137,7 @@ const poolsSlice = createSlice({
       return state
     },
     setPoolKeys(state, action: PayloadAction<PoolKey[]>) {
+      console.log('setPoolKeys')
       action.payload.map(poolKey => {
         const keyStringified = poolKeyToString(poolKey)
         state.poolKeys[keyStringified] = poolKey
@@ -147,9 +145,11 @@ const poolsSlice = createSlice({
       return state
     },
     getPoolKeys(state) {
+      console.log('getPoolKeys')
       return state
     },
     addPool(state, action: PayloadAction<PoolWithPoolKey | undefined>) {
+      console.log('addPool')
       if (action.payload) {
         const poolKey = action.payload.pool_key
         const keyStringified = poolKeyToString(poolKey)
@@ -166,6 +166,7 @@ const poolsSlice = createSlice({
       return state
     },
     getPoolData(state, _action: PayloadAction<PoolKey>) {
+      console.log('getPoolData')
       state.isLoadingLatestPoolsForTransaction = true
       return state
     },
@@ -174,6 +175,7 @@ const poolsSlice = createSlice({
     //   return state
     // },
     setTickMaps(state, action: PayloadAction<updateTickMaps>) {
+      console.log('setTickMaps')
       state.tickMaps[poolKeyToString(action.payload.poolKey)] = JSON.stringify(
         Array.from(action.payload.tickMapStructure.bitmap.entries()).map(([key, value]) => [
           key.toString(),
@@ -183,9 +185,11 @@ const poolsSlice = createSlice({
       return state
     },
     stopIsLoadingTicksAndTickMaps(state) {
+      console.log('stopIsLoadingTicksAndTickMaps')
       state.isLoadingTicksAndTickMaps = false
     },
     setTicks(state, action: PayloadAction<UpdateTick>) {
+      console.log('setTicks')
       state.poolTicks[poolKeyToString(action.payload.poolKey)] = action.payload.tickStructure
       return state
     },
@@ -197,6 +201,7 @@ const poolsSlice = createSlice({
     //   return state
     // },
     addPools(state, action: PayloadAction<PoolWithPoolKey[]>) {
+      console.log('addPools')
       const newData = action.payload.reduce(
         (acc, pool) => ({
           ...acc,
@@ -209,6 +214,7 @@ const poolsSlice = createSlice({
       return state
     },
     addPoolsForList(state, action: PayloadAction<ListPoolsResponse>) {
+      console.log('addPoolsForList')
       const newData = action.payload.data.reduce(
         (acc, pool) => ({
           ...acc,
@@ -226,11 +232,15 @@ const poolsSlice = createSlice({
     // },
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     getAllPoolsForPairData(state, _action: PayloadAction<PairTokens>) {
+      console.log('getAllPoolsForPairData')
       state.isLoadingLatestPoolsForTransaction = true
       return state
     },
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    getPoolsDataForList(_state, _action: PayloadAction<ListPoolsRequest>) {},
+    getPoolsDataForList(_state, _action: PayloadAction<ListPoolsRequest>) {
+      console.log('getPoolsDataForList')
+      return _state
+    },
     // deleteTick(state, action: PayloadAction<DeleteTick>) {
     //   state.poolTicks[action.payload.address].splice(action.payload.index, 1)
     // },
@@ -239,6 +249,7 @@ const poolsSlice = createSlice({
     // },
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     getTicksAndTickMaps(state, _action: PayloadAction<FetchTicksAndTickMaps>) {
+      console.log('getTicksAndTickMaps')
       state.isLoadingTicksAndTickMaps = true
       return state
     }

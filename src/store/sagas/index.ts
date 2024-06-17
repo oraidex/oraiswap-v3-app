@@ -5,6 +5,6 @@ import { positionsSaga } from './positions'
 import { walletSaga } from './wallet'
 
 function* rootSaga(): Generator {
-  yield all([positionsSaga].map(spawn))
+  yield all([walletSaga, poolsSaga, positionsSaga].map(spawn))
 }
 export default rootSaga
