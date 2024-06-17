@@ -269,6 +269,14 @@ export function* handleGetCurrentPlotTicks(
   }
 }
 
+export async function handleClaimFeeSingleton(index?: number) {
+  const txResult = await SingletonOraiswapV3.dex.claimFee({
+    index: Number(index)
+  })
+
+  return txResult
+}
+
 export function* handleClaimFee(action: PayloadAction<HandleClaimFee>) {
   const { index, addressTokenX, addressTokenY } = action.payload
 
@@ -283,19 +291,9 @@ export function* handleClaimFee(action: PayloadAction<HandleClaimFee>) {
         key: loaderKey
       })
     )
-    const walletAddress = yield* select(address)
-    const api = yield* getConnection()
-    const network = yield* select(networkType)
-    const invAddress = yield* select(dexAddress)
-
-    const invariant = yield* call(
-      [invariantSingleton, invariantSingleton.loadInstance],
-      api,
-      network,
-      invAddress
-    )
-
-    const tx = invariant.claimFeeTx(index, INVARIANT_CLAIM_FEE_OPTIONS)
+    // const txResult =  SingletonOraiswapV3.dex.claimFee({
+    //   index: Number(index)
+    // })
 
     yield put(
       snackbarsActions.add({
@@ -306,14 +304,10 @@ export function* handleClaimFee(action: PayloadAction<HandleClaimFee>) {
       })
     )
 
-    const signedTx = yield* call([tx, tx.signAsync], walletAddress, {
-      signer: adapter.signer as Signer
-    })
-
     closeSnackbar(loaderSigningTx)
     yield put(snackbarsActions.remove(loaderSigningTx))
 
-    const txResult = yield* call(sendTx, signedTx)
+    const txResult = yield* call(handleClaimFeeSingleton, index)
 
     closeSnackbar(loaderKey)
     yield put(snackbarsActions.remove(loaderKey))
@@ -322,7 +316,7 @@ export function* handleClaimFee(action: PayloadAction<HandleClaimFee>) {
         message: 'Fee successfully claimed',
         variant: 'success',
         persist: false,
-        txid: txResult.hash
+        txid: txResult.transactionHash
       })
     )
 
