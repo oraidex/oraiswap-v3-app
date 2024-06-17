@@ -1,5 +1,3 @@
-import { positionToTick } from '../wasm'
-
 const MAX_TICK = 221_818
 
 const position_to_tick = (chunk: number, bit: number, tick_spacing: number): number => {
