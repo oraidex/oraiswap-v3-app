@@ -1,4 +1,5 @@
-import { positionToTick } from '@wasm'
+import { parse } from '@store/consts/utils'
+import { positionToTick, LiquidityTick } from '@wasm'
 
 describe('utils', () => {
   it('test postion to tick', async () => {
@@ -21,5 +22,19 @@ describe('utils', () => {
     })
 
     expect(ticks).toEqual([-10, 10])
+  })
+
+  it('test parse', async () => {
+    const liquidityTick: LiquidityTick = parse({
+      index: 1,
+      sign: true,
+      liquidity_change: '10000'
+    })
+
+    expect(liquidityTick).toEqual({
+      index: 1,
+      sign: true,
+      liquidity_change: 10000n
+    })
   })
 })
