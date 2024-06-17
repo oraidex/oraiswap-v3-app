@@ -22,7 +22,6 @@ export const HeaderWrapper: React.FC = () => {
 
   useEffect(() => {
     ;(async () => {
-      console.log('wallet', { walletAddress })
       if (walletAddress == '') {
         connectWallet()
       }

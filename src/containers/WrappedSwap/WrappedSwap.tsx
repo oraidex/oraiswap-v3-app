@@ -188,8 +188,8 @@ export const WrappedSwap = () => {
 
     dispatch(
       poolsActions.getAllPoolsForPairData({
-        first: tokensList[tokenFromIndex].address,
-        second: tokensList[tokenToIndex].address
+        first: tokensList[tokenFromIndex].assetAddress,
+        second: tokensList[tokenToIndex].assetAddress
       })
     )
 

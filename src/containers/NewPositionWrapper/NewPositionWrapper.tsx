@@ -38,7 +38,13 @@ import {
   poolsArraySortedByFees
 } from '@store/selectors/pools'
 import { initPosition, plotTicks } from '@store/selectors/positions'
-import { canCreateNewPool, canCreateNewPosition, status, swapTokens } from '@store/selectors/wallet'
+import {
+  address,
+  canCreateNewPool,
+  canCreateNewPosition,
+  status,
+  swapTokens
+} from '@store/selectors/wallet'
 import { openWalletSelectorModal } from '@utils/web3/selector'
 import { VariantType } from 'notistack'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
@@ -77,6 +83,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   const allPoolKeys = useSelector(poolKeys)
   const poolsData = useSelector(pools)
   const loadingTicksAndTickMaps = useSelector(isLoadingTicksAndTickMaps)
+  const walletAddress = useSelector(address)
 
   const { success, inProgress } = useSelector(initPosition)
   const { data: ticksData, loading: ticksLoading, hasError: hasTicksError } = useSelector(plotTicks)
@@ -85,24 +92,6 @@ export const NewPositionWrapper: React.FC<IProps> = ({
 
   const canUserCreateNewPool = useSelector(canCreateNewPool())
   const canUserCreateNewPosition = useSelector(canCreateNewPosition())
-
-  console.log({
-    tokens,
-    walletStatus,
-    allPools,
-    allPoolKeys,
-    poolsData,
-    loadingTicksAndTickMaps,
-    success,
-    inProgress,
-    ticksData,
-    ticksLoading,
-    hasTicksError,
-    isFetchingNewPool,
-    currentNetwork,
-    canUserCreateNewPool,
-    canUserCreateNewPosition
-  })
 
   const [poolIndex, setPoolIndex] = useState<number | null>(null)
 
@@ -126,7 +115,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
 
   useEffect(() => {
     dispatch(poolsActions.getPoolKeys())
-  }, [walletStatus])
+  }, [walletStatus, walletAddress])
 
   useEffect(() => {
     isMountedRef.current = true

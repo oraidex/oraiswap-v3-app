@@ -548,14 +548,14 @@ export const getPool = async (poolKey: PoolKey): Promise<PoolWithPoolKey> => {
 }
 
 export const getPoolKeys = async (): Promise<PoolKey[]> => {
-  const pools = await SingletonOraiswapV3.dex.pools({})
-  const poolKeys: PoolKey[] = pools.map(pool => pool.pool_key)
-  console.log('poolKeys', poolKeys)
-  return poolKeys
-  // return pools.map((pool, index) => ({
-  //   pool,
-  //   pool_key: poolKeys[index]
-  // }))
+  try {
+    const pools = await SingletonOraiswapV3.getPools()
+    const poolKeys: PoolKey[] = pools.map(pool => pool.pool_key)
+    console.log('poolKeys', poolKeys)
+    return poolKeys
+  } catch {
+    return []
+  }
 }
 
 export const poolKeyToString = (poolKey: PoolKey): string => {
