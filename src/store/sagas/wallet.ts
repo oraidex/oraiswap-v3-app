@@ -331,10 +331,6 @@ export function* disconnectHandler(): Generator {
   yield takeLatest(actions.disconnect, handleDisconnect)
 }
 
-export function* airdropSaga(): Generator {
-  yield takeLeading(actions.airdrop, handleAirdrop)
-}
-
 export function* initSaga(): Generator {
   yield takeLeading(actions.initWallet, init)
 }
@@ -355,7 +351,6 @@ export function* walletSaga(): Generator {
   yield all(
     [
       initSaga,
-      airdropSaga,
       connectHandler,
       disconnectHandler,
       handleFetchTokensBalances,

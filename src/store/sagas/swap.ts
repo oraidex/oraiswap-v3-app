@@ -340,7 +340,7 @@ export function* handleGetSimulateResult(action: PayloadAction<Simulate>) {
       const xToY = fromToken.toString() === pool.poolKey.token_x
 
       try {
-        const result = simulateInvariantSwap(
+        const result = simulateOraiswapV3Swap(
           deserializeTickmap(allTickmaps[poolKeyToString(pool.poolKey)]),
           pool.poolKey.fee_tier,
           allPools[poolKeyToString(pool.poolKey)],
