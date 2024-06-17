@@ -28,18 +28,19 @@ import {
   Pool,
   PoolKey,
   FeeTier,
-  Position,
+  // Position,
   SqrtPrice,
   TokenAmount,
   positionToTick,
   SwapError,
   getGlobalMaxSqrtPrice,
   getGlobalMinSqrtPrice,
-  CalculateSwapResult,
-  simulateSwap
+  Tick,
+  Position,
+  LiquidityTick
 } from '../../wasm'
 import { Token, TokenPriceData } from './static'
-import { LiquidityTick, PoolWithPoolKey, Tick } from '@/sdk/OraiswapV3.types'
+import { PoolWithPoolKey } from '@/sdk/OraiswapV3.types'
 
 export enum Network {
   Local = 'Local',
@@ -823,7 +824,21 @@ export const getAllLiquidityTicks = async (
     }
   }
 
-  return SingletonOraiswapV3.dex.liquidityTicks({ poolKey, tickIndexes: ticks })
+  const liquidityTicks = await SingletonOraiswapV3.dex.liquidityTicks({ poolKey, tickIndexes: ticks });
+  const convertedLiquidityTicks: LiquidityTick[] = liquidityTicks.map((tickData: any) => {
+    return {
+      fee_growth_outside_x: BigInt(tickData.fee_growth_outside_x),
+      fee_growth_outside_y: BigInt(tickData.fee_growth_outside_y),
+      index: tickData.index,
+      liquidity_change: BigInt(tickData.liquidity_change),
+      sign: tickData.sign,
+      liquidity_gross: BigInt(tickData.liquidity_gross),
+      seconds_outside: tickData.seconds_outside,
+      sqrt_price: BigInt(tickData.sqrt_price)
+    }
+  });
+
+  return convertedLiquidityTicks;
 }
 
 export const calculateTickDelta = (
@@ -879,30 +894,26 @@ export const calcTicksAmountInRange = (
   return Math.ceil(Math.abs(maxIndex - minIndex) / tickSpacing)
 }
 
-export const getAllTicks = (poolKey: PoolKey, ticks: bigint[]): Promise<Tick[]> => {
-  const promises: Promise<Tick>[] = []
+export const getAllTicks = async (poolKey: PoolKey, ticks: bigint[]): Promise<Tick[]> => {
+  const tickDatas = await Promise.all(
+    ticks.map(async tick => {
+      const tickData = await SingletonOraiswapV3.dex.tick({ key: poolKey, index: Number(tick) })
+      const convertedTick: Tick = {
+        fee_growth_outside_x: BigInt(tickData.fee_growth_outside_x),
+        fee_growth_outside_y: BigInt(tickData.fee_growth_outside_y),
+        index: tickData.index,
+        liquidity_change: BigInt(tickData.liquidity_change),
+        sign: tickData.sign,
+        liquidity_gross: BigInt(tickData.liquidity_gross),
+        seconds_outside: tickData.seconds_outside,
+        sqrt_price: BigInt(tickData.sqrt_price)
+      }
+      return convertedTick
+    })
+  )
 
-  for (const tick of ticks) {
-    promises.push(SingletonOraiswapV3.dex.tick({ key: poolKey, index: Number(tick) }))
-  }
-
-  return Promise.all(promises)
+  return tickDatas
 }
-
-// export const tickmapToArray = (tickmap: Tickmap, tickSpacing: bigint): bigint[] => {
-//   const ticks = []
-
-//   for (const [chunkIndex, chunk] of tickmap.bitmap.entries()) {
-//     for (let bit = 0n; bit < CHUNK_SIZE; bit++) {
-//       const checkedBit = chunk & (1n << bit)
-//       if (checkedBit) {
-//         ticks.push(positionToTick(chunkIndex, bit, tickSpacing))
-//       }
-//     }
-//   }
-
-//   return ticks
-// }
 
 export const deserializeTickmap = (serializedTickmap: string): Tickmap => {
   const deserializedMap: Map<string, string> = new Map(JSON.parse(serializedTickmap))
@@ -936,10 +947,18 @@ export interface LiquidityBreakpoint {
 }
 
 export const getTick = async (ind: bigint, poolKey: PoolKey): Promise<Tick> => {
-  return await SingletonOraiswapV3.dex.tick({
-    index: Number(ind),
-    key: poolKey
-  })
+  const tickData = await SingletonOraiswapV3.dex.tick({ key: poolKey, index: Number(ind) })
+  const convertedTick: Tick = {
+    fee_growth_outside_x: BigInt(tickData.fee_growth_outside_x),
+    fee_growth_outside_y: BigInt(tickData.fee_growth_outside_y),
+    index: tickData.index,
+    liquidity_change: BigInt(tickData.liquidity_change),
+    sign: tickData.sign,
+    liquidity_gross: BigInt(tickData.liquidity_gross),
+    seconds_outside: tickData.seconds_outside,
+    sqrt_price: BigInt(tickData.sqrt_price)
+  }
+  return convertedTick
 }
 
 export const calculateLiquidityBreakpoints = (
@@ -1132,4 +1151,48 @@ export const calculatePriceImpact = (
   const denominator = startingPrice > endingPrice ? startingPrice : endingPrice
 
   return (nominator * getPercentageDenominator()) / denominator
+}
+
+/**
+ * export interface Position {
+    pool_key: PoolKey;
+    liquidity: Liquidity;
+    lower_tick_index: number;
+    upper_tick_index: number;
+    fee_growth_inside_x: FeeGrowth;
+    fee_growth_inside_y: FeeGrowth;
+    last_block_number: number;
+    tokens_owed_x: TokenAmount;
+    tokens_owed_y: TokenAmount;
+}
+ */
+export const getPosition = async (index: bigint, ownerId: string): Promise<Position> => {
+  const position = await SingletonOraiswapV3.dex.position({ index: Number(index), ownerId })
+  const convertedPosition: Position = {
+    pool_key: position.pool_key,
+    liquidity: BigInt(position.liquidity),
+    lower_tick_index: position.lower_tick_index,
+    upper_tick_index: position.upper_tick_index,
+    fee_growth_inside_x: BigInt(position.fee_growth_inside_x),
+    fee_growth_inside_y: BigInt(position.fee_growth_inside_y),
+    last_block_number: position.last_block_number,
+    tokens_owed_x: BigInt(position.tokens_owed_x),
+    tokens_owed_y: BigInt(position.tokens_owed_y)
+  }
+  return convertedPosition
+}
+
+export const positionList = async (ownerId: string): Promise<Position[]> => {
+  const positions = await SingletonOraiswapV3.dex.positions({ ownerId })
+  return positions.map(position => ({
+    pool_key: position.pool_key,
+    liquidity: BigInt(position.liquidity),
+    lower_tick_index: position.lower_tick_index,
+    upper_tick_index: position.upper_tick_index,
+    fee_growth_inside_x: BigInt(position.fee_growth_inside_x),
+    fee_growth_inside_y: BigInt(position.fee_growth_inside_y),
+    last_block_number: position.last_block_number,
+    tokens_owed_x: BigInt(position.tokens_owed_x),
+    tokens_owed_y: BigInt(position.tokens_owed_y)
+  }))
 }

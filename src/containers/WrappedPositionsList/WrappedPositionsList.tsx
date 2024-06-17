@@ -1,4 +1,4 @@
-import { Position } from '@/sdk/OraiswapV3.types'
+import { Position } from '@/wasm/oraiswap_v3_wasm'
 import { useSigningClient } from '../../../src/contexts/cosmwasm'
 import { PositionsList } from '@components/PositionsList/PositionsList'
 import { FAUCET_LIST_TOKEN, POSITIONS_PER_PAGE } from '@store/consts/static'

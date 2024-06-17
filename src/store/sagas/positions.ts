@@ -6,8 +6,10 @@ import {
   createPlaceholderLiquidityPlot,
   deserializeTickmap,
   getAllLiquidityTicks,
+  getPosition,
   getTick,
-  poolKeyToString
+  poolKeyToString,
+  positionList
 } from '@store/consts/utils'
 import { FetchTicksAndTickMaps, ListType, actions as poolsActions } from '@store/reducers/pools'
 import {
@@ -162,10 +164,8 @@ function* handleInitPosition(action: PayloadAction<InitPositionData>): Generator
   }
 }
 
-export async function handleGetPositionsList() {
-  const positions = await SingletonOraiswapV3.dex.positions({
-    ownerId: SingletonOraiswapV3.dex.sender
-  })
+export function* handleGetPositionsList() {
+  const positions = yield* call(positionList, SingletonOraiswapV3.dex.sender);
 
   const pools: PoolKey[] = []
   const poolSet: Set<string> = new Set()
@@ -443,10 +443,8 @@ export function* handleClaimFeeWithAZERO(action: PayloadAction<HandleClaimFee>) 
 
 export function* handleGetSinglePosition(action: PayloadAction<bigint>) {
   const walletAddress = yield* select(address)
-  const position = yield SingletonOraiswapV3.dex.position({
-    index: Number(action.payload),
-    ownerId: walletAddress
-  })
+  const position = yield* call(getPosition, action.payload, walletAddress)
+  console.log('position', position)
   yield* put(
     actions.setSinglePosition({
       index: action.payload,
@@ -455,13 +453,13 @@ export function* handleGetSinglePosition(action: PayloadAction<bigint>) {
   )
   yield* put(
     actions.getCurrentPositionTicks({
-      poolKey: position.poolKey,
-      lowerTickIndex: position.lowerTickIndex,
-      upperTickIndex: position.upperTickIndex
+      poolKey: position.pool_key,
+      lowerTickIndex: BigInt(position.lower_tick_index),
+      upperTickIndex: BigInt(position.upper_tick_index)
     })
   )
   yield* put(
-    poolsActions.getPoolsDataForList({ poolKeys: [position.poolKey], listType: ListType.POSITIONS })
+    poolsActions.getPoolsDataForList({ poolKeys: [position.pool_key], listType: ListType.POSITIONS })
   )
 }
 
@@ -490,11 +488,7 @@ export function* handleClosePosition(action: PayloadAction<ClosePositionData>) {
         key: loaderSigningTx
       })
     )
-
-    // const signedTx = yield* call([tx, tx.signAsync], walletAddress, {
-    //   signer: adapter.signer as Signer
-    // })
-
+    
     closeSnackbar(loaderSigningTx)
     yield put(snackbarsActions.remove(loaderSigningTx))
 

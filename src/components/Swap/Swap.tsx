@@ -27,8 +27,8 @@ import { useDispatch } from 'react-redux'
 import ExchangeRate from './ExchangeRate/ExchangeRate'
 import TransactionDetailsBox from './TransactionDetailsBox/TransactionDetailsBox'
 import useStyles from './style'
-import { PoolKey, PoolWithPoolKey, Tick, TokenAmount } from '@/sdk/OraiswapV3.types'
-import { Price } from '@/wasm'
+import { PoolKey, Price, SwapError, Tick, TokenAmount } from '@/wasm'
+import { PoolWithPoolKey } from '@/sdk/OraiswapV3.types'
 
 export interface Pools {
   tokenX: string
@@ -330,7 +330,7 @@ export const Swap: React.FC<ISwap> = ({
 
     if (
       convertBalanceToBigint(amountFrom, Number(tokens[tokenFromIndex].decimals)) >
-      tokens[tokenFromIndex].balance
+      BigInt(tokens[tokenFromIndex].balance)
     ) {
       return 'Insufficient balance'
     }
@@ -459,7 +459,7 @@ export const Swap: React.FC<ISwap> = ({
             value={amountFrom}
             balance={
               tokenFromIndex !== null
-                ? printBigint(tokens[tokenFromIndex].balance, tokens[tokenFromIndex].decimals)
+                ? printBigint(BigInt(tokens[tokenFromIndex].balance), tokens[tokenFromIndex].decimals)
                 : '- -'
             }
             decimal={tokenFromIndex !== null ? tokens[tokenFromIndex].decimals : 12n}
@@ -475,7 +475,7 @@ export const Swap: React.FC<ISwap> = ({
               if (tokenFromIndex !== null) {
                 setInputRef(inputTarget.FROM)
                 setAmountFrom(
-                  printBigint(tokens[tokenFromIndex].balance, tokens[tokenFromIndex].decimals)
+                  printBigint(BigInt(tokens[tokenFromIndex].balance), tokens[tokenFromIndex].decimals)
                 )
               }
             }}
@@ -530,7 +530,7 @@ export const Swap: React.FC<ISwap> = ({
             value={amountTo}
             balance={
               tokenToIndex !== null
-                ? printBigint(tokens[tokenToIndex].balance, tokens[tokenToIndex].decimals)
+                ? printBigint(BigInt(tokens[tokenToIndex].balance), tokens[tokenToIndex].decimals)
                 : '- -'
             }
             className={classes.amountInput}
@@ -546,7 +546,7 @@ export const Swap: React.FC<ISwap> = ({
               if (tokenFromIndex !== null) {
                 setInputRef(inputTarget.FROM)
                 setAmountFrom(
-                  printBigint(tokens[tokenFromIndex].balance, tokens[tokenFromIndex].decimals)
+                  printBigint(BigInt(tokens[tokenFromIndex].balance), tokens[tokenFromIndex].decimals)
                 )
               }
             }}
@@ -660,8 +660,8 @@ export const Swap: React.FC<ISwap> = ({
                 simulateResult.targetSqrtPrice,
                 tokens[tokenFromIndex].assetAddress,
                 tokens[tokenToIndex].assetAddress,
-                convertBalanceToBigint(amountFrom, tokens[tokenFromIndex].decimals).toString(),
-                convertBalanceToBigint(amountTo, tokens[tokenToIndex].decimals).toString(),
+                convertBalanceToBigint(amountFrom, tokens[tokenFromIndex].decimals),
+                convertBalanceToBigint(amountTo, tokens[tokenToIndex].decimals),
                 inputRef === inputTarget.FROM
               )
             }}

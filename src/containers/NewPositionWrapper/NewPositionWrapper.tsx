@@ -1,5 +1,5 @@
-import { FeeTier } from '@/sdk/OraiswapV3.types'
 import {
+  FeeTier,
   TokenAmount,
   _newPoolKey,
   calculateSqrtPrice,

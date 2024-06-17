@@ -5,14 +5,11 @@ import {
   Tickmap,
   getMaxTick,
   getMinTick,
-  positionToTick,
   _newPoolKey,
   PoolKey,
-  LiquidityTick
 } from '../../wasm'
 import {
   CHUNK_SIZE,
-  LIQUIDITY_TICKS_LIMIT,
   MAX_TICKMAP_QUERY_SIZE,
   TokenDataOnChain
 } from '@store/consts/utils'
@@ -166,34 +163,5 @@ export default class SingletonOraiswapV3 {
     const storedTickmap = new Map<bigint, bigint>(fullResult)
 
     return { bitmap: storedTickmap }
-  }
-
-  public static async getAllLiquidityTicks(
-    poolKey: PoolKey,
-    tickmap: Tickmap
-  ): Promise<LiquidityTick[]> {
-    const tickIndexes: bigint[] = []
-    for (const [chunkIndex, chunk] of tickmap.bitmap.entries()) {
-      for (let bit = 0n; bit < CHUNK_SIZE; bit++) {
-        const checkedBit = chunk & (1n << bit)
-        if (checkedBit) {
-          const tickIndex = positionToTick(chunkIndex, bit, poolKey.fee_tier.tick_spacing)
-          tickIndexes.push(tickIndex)
-        }
-      }
-    }
-    const tickLimit = integerSafeCast(LIQUIDITY_TICKS_LIMIT)
-    const promises: Promise<LiquidityTick[]>[] = []
-    for (let i = 0; i < tickIndexes.length; i += tickLimit) {
-      promises.push(
-        this.dex.liquidityTicks({
-          poolKey,
-          tickIndexes: tickIndexes.slice(i, i + tickLimit).map(Number)
-        })
-      )
-    }
-
-    const tickResults = await Promise.all(promises)
-    return tickResults.flat(1)
   }
 }

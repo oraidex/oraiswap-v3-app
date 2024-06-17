@@ -26,7 +26,7 @@ import {
   plotTicks,
   singlePositionData
 } from '@store/selectors/positions'
-import { status } from '@store/selectors/wallet'
+import { address, status } from '@store/selectors/wallet'
 import { VariantType } from 'notistack'
 import React, { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -46,6 +46,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
 
   const allPools = useSelector(poolsArraySortedByFees)
   const currentNetwork = useSelector(networkType)
+  const walletAddress = useSelector(address)
   const position = useSelector(singlePositionData(id))
   const isLoadingList = useSelector(isLoadingPositionsList)
   const { data: ticksData, loading: ticksLoading, hasError: hasTicksError } = useSelector(plotTicks)
@@ -297,8 +298,8 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
   }, [walletStatus])
 
   useEffect(() => {
-    dispatch(actions.getSinglePosition(id))
-  }, [])
+    dispatch(actions.getPositionsList())
+  }, [walletAddress])
 
   if (position) {
     return (
