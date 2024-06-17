@@ -217,17 +217,17 @@ export const calculateFee = (
 ): [TokenAmount, TokenAmount] => {
   return _calculateFee(
     lowerTick.index,
-    lowerTick.fee_growth_outside_x,
-    lowerTick.fee_growth_outside_y,
+    BigInt(lowerTick.fee_growth_outside_x),
+    BigInt(lowerTick.fee_growth_outside_y),
     upperTick.index,
-    upperTick.fee_growth_outside_x,
-    upperTick.fee_growth_outside_y,
+    BigInt(upperTick.fee_growth_outside_x),
+    BigInt(upperTick.fee_growth_outside_y),
     pool.current_tick_index,
-    pool.fee_growth_global_x,
-    pool.fee_growth_global_y,
-    position.fee_growth_inside_x,
-    position.fee_growth_inside_y,
-    position.liquidity
+    BigInt(pool.fee_growth_global_x),
+    BigInt(pool.fee_growth_global_y),
+    BigInt(position.fee_growth_inside_x),
+    BigInt(position.fee_growth_inside_y),
+    BigInt(position.liquidity)
   )
 }
 
@@ -355,19 +355,10 @@ export const _calculateTokenAmounts = (
   position: Position,
   sign: boolean
 ): calculateAmountDeltaResult => {
-  console.log({
-    current_tick_index: pool.current_tick_index,
-    sqrt_price: pool.sqrt_price,
-    liquidity: position.liquidity,
-    sign,
-    upper_tick_index: position.upper_tick_index,
-    lower_tick_index: position.lower_tick_index
-  })
-
   return calculateAmountDelta(
     pool.current_tick_index,
-    pool.sqrt_price,
-    position.liquidity,
+    BigInt(pool.sqrt_price),
+    BigInt(position.liquidity),
     sign,
     position.upper_tick_index,
     position.lower_tick_index
