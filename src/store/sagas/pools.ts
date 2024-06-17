@@ -1,5 +1,5 @@
 import { PoolKey } from '@/sdk/OraiswapV3.types'
-import { _newPoolKey, toSqrtPrice } from '../../wasm/oraiswap_v3_wasm'
+import { _newPoolKey, toSqrtPrice } from '@wasm'
 import { PayloadAction } from '@reduxjs/toolkit'
 import {
   createLoaderKey,
@@ -147,8 +147,8 @@ export function* fetchAllPoolKeys(): Generator {
         poolKeys: pools,
         listType: ListType.POSITIONS
       }
-    };
-    yield call(fetchPoolsDataForList, actionPayload as PayloadAction<ListPoolsRequest>);
+    }
+    yield call(fetchPoolsDataForList, actionPayload as PayloadAction<ListPoolsRequest>)
 
     yield* put(actions.setPoolKeys(pools))
   } catch (error) {

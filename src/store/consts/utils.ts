@@ -38,7 +38,7 @@ import {
   getGlobalMinSqrtPrice,
   CalculateSwapResult,
   simulateSwap
-} from '../../wasm'
+} from '@wasm'
 import { Token, TokenPriceData } from './static'
 import { PoolWithPoolKey, Tick } from '@/sdk/OraiswapV3.types'
 

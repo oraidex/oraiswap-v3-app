@@ -9,7 +9,7 @@ import {
   _newPoolKey,
   PoolKey,
   LiquidityTick
-} from '../../wasm'
+} from '@wasm'
 import {
   CHUNK_SIZE,
   LIQUIDITY_TICKS_LIMIT,

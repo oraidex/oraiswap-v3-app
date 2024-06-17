@@ -1,4 +1,4 @@
-import { positionToTick } from '../wasm'
+import { positionToTick } from '@wasm'
 
 describe('utils', () => {
   it('test postion to tick', async () => {

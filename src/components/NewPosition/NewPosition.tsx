@@ -29,7 +29,7 @@ import MarketIdLabel from './MarketIdLabel/MarketIdLabel'
 import PoolInit from './PoolInit/PoolInit'
 import RangeSelector from './RangeSelector/RangeSelector'
 import useStyles from './style'
-import { Price, TokenAmount, getMaxTick, getMinTick } from '../../wasm'
+import { Price, TokenAmount, getMaxTick, getMinTick } from '@wasm'
 
 export interface INewPosition {
   initialTokenFrom: string

@@ -30,7 +30,7 @@ import SingletonOraiswapV3 from '@store/services/contractSingleton'
 import { closeSnackbar } from 'notistack'
 import { all, call, put, select, spawn, takeEvery } from 'typed-redux-saga'
 import { fetchBalances } from './wallet'
-import { SwapError, simulateSwap } from '../../wasm/oraiswap_v3_wasm'
+import { SwapError, simulateSwap } from '@wasm'
 
 export async function handleSwap(action: PayloadAction<Omit<Swap, 'txid'>>) {
   const { poolKey, tokenFrom, slippage, amountIn, byAmountIn, estimatedPriceAfterSwap, tokenTo } =
