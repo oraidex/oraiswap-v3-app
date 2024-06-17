@@ -1,5 +1,4 @@
 import { createSelector } from '@reduxjs/toolkit'
-import { POOL_SAFE_TRANSACTION_FEE, SWAP_SAFE_TRANSACTION_FEE } from '@store/consts/static'
 import { IOraichainWallet, ITokenBalance, walletSliceName } from '@store/reducers/wallet'
 import { AnyProps, keySelectors } from './helpers'
 import { tokens } from './pools'
@@ -60,11 +59,14 @@ export const swapTokens = createSelector(
   tokens,
   balance,
   (allAccounts, tokens, a0Balance) => {
-    return Object.values(tokens).map(token => ({
-      ...token,
-      assetAddress: token.address,
-      balance: allAccounts[token.address.toString()]?.balance ?? 0n
-    }))
+    return Object.values(tokens).map(token => {
+      const tokenSwap: SwapToken = {
+        ...token,
+        assetAddress: token.address,
+        balance: allAccounts[token.address.toString()]?.balance.toString() ?? '0'
+      }
+      return tokenSwap;
+    })
   }
 )
 
@@ -76,7 +78,7 @@ export const poolTokens = createSelector(
     return Object.values(tokens).map(token => ({
       ...token,
       assetAddress: token.address,
-      balance: allAccounts[token.address.toString()]?.balance ?? 0n
+      balance: allAccounts[token.address.toString()]?.balance.toString() ?? '0'
     }))
   }
 )
@@ -91,7 +93,7 @@ export const swapTokensDict = createSelector(
       swapTokens[key] = {
         ...val,
         assetAddress: val.address,
-        balance: allAccounts[val.address.toString()]?.balance ?? BigInt(0)
+        balance: allAccounts[val.address.toString()]?.balance.toString() ?? '0'
       }
     })
 

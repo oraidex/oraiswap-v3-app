@@ -559,7 +559,7 @@ export type FixedPoint = string;
 
 export type Liquidity = string;
 
-export type Percentage = string;
+export type Percentage = number;
 
 export type Price = string;
 

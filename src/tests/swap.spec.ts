@@ -16,6 +16,7 @@ const client = new SimulateCosmWasmClient({
 })
 
 const createToken = async (symbol: string, amount: string) => {
+  console.log(senderAddress, amount)
   // init airi token
   const res = await oraidexArtifacts.deployContract(
     client,
@@ -37,7 +38,7 @@ const createToken = async (symbol: string, amount: string) => {
 
 describe('swap', () => {
   // decimals: 12 + scale 3 = e9
-  let protocol_fee = Number(OraiswapV3Wasm.toPercentage(6, 3))
+  let protocol_fee = Number(OraiswapV3Wasm.toPercentage(6, 3).toString())
 
   let dex: OraiswapV3Client
 
@@ -47,6 +48,7 @@ describe('swap', () => {
       fs.readFileSync(path.resolve(__dirname, 'testdata', 'oraiswap-v3.wasm')),
       'auto'
     )
+    console.log(protocol_fee)
 
     dex = new OraiswapV3Client(
       client,

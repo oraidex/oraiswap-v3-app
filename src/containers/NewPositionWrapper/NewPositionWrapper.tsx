@@ -537,7 +537,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
           !(
             tokenAIndex === tokenA &&
             tokenBIndex === tokenB &&
-            fee === ALL_FEE_TIERS_DATA[feeTierIndex].tier.fee
+            fee === ALL_FEE_TIERS_DATA[feeTierIndex].fee
           )
         ) {
           const index = allPools.findIndex(
@@ -587,9 +587,9 @@ export const NewPositionWrapper: React.FC<IProps> = ({
             dispatch(
               poolsActions.getPoolData(
                 _newPoolKey(
-                  tokens[tokenA].address.toString(),
-                  tokens[tokenB].address.toString(),
-                  ALL_FEE_TIERS_DATA[feeTierIndex].tier
+                  tokens[tokenA].assetAddress.toString(),
+                  tokens[tokenB].assetAddress.toString(),
+                  ALL_FEE_TIERS_DATA[feeTierIndex]
                 )
               )
             )
@@ -604,7 +604,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       calcAmount={calcAmount}
       feeTiers={ALL_FEE_TIERS_DATA.map(tier => {
         return {
-          feeValue: +printBigint(BigInt(tier.tier.fee), 10n) //TODO replace 10n with DECIMAL - n
+          feeValue: +printBigint(BigInt(tier.fee), 10n) //TODO replace 10n with DECIMAL - n
         }
       })}
       ticksLoading={ticksLoading}
@@ -668,7 +668,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
             poolKeyData: _newPoolKey(
               tokens[tokenAIndex].assetAddress.toString(),
               tokens[tokenBIndex].assetAddress.toString(),
-              ALL_FEE_TIERS_DATA[feeIndex].tier
+              ALL_FEE_TIERS_DATA[feeIndex]
             ),
             lowerTick: lowerTickIndex,
             upperTick: upperTickIndex,

@@ -1,4 +1,4 @@
-export type Percentage = string;
+export type Percentage = number;
 export interface InstantiateMsg {
   protocol_fee: Percentage;
 }

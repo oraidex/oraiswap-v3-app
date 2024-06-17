@@ -33,11 +33,10 @@ import {
   FeeTier,
   Position,
   SqrtPrice,
-  Tick,
-  TokenAmount
+  TokenAmount,
 } from '../../wasm'
 import { Token } from './static'
-import { PoolWithPoolKey } from '@/sdk/OraiswapV3.types'
+import { PoolWithPoolKey, Tick } from '@/sdk/OraiswapV3.types'
 
 export enum Network {
   Local = 'Local',
@@ -87,7 +86,8 @@ export const newPoolKey = (token0: string, token1: string, feeTier: FeeTier): Po
   return _newPoolKey(
     token0,
     token1,
-    _newFeeTier(feeTier.fee, integerSafeCast(feeTier.tick_spacing))
+    // _newFeeTier(feeTier.fee, integerSafeCast(feeTier.tick_spacing))
+    _newFeeTier(feeTier.fee, BigInt(feeTier.tick_spacing))
   )
 }
 
@@ -881,7 +881,7 @@ export const calculateAmountInWithSlippage = (
 }
 
 export const sqrtPriceToPrice = (sqrtPrice: SqrtPrice | bigint): Price => {
-  return (BigInt(sqrtPrice) * BigInt(sqrtPrice)) / getSqrtPriceDenominator()
+  return ((BigInt(sqrtPrice) * BigInt(sqrtPrice)) / getSqrtPriceDenominator()).toString()
 }
 
 export interface LiquidityBreakpoint {
@@ -1010,7 +1010,7 @@ const newtonIteration = (n: bigint, x0: bigint): bigint => {
 }
 
 export const priceToSqrtPrice = (price: Price): bigint => {
-  return sqrt(price * getSqrtPriceDenominator())
+  return sqrt(BigInt(price) * getSqrtPriceDenominator())
 }
 
 export const calculateSqrtPriceAfterSlippage = (
@@ -1024,8 +1024,8 @@ export const calculateSqrtPriceAfterSlippage = (
 
   const multiplier = getPercentageDenominator() + BigInt(up ? slippage : -slippage)
   const price = sqrtPriceToPrice(sqrtPrice)
-  const priceWithSlippage = price * multiplier * getPercentageDenominator()
-  const sqrtPriceWithSlippage = priceToSqrtPrice(priceWithSlippage) / getPercentageDenominator()
+  const priceWithSlippage = BigInt(price) * multiplier * getPercentageDenominator()
+  const sqrtPriceWithSlippage = priceToSqrtPrice(priceWithSlippage.toString()) / getPercentageDenominator()
 
   return sqrtPriceWithSlippage
 }
