@@ -1,7 +1,7 @@
 import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 import { OraiswapV3Client } from '../../sdk'
 import { OraiswapTokenClient } from '@oraichain/oraidex-contracts-sdk'
-import { ArrayOfTupleOfUint16AndUint64, LiquidityTick, PoolKey } from '@/sdk/OraiswapV3.types'
+import { ArrayOfTupleOfUint16AndUint64, LiquidityTick, PoolKey } from '../../sdk/OraiswapV3.types'
 import {
   Tickmap,
   getLiquidityTicksLimit,
