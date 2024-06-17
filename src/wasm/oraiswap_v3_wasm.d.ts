@@ -518,21 +518,21 @@ export interface LiquidityTick {
     sign: boolean;
 }
 
-export type FeeGrowth = string;
+export type FeeGrowth = bigint;
 
-export type FixedPoint = string;
+export type FixedPoint = bigint;
 
-export type Liquidity = string;
+export type Liquidity = bigint;
 
 export type Percentage = number;
 
-export type Price = string;
+export type Price = bigint;
 
-export type SecondsPerLiquidity = string;
+export type SecondsPerLiquidity = bigint;
 
-export type SqrtPrice = string;
+export type SqrtPrice = bigint;
 
-export type TokenAmount = string;
+export type TokenAmount = bigint;
 
 export interface Tickmap {
     bitmap: Map<bigint,bigint>;
