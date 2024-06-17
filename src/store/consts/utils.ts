@@ -1,7 +1,6 @@
 import { PlotTickData } from '@store/reducers/positions'
 import SingletonOraiswapV3, { integerSafeCast } from '@store/services/contractSingleton'
 import axios from 'axios'
-import { BTC, ETH, ORAI, Token, TokenPriceData, USDC, USDT, tokensPrices } from './static'
 import {
   Liquidity,
   LiquidityTick,
@@ -35,9 +34,9 @@ import {
   getMaxTickmapQuerySize,
   getLiquidityTicksLimit
 } from '../../wasm'
-import { BalanceResponse } from '@oraichain/cw-simulate/dist/modules/bank'
 import { FeeTier } from '@/sdk/OraiswapV3.types'
 import { Position } from '@/sdk/OraiswapV3.types'
+import { Token } from './static'
 
 export enum Network {
   Local = 'Local',
@@ -448,16 +447,79 @@ export const parseFeeToPathFee = (fee: bigint): string => {
   return parsedFee.slice(0, parsedFee.length - 2) + '_' + parsedFee.slice(parsedFee.length - 2)
 }
 
-export const getPoolsByPoolKeys = async (poolKeys: PoolKey[]): Promise<Pool[]> => {
+export const getPoolsByPoolKeys = async (poolKeys: PoolKey[]): Promise<PoolWithPoolKey[]> => {
   const promises = poolKeys.map(({ token_x, token_y, fee_tier }) =>
     SingletonOraiswapV3.dex.pool({ token0: token_x, token1: token_y, feeTier: fee_tier })
   )
   const pools = await Promise.all(promises)
 
-  return pools.map((pool, index) => ({
-    ...pool,
-    poolKey: poolKeys[index]
-  }))
+  return pools.map((pool, index) => {
+    const poolWithPoolKey: PoolWithPoolKey = {
+      pool,
+      pool_key: poolKeys[index]
+    }
+    return poolWithPoolKey
+  })
+}
+
+export type TokenDataOnChain = {
+  symbol: string
+  address: string
+  name: string
+  decimals: bigint
+  balance: bigint
+}
+
+export const getTokenDataByAddresses = async (tokens: string[]): Promise<Record<string, Token>> => {
+  const tokenInfos: TokenDataOnChain[] = await SingletonOraiswapV3.getTokensInfo(tokens)
+
+  const newTokens: Record<string, Token> = {}
+  tokenInfos.forEach(token => {
+    newTokens[token.address] = {
+      symbol: token.symbol ? (token.symbol as string) : 'UNKNOWN',
+      address: token.address,
+      name: token.name ? (token.name as string) : '',
+      decimals: token.decimals as bigint,
+      balance: token.balance as bigint,
+      logoURI: '/unknownToken.svg',
+      isUnknown: true
+    }
+  })
+  return newTokens
+}
+
+export const createPoolTx = async (
+  poolKey: PoolKey,
+  initSqrtPrice: string,
+  initTick: number
+): Promise<string> => {
+  return (
+    await SingletonOraiswapV3.dex.createPool({
+      feeTier: poolKey.fee_tier,
+      initSqrtPrice,
+      initTick,
+      token0: poolKey.token_x,
+      token1: poolKey.token_y
+    })
+  ).transactionHash
+}
+
+export const getPool = async (poolKey: PoolKey): Promise<PoolWithPoolKey> => {
+  return {
+    pool: await SingletonOraiswapV3.dex.pool({
+      token0: poolKey.token_x,
+      token1: poolKey.token_y,
+      feeTier: poolKey.fee_tier
+    }),
+    pool_key: poolKey
+  }
+}
+
+export const getPoolKeys = async (): Promise<PoolKey[]> => {
+  const pools = await SingletonOraiswapV3.dex.pools({});
+  const poolKeys: PoolKey[] = pools.map(pool => pool.pool_key)
+  console.log('poolKeys', poolKeys)
+  return poolKeys
 }
 
 export const poolKeyToString = (poolKey: PoolKey): string => {
@@ -699,6 +761,26 @@ export const getPools = async (poolKeys: PoolKey[]): Promise<PoolWithPoolKey[]> 
   })
 }
 
+export const getFullTickmap = async (poolKey: PoolKey): Promise<Tickmap> => {
+  return SingletonOraiswapV3.getFullTickmap(poolKey)
+}
+
+export const getAllLiquidityTicks = async (
+  poolKey: PoolKey,
+  tickmap: Tickmap
+): Promise<LiquidityTick[]> => {
+  const ticks: number[] = []
+  tickmap.bitmap.forEach((chunkIndex, chunk) => {
+    for (let i = 0; i < 64; i++) {
+      if (chunk && 1 << i !== 0) {
+        const tickIndex = positionToTick(chunkIndex, i, poolKey.fee_tier.tick_spacing)
+        ticks.push(Number(tickIndex))
+      }
+    }
+  })
+  return SingletonOraiswapV3.dex.liquidityTicks({ poolKey, tickIndexes: ticks })
+}
+
 export const calculateTickDelta = (
   tickSpacing: number,
   minimumRange: number,
@@ -853,7 +935,7 @@ export const createLiquidityPlot = (
   }
 
   ticks.forEach((tick, i) => {
-    let tickIndex = BigInt(tick.index)
+    const tickIndex = BigInt(tick.index)
     if (i === 0 && tickIndex - tickSpacing > min) {
       const price = calcPrice(tickIndex - tickSpacing, isXtoY, tokenXDecimal, tokenYDecimal)
       ticksData.push({

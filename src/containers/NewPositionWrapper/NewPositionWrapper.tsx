@@ -1,10 +1,16 @@
-import { TokenAmount } from '@/sdk/OraiswapV3.types'
-import { _newPoolKey, calculateSqrtPrice, getLiquidityByX, getLiquidityByY, getMinTick } from '../../wasm'
+import { FeeTier, TokenAmount } from '@/sdk/OraiswapV3.types'
+import {
+  _newPoolKey,
+  calculateSqrtPrice,
+  getLiquidityByX,
+  getLiquidityByY,
+  getMinTick
+} from '../../wasm'
 import { ProgressState } from '@components/AnimatedButton/AnimatedButton'
 import NewPosition from '@components/NewPosition/NewPosition'
 
 import {
-  ALL_FEE_TIERS_DATA,
+  // ALL_FEE_TIERS_DATA,
   PositionOpeningMethod,
   TokenPriceData,
   bestTiers,
@@ -36,6 +42,21 @@ import { VariantType } from 'notistack'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
+export const ALL_FEE_TIERS_DATA: FeeTier[] = [
+  {
+    fee: 500000000,
+    tick_spacing: 100
+  },
+  {
+    fee: 1000000000,
+    tick_spacing: 100
+  },
+  {
+    fee: 30000000000,
+    tick_spacing: 100
+  }
+]
+
 export interface IProps {
   initialTokenFrom: string
   initialTokenTo: string
@@ -63,6 +84,24 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   const canUserCreateNewPool = useSelector(canCreateNewPool())
   const canUserCreateNewPosition = useSelector(canCreateNewPosition())
 
+  console.log({
+    tokens,
+    walletStatus,
+    allPools,
+    allPoolKeys,
+    poolsData,
+    loadingTicksAndTickMaps,
+    success,
+    inProgress,
+    ticksData,
+    ticksLoading,
+    hasTicksError,
+    isFetchingNewPool,
+    currentNetwork,
+    canUserCreateNewPool,
+    canUserCreateNewPosition
+  })
+
   const [poolIndex, setPoolIndex] = useState<number | null>(null)
 
   const [poolKey, setPoolKey] = useState<string>('')
@@ -85,7 +124,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
 
   useEffect(() => {
     dispatch(poolsActions.getPoolKeys())
-  }, [])
+  }, [walletStatus])
 
   useEffect(() => {
     isMountedRef.current = true
@@ -175,12 +214,12 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   const [feeIndex, setFeeIndex] = useState(0)
 
   const fee = useMemo(
-    () => (ALL_FEE_TIERS_DATA[feeIndex] ? ALL_FEE_TIERS_DATA[feeIndex].tier.fee : 1n),
+    () => (ALL_FEE_TIERS_DATA[feeIndex] ? ALL_FEE_TIERS_DATA[feeIndex].fee : 1n),
     [feeIndex]
   )
 
   const tickSpacing = useMemo(
-    () => (ALL_FEE_TIERS_DATA[feeIndex] ? ALL_FEE_TIERS_DATA[feeIndex].tier.tick_spacing : 1n),
+    () => (ALL_FEE_TIERS_DATA[feeIndex] ? ALL_FEE_TIERS_DATA[feeIndex].tick_spacing : 1n),
     [feeIndex]
   )
 
@@ -205,8 +244,10 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       const keyStringified = poolKeyToString({
         token_x: isXtoY ? tokenA : tokenB,
         token_y: isXtoY ? tokenB : tokenA,
-        fee_tier: ALL_FEE_TIERS_DATA[feeIndex].tier
+        fee_tier: ALL_FEE_TIERS_DATA[feeIndex]
       })
+
+      console.log({ keyStringified, allPoolKeys })
 
       if (allPoolKeys[keyStringified]) {
         setPoolKey(keyStringified)
@@ -272,20 +313,26 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     if (
       tokenAIndex !== null &&
       tokenBIndex !== null &&
-      poolIndex === null &&
-      progress === 'approvedWithSuccess'
+      poolIndex === null
+      // progress === 'approvedWithSuccess'
     ) {
+      console.log('all fee tier: ', ALL_FEE_TIERS_DATA)
+      console.log('getPoolData use effect', {
+        tokenA: tokens[tokenAIndex].assetAddress.toString(),
+        tokenB: tokens[tokenBIndex].assetAddress.toString(),
+        fee: ALL_FEE_TIERS_DATA[feeIndex]
+      })
       dispatch(
         poolsActions.getPoolData(
           _newPoolKey(
             tokens[tokenAIndex].assetAddress.toString(),
             tokens[tokenBIndex].assetAddress.toString(),
-            ALL_FEE_TIERS_DATA[feeIndex].tier
+            ALL_FEE_TIERS_DATA[feeIndex]
           )
         )
       )
     }
-  }, [progress])
+  }, [tokenAIndex, tokenBIndex, poolIndex])
 
   const initialIsDiscreteValue = localStorage.getItem('IS_PLOT_DISCRETE')
     ? localStorage.getItem('IS_PLOT_DISCRETE') === 'true'
@@ -507,7 +554,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
             !(
               tokenAIndex === tokenB &&
               tokenBIndex === tokenA &&
-              fee === ALL_FEE_TIERS_DATA[feeTierIndex].tier.fee
+              fee === ALL_FEE_TIERS_DATA[feeTierIndex].fee
             )
           ) {
             if (isMountedRef.current) {
@@ -517,7 +564,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
           } else if (
             tokenAIndex === tokenB &&
             tokenBIndex === tokenA &&
-            fee === ALL_FEE_TIERS_DATA[feeTierIndex].tier.fee
+            fee === ALL_FEE_TIERS_DATA[feeTierIndex].fee
           ) {
             if (isMountedRef.current) {
               setCurrentPairReversed(currentPairReversed === null ? true : !currentPairReversed)
@@ -534,7 +581,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
             !(
               tokenAIndex === tokenB &&
               tokenBIndex === tokenA &&
-              fee === ALL_FEE_TIERS_DATA[feeTierIndex].tier.fee
+              fee === ALL_FEE_TIERS_DATA[feeTierIndex].fee
             )
           ) {
             dispatch(
@@ -565,7 +612,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       isXtoY={isXtoY}
       xDecimal={xDecimal}
       yDecimal={yDecimal}
-      tickSpacing={BigInt(10)} 
+      tickSpacing={BigInt(10)}
       isWaitingForNewPool={isWaitingForNewPool}
       poolIndex={poolIndex}
       currentPairReversed={currentPairReversed}
