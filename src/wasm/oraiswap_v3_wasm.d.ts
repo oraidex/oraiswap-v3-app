@@ -407,6 +407,10 @@ export enum SwapError {
   InvalidInitTick = 24,
   InvalidInitSqrtPrice = 25,
   TickLimitReached = 26,
+  NoRouteFound = 27,
+  MaxTicksCrossed = 28,
+  StateOutdated = 29,
+  InsufficientLiquidity = 30,
 }
 export interface AmountDeltaResult {
     x: TokenAmount;
@@ -452,7 +456,7 @@ export interface Config {
     protocol_fee: Percentage;
 }
 
-export type SwapError = "NotAdmin" | "NotFeeReceiver" | "PoolAlreadyExist" | "PoolNotFound" | "TickAlreadyExist" | "InvalidTickIndexOrTickSpacing" | "PositionNotFound" | "TickNotFound" | "FeeTierNotFound" | "PoolKeyNotFound" | "AmountIsZero" | "WrongLimit" | "PriceLimitReached" | "NoGainSwap" | "InvalidTickSpacing" | "FeeTierAlreadyExist" | "PoolKeyAlreadyExist" | "UnauthorizedFeeReceiver" | "ZeroLiquidity" | "TransferError" | "TokensAreSame" | "AmountUnderMinimumAmountOut" | "InvalidFee" | "NotEmptyTickDeinitialization" | "InvalidInitTick" | "InvalidInitSqrtPrice" | "TickLimitReached";
+export type SwapError = "NotAdmin" | "NotFeeReceiver" | "PoolAlreadyExist" | "PoolNotFound" | "TickAlreadyExist" | "InvalidTickIndexOrTickSpacing" | "PositionNotFound" | "TickNotFound" | "FeeTierNotFound" | "PoolKeyNotFound" | "AmountIsZero" | "WrongLimit" | "PriceLimitReached" | "NoGainSwap" | "InvalidTickSpacing" | "FeeTierAlreadyExist" | "PoolKeyAlreadyExist" | "UnauthorizedFeeReceiver" | "ZeroLiquidity" | "TransferError" | "TokensAreSame" | "AmountUnderMinimumAmountOut" | "InvalidFee" | "NotEmptyTickDeinitialization" | "InvalidInitTick" | "InvalidInitSqrtPrice" | "TickLimitReached" | "NoRouteFound" | "MaxTicksCrossed" | "StateOutdated" | "InsufficientLiquidity";
 
 export interface FeeTier {
     fee: Percentage;
