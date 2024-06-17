@@ -122,11 +122,11 @@ export const WrappedPositionsList: React.FC = () => {
 
       let tokenXLiq, tokenYLiq
 
-      let x = '0'
-      let y = '0'
+      let x = 0n
+      let y = 0n
 
       if (position.poolData) {
-        [x, y] = calculateTokenAmounts(position.poolData, position)
+        // ;[x, y] = calculateTokenAmounts(position.poolData, position)
       }
 
       try {
