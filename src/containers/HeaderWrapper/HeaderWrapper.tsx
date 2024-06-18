@@ -45,7 +45,6 @@ export const HeaderWrapper: React.FC = () => {
 
         dispatch(walletActions.addTokenBalances(convertedBalances))
         dispatch(walletActions.setIsBalanceLoading(false))
-        dispatch()
       }
 
       window.addEventListener('keplr_keystorechange', connectWallet)
