@@ -1,10 +1,10 @@
 import {
   FeeTier,
   TokenAmount,
-  newPoolKey,
-  calculateSqrtPrice,
-  getLiquidityByX,
-  getLiquidityByY
+  new_pool_key,
+  calculate_sqrt_price,
+  get_liquidity_by_x,
+  get_liquidity_by_y
 } from '@wasm'
 import { ProgressState } from '@components/AnimatedButton/AnimatedButton'
 import NewPosition from '@components/NewPosition/NewPosition'
@@ -201,12 +201,12 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   )
 
   const tickSpacing = useMemo(
-    () => (ALL_FEE_TIERS_DATA[feeIndex] ? ALL_FEE_TIERS_DATA[feeIndex].tick_spacing : 1n),
+    () => (ALL_FEE_TIERS_DATA[feeIndex] ? ALL_FEE_TIERS_DATA[feeIndex].tick_spacing : 1),
     [feeIndex]
   )
 
   const [midPrice, setMidPrice] = useState<TickPlotPositionData>({
-    index: 0n,
+    index: 0,
     x: 1
   })
 
@@ -263,7 +263,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   useEffect(() => {
     if (poolsData[poolKey]) {
       setMidPrice({
-        index: BigInt(poolsData[poolKey].pool.current_tick_index),
+        index: poolsData[poolKey].pool.current_tick_index,
         x:
           calcYPerXPriceBySqrtPrice(
             BigInt(poolsData[poolKey].pool.sqrt_price),
@@ -277,15 +277,15 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   useEffect(() => {
     if (poolKey === '') {
       setMidPrice({
-        index: 0n,
-        x: calcPrice(0n, isXtoY, xDecimal, yDecimal)
+        index: 0,
+        x: calcPrice(0, isXtoY, xDecimal, yDecimal)
       })
     }
   }, [poolIndex, isXtoY, xDecimal, yDecimal, poolKey])
 
   const data = useMemo(() => {
     if (ticksLoading && tickSpacing) {
-      return createPlaceholderLiquidityPlot(isXtoY, 10, BigInt(tickSpacing), xDecimal, yDecimal)
+      return createPlaceholderLiquidityPlot(isXtoY, 10, tickSpacing, xDecimal, yDecimal)
     }
 
     return ticksData
@@ -306,7 +306,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       })
       dispatch(
         poolsActions.getPoolData(
-          newPoolKey(
+          new_pool_key(
             tokens[tokenAIndex].assetAddress.toString(),
             tokens[tokenBIndex].assetAddress.toString(),
             ALL_FEE_TIERS_DATA[feeIndex]
@@ -446,18 +446,18 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       tokenAddress ===
       (isXtoY ? tokens[tokenAIndex].assetAddress : tokens[tokenBIndex].assetAddress)
 
-    const lowerTick = BigInt(Math.min(left, right))
-    const upperTick = BigInt(Math.max(left, right))
+    const lowerTick = Math.min(left, right)
+    const upperTick = Math.max(left, right)
 
     try {
       if (byX) {
-        const { amount: tokenYAmount, l: positionLiquidity } = getLiquidityByX(
+        const { amount: tokenYAmount, l: positionLiquidity } = get_liquidity_by_x(
           amount,
           lowerTick,
           upperTick,
           poolsData[poolKey]
             ? BigInt(poolsData[poolKey].pool.sqrt_price)
-            : calculateSqrtPrice(midPrice.index),
+            : calculate_sqrt_price(midPrice.index),
           true
         )
 
@@ -468,13 +468,13 @@ export const NewPositionWrapper: React.FC<IProps> = ({
         return tokenYAmount
       }
 
-      const { amount: tokenXAmount, l: positionLiquidity } = getLiquidityByY(
+      const { amount: tokenXAmount, l: positionLiquidity } = get_liquidity_by_y(
         amount,
         lowerTick,
         upperTick,
         poolsData[poolKey]
           ? BigInt(poolsData[poolKey].pool.sqrt_price)
-          : calculateSqrtPrice(midPrice.index),
+          : calculate_sqrt_price(midPrice.index),
         true
       )
 
@@ -484,17 +484,17 @@ export const NewPositionWrapper: React.FC<IProps> = ({
 
       return tokenXAmount
     } catch (error) {
-      const result = (byX ? getLiquidityByY : getLiquidityByX)(
+      const result = (byX ? get_liquidity_by_y : get_liquidity_by_x)(
         BigInt(amount),
         lowerTick,
         upperTick,
         poolsData[poolKey]
           ? BigInt(poolsData[poolKey].pool.sqrt_price)
-          : calculateSqrtPrice(midPrice.index),
+          : calculate_sqrt_price(midPrice.index),
         true
       )
       if (isMountedRef.current) {
-        liquidityRef.current = result.liquidity
+        liquidityRef.current = result.l
       }
     }
 
@@ -568,7 +568,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
           ) {
             dispatch(
               poolsActions.getPoolData(
-                newPoolKey(
+                new_pool_key(
                   tokens[tokenA].assetAddress.toString(),
                   tokens[tokenB].assetAddress.toString(),
                   ALL_FEE_TIERS_DATA[feeTierIndex]
@@ -604,7 +604,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       currentPriceSqrt={
         poolsData[poolKey]
           ? BigInt(poolsData[poolKey].pool.sqrt_price)
-          : calculateSqrtPrice(midPrice.index)
+          : calculate_sqrt_price(midPrice.index)
       }
       canCreateNewPool={canUserCreateNewPool}
       canCreateNewPosition={canUserCreateNewPosition}
@@ -649,7 +649,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
         console.log({ beforeHandle: poolKey })
         dispatch(
           positionsActions.initPosition({
-            poolKeyData: newPoolKey(
+            poolKeyData: new_pool_key(
               tokens[tokenAIndex].assetAddress.toString(),
               tokens[tokenBIndex].assetAddress.toString(),
               ALL_FEE_TIERS_DATA[feeIndex]
@@ -659,7 +659,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
             liquidityDelta: liquidityRef.current,
             spotSqrtPrice: poolsData[poolKey]
               ? BigInt(poolsData[poolKey].pool.sqrt_price)
-              : calculateSqrtPrice(midPrice.index),
+              : calculate_sqrt_price(midPrice.index),
             slippageTolerance: slippage,
             tokenXAmount: BigInt(xAmount),
             tokenYAmount: BigInt(yAmount),

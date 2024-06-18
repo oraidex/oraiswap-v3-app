@@ -1,27 +1,27 @@
 import { PlotTickData } from '@store/reducers/positions'
-import SingletonOraiswapV3, { integerSafeCast } from '@store/services/contractSingleton'
+import SingletonOraiswapV3 from '@store/services/contractSingleton'
 import axios from 'axios'
 
 import {
   Tickmap,
-  calculateSqrtPrice,
-  getChunkSize,
-  getMaxTick,
-  getMinTick,
-  getPercentageDenominator,
-  getPercentageScale,
-  getPriceScale,
-  toPercentage,
-  getSqrtPriceDenominator,
-  newFeeTier,
-  // positionToTick,
-  alignTickToSpacing,
-  _calculateFee,
-  calculateAmountDelta,
-  calculateAmountDeltaResult,
-  getMaxTickmapQuerySize,
-  getLiquidityTicksLimit,
-  calculateTick,
+  calculate_sqrt_price,
+  get_chunk_size,
+  get_max_tick,
+  get_min_tick,
+  get_percentage_denominator,
+  get_percentage_scale,
+  get_price_scale,
+  to_percentage,
+  get_sqrt_price_denominator,
+  new_fee_tier,
+  // position_to_tick,
+  align_tick_to_spacing,
+  calculate_fee,
+  calculate_amount_delta,
+  AmountDeltaResult,
+  get_max_tickmap_query_size,
+  get_liquidity_ticks_limit,
+  get_tick_at_sqrt_price,
   Liquidity,
   Percentage,
   Pool,
@@ -30,13 +30,14 @@ import {
   // Position,
   SqrtPrice,
   TokenAmount,
-  positionToTick,
+  position_to_tick,
   SwapError,
-  getGlobalMaxSqrtPrice,
-  getGlobalMinSqrtPrice,
+  get_global_max_sqrt_price,
+  get_global_min_sqrt_price,
   Tick,
   Position,
-  LiquidityTick
+  LiquidityTick,
+  TokenAmounts
 } from '@wasm'
 import { Token, TokenPriceData } from './static'
 import { PoolWithPoolKey } from '@/sdk/OraiswapV3.types'
@@ -90,7 +91,7 @@ const isObject = (value: any): boolean => {
 }
 
 export const calculateFeeTierWithLinearRatio = (tickCount: number): FeeTier => {
-  return newFeeTier(tickCount * Number(toPercentage(1, 4)), tickCount)
+  return new_fee_tier(tickCount * Number(to_percentage(1, 4)), tickCount)
 }
 
 // export const FEE_TIERS: FeeTier[] = [
@@ -102,14 +103,14 @@ export const calculateFeeTierWithLinearRatio = (tickCount: number): FeeTier => {
 //   calculateFeeTierWithLinearRatio(100)
 // ]
 
-export const MAX_SQRT_PRICE = getGlobalMaxSqrtPrice()
-export const MIN_SQRT_PRICE = getGlobalMinSqrtPrice()
-export const MAX_TICKMAP_QUERY_SIZE = getMaxTickmapQuerySize()
-export const LIQUIDITY_TICKS_LIMIT = getLiquidityTicksLimit()
-export const PERCENTAGE_SCALE = getPercentageScale()
-export const PERCENTAGE_DENOMINATOR = getPercentageDenominator()
-export const CHUNK_SIZE = getChunkSize()
-export const PRICE_SCALE = getPriceScale()
+export const MAX_SQRT_PRICE = get_global_max_sqrt_price()
+export const MIN_SQRT_PRICE = get_global_min_sqrt_price()
+export const MAX_TICKMAP_QUERY_SIZE = get_max_tickmap_query_size()
+export const LIQUIDITY_TICKS_LIMIT = get_liquidity_ticks_limit()
+export const PERCENTAGE_SCALE = get_percentage_scale()
+export const PERCENTAGE_DENOMINATOR = get_percentage_denominator()
+export const CHUNK_SIZE = get_chunk_size()
+export const PRICE_SCALE = get_price_scale()
 export const MAX_REF_TIME = 259058343000
 export const DEFAULT_REF_TIME = 1250000000000
 export const DEFAULT_PROOF_SIZE = 1250000000000
@@ -209,8 +210,8 @@ export const calculateFee = (
   position: Position,
   lowerTick: Tick,
   upperTick: Tick
-): [TokenAmount, TokenAmount] => {
-  return _calculateFee(
+): TokenAmounts => {
+  return calculate_fee(
     lowerTick.index,
     BigInt(lowerTick.fee_growth_outside_x),
     BigInt(lowerTick.fee_growth_outside_y),
@@ -227,11 +228,11 @@ export const calculateFee = (
 }
 
 export const calcYPerXPriceByTickIndex = (
-  tickIndex: bigint | number,
+  tickIndex: number,
   xDecimal: bigint,
   yDecimal: bigint
 ): number => {
-  const sqrt = +printBigint(calculateSqrtPrice(tickIndex), PRICE_SCALE)
+  const sqrt = +printBigint(calculate_sqrt_price(tickIndex), PRICE_SCALE)
 
   const proportion = sqrt * sqrt
 
@@ -297,7 +298,7 @@ export const toMaxNumericPlaces = (num: number, places: number): string => {
 }
 
 export const calcPrice = (
-  amountTickIndex: bigint,
+  amountTickIndex: number,
   isXtoY: boolean,
   xDecimal: bigint,
   yDecimal: bigint
@@ -310,14 +311,14 @@ export const calcPrice = (
 export const createPlaceholderLiquidityPlot = (
   isXtoY: boolean,
   yValueToFill: number,
-  tickSpacing: bigint,
+  tickSpacing: number,
   tokenXDecimal: bigint,
   tokenYDecimal: bigint
 ) => {
   const ticksData: PlotTickData[] = []
 
-  const min = getMinTick(tickSpacing)
-  const max = getMaxTick(tickSpacing)
+  const min = get_min_tick(tickSpacing)
+  const max = get_max_tick(tickSpacing)
 
   const minPrice = calcPrice(min, isXtoY, tokenXDecimal, tokenYDecimal)
 
@@ -338,10 +339,7 @@ export const createPlaceholderLiquidityPlot = (
   return isXtoY ? ticksData : ticksData.reverse()
 }
 
-export const calculateTokenAmounts = (
-  pool: Pool,
-  position: Position
-): calculateAmountDeltaResult => {
+export const calculateTokenAmounts = (pool: Pool, position: Position): AmountDeltaResult => {
   return _calculateTokenAmounts(pool, position, false)
 }
 
@@ -349,8 +347,8 @@ export const _calculateTokenAmounts = (
   pool: Pool,
   position: Position,
   sign: boolean
-): calculateAmountDeltaResult => {
-  return calculateAmountDelta(
+): AmountDeltaResult => {
+  return calculate_amount_delta(
     pool.current_tick_index,
     BigInt(pool.sqrt_price),
     BigInt(position.liquidity),
@@ -670,20 +668,20 @@ export const nearestSpacingMultiplicity = (centerTick: number, spacing: number) 
     Math.abs(greaterTick - centerTick) < Math.abs(lowerTick - centerTick) ? greaterTick : lowerTick
 
   return Math.max(
-    Math.min(nearestTick, Number(getMaxTick(BigInt(spacing)))),
-    Number(getMinTick(BigInt(spacing)))
+    Math.min(nearestTick, Number(get_max_tick(spacing))),
+    Number(get_min_tick(spacing))
   )
 }
 
-export const calculateTickFromBalance = (
+export const get_tick_at_sqrt_priceFromBalance = (
   price: number,
-  spacing: bigint,
+  spacing: number,
   isXtoY: boolean,
   xDecimal: bigint,
   yDecimal: bigint
 ) => {
-  const minTick = getMinTick(spacing)
-  const maxTick = getMaxTick(spacing)
+  const minTick = get_min_tick(spacing)
+  const maxTick = get_max_tick(spacing)
 
   const basePrice = Math.max(
     price,
@@ -697,20 +695,17 @@ export const calculateTickFromBalance = (
   )
   const tick = Math.round(logBase(primaryUnitsPrice, 1.0001))
 
-  return Math.max(
-    Math.min(tick, Number(getMaxTick(BigInt(spacing)))),
-    Number(getMinTick(BigInt(spacing)))
-  )
+  return Math.max(Math.min(tick, Number(get_max_tick(spacing))), Number(get_min_tick(spacing)))
 }
 
 export const nearestTickIndex = (
   price: number,
-  spacing: bigint,
+  spacing: number,
   isXtoY: boolean,
   xDecimal: bigint,
   yDecimal: bigint
 ) => {
-  const tick = calculateTickFromBalance(price, spacing, isXtoY, xDecimal, yDecimal)
+  const tick = get_tick_at_sqrt_priceFromBalance(price, spacing, isXtoY, xDecimal, yDecimal)
 
   return BigInt(nearestSpacingMultiplicity(tick, Number(spacing)))
 }
@@ -739,7 +734,7 @@ export const getConcentrationArray = (
     concentrations.push(concentration)
     concentration--
   }
-  const maxTick = integerSafeCast(alignTickToSpacing(getMaxTick(1n), tickSpacing))
+  const maxTick = align_tick_to_spacing(get_max_tick(1), tickSpacing)
   if ((minimumRange / 2) * tickSpacing > maxTick - Math.abs(currentTick)) {
     throw new Error(String(SwapError.TickLimitReached))
   }
@@ -771,12 +766,12 @@ export enum PositionTokenBlock {
 
 export const determinePositionTokenBlock = (
   currentSqrtPrice: bigint,
-  lowerTick: bigint,
-  upperTick: bigint,
+  lowerTick: number,
+  upperTick: number,
   isXtoY: boolean
 ) => {
-  const lowerPrice = calculateSqrtPrice(lowerTick)
-  const upperPrice = calculateSqrtPrice(upperTick)
+  const lowerPrice = calculate_sqrt_price(lowerTick)
+  const upperPrice = calculate_sqrt_price(upperTick)
 
   const isBelowLowerPrice = lowerPrice >= currentSqrtPrice
   const isAboveUpperPrice = upperPrice <= currentSqrtPrice
@@ -839,7 +834,7 @@ export const getAllLiquidityTicks = async (
   for (const [chunkIndex, chunk] of tickmap.bitmap.entries()) {
     for (let i = 0; i < 64; i++) {
       if ((chunk & (1n << BigInt(i))) != 0n) {
-        const tickIndex = positionToTick(Number(chunkIndex), i, poolKey.fee_tier.tick_spacing)
+        const tickIndex = position_to_tick(Number(chunkIndex), i, poolKey.fee_tier.tick_spacing)
         ticks.push(Number(tickIndex.toString()))
       }
     }
@@ -858,7 +853,7 @@ export const getAllLiquidityTicks = async (
   return convertedLiquidityTicks
 }
 
-export const calculateTickDelta = (
+export const get_tick_at_sqrt_priceDelta = (
   tickSpacing: number,
   minimumRange: number,
   concentration: number
@@ -885,7 +880,7 @@ export const calculateConcentrationRange = (
 ) => {
   const parsedTickSpacing = Number(tickSpacing)
   const parsedCurrentTick = Number(currentTick)
-  const tickDelta = calculateTickDelta(parsedTickSpacing, minimumRange, concentration)
+  const tickDelta = get_tick_at_sqrt_priceDelta(parsedTickSpacing, minimumRange, concentration)
   const lowerTick = parsedCurrentTick - (minimumRange / 2 + tickDelta) * parsedTickSpacing
   const upperTick = parsedCurrentTick + (minimumRange / 2 + tickDelta) * parsedTickSpacing
 
@@ -955,7 +950,7 @@ export const calculateAmountInWithSlippage = (
 }
 
 export const sqrtPriceToPrice = (sqrtPrice: SqrtPrice | bigint): bigint => {
-  return (BigInt(sqrtPrice) * BigInt(sqrtPrice)) / getSqrtPriceDenominator()
+  return (BigInt(sqrtPrice) * BigInt(sqrtPrice)) / get_sqrt_price_denominator()
 }
 
 export interface LiquidityBreakpoint {
@@ -994,7 +989,7 @@ export const calculateLiquidityBreakpoints = (
 
 export const createLiquidityPlot = (
   rawTicks: LiquidityTick[],
-  tickSpacing: bigint,
+  tickSpacing: number,
   isXtoY: boolean,
   tokenXDecimal: bigint,
   tokenYDecimal: bigint
@@ -1009,8 +1004,8 @@ export const createLiquidityPlot = (
 
   const ticksData: PlotTickData[] = []
 
-  const min = getMinTick(tickSpacing)
-  const max = getMaxTick(tickSpacing)
+  const min = get_min_tick(tickSpacing)
+  const max = get_max_tick(tickSpacing)
 
   if (!ticks.length || ticks[0].index > min) {
     const minPrice = calcPrice(min, isXtoY, tokenXDecimal, tokenYDecimal)
@@ -1023,7 +1018,7 @@ export const createLiquidityPlot = (
   }
 
   ticks.forEach((tick, i) => {
-    const tickIndex = BigInt(tick.index)
+    const tickIndex = tick.index
     if (i === 0 && tickIndex - tickSpacing > min) {
       const price = calcPrice(tickIndex - tickSpacing, isXtoY, tokenXDecimal, tokenYDecimal)
       ticksData.push({
@@ -1047,7 +1042,7 @@ export const createLiquidityPlot = (
       index: tickIndex
     })
   })
-  const lastTick = BigInt(ticks[ticks.length - 1].index)
+  const lastTick = ticks[ticks.length - 1].index
   if (!ticks.length) {
     const maxPrice = calcPrice(max, isXtoY, tokenXDecimal, tokenYDecimal)
 
@@ -1099,7 +1094,7 @@ const newtonIteration = (n: bigint, x0: bigint): bigint => {
 }
 
 export const priceToSqrtPrice = (price: bigint): bigint => {
-  return sqrt(price * getSqrtPriceDenominator())
+  return sqrt(price * get_sqrt_price_denominator())
 }
 
 export const calculateSqrtPriceAfterSlippage = (
@@ -1111,29 +1106,29 @@ export const calculateSqrtPriceAfterSlippage = (
     return BigInt(sqrtPrice)
   }
 
-  const multiplier = getPercentageDenominator() + BigInt(up ? slippage : -slippage)
+  const multiplier = get_percentage_denominator() + BigInt(up ? slippage : -slippage)
   const price = sqrtPriceToPrice(sqrtPrice)
-  const priceWithSlippage = BigInt(price) * multiplier * getPercentageDenominator()
-  const sqrtPriceWithSlippage = priceToSqrtPrice(priceWithSlippage) / getPercentageDenominator()
+  const priceWithSlippage = BigInt(price) * multiplier * get_percentage_denominator()
+  const sqrtPriceWithSlippage = priceToSqrtPrice(priceWithSlippage) / get_percentage_denominator()
 
   return sqrtPriceWithSlippage
 }
 
 export const calculateTokenAmountsWithSlippage = (
-  tickSpacing: bigint,
+  tickSpacing: number,
   currentSqrtPrice: SqrtPrice,
   liquidity: Liquidity,
-  lowerTickIndex: bigint,
-  upperTickIndex: bigint,
+  lowerTickIndex: number,
+  upperTickIndex: number,
   slippage: Percentage,
   roundingUp: boolean
 ): [bigint, bigint] => {
   const lowerBound = calculateSqrtPriceAfterSlippage(currentSqrtPrice, slippage, false)
   const upperBound = calculateSqrtPriceAfterSlippage(currentSqrtPrice, slippage, true)
 
-  const currentTickIndex = calculateTick(currentSqrtPrice, tickSpacing)
+  const currentTickIndex = get_tick_at_sqrt_price(currentSqrtPrice, tickSpacing)
 
-  const [lowerX, lowerY] = calculateAmountDelta(
+  const { x: lowerX, y: lowerY } = calculate_amount_delta(
     currentTickIndex,
     lowerBound,
     liquidity,
@@ -1142,7 +1137,7 @@ export const calculateTokenAmountsWithSlippage = (
     lowerTickIndex
   )
 
-  const [upperX, upperY] = calculateAmountDelta(
+  const { x: upperX, y: upperY } = calculate_amount_delta(
     currentTickIndex,
     upperBound,
     liquidity,
@@ -1167,7 +1162,7 @@ export const calculatePriceImpact = (
   const nominator = diff > 0n ? diff : -diff
   const denominator = startingPrice > endingPrice ? startingPrice : endingPrice
 
-  return (nominator * getPercentageDenominator()) / denominator
+  return (nominator * get_percentage_denominator()) / denominator
 }
 
 /**

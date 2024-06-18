@@ -1,7 +1,5 @@
 import { PayloadAction } from '@reduxjs/toolkit'
-import {
-  U128MAX,
-} from '@store/consts/static'
+import { U128MAX } from '@store/consts/static'
 import {
   MAX_SQRT_PRICE,
   MIN_SQRT_PRICE,
@@ -13,6 +11,7 @@ import {
   createLoaderKey,
   deserializeTickmap,
   findPairs,
+  parse,
   poolKeyToString,
   printBigint,
   swapWithSlippageTx
@@ -24,7 +23,7 @@ import { poolTicks, pools, tickMaps, tokens } from '@store/selectors/pools'
 import { closeSnackbar } from 'notistack'
 import { all, call, put, select, spawn, takeEvery } from 'typed-redux-saga'
 import { fetchBalances } from './wallet'
-import { CalculateSwapResult, Pool, SqrtPrice, SwapError, simulateSwap } from '@wasm'
+import { CalculateSwapResult, Pool, SqrtPrice, SwapError, simulate_swap } from '@wasm'
 import { fetchTicksAndTickMaps } from './pools'
 
 export function* handleSwap(action: PayloadAction<Omit<Swap, 'txid'>>): Generator {
@@ -74,7 +73,11 @@ export function* handleSwap(action: PayloadAction<Omit<Swap, 'txid'>>): Generato
 
     const txs = []
 
-    const sqrtPriceLimit = calculateSqrtPriceAfterSlippage(BigInt(estimatedPriceAfterSwap), slippage, !xToY)
+    const sqrtPriceLimit = calculateSqrtPriceAfterSlippage(
+      BigInt(estimatedPriceAfterSwap),
+      slippage,
+      !xToY
+    )
 
     let calculatedAmountIn = amountIn
     if (!byAmountIn) {
@@ -89,7 +92,15 @@ export function* handleSwap(action: PayloadAction<Omit<Swap, 'txid'>>): Generato
       txs.push(approveTx)
     }
 
-    const swapTx = yield* call(swapWithSlippageTx, poolKey, xToY, amountIn, byAmountIn, sqrtPriceLimit, slippage)
+    const swapTx = yield* call(
+      swapWithSlippageTx,
+      poolKey,
+      xToY,
+      amountIn,
+      byAmountIn,
+      sqrtPriceLimit,
+      slippage
+    )
     txs.push(swapTx)
 
     // const batchedTx = api.tx.utility.batchAll(txs)
@@ -414,7 +425,6 @@ export function* handleGetSimulateResult(action: PayloadAction<Simulate>) {
     const allTickmaps = yield* select(tickMaps)
     const allTicks = yield* select(poolTicks)
 
-
     console.log({ allPools, allTickmaps, allTicks, fromToken, toToken, amount, byAmountIn })
 
     if (amount === 0n) {
@@ -464,17 +474,17 @@ export function* handleGetSimulateResult(action: PayloadAction<Simulate>) {
         current_tick_index: poolInfo.current_tick_index,
         fee_growth_global_x: BigInt(poolInfo.fee_growth_global_x),
         fee_growth_global_y: BigInt(poolInfo.fee_growth_global_y),
-        fee_protocol_token_x:   BigInt(poolInfo.fee_protocol_token_x),
-        fee_protocol_token_y:  BigInt(poolInfo.fee_protocol_token_y),
+        fee_protocol_token_x: BigInt(poolInfo.fee_protocol_token_x),
+        fee_protocol_token_y: BigInt(poolInfo.fee_protocol_token_y),
         fee_receiver: poolInfo.fee_receiver,
         liquidity: BigInt(poolInfo.liquidity),
         last_timestamp: Number(poolInfo.last_timestamp.toFixed(0)),
         sqrt_price: BigInt(poolInfo.sqrt_price),
-        start_timestamp: Number(poolInfo.start_timestamp.toFixed(0)),
+        start_timestamp: Number(poolInfo.start_timestamp.toFixed(0))
       }
       console.log({ convertedPool })
       try {
-        const result: CalculateSwapResult = simulateSwap(
+        const result: CalculateSwapResult = simulate_swap(
           deserializeTickmap(allTickmaps[poolKeyToString(pool.pool_key)]),
           pool.pool_key.fee_tier,
           convertedPool,
@@ -505,7 +515,9 @@ export function* handleGetSimulateResult(action: PayloadAction<Simulate>) {
           continue
         }
 
-        if (byAmountIn ? result.amount_out > amountOut : result.amount_in + result.fee < amountOut) {
+        if (
+          byAmountIn ? result.amount_out > amountOut : result.amount_in + result.fee < amountOut
+        ) {
           amountOut = byAmountIn ? result.amount_out : result.amount_in + result.fee
           poolKey = pool.pool_key
           priceImpact = +printBigint(

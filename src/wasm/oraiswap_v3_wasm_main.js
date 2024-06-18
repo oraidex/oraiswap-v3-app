@@ -3,6 +3,35 @@ imports['__wbindgen_placeholder__'] = module.exports;
 let wasm;
 const { TextDecoder, TextEncoder } = require(`util`);
 
+const heap = new Array(128).fill(undefined);
+
+heap.push(undefined, null, true, false);
+
+function getObject(idx) { return heap[idx]; }
+
+let heap_next = heap.length;
+
+function dropObject(idx) {
+    if (idx < 132) return;
+    heap[idx] = heap_next;
+    heap_next = idx;
+}
+
+function takeObject(idx) {
+    const ret = getObject(idx);
+    dropObject(idx);
+    return ret;
+}
+
+function addHeapObject(obj) {
+    if (heap_next === heap.length) heap.push(heap.length + 1);
+    const idx = heap_next;
+    heap_next = heap[idx];
+
+    heap[idx] = obj;
+    return idx;
+}
+
 let cachedTextDecoder = new TextDecoder('utf-8', { ignoreBOM: true, fatal: true });
 
 cachedTextDecoder.decode();
@@ -21,33 +50,26 @@ function getStringFromWasm0(ptr, len) {
     return cachedTextDecoder.decode(getUint8Memory0().subarray(ptr, ptr + len));
 }
 
-const heap = new Array(128).fill(undefined);
-
-heap.push(undefined, null, true, false);
-
-let heap_next = heap.length;
-
-function addHeapObject(obj) {
-    if (heap_next === heap.length) heap.push(heap.length + 1);
-    const idx = heap_next;
-    heap_next = heap[idx];
-
-    heap[idx] = obj;
-    return idx;
+function isLikeNone(x) {
+    return x === undefined || x === null;
 }
 
-function getObject(idx) { return heap[idx]; }
+let cachedFloat64Memory0 = null;
 
-function dropObject(idx) {
-    if (idx < 132) return;
-    heap[idx] = heap_next;
-    heap_next = idx;
+function getFloat64Memory0() {
+    if (cachedFloat64Memory0 === null || cachedFloat64Memory0.byteLength === 0) {
+        cachedFloat64Memory0 = new Float64Array(wasm.memory.buffer);
+    }
+    return cachedFloat64Memory0;
 }
 
-function takeObject(idx) {
-    const ret = getObject(idx);
-    dropObject(idx);
-    return ret;
+let cachedInt32Memory0 = null;
+
+function getInt32Memory0() {
+    if (cachedInt32Memory0 === null || cachedInt32Memory0.byteLength === 0) {
+        cachedInt32Memory0 = new Int32Array(wasm.memory.buffer);
+    }
+    return cachedInt32Memory0;
 }
 
 let WASM_VECTOR_LEN = 0;
@@ -104,28 +126,6 @@ function passStringToWasm0(arg, malloc, realloc) {
 
     WASM_VECTOR_LEN = offset;
     return ptr;
-}
-
-function isLikeNone(x) {
-    return x === undefined || x === null;
-}
-
-let cachedInt32Memory0 = null;
-
-function getInt32Memory0() {
-    if (cachedInt32Memory0 === null || cachedInt32Memory0.byteLength === 0) {
-        cachedInt32Memory0 = new Int32Array(wasm.memory.buffer);
-    }
-    return cachedInt32Memory0;
-}
-
-let cachedFloat64Memory0 = null;
-
-function getFloat64Memory0() {
-    if (cachedFloat64Memory0 === null || cachedFloat64Memory0.byteLength === 0) {
-        cachedFloat64Memory0 = new Float64Array(wasm.memory.buffer);
-    }
-    return cachedFloat64Memory0;
 }
 
 let cachedBigInt64Memory0 = null;
@@ -202,18 +202,18 @@ function debugString(val) {
     return className;
 }
 /**
-* @param {any} js_current_sqrt_price
-* @param {any} js_target_sqrt_price
-* @param {any} js_liquidity
-* @param {any} js_amount
-* @param {any} js_by_amount_in
-* @param {any} js_fee
-* @returns {any}
+* @param {SqrtPrice} current_sqrt_price
+* @param {SqrtPrice} target_sqrt_price
+* @param {Liquidity} liquidity
+* @param {TokenAmount} amount
+* @param {boolean} by_amount_in
+* @param {Percentage} fee
+* @returns {SwapResult}
 */
-module.exports.computeSwapStep = function(js_current_sqrt_price, js_target_sqrt_price, js_liquidity, js_amount, js_by_amount_in, js_fee) {
+module.exports.compute_swap_step = function(current_sqrt_price, target_sqrt_price, liquidity, amount, by_amount_in, fee) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.computeSwapStep(retptr, addHeapObject(js_current_sqrt_price), addHeapObject(js_target_sqrt_price), addHeapObject(js_liquidity), addHeapObject(js_amount), addHeapObject(js_by_amount_in), addHeapObject(js_fee));
+        wasm.compute_swap_step(retptr, addHeapObject(current_sqrt_price), addHeapObject(target_sqrt_price), addHeapObject(liquidity), addHeapObject(amount), by_amount_in, addHeapObject(fee));
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         var r2 = getInt32Memory0()[retptr / 4 + 2];
@@ -227,16 +227,16 @@ module.exports.computeSwapStep = function(js_current_sqrt_price, js_target_sqrt_
 };
 
 /**
-* @param {any} js_sqrt_price_a
-* @param {any} js_sqrt_price_b
-* @param {any} js_liquidity
-* @param {any} js_rounding_up
-* @returns {any}
+* @param {SqrtPrice} sqrt_price_a
+* @param {SqrtPrice} sqrt_price_b
+* @param {Liquidity} liquidity
+* @param {boolean} rounding_up
+* @returns {TokenAmount}
 */
-module.exports.getDeltaX = function(js_sqrt_price_a, js_sqrt_price_b, js_liquidity, js_rounding_up) {
+module.exports.get_delta_x = function(sqrt_price_a, sqrt_price_b, liquidity, rounding_up) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.getDeltaX(retptr, addHeapObject(js_sqrt_price_a), addHeapObject(js_sqrt_price_b), addHeapObject(js_liquidity), addHeapObject(js_rounding_up));
+        wasm.get_delta_x(retptr, addHeapObject(sqrt_price_a), addHeapObject(sqrt_price_b), addHeapObject(liquidity), rounding_up);
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         var r2 = getInt32Memory0()[retptr / 4 + 2];
@@ -250,16 +250,16 @@ module.exports.getDeltaX = function(js_sqrt_price_a, js_sqrt_price_b, js_liquidi
 };
 
 /**
-* @param {any} js_sqrt_price_a
-* @param {any} js_sqrt_price_b
-* @param {any} js_liquidity
-* @param {any} js_rounding_up
-* @returns {any}
+* @param {SqrtPrice} sqrt_price_a
+* @param {SqrtPrice} sqrt_price_b
+* @param {Liquidity} liquidity
+* @param {boolean} rounding_up
+* @returns {TokenAmount}
 */
-module.exports.getDeltaY = function(js_sqrt_price_a, js_sqrt_price_b, js_liquidity, js_rounding_up) {
+module.exports.get_delta_y = function(sqrt_price_a, sqrt_price_b, liquidity, rounding_up) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.getDeltaY(retptr, addHeapObject(js_sqrt_price_a), addHeapObject(js_sqrt_price_b), addHeapObject(js_liquidity), addHeapObject(js_rounding_up));
+        wasm.get_delta_y(retptr, addHeapObject(sqrt_price_a), addHeapObject(sqrt_price_b), addHeapObject(liquidity), rounding_up);
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         var r2 = getInt32Memory0()[retptr / 4 + 2];
@@ -273,16 +273,16 @@ module.exports.getDeltaY = function(js_sqrt_price_a, js_sqrt_price_b, js_liquidi
 };
 
 /**
-* @param {any} js_starting_sqrt_price
-* @param {any} js_liquidity
-* @param {any} js_amount
-* @param {any} js_x_to_y
-* @returns {any}
+* @param {SqrtPrice} starting_sqrt_price
+* @param {Liquidity} liquidity
+* @param {TokenAmount} amount
+* @param {boolean} x_to_y
+* @returns {SqrtPrice}
 */
-module.exports.getNextSqrtPriceFromInput = function(js_starting_sqrt_price, js_liquidity, js_amount, js_x_to_y) {
+module.exports.get_next_sqrt_price_from_input = function(starting_sqrt_price, liquidity, amount, x_to_y) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.getNextSqrtPriceFromInput(retptr, addHeapObject(js_starting_sqrt_price), addHeapObject(js_liquidity), addHeapObject(js_amount), addHeapObject(js_x_to_y));
+        wasm.get_next_sqrt_price_from_input(retptr, addHeapObject(starting_sqrt_price), addHeapObject(liquidity), addHeapObject(amount), x_to_y);
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         var r2 = getInt32Memory0()[retptr / 4 + 2];
@@ -296,16 +296,16 @@ module.exports.getNextSqrtPriceFromInput = function(js_starting_sqrt_price, js_l
 };
 
 /**
-* @param {any} js_starting_sqrt_price
-* @param {any} js_liquidity
-* @param {any} js_amount
-* @param {any} js_x_to_y
-* @returns {any}
+* @param {SqrtPrice} starting_sqrt_price
+* @param {Liquidity} liquidity
+* @param {TokenAmount} amount
+* @param {boolean} x_to_y
+* @returns {SqrtPrice}
 */
-module.exports.getNextSqrtPriceFromOutput = function(js_starting_sqrt_price, js_liquidity, js_amount, js_x_to_y) {
+module.exports.get_next_sqrt_price_from_output = function(starting_sqrt_price, liquidity, amount, x_to_y) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.getNextSqrtPriceFromOutput(retptr, addHeapObject(js_starting_sqrt_price), addHeapObject(js_liquidity), addHeapObject(js_amount), addHeapObject(js_x_to_y));
+        wasm.get_next_sqrt_price_from_output(retptr, addHeapObject(starting_sqrt_price), addHeapObject(liquidity), addHeapObject(amount), x_to_y);
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         var r2 = getInt32Memory0()[retptr / 4 + 2];
@@ -319,16 +319,16 @@ module.exports.getNextSqrtPriceFromOutput = function(js_starting_sqrt_price, js_
 };
 
 /**
-* @param {any} js_starting_sqrt_price
-* @param {any} js_liquidity
-* @param {any} js_x
-* @param {any} js_add_x
-* @returns {any}
+* @param {SqrtPrice} starting_sqrt_price
+* @param {Liquidity} liquidity
+* @param {TokenAmount} x
+* @param {boolean} add_x
+* @returns {SqrtPrice}
 */
-module.exports.getNextSqrtPriceXUp = function(js_starting_sqrt_price, js_liquidity, js_x, js_add_x) {
+module.exports.get_next_sqrt_price_x_up = function(starting_sqrt_price, liquidity, x, add_x) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.getNextSqrtPriceXUp(retptr, addHeapObject(js_starting_sqrt_price), addHeapObject(js_liquidity), addHeapObject(js_x), addHeapObject(js_add_x));
+        wasm.get_next_sqrt_price_x_up(retptr, addHeapObject(starting_sqrt_price), addHeapObject(liquidity), addHeapObject(x), add_x);
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         var r2 = getInt32Memory0()[retptr / 4 + 2];
@@ -342,16 +342,16 @@ module.exports.getNextSqrtPriceXUp = function(js_starting_sqrt_price, js_liquidi
 };
 
 /**
-* @param {any} js_starting_sqrt_price
-* @param {any} js_liquidity
-* @param {any} js_y
-* @param {any} js_add_y
-* @returns {any}
+* @param {SqrtPrice} starting_sqrt_price
+* @param {Liquidity} liquidity
+* @param {TokenAmount} y
+* @param {boolean} add_y
+* @returns {SqrtPrice}
 */
-module.exports.getNextSqrtPriceYDown = function(js_starting_sqrt_price, js_liquidity, js_y, js_add_y) {
+module.exports.get_next_sqrt_price_y_down = function(starting_sqrt_price, liquidity, y, add_y) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.getNextSqrtPriceYDown(retptr, addHeapObject(js_starting_sqrt_price), addHeapObject(js_liquidity), addHeapObject(js_y), addHeapObject(js_add_y));
+        wasm.get_next_sqrt_price_y_down(retptr, addHeapObject(starting_sqrt_price), addHeapObject(liquidity), addHeapObject(y), add_y);
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         var r2 = getInt32Memory0()[retptr / 4 + 2];
@@ -365,18 +365,18 @@ module.exports.getNextSqrtPriceYDown = function(js_starting_sqrt_price, js_liqui
 };
 
 /**
-* @param {any} js_current_tick_index
-* @param {any} js_current_sqrt_price
-* @param {any} js_liquidity_delta
-* @param {any} js_liquidity_sign
-* @param {any} js_upper_tick
-* @param {any} js_lower_tick
-* @returns {any}
+* @param {number} current_tick_index
+* @param {SqrtPrice} current_sqrt_price
+* @param {Liquidity} liquidity_delta
+* @param {boolean} liquidity_sign
+* @param {number} upper_tick
+* @param {number} lower_tick
+* @returns {AmountDeltaResult}
 */
-module.exports.calculateAmountDelta = function(js_current_tick_index, js_current_sqrt_price, js_liquidity_delta, js_liquidity_sign, js_upper_tick, js_lower_tick) {
+module.exports.calculate_amount_delta = function(current_tick_index, current_sqrt_price, liquidity_delta, liquidity_sign, upper_tick, lower_tick) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.calculateAmountDelta(retptr, addHeapObject(js_current_tick_index), addHeapObject(js_current_sqrt_price), addHeapObject(js_liquidity_delta), addHeapObject(js_liquidity_sign), addHeapObject(js_upper_tick), addHeapObject(js_lower_tick));
+        wasm.calculate_amount_delta(retptr, current_tick_index, addHeapObject(current_sqrt_price), addHeapObject(liquidity_delta), liquidity_sign, upper_tick, lower_tick);
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         var r2 = getInt32Memory0()[retptr / 4 + 2];
@@ -390,140 +390,186 @@ module.exports.calculateAmountDelta = function(js_current_tick_index, js_current
 };
 
 /**
-* @param {any} js_amount
-* @param {any} js_starting_sqrt_price
-* @param {any} js_liquidity
-* @param {any} js_fee
-* @param {any} js_by_amount_in
-* @param {any} js_x_to_y
-* @returns {any}
+* @param {TokenAmount} amount
+* @param {SqrtPrice} starting_sqrt_price
+* @param {Liquidity} liquidity
+* @param {Percentage} fee
+* @param {boolean} by_amount_in
+* @param {boolean} x_to_y
+* @returns {boolean}
 */
-module.exports.isEnoughAmountToChangePrice = function(js_amount, js_starting_sqrt_price, js_liquidity, js_fee, js_by_amount_in, js_x_to_y) {
+module.exports.is_enough_amount_to_change_price = function(amount, starting_sqrt_price, liquidity, fee, by_amount_in, x_to_y) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.isEnoughAmountToChangePrice(retptr, addHeapObject(js_amount), addHeapObject(js_starting_sqrt_price), addHeapObject(js_liquidity), addHeapObject(js_fee), addHeapObject(js_by_amount_in), addHeapObject(js_x_to_y));
+        wasm.is_enough_amount_to_change_price(retptr, addHeapObject(amount), addHeapObject(starting_sqrt_price), addHeapObject(liquidity), addHeapObject(fee), by_amount_in, x_to_y);
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         var r2 = getInt32Memory0()[retptr / 4 + 2];
         if (r2) {
             throw takeObject(r1);
         }
-        return takeObject(r0);
+        return r0 !== 0;
     } finally {
         wasm.__wbindgen_add_to_stack_pointer(16);
     }
 };
 
 /**
-* @param {any} js_tick_spacing
-* @returns {bigint}
+* @param {number} tick_spacing
+* @returns {Liquidity}
 */
-module.exports.calculateMaxLiquidityPerTick = function(js_tick_spacing) {
+module.exports.calculate_max_liquidity_per_tick = function(tick_spacing) {
+    const ret = wasm.calculate_max_liquidity_per_tick(tick_spacing);
+    return takeObject(ret);
+};
+
+/**
+* @param {number} tick_lower
+* @param {number} tick_upper
+* @param {number} tick_spacing
+*/
+module.exports.check_ticks = function(tick_lower, tick_upper, tick_spacing) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.calculateMaxLiquidityPerTick(retptr, addHeapObject(js_tick_spacing));
+        wasm.check_ticks(retptr, tick_lower, tick_upper, tick_spacing);
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
-        var r2 = getInt32Memory0()[retptr / 4 + 2];
-        if (r2) {
-            throw takeObject(r1);
+        if (r1) {
+            throw takeObject(r0);
         }
-        return takeObject(r0);
     } finally {
         wasm.__wbindgen_add_to_stack_pointer(16);
     }
 };
 
 /**
-* @param {any} js_tick_lower
-* @param {any} js_tick_upper
-* @param {any} js_tick_spacing
-* @returns {any}
+* @param {number} tick_index
+* @param {number} tick_spacing
 */
-module.exports.checkTicks = function(js_tick_lower, js_tick_upper, js_tick_spacing) {
+module.exports.check_tick = function(tick_index, tick_spacing) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.checkTicks(retptr, addHeapObject(js_tick_lower), addHeapObject(js_tick_upper), addHeapObject(js_tick_spacing));
+        wasm.check_tick(retptr, tick_index, tick_spacing);
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
-        var r2 = getInt32Memory0()[retptr / 4 + 2];
-        if (r2) {
-            throw takeObject(r1);
+        if (r1) {
+            throw takeObject(r0);
         }
-        return takeObject(r0);
     } finally {
         wasm.__wbindgen_add_to_stack_pointer(16);
     }
 };
 
 /**
-* @param {any} js_tick_index
-* @param {any} js_tick_spacing
-* @returns {any}
+* @param {TokenAmount} expected_amount_out
+* @param {Percentage} slippage
+* @returns {TokenAmount}
 */
-module.exports.checkTick = function(js_tick_index, js_tick_spacing) {
-    try {
-        const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.checkTick(retptr, addHeapObject(js_tick_index), addHeapObject(js_tick_spacing));
-        var r0 = getInt32Memory0()[retptr / 4 + 0];
-        var r1 = getInt32Memory0()[retptr / 4 + 1];
-        var r2 = getInt32Memory0()[retptr / 4 + 2];
-        if (r2) {
-            throw takeObject(r1);
-        }
-        return takeObject(r0);
-    } finally {
-        wasm.__wbindgen_add_to_stack_pointer(16);
-    }
-};
-
-/**
-* @param {any} js_expected_amount_out
-* @param {any} js_slippage
-* @returns {bigint}
-*/
-module.exports.calculateMinAmountOut = function(js_expected_amount_out, js_slippage) {
-    try {
-        const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.calculateMinAmountOut(retptr, addHeapObject(js_expected_amount_out), addHeapObject(js_slippage));
-        var r0 = getInt32Memory0()[retptr / 4 + 0];
-        var r1 = getInt32Memory0()[retptr / 4 + 1];
-        var r2 = getInt32Memory0()[retptr / 4 + 2];
-        if (r2) {
-            throw takeObject(r1);
-        }
-        return takeObject(r0);
-    } finally {
-        wasm.__wbindgen_add_to_stack_pointer(16);
-    }
+module.exports.calculate_min_amount_out = function(expected_amount_out, slippage) {
+    const ret = wasm.calculate_min_amount_out(addHeapObject(expected_amount_out), addHeapObject(slippage));
+    return takeObject(ret);
 };
 
 /**
 * @returns {bigint}
 */
-module.exports.getGlobalMaxSqrtPrice = function() {
-    try {
-        const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.getGlobalMaxSqrtPrice(retptr);
-        var r0 = getInt32Memory0()[retptr / 4 + 0];
-        var r1 = getInt32Memory0()[retptr / 4 + 1];
-        var r2 = getInt32Memory0()[retptr / 4 + 2];
-        if (r2) {
-            throw takeObject(r1);
-        }
-        return takeObject(r0);
-    } finally {
-        wasm.__wbindgen_add_to_stack_pointer(16);
-    }
+module.exports.get_global_max_sqrt_price = function() {
+    const ret = wasm.get_global_max_sqrt_price();
+    return takeObject(ret);
 };
 
 /**
 * @returns {bigint}
 */
-module.exports.getGlobalMinSqrtPrice = function() {
+module.exports.get_global_min_sqrt_price = function() {
+    const ret = wasm.get_global_min_sqrt_price();
+    return takeObject(ret);
+};
+
+/**
+* @returns {number}
+*/
+module.exports.get_tick_search_range = function() {
+    const ret = wasm.get_tick_search_range();
+    return ret;
+};
+
+/**
+* @param {number} tick_spacing
+* @returns {number}
+*/
+module.exports.get_max_chunk = function(tick_spacing) {
+    const ret = wasm.get_max_chunk(tick_spacing);
+    return ret;
+};
+
+/**
+* @returns {number}
+*/
+module.exports.get_chunk_size = function() {
+    const ret = wasm.get_chunk_size();
+    return ret;
+};
+
+/**
+* @returns {number}
+*/
+module.exports.get_max_tick_cross = function() {
+    const ret = wasm.get_max_tick_cross();
+    return ret;
+};
+
+/**
+* @returns {number}
+*/
+module.exports.get_max_tickmap_query_size = function() {
+    const ret = wasm.get_max_tickmap_query_size();
+    return ret >>> 0;
+};
+
+/**
+* @returns {number}
+*/
+module.exports.get_liquidity_ticks_limit = function() {
+    const ret = wasm.get_liquidity_ticks_limit();
+    return ret >>> 0;
+};
+
+/**
+* @returns {number}
+*/
+module.exports.get_max_pool_keys_returned = function() {
+    const ret = wasm.get_max_pool_keys_returned();
+    return ret;
+};
+
+/**
+* @returns {number}
+*/
+module.exports.get_max_pool_pairs_returned = function() {
+    const ret = wasm.get_max_pool_pairs_returned();
+    return ret >>> 0;
+};
+
+/**
+* @param {number} lower_tick_index
+* @param {FeeGrowth} lower_tick_fee_growth_outside_x
+* @param {FeeGrowth} lower_tick_fee_growth_outside_y
+* @param {number} upper_tick_index
+* @param {FeeGrowth} upper_tick_fee_growth_outside_x
+* @param {FeeGrowth} upper_tick_fee_growth_outside_y
+* @param {number} pool_current_tick_index
+* @param {FeeGrowth} pool_fee_growth_global_x
+* @param {FeeGrowth} pool_fee_growth_global_y
+* @param {FeeGrowth} position_fee_growth_inside_x
+* @param {FeeGrowth} position_fee_growth_inside_y
+* @param {Liquidity} position_liquidity
+* @returns {TokenAmounts}
+*/
+module.exports.calculate_fee = function(lower_tick_index, lower_tick_fee_growth_outside_x, lower_tick_fee_growth_outside_y, upper_tick_index, upper_tick_fee_growth_outside_x, upper_tick_fee_growth_outside_y, pool_current_tick_index, pool_fee_growth_global_x, pool_fee_growth_global_y, position_fee_growth_inside_x, position_fee_growth_inside_y, position_liquidity) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.getGlobalMinSqrtPrice(retptr);
+        wasm.calculate_fee(retptr, lower_tick_index, addHeapObject(lower_tick_fee_growth_outside_x), addHeapObject(lower_tick_fee_growth_outside_y), upper_tick_index, addHeapObject(upper_tick_fee_growth_outside_x), addHeapObject(upper_tick_fee_growth_outside_y), pool_current_tick_index, addHeapObject(pool_fee_growth_global_x), addHeapObject(pool_fee_growth_global_y), addHeapObject(position_fee_growth_inside_x), addHeapObject(position_fee_growth_inside_y), addHeapObject(position_liquidity));
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         var r2 = getInt32Memory0()[retptr / 4 + 2];
@@ -537,12 +583,95 @@ module.exports.getGlobalMinSqrtPrice = function() {
 };
 
 /**
-* @returns {bigint}
+* @param {string} token_candidate
+* @param {string} token_to_compare
+* @returns {boolean}
 */
-module.exports.getTickSearchRange = function() {
+module.exports.is_token_x = function(token_candidate, token_to_compare) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.getTickSearchRange(retptr);
+        const ptr0 = passStringToWasm0(token_candidate, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ptr1 = passStringToWasm0(token_to_compare, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len1 = WASM_VECTOR_LEN;
+        wasm.is_token_x(retptr, ptr0, len0, ptr1, len1);
+        var r0 = getInt32Memory0()[retptr / 4 + 0];
+        var r1 = getInt32Memory0()[retptr / 4 + 1];
+        var r2 = getInt32Memory0()[retptr / 4 + 2];
+        if (r2) {
+            throw takeObject(r1);
+        }
+        return r0 !== 0;
+    } finally {
+        wasm.__wbindgen_add_to_stack_pointer(16);
+    }
+};
+
+/**
+* @param {number} tick_index
+* @param {number} tick_spacing
+* @param {SqrtPrice} sqrt_price
+* @returns {boolean}
+*/
+module.exports.check_tick_to_sqrt_price_relationship = function(tick_index, tick_spacing, sqrt_price) {
+    try {
+        const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+        wasm.check_tick_to_sqrt_price_relationship(retptr, tick_index, tick_spacing, addHeapObject(sqrt_price));
+        var r0 = getInt32Memory0()[retptr / 4 + 0];
+        var r1 = getInt32Memory0()[retptr / 4 + 1];
+        var r2 = getInt32Memory0()[retptr / 4 + 2];
+        if (r2) {
+            throw takeObject(r1);
+        }
+        return r0 !== 0;
+    } finally {
+        wasm.__wbindgen_add_to_stack_pointer(16);
+    }
+};
+
+/**
+* @param {number} accurate_tick
+* @param {number} tick_spacing
+* @returns {number}
+*/
+module.exports.align_tick_to_spacing = function(accurate_tick, tick_spacing) {
+    const ret = wasm.align_tick_to_spacing(accurate_tick, tick_spacing);
+    return ret;
+};
+
+/**
+* @param {SqrtPrice} sqrt_price
+* @param {number} tick_spacing
+* @returns {number}
+*/
+module.exports.get_tick_at_sqrt_price = function(sqrt_price, tick_spacing) {
+    try {
+        const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+        wasm.get_tick_at_sqrt_price(retptr, addHeapObject(sqrt_price), tick_spacing);
+        var r0 = getInt32Memory0()[retptr / 4 + 0];
+        var r1 = getInt32Memory0()[retptr / 4 + 1];
+        var r2 = getInt32Memory0()[retptr / 4 + 2];
+        if (r2) {
+            throw takeObject(r1);
+        }
+        return r0;
+    } finally {
+        wasm.__wbindgen_add_to_stack_pointer(16);
+    }
+};
+
+/**
+* @param {TokenAmount} x
+* @param {number} lower_tick
+* @param {number} upper_tick
+* @param {SqrtPrice} current_sqrt_price
+* @param {boolean} rounding_up
+* @returns {SingleTokenLiquidity}
+*/
+module.exports.get_liquidity_by_x = function(x, lower_tick, upper_tick, current_sqrt_price, rounding_up) {
+    try {
+        const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+        wasm.get_liquidity_by_x(retptr, addHeapObject(x), lower_tick, upper_tick, addHeapObject(current_sqrt_price), rounding_up);
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         var r2 = getInt32Memory0()[retptr / 4 + 2];
@@ -556,291 +685,17 @@ module.exports.getTickSearchRange = function() {
 };
 
 /**
-* @param {any} js_tick_spacing
-* @returns {bigint}
+* @param {TokenAmount} y
+* @param {number} lower_tick
+* @param {number} upper_tick
+* @param {SqrtPrice} current_sqrt_price
+* @param {boolean} rounding_up
+* @returns {SingleTokenLiquidity}
 */
-module.exports.getMaxChunk = function(js_tick_spacing) {
+module.exports.get_liquidity_by_y = function(y, lower_tick, upper_tick, current_sqrt_price, rounding_up) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.getMaxChunk(retptr, addHeapObject(js_tick_spacing));
-        var r0 = getInt32Memory0()[retptr / 4 + 0];
-        var r1 = getInt32Memory0()[retptr / 4 + 1];
-        var r2 = getInt32Memory0()[retptr / 4 + 2];
-        if (r2) {
-            throw takeObject(r1);
-        }
-        return takeObject(r0);
-    } finally {
-        wasm.__wbindgen_add_to_stack_pointer(16);
-    }
-};
-
-/**
-* @returns {bigint}
-*/
-module.exports.getChunkSize = function() {
-    try {
-        const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.getChunkSize(retptr);
-        var r0 = getInt32Memory0()[retptr / 4 + 0];
-        var r1 = getInt32Memory0()[retptr / 4 + 1];
-        var r2 = getInt32Memory0()[retptr / 4 + 2];
-        if (r2) {
-            throw takeObject(r1);
-        }
-        return takeObject(r0);
-    } finally {
-        wasm.__wbindgen_add_to_stack_pointer(16);
-    }
-};
-
-/**
-* @returns {bigint}
-*/
-module.exports.getMaxTickCross = function() {
-    try {
-        const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.getMaxTickCross(retptr);
-        var r0 = getInt32Memory0()[retptr / 4 + 0];
-        var r1 = getInt32Memory0()[retptr / 4 + 1];
-        var r2 = getInt32Memory0()[retptr / 4 + 2];
-        if (r2) {
-            throw takeObject(r1);
-        }
-        return takeObject(r0);
-    } finally {
-        wasm.__wbindgen_add_to_stack_pointer(16);
-    }
-};
-
-/**
-* @returns {bigint}
-*/
-module.exports.getMaxTickmapQuerySize = function() {
-    try {
-        const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.getMaxTickmapQuerySize(retptr);
-        var r0 = getInt32Memory0()[retptr / 4 + 0];
-        var r1 = getInt32Memory0()[retptr / 4 + 1];
-        var r2 = getInt32Memory0()[retptr / 4 + 2];
-        if (r2) {
-            throw takeObject(r1);
-        }
-        return takeObject(r0);
-    } finally {
-        wasm.__wbindgen_add_to_stack_pointer(16);
-    }
-};
-
-/**
-* @returns {bigint}
-*/
-module.exports.getLiquidityTicksLimit = function() {
-    try {
-        const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.getLiquidityTicksLimit(retptr);
-        var r0 = getInt32Memory0()[retptr / 4 + 0];
-        var r1 = getInt32Memory0()[retptr / 4 + 1];
-        var r2 = getInt32Memory0()[retptr / 4 + 2];
-        if (r2) {
-            throw takeObject(r1);
-        }
-        return takeObject(r0);
-    } finally {
-        wasm.__wbindgen_add_to_stack_pointer(16);
-    }
-};
-
-/**
-* @returns {bigint}
-*/
-module.exports.getMaxPoolKeysReturned = function() {
-    try {
-        const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.getMaxPoolKeysReturned(retptr);
-        var r0 = getInt32Memory0()[retptr / 4 + 0];
-        var r1 = getInt32Memory0()[retptr / 4 + 1];
-        var r2 = getInt32Memory0()[retptr / 4 + 2];
-        if (r2) {
-            throw takeObject(r1);
-        }
-        return takeObject(r0);
-    } finally {
-        wasm.__wbindgen_add_to_stack_pointer(16);
-    }
-};
-
-/**
-* @returns {bigint}
-*/
-module.exports.getMaxPoolPairsReturned = function() {
-    try {
-        const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.getMaxPoolPairsReturned(retptr);
-        var r0 = getInt32Memory0()[retptr / 4 + 0];
-        var r1 = getInt32Memory0()[retptr / 4 + 1];
-        var r2 = getInt32Memory0()[retptr / 4 + 2];
-        if (r2) {
-            throw takeObject(r1);
-        }
-        return takeObject(r0);
-    } finally {
-        wasm.__wbindgen_add_to_stack_pointer(16);
-    }
-};
-
-/**
-* @param {any} js_lower_tick_index
-* @param {any} js_lower_tick_fee_growth_outside_x
-* @param {any} js_lower_tick_fee_growth_outside_y
-* @param {any} js_upper_tick_index
-* @param {any} js_upper_tick_fee_growth_outside_x
-* @param {any} js_upper_tick_fee_growth_outside_y
-* @param {any} js_pool_current_tick_index
-* @param {any} js_pool_fee_growth_global_x
-* @param {any} js_pool_fee_growth_global_y
-* @param {any} js_position_fee_growth_inside_x
-* @param {any} js_position_fee_growth_inside_y
-* @param {any} js_position_liquidity
-* @returns {any}
-*/
-module.exports._calculateFee = function(js_lower_tick_index, js_lower_tick_fee_growth_outside_x, js_lower_tick_fee_growth_outside_y, js_upper_tick_index, js_upper_tick_fee_growth_outside_x, js_upper_tick_fee_growth_outside_y, js_pool_current_tick_index, js_pool_fee_growth_global_x, js_pool_fee_growth_global_y, js_position_fee_growth_inside_x, js_position_fee_growth_inside_y, js_position_liquidity) {
-    try {
-        const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm._calculateFee(retptr, addHeapObject(js_lower_tick_index), addHeapObject(js_lower_tick_fee_growth_outside_x), addHeapObject(js_lower_tick_fee_growth_outside_y), addHeapObject(js_upper_tick_index), addHeapObject(js_upper_tick_fee_growth_outside_x), addHeapObject(js_upper_tick_fee_growth_outside_y), addHeapObject(js_pool_current_tick_index), addHeapObject(js_pool_fee_growth_global_x), addHeapObject(js_pool_fee_growth_global_y), addHeapObject(js_position_fee_growth_inside_x), addHeapObject(js_position_fee_growth_inside_y), addHeapObject(js_position_liquidity));
-        var r0 = getInt32Memory0()[retptr / 4 + 0];
-        var r1 = getInt32Memory0()[retptr / 4 + 1];
-        var r2 = getInt32Memory0()[retptr / 4 + 2];
-        if (r2) {
-            throw takeObject(r1);
-        }
-        return takeObject(r0);
-    } finally {
-        wasm.__wbindgen_add_to_stack_pointer(16);
-    }
-};
-
-/**
-* @param {any} js_token_candidate
-* @param {any} js_token_to_compare
-* @returns {any}
-*/
-module.exports.isTokenX = function(js_token_candidate, js_token_to_compare) {
-    try {
-        const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.isTokenX(retptr, addHeapObject(js_token_candidate), addHeapObject(js_token_to_compare));
-        var r0 = getInt32Memory0()[retptr / 4 + 0];
-        var r1 = getInt32Memory0()[retptr / 4 + 1];
-        var r2 = getInt32Memory0()[retptr / 4 + 2];
-        if (r2) {
-            throw takeObject(r1);
-        }
-        return takeObject(r0);
-    } finally {
-        wasm.__wbindgen_add_to_stack_pointer(16);
-    }
-};
-
-/**
-* @param {any} js_tick_index
-* @param {any} js_tick_spacing
-* @param {any} js_sqrt_price
-* @returns {any}
-*/
-module.exports.isValidTick = function(js_tick_index, js_tick_spacing, js_sqrt_price) {
-    try {
-        const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.isValidTick(retptr, addHeapObject(js_tick_index), addHeapObject(js_tick_spacing), addHeapObject(js_sqrt_price));
-        var r0 = getInt32Memory0()[retptr / 4 + 0];
-        var r1 = getInt32Memory0()[retptr / 4 + 1];
-        var r2 = getInt32Memory0()[retptr / 4 + 2];
-        if (r2) {
-            throw takeObject(r1);
-        }
-        return takeObject(r0);
-    } finally {
-        wasm.__wbindgen_add_to_stack_pointer(16);
-    }
-};
-
-/**
-* @param {any} js_accurate_tick
-* @param {any} js_tick_spacing
-* @returns {bigint}
-*/
-module.exports.alignTickToSpacing = function(js_accurate_tick, js_tick_spacing) {
-    try {
-        const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.alignTickToSpacing(retptr, addHeapObject(js_accurate_tick), addHeapObject(js_tick_spacing));
-        var r0 = getInt32Memory0()[retptr / 4 + 0];
-        var r1 = getInt32Memory0()[retptr / 4 + 1];
-        var r2 = getInt32Memory0()[retptr / 4 + 2];
-        if (r2) {
-            throw takeObject(r1);
-        }
-        return takeObject(r0);
-    } finally {
-        wasm.__wbindgen_add_to_stack_pointer(16);
-    }
-};
-
-/**
-* @param {any} js_sqrt_price
-* @param {any} js_tick_spacing
-* @returns {any}
-*/
-module.exports.calculateTick = function(js_sqrt_price, js_tick_spacing) {
-    try {
-        const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.calculateTick(retptr, addHeapObject(js_sqrt_price), addHeapObject(js_tick_spacing));
-        var r0 = getInt32Memory0()[retptr / 4 + 0];
-        var r1 = getInt32Memory0()[retptr / 4 + 1];
-        var r2 = getInt32Memory0()[retptr / 4 + 2];
-        if (r2) {
-            throw takeObject(r1);
-        }
-        return takeObject(r0);
-    } finally {
-        wasm.__wbindgen_add_to_stack_pointer(16);
-    }
-};
-
-/**
-* @param {any} js_x
-* @param {any} js_lower_tick
-* @param {any} js_upper_tick
-* @param {any} js_current_sqrt_price
-* @param {any} js_rounding_up
-* @returns {any}
-*/
-module.exports.getLiquidityByX = function(js_x, js_lower_tick, js_upper_tick, js_current_sqrt_price, js_rounding_up) {
-    try {
-        const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.getLiquidityByX(retptr, addHeapObject(js_x), addHeapObject(js_lower_tick), addHeapObject(js_upper_tick), addHeapObject(js_current_sqrt_price), addHeapObject(js_rounding_up));
-        var r0 = getInt32Memory0()[retptr / 4 + 0];
-        var r1 = getInt32Memory0()[retptr / 4 + 1];
-        var r2 = getInt32Memory0()[retptr / 4 + 2];
-        if (r2) {
-            throw takeObject(r1);
-        }
-        return takeObject(r0);
-    } finally {
-        wasm.__wbindgen_add_to_stack_pointer(16);
-    }
-};
-
-/**
-* @param {any} js_y
-* @param {any} js_lower_tick
-* @param {any} js_upper_tick
-* @param {any} js_current_sqrt_price
-* @param {any} js_rounding_up
-* @returns {any}
-*/
-module.exports.getLiquidityByY = function(js_y, js_lower_tick, js_upper_tick, js_current_sqrt_price, js_rounding_up) {
-    try {
-        const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.getLiquidityByY(retptr, addHeapObject(js_y), addHeapObject(js_lower_tick), addHeapObject(js_upper_tick), addHeapObject(js_current_sqrt_price), addHeapObject(js_rounding_up));
+        wasm.get_liquidity_by_y(retptr, addHeapObject(y), lower_tick, upper_tick, addHeapObject(current_sqrt_price), rounding_up);
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         var r2 = getInt32Memory0()[retptr / 4 + 2];
@@ -858,10 +713,10 @@ module.exports.getLiquidityByY = function(js_y, js_lower_tick, js_upper_tick, js
 * @param {number} tick_spacing
 * @returns {FeeTier}
 */
-module.exports.newFeeTier = function(fee, tick_spacing) {
+module.exports.new_fee_tier = function(fee, tick_spacing) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.newFeeTier(retptr, addHeapObject(fee), tick_spacing);
+        wasm.new_fee_tier(retptr, addHeapObject(fee), tick_spacing);
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         var r2 = getInt32Memory0()[retptr / 4 + 2];
@@ -880,14 +735,14 @@ module.exports.newFeeTier = function(fee, tick_spacing) {
 * @param {FeeTier} fee_tier
 * @returns {PoolKey}
 */
-module.exports.newPoolKey = function(token_0, token_1, fee_tier) {
+module.exports.new_pool_key = function(token_0, token_1, fee_tier) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
         const ptr0 = passStringToWasm0(token_0, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         const len0 = WASM_VECTOR_LEN;
         const ptr1 = passStringToWasm0(token_1, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         const len1 = WASM_VECTOR_LEN;
-        wasm.newPoolKey(retptr, ptr0, len0, ptr1, len1, addHeapObject(fee_tier));
+        wasm.new_pool_key(retptr, ptr0, len0, ptr1, len1, addHeapObject(fee_tier));
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         var r2 = getInt32Memory0()[retptr / 4 + 2];
@@ -903,28 +758,28 @@ module.exports.newPoolKey = function(token_0, token_1, fee_tier) {
 /**
 * @returns {bigint}
 */
-module.exports.getFeeGrowthScale = function() {
-    const ret = wasm.getFeeGrowthScale();
+module.exports.get_fee_growth_scale = function() {
+    const ret = wasm.get_fee_growth_scale();
     return takeObject(ret);
 };
 
 /**
 * @returns {bigint}
 */
-module.exports.getFeeGrowthDenominator = function() {
-    const ret = wasm.getFeeGrowthDenominator();
+module.exports.get_fee_growth_denominator = function() {
+    const ret = wasm.get_fee_growth_denominator();
     return takeObject(ret);
 };
 
 /**
-* @param {any} js_val
-* @param {any} js_scale
+* @param {number} js_val
+* @param {number} scale
 * @returns {bigint}
 */
-module.exports.toFeeGrowth = function(js_val, js_scale) {
+module.exports.to_fee_growth = function(js_val, scale) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.toFeeGrowth(retptr, addHeapObject(js_val), addHeapObject(js_scale));
+        wasm.to_fee_growth(retptr, js_val, scale);
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         var r2 = getInt32Memory0()[retptr / 4 + 2];
@@ -940,65 +795,28 @@ module.exports.toFeeGrowth = function(js_val, js_scale) {
 /**
 * @returns {bigint}
 */
-module.exports.getFixedPointScale = function() {
-    const ret = wasm.getFixedPointScale();
-    return takeObject(ret);
-};
-
-/**
-* @returns {bigint}
-*/
-module.exports.getFixedPointDenominator = function() {
-    const ret = wasm.getFixedPointDenominator();
-    return takeObject(ret);
-};
-
-/**
-* @param {any} js_val
-* @param {any} js_scale
-* @returns {bigint}
-*/
-module.exports.toFixedPoint = function(js_val, js_scale) {
-    try {
-        const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.toFixedPoint(retptr, addHeapObject(js_val), addHeapObject(js_scale));
-        var r0 = getInt32Memory0()[retptr / 4 + 0];
-        var r1 = getInt32Memory0()[retptr / 4 + 1];
-        var r2 = getInt32Memory0()[retptr / 4 + 2];
-        if (r2) {
-            throw takeObject(r1);
-        }
-        return takeObject(r0);
-    } finally {
-        wasm.__wbindgen_add_to_stack_pointer(16);
-    }
-};
-
-/**
-* @returns {bigint}
-*/
-module.exports.getLiquidityScale = function() {
-    const ret = wasm.getLiquidityScale();
+module.exports.get_fixed_point_scale = function() {
+    const ret = wasm.get_fixed_point_scale();
     return takeObject(ret);
 };
 
 /**
 * @returns {bigint}
 */
-module.exports.getLiquidityDenominator = function() {
-    const ret = wasm.getLiquidityDenominator();
+module.exports.get_fixed_point_denominator = function() {
+    const ret = wasm.get_fixed_point_denominator();
     return takeObject(ret);
 };
 
 /**
-* @param {any} js_val
-* @param {any} js_scale
+* @param {number} js_val
+* @param {number} scale
 * @returns {bigint}
 */
-module.exports.toLiquidity = function(js_val, js_scale) {
+module.exports.to_fixed_point = function(js_val, scale) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.toLiquidity(retptr, addHeapObject(js_val), addHeapObject(js_scale));
+        wasm.to_fixed_point(retptr, js_val, scale);
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         var r2 = getInt32Memory0()[retptr / 4 + 2];
@@ -1014,65 +832,28 @@ module.exports.toLiquidity = function(js_val, js_scale) {
 /**
 * @returns {bigint}
 */
-module.exports.getPercentageScale = function() {
-    const ret = wasm.getFixedPointScale();
-    return takeObject(ret);
-};
-
-/**
-* @returns {bigint}
-*/
-module.exports.getPercentageDenominator = function() {
-    const ret = wasm.getPercentageDenominator();
-    return takeObject(ret);
-};
-
-/**
-* @param {any} js_val
-* @param {any} js_scale
-* @returns {bigint}
-*/
-module.exports.toPercentage = function(js_val, js_scale) {
-    try {
-        const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.toPercentage(retptr, addHeapObject(js_val), addHeapObject(js_scale));
-        var r0 = getInt32Memory0()[retptr / 4 + 0];
-        var r1 = getInt32Memory0()[retptr / 4 + 1];
-        var r2 = getInt32Memory0()[retptr / 4 + 2];
-        if (r2) {
-            throw takeObject(r1);
-        }
-        return takeObject(r0);
-    } finally {
-        wasm.__wbindgen_add_to_stack_pointer(16);
-    }
-};
-
-/**
-* @returns {bigint}
-*/
-module.exports.getPriceScale = function() {
-    const ret = wasm.getPriceScale();
+module.exports.get_liquidity_scale = function() {
+    const ret = wasm.get_liquidity_scale();
     return takeObject(ret);
 };
 
 /**
 * @returns {bigint}
 */
-module.exports.getPriceDenominator = function() {
-    const ret = wasm.getPriceDenominator();
+module.exports.get_liquidity_denominator = function() {
+    const ret = wasm.get_liquidity_denominator();
     return takeObject(ret);
 };
 
 /**
-* @param {any} js_val
-* @param {any} js_scale
+* @param {number} js_val
+* @param {number} scale
 * @returns {bigint}
 */
-module.exports.toPrice = function(js_val, js_scale) {
+module.exports.to_liquidity = function(js_val, scale) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.toPrice(retptr, addHeapObject(js_val), addHeapObject(js_scale));
+        wasm.to_liquidity(retptr, js_val, scale);
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         var r2 = getInt32Memory0()[retptr / 4 + 2];
@@ -1088,165 +869,28 @@ module.exports.toPrice = function(js_val, js_scale) {
 /**
 * @returns {bigint}
 */
-module.exports.getSecondsPerLiquidityScale = function() {
-    const ret = wasm.getPriceScale();
-    return takeObject(ret);
-};
-
-/**
-* @returns {bigint}
-*/
-module.exports.getSecondsPerLiquidityDenominator = function() {
-    const ret = wasm.getPriceDenominator();
-    return takeObject(ret);
-};
-
-/**
-* @param {any} js_val
-* @param {any} js_scale
-* @returns {bigint}
-*/
-module.exports.toSecondsPerLiquidity = function(js_val, js_scale) {
-    try {
-        const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.toSecondsPerLiquidity(retptr, addHeapObject(js_val), addHeapObject(js_scale));
-        var r0 = getInt32Memory0()[retptr / 4 + 0];
-        var r1 = getInt32Memory0()[retptr / 4 + 1];
-        var r2 = getInt32Memory0()[retptr / 4 + 2];
-        if (r2) {
-            throw takeObject(r1);
-        }
-        return takeObject(r0);
-    } finally {
-        wasm.__wbindgen_add_to_stack_pointer(16);
-    }
-};
-
-/**
-* @returns {bigint}
-*/
-module.exports.getSqrtPriceScale = function() {
-    const ret = wasm.getPriceScale();
+module.exports.get_percentage_scale = function() {
+    const ret = wasm.get_fixed_point_scale();
     return takeObject(ret);
 };
 
 /**
 * @returns {bigint}
 */
-module.exports.getSqrtPriceDenominator = function() {
-    const ret = wasm.getPriceDenominator();
+module.exports.get_percentage_denominator = function() {
+    const ret = wasm.get_percentage_denominator();
     return takeObject(ret);
 };
 
 /**
-* @param {any} js_val
-* @param {any} js_scale
+* @param {number} js_val
+* @param {number} scale
 * @returns {bigint}
 */
-module.exports.toSqrtPrice = function(js_val, js_scale) {
+module.exports.to_percentage = function(js_val, scale) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.toSqrtPrice(retptr, addHeapObject(js_val), addHeapObject(js_scale));
-        var r0 = getInt32Memory0()[retptr / 4 + 0];
-        var r1 = getInt32Memory0()[retptr / 4 + 1];
-        var r2 = getInt32Memory0()[retptr / 4 + 2];
-        if (r2) {
-            throw takeObject(r1);
-        }
-        return takeObject(r0);
-    } finally {
-        wasm.__wbindgen_add_to_stack_pointer(16);
-    }
-};
-
-/**
-* @param {any} js_tick_index
-* @returns {any}
-*/
-module.exports.calculateSqrtPrice = function(js_tick_index) {
-    try {
-        const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.calculateSqrtPrice(retptr, addHeapObject(js_tick_index));
-        var r0 = getInt32Memory0()[retptr / 4 + 0];
-        var r1 = getInt32Memory0()[retptr / 4 + 1];
-        var r2 = getInt32Memory0()[retptr / 4 + 2];
-        if (r2) {
-            throw takeObject(r1);
-        }
-        return takeObject(r0);
-    } finally {
-        wasm.__wbindgen_add_to_stack_pointer(16);
-    }
-};
-
-/**
-* @param {any} js_tick_spacing
-* @returns {bigint}
-*/
-module.exports.getMaxTick = function(js_tick_spacing) {
-    try {
-        const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.getMaxTick(retptr, addHeapObject(js_tick_spacing));
-        var r0 = getInt32Memory0()[retptr / 4 + 0];
-        var r1 = getInt32Memory0()[retptr / 4 + 1];
-        var r2 = getInt32Memory0()[retptr / 4 + 2];
-        if (r2) {
-            throw takeObject(r1);
-        }
-        return takeObject(r0);
-    } finally {
-        wasm.__wbindgen_add_to_stack_pointer(16);
-    }
-};
-
-/**
-* @param {any} js_tick_spacing
-* @returns {bigint}
-*/
-module.exports.getMinTick = function(js_tick_spacing) {
-    try {
-        const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.getMinTick(retptr, addHeapObject(js_tick_spacing));
-        var r0 = getInt32Memory0()[retptr / 4 + 0];
-        var r1 = getInt32Memory0()[retptr / 4 + 1];
-        var r2 = getInt32Memory0()[retptr / 4 + 2];
-        if (r2) {
-            throw takeObject(r1);
-        }
-        return takeObject(r0);
-    } finally {
-        wasm.__wbindgen_add_to_stack_pointer(16);
-    }
-};
-
-/**
-* @param {any} js_tick_spacing
-* @returns {bigint}
-*/
-module.exports.getMaxSqrtPrice = function(js_tick_spacing) {
-    try {
-        const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.getMaxSqrtPrice(retptr, addHeapObject(js_tick_spacing));
-        var r0 = getInt32Memory0()[retptr / 4 + 0];
-        var r1 = getInt32Memory0()[retptr / 4 + 1];
-        var r2 = getInt32Memory0()[retptr / 4 + 2];
-        if (r2) {
-            throw takeObject(r1);
-        }
-        return takeObject(r0);
-    } finally {
-        wasm.__wbindgen_add_to_stack_pointer(16);
-    }
-};
-
-/**
-* @param {any} js_tick_spacing
-* @returns {bigint}
-*/
-module.exports.getMinSqrtPrice = function(js_tick_spacing) {
-    try {
-        const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.getMinSqrtPrice(retptr, addHeapObject(js_tick_spacing));
+        wasm.to_percentage(retptr, js_val, scale);
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         var r2 = getInt32Memory0()[retptr / 4 + 2];
@@ -1262,28 +906,28 @@ module.exports.getMinSqrtPrice = function(js_tick_spacing) {
 /**
 * @returns {bigint}
 */
-module.exports.getTokenAmountScale = function() {
-    const ret = wasm.getTokenAmountScale();
+module.exports.get_price_scale = function() {
+    const ret = wasm.get_price_scale();
     return takeObject(ret);
 };
 
 /**
 * @returns {bigint}
 */
-module.exports.getTokenAmountDenominator = function() {
-    const ret = wasm.getTokenAmountDenominator();
+module.exports.get_price_denominator = function() {
+    const ret = wasm.get_price_denominator();
     return takeObject(ret);
 };
 
 /**
-* @param {any} js_val
-* @param {any} js_scale
+* @param {number} js_val
+* @param {number} scale
 * @returns {bigint}
 */
-module.exports.toTokenAmount = function(js_val, js_scale) {
+module.exports.to_price = function(js_val, scale) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.toTokenAmount(retptr, addHeapObject(js_val), addHeapObject(js_scale));
+        wasm.to_price(retptr, js_val, scale);
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         var r2 = getInt32Memory0()[retptr / 4 + 2];
@@ -1297,63 +941,30 @@ module.exports.toTokenAmount = function(js_val, js_scale) {
 };
 
 /**
-* @param {any} js_tickmap
-* @param {any} js_fee_tier
-* @param {any} js_pool
-* @param {any} js_ticks
-* @param {any} js_x_to_y
-* @param {any} js_amount
-* @param {any} js_by_amount_in
-* @param {any} js_sqrt_price_limit
-* @returns {any}
-*/
-module.exports.simulateSwap = function(js_tickmap, js_fee_tier, js_pool, js_ticks, js_x_to_y, js_amount, js_by_amount_in, js_sqrt_price_limit) {
-    try {
-        const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.simulateSwap(retptr, addHeapObject(js_tickmap), addHeapObject(js_fee_tier), addHeapObject(js_pool), addHeapObject(js_ticks), addHeapObject(js_x_to_y), addHeapObject(js_amount), addHeapObject(js_by_amount_in), addHeapObject(js_sqrt_price_limit));
-        var r0 = getInt32Memory0()[retptr / 4 + 0];
-        var r1 = getInt32Memory0()[retptr / 4 + 1];
-        var r2 = getInt32Memory0()[retptr / 4 + 2];
-        if (r2) {
-            throw takeObject(r1);
-        }
-        return takeObject(r0);
-    } finally {
-        wasm.__wbindgen_add_to_stack_pointer(16);
-    }
-};
-
-/**
-* @param {any} js_tick
-* @param {any} js_tick_spacing
-* @returns {any}
-*/
-module.exports.tickIndexToPosition = function(js_tick, js_tick_spacing) {
-    try {
-        const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.tickIndexToPosition(retptr, addHeapObject(js_tick), addHeapObject(js_tick_spacing));
-        var r0 = getInt32Memory0()[retptr / 4 + 0];
-        var r1 = getInt32Memory0()[retptr / 4 + 1];
-        var r2 = getInt32Memory0()[retptr / 4 + 2];
-        if (r2) {
-            throw takeObject(r1);
-        }
-        return takeObject(r0);
-    } finally {
-        wasm.__wbindgen_add_to_stack_pointer(16);
-    }
-};
-
-/**
-* @param {any} js_chunk
-* @param {any} js_bit
-* @param {any} js_tick_spacing
 * @returns {bigint}
 */
-module.exports.positionToTick = function(js_chunk, js_bit, js_tick_spacing) {
+module.exports.get_seconds_per_liquidity_scale = function() {
+    const ret = wasm.get_price_scale();
+    return takeObject(ret);
+};
+
+/**
+* @returns {bigint}
+*/
+module.exports.get_seconds_per_liquidity_denominator = function() {
+    const ret = wasm.get_price_denominator();
+    return takeObject(ret);
+};
+
+/**
+* @param {number} js_val
+* @param {number} scale
+* @returns {bigint}
+*/
+module.exports.to_seconds_per_liquidity = function(js_val, scale) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.positionToTick(retptr, addHeapObject(js_chunk), addHeapObject(js_bit), addHeapObject(js_tick_spacing));
+        wasm.to_seconds_per_liquidity(retptr, js_val, scale);
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         var r2 = getInt32Memory0()[retptr / 4 + 2];
@@ -1364,6 +975,195 @@ module.exports.positionToTick = function(js_chunk, js_bit, js_tick_spacing) {
     } finally {
         wasm.__wbindgen_add_to_stack_pointer(16);
     }
+};
+
+/**
+* @returns {bigint}
+*/
+module.exports.get_sqrt_price_scale = function() {
+    const ret = wasm.get_price_scale();
+    return takeObject(ret);
+};
+
+/**
+* @returns {bigint}
+*/
+module.exports.get_sqrt_price_denominator = function() {
+    const ret = wasm.get_price_denominator();
+    return takeObject(ret);
+};
+
+/**
+* @param {number} js_val
+* @param {number} scale
+* @returns {bigint}
+*/
+module.exports.to_sqrt_price = function(js_val, scale) {
+    try {
+        const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+        wasm.to_sqrt_price(retptr, js_val, scale);
+        var r0 = getInt32Memory0()[retptr / 4 + 0];
+        var r1 = getInt32Memory0()[retptr / 4 + 1];
+        var r2 = getInt32Memory0()[retptr / 4 + 2];
+        if (r2) {
+            throw takeObject(r1);
+        }
+        return takeObject(r0);
+    } finally {
+        wasm.__wbindgen_add_to_stack_pointer(16);
+    }
+};
+
+/**
+* @param {number} tick_index
+* @returns {SqrtPrice}
+*/
+module.exports.calculate_sqrt_price = function(tick_index) {
+    try {
+        const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+        wasm.calculate_sqrt_price(retptr, tick_index);
+        var r0 = getInt32Memory0()[retptr / 4 + 0];
+        var r1 = getInt32Memory0()[retptr / 4 + 1];
+        var r2 = getInt32Memory0()[retptr / 4 + 2];
+        if (r2) {
+            throw takeObject(r1);
+        }
+        return takeObject(r0);
+    } finally {
+        wasm.__wbindgen_add_to_stack_pointer(16);
+    }
+};
+
+/**
+* @param {number} tick_spacing
+* @returns {number}
+*/
+module.exports.get_max_tick = function(tick_spacing) {
+    const ret = wasm.get_max_tick(tick_spacing);
+    return ret;
+};
+
+/**
+* @param {number} tick_spacing
+* @returns {number}
+*/
+module.exports.get_min_tick = function(tick_spacing) {
+    const ret = wasm.get_min_tick(tick_spacing);
+    return ret;
+};
+
+/**
+* @param {number} tick_spacing
+* @returns {SqrtPrice}
+*/
+module.exports.get_max_sqrt_price = function(tick_spacing) {
+    const ret = wasm.get_max_sqrt_price(tick_spacing);
+    return takeObject(ret);
+};
+
+/**
+* @param {number} tick_spacing
+* @returns {SqrtPrice}
+*/
+module.exports.get_min_sqrt_price = function(tick_spacing) {
+    const ret = wasm.get_min_sqrt_price(tick_spacing);
+    return takeObject(ret);
+};
+
+/**
+* @returns {bigint}
+*/
+module.exports.get_token_amount_scale = function() {
+    const ret = wasm.get_token_amount_scale();
+    return takeObject(ret);
+};
+
+/**
+* @returns {bigint}
+*/
+module.exports.get_token_amount_denominator = function() {
+    const ret = wasm.get_token_amount_denominator();
+    return takeObject(ret);
+};
+
+/**
+* @param {number} js_val
+* @param {number} scale
+* @returns {bigint}
+*/
+module.exports.to_token_amount = function(js_val, scale) {
+    try {
+        const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+        wasm.to_token_amount(retptr, js_val, scale);
+        var r0 = getInt32Memory0()[retptr / 4 + 0];
+        var r1 = getInt32Memory0()[retptr / 4 + 1];
+        var r2 = getInt32Memory0()[retptr / 4 + 2];
+        if (r2) {
+            throw takeObject(r1);
+        }
+        return takeObject(r0);
+    } finally {
+        wasm.__wbindgen_add_to_stack_pointer(16);
+    }
+};
+
+/**
+* @param {Tickmap} tickmap
+* @param {FeeTier} fee_tier
+* @param {Pool} pool
+* @param {any} ticks
+* @param {boolean} x_to_y
+* @param {TokenAmount} amount
+* @param {boolean} by_amount_in
+* @param {SqrtPrice} sqrt_price_limit
+* @returns {CalculateSwapResult}
+*/
+module.exports.simulate_swap = function(tickmap, fee_tier, pool, ticks, x_to_y, amount, by_amount_in, sqrt_price_limit) {
+    try {
+        const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+        wasm.simulate_swap(retptr, addHeapObject(tickmap), addHeapObject(fee_tier), addHeapObject(pool), addHeapObject(ticks), x_to_y, addHeapObject(amount), by_amount_in, addHeapObject(sqrt_price_limit));
+        var r0 = getInt32Memory0()[retptr / 4 + 0];
+        var r1 = getInt32Memory0()[retptr / 4 + 1];
+        var r2 = getInt32Memory0()[retptr / 4 + 2];
+        if (r2) {
+            throw takeObject(r1);
+        }
+        return takeObject(r0);
+    } finally {
+        wasm.__wbindgen_add_to_stack_pointer(16);
+    }
+};
+
+/**
+* @param {number} tick
+* @param {number} tick_spacing
+* @returns {PositionResult}
+*/
+module.exports.tick_to_position_js = function(tick, tick_spacing) {
+    try {
+        const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+        wasm.tick_to_position_js(retptr, tick, tick_spacing);
+        var r0 = getInt32Memory0()[retptr / 4 + 0];
+        var r1 = getInt32Memory0()[retptr / 4 + 1];
+        var r2 = getInt32Memory0()[retptr / 4 + 2];
+        if (r2) {
+            throw takeObject(r1);
+        }
+        return takeObject(r0);
+    } finally {
+        wasm.__wbindgen_add_to_stack_pointer(16);
+    }
+};
+
+/**
+* @param {number} chunk
+* @param {number} bit
+* @param {number} tick_spacing
+* @returns {number}
+*/
+module.exports.position_to_tick = function(chunk, bit, tick_spacing) {
+    const ret = wasm.position_to_tick(chunk, bit, tick_spacing);
+    return ret;
 };
 
 function handleError(f, args) {
@@ -1377,26 +1177,6 @@ function handleError(f, args) {
 */
 module.exports.SwapError = Object.freeze({ NotAdmin:0,"0":"NotAdmin",NotFeeReceiver:1,"1":"NotFeeReceiver",PoolAlreadyExist:2,"2":"PoolAlreadyExist",PoolNotFound:3,"3":"PoolNotFound",TickAlreadyExist:4,"4":"TickAlreadyExist",InvalidTickIndexOrTickSpacing:5,"5":"InvalidTickIndexOrTickSpacing",PositionNotFound:6,"6":"PositionNotFound",TickNotFound:7,"7":"TickNotFound",FeeTierNotFound:8,"8":"FeeTierNotFound",PoolKeyNotFound:9,"9":"PoolKeyNotFound",AmountIsZero:10,"10":"AmountIsZero",WrongLimit:11,"11":"WrongLimit",PriceLimitReached:12,"12":"PriceLimitReached",NoGainSwap:13,"13":"NoGainSwap",InvalidTickSpacing:14,"14":"InvalidTickSpacing",FeeTierAlreadyExist:15,"15":"FeeTierAlreadyExist",PoolKeyAlreadyExist:16,"16":"PoolKeyAlreadyExist",UnauthorizedFeeReceiver:17,"17":"UnauthorizedFeeReceiver",ZeroLiquidity:18,"18":"ZeroLiquidity",TransferError:19,"19":"TransferError",TokensAreSame:20,"20":"TokensAreSame",AmountUnderMinimumAmountOut:21,"21":"AmountUnderMinimumAmountOut",InvalidFee:22,"22":"InvalidFee",NotEmptyTickDeinitialization:23,"23":"NotEmptyTickDeinitialization",InvalidInitTick:24,"24":"InvalidInitTick",InvalidInitSqrtPrice:25,"25":"InvalidInitSqrtPrice",TickLimitReached:26,"26":"TickLimitReached",NoRouteFound:27,"27":"NoRouteFound",MaxTicksCrossed:28,"28":"MaxTicksCrossed",StateOutdated:29,"29":"StateOutdated",InsufficientLiquidity:30,"30":"InsufficientLiquidity", });
 
-module.exports.__wbindgen_error_new = function(arg0, arg1) {
-    const ret = new Error(getStringFromWasm0(arg0, arg1));
-    return addHeapObject(ret);
-};
-
-module.exports.__wbindgen_is_bigint = function(arg0) {
-    const ret = typeof(getObject(arg0)) === 'bigint';
-    return ret;
-};
-
-module.exports.__wbindgen_bigint_from_i64 = function(arg0) {
-    const ret = arg0;
-    return addHeapObject(ret);
-};
-
-module.exports.__wbindgen_jsval_eq = function(arg0, arg1) {
-    const ret = getObject(arg0) === getObject(arg1);
-    return ret;
-};
-
 module.exports.__wbindgen_object_drop_ref = function(arg0) {
     takeObject(arg0);
 };
@@ -1406,15 +1186,24 @@ module.exports.__wbindgen_bigint_from_u64 = function(arg0) {
     return addHeapObject(ret);
 };
 
-module.exports.__wbindgen_boolean_get = function(arg0) {
-    const v = getObject(arg0);
-    const ret = typeof(v) === 'boolean' ? (v ? 1 : 0) : 2;
-    return ret;
-};
-
 module.exports.__wbindgen_shr = function(arg0, arg1) {
     const ret = getObject(arg0) >> getObject(arg1);
     return addHeapObject(ret);
+};
+
+module.exports.__wbindgen_jsval_eq = function(arg0, arg1) {
+    const ret = getObject(arg0) === getObject(arg1);
+    return ret;
+};
+
+module.exports.__wbindgen_error_new = function(arg0, arg1) {
+    const ret = new Error(getStringFromWasm0(arg0, arg1));
+    return addHeapObject(ret);
+};
+
+module.exports.__wbindgen_is_bigint = function(arg0) {
+    const ret = typeof(getObject(arg0)) === 'bigint';
+    return ret;
 };
 
 module.exports.__wbindgen_is_object = function(arg0) {
@@ -1433,8 +1222,14 @@ module.exports.__wbindgen_in = function(arg0, arg1) {
     return ret;
 };
 
-module.exports.__wbindgen_string_new = function(arg0, arg1) {
-    const ret = getStringFromWasm0(arg0, arg1);
+module.exports.__wbindgen_boolean_get = function(arg0) {
+    const v = getObject(arg0);
+    const ret = typeof(v) === 'boolean' ? (v ? 1 : 0) : 2;
+    return ret;
+};
+
+module.exports.__wbindgen_object_clone_ref = function(arg0) {
+    const ret = getObject(arg0);
     return addHeapObject(ret);
 };
 
@@ -1448,15 +1243,6 @@ module.exports.__wbindgen_number_new = function(arg0) {
     return addHeapObject(ret);
 };
 
-module.exports.__wbindgen_string_get = function(arg0, arg1) {
-    const obj = getObject(arg1);
-    const ret = typeof(obj) === 'string' ? obj : undefined;
-    var ptr1 = isLikeNone(ret) ? 0 : passStringToWasm0(ret, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-    var len1 = WASM_VECTOR_LEN;
-    getInt32Memory0()[arg0 / 4 + 1] = len1;
-    getInt32Memory0()[arg0 / 4 + 0] = ptr1;
-};
-
 module.exports.__wbindgen_number_get = function(arg0, arg1) {
     const obj = getObject(arg1);
     const ret = typeof(obj) === 'number' ? obj : undefined;
@@ -1464,9 +1250,13 @@ module.exports.__wbindgen_number_get = function(arg0, arg1) {
     getInt32Memory0()[arg0 / 4 + 0] = !isLikeNone(ret);
 };
 
-module.exports.__wbindgen_object_clone_ref = function(arg0) {
-    const ret = getObject(arg0);
-    return addHeapObject(ret);
+module.exports.__wbindgen_string_get = function(arg0, arg1) {
+    const obj = getObject(arg1);
+    const ret = typeof(obj) === 'string' ? obj : undefined;
+    var ptr1 = isLikeNone(ret) ? 0 : passStringToWasm0(ret, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+    var len1 = WASM_VECTOR_LEN;
+    getInt32Memory0()[arg0 / 4 + 1] = len1;
+    getInt32Memory0()[arg0 / 4 + 0] = ptr1;
 };
 
 module.exports.__wbindgen_jsval_loose_eq = function(arg0, arg1) {
@@ -1479,13 +1269,14 @@ module.exports.__wbindgen_as_number = function(arg0) {
     return ret;
 };
 
-module.exports.__wbg_getwithrefkey_edc2c8960f0f1191 = function(arg0, arg1) {
-    const ret = getObject(arg0)[getObject(arg1)];
+module.exports.__wbindgen_string_new = function(arg0, arg1) {
+    const ret = getStringFromWasm0(arg0, arg1);
     return addHeapObject(ret);
 };
 
-module.exports.__wbg_set_f975102236d3c502 = function(arg0, arg1, arg2) {
-    getObject(arg0)[takeObject(arg1)] = takeObject(arg2);
+module.exports.__wbg_getwithrefkey_edc2c8960f0f1191 = function(arg0, arg1) {
+    const ret = getObject(arg0)[getObject(arg1)];
+    return addHeapObject(ret);
 };
 
 module.exports.__wbg_String_88810dfeb4021902 = function(arg0, arg1) {

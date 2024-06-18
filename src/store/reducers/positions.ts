@@ -9,7 +9,7 @@ export interface PositionsListStore {
 export interface PlotTickData {
   x: number
   y: number
-  index: bigint
+  index: number
 }
 
 export type TickPlotPositionData = Omit<PlotTickData, 'y'>

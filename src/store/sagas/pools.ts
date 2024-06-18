@@ -1,5 +1,5 @@
 import { PoolKey } from '@/sdk/OraiswapV3.types'
-import { newPoolKey, toSqrtPrice } from '@wasm'
+import { new_pool_key, toSqrtPrice } from '@wasm'
 import { PayloadAction } from '@reduxjs/toolkit'
 import {
   createLoaderKey,
@@ -72,7 +72,7 @@ export function* handleInitPool(action: PayloadAction<PoolKey>): Generator {
 
     const { token_x, token_y, fee_tier } = action.payload
 
-    const poolKey = newPoolKey(token_x, token_y, fee_tier)
+    const poolKey = new_pool_key(token_x, token_y, fee_tier)
 
     const initTick = 0
 

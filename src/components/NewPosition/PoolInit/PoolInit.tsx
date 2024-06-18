@@ -4,7 +4,7 @@ import SimpleInput from '@components/Inputs/SimpleInput/SimpleInput'
 import { Button, Grid, Typography } from '@mui/material'
 import {
   calcPrice,
-  calculateTickFromBalance,
+  get_tick_at_sqrt_priceFromBalance,
   formatNumbers,
   nearestTickIndex,
   showPrefix,
@@ -12,17 +12,17 @@ import {
 } from '@store/consts/utils'
 import React, { useEffect, useMemo, useState } from 'react'
 import useStyles from './style'
-import { Price, getMaxTick, getMinTick } from '@wasm'
+import { Price, get_max_tick, get_min_tick } from '@wasm'
 
 export interface IPoolInit {
   tokenASymbol: string
   tokenBSymbol: string
-  onChangeRange: (leftIndex: bigint, rightIndex: bigint) => void
+  onChangeRange: (leftIndex: number, rightIndex: number) => void
   isXtoY: boolean
   xDecimal: bigint
   yDecimal: bigint
-  tickSpacing: bigint
-  midPrice: bigint
+  tickSpacing: number
+  midPrice: number
   onChangeMidPrice: (mid: Price) => void
   currentPairReversed: boolean | null
 }
@@ -41,8 +41,8 @@ export const PoolInit: React.FC<IPoolInit> = ({
 }) => {
   const { classes } = useStyles()
 
-  const [leftRange, setLeftRange] = useState(tickSpacing * 10n * (isXtoY ? -1n : 1n))
-  const [rightRange, setRightRange] = useState(tickSpacing * 10n * (isXtoY ? 1n : -1n))
+  const [leftRange, setLeftRange] = useState(tickSpacing * 10 * (isXtoY ? -1 : 1))
+  const [rightRange, setRightRange] = useState(tickSpacing * 10 * (isXtoY ? 1 : -1))
 
   const [leftInput, setLeftInput] = useState(
     calcPrice(leftRange, isXtoY, xDecimal, yDecimal).toString()
@@ -59,7 +59,7 @@ export const PoolInit: React.FC<IPoolInit> = ({
   )
 
   useEffect(() => {
-    const tickIndex = calculateTickFromBalance(
+    const tickIndex = get_tick_at_sqrt_priceFromBalance(
       +midPriceInput,
       tickSpacing,
       isXtoY,
@@ -90,7 +90,7 @@ export const PoolInit: React.FC<IPoolInit> = ({
     setRightInputRounded(val)
   }
 
-  const changeRangeHandler = (left: bigint, right: bigint) => {
+  const changeRangeHandler = (left: number, right: number) => {
     setLeftRange(left)
     setRightRange(right)
 
@@ -101,10 +101,7 @@ export const PoolInit: React.FC<IPoolInit> = ({
   }
 
   const resetRange = () => {
-    changeRangeHandler(
-      tickSpacing * 10n * (isXtoY ? -1n : 1n),
-      tickSpacing * 10n * (isXtoY ? 1n : -1n)
-    )
+    changeRangeHandler(tickSpacing * 10 * (isXtoY ? -1 : 1), tickSpacing * 10 * (isXtoY ? 1 : -1))
   }
 
   useEffect(() => {
@@ -112,8 +109,8 @@ export const PoolInit: React.FC<IPoolInit> = ({
   }, [midPrice])
 
   const validateMidPriceInput = (midPriceInput: string) => {
-    const minTick = getMinTick(tickSpacing)
-    const maxTick = getMaxTick(tickSpacing)
+    const minTick = get_min_tick(tickSpacing)
+    const maxTick = get_max_tick(tickSpacing)
     const minPrice = isXtoY
       ? calcPrice(minTick, isXtoY, xDecimal, yDecimal)
       : calcPrice(maxTick, isXtoY, xDecimal, yDecimal)
@@ -193,15 +190,15 @@ export const PoolInit: React.FC<IPoolInit> = ({
             setValue={onLeftInputChange}
             decreaseValue={() => {
               const newLeft = isXtoY
-                ? Math.max(Number(getMinTick(tickSpacing)), Number(leftRange - tickSpacing))
-                : Math.min(Number(getMaxTick(tickSpacing)), Number(leftRange + tickSpacing))
-              changeRangeHandler(BigInt(newLeft), rightRange)
+                ? Math.max(Number(get_min_tick(tickSpacing)), Number(leftRange - tickSpacing))
+                : Math.min(Number(get_max_tick(tickSpacing)), Number(leftRange + tickSpacing))
+              changeRangeHandler(newLeft, rightRange)
             }}
             increaseValue={() => {
               const newLeft = isXtoY
                 ? Math.min(Number(rightRange - tickSpacing), Number(leftRange + tickSpacing))
                 : Math.max(Number(rightRange + tickSpacing), Number(leftRange - tickSpacing))
-              changeRangeHandler(BigInt(newLeft), rightRange)
+              changeRangeHandler(newLeft, rightRange)
             }}
             onBlur={() => {
               const newLeft = isXtoY
@@ -213,7 +210,7 @@ export const PoolInit: React.FC<IPoolInit> = ({
                     Number(rightRange + tickSpacing),
                     Number(nearestTickIndex(+leftInput, tickSpacing, isXtoY, xDecimal, yDecimal))
                   )
-              changeRangeHandler(BigInt(newLeft), rightRange)
+              changeRangeHandler(newLeft, rightRange)
             }}
             diffLabel='Min - Current price'
             percentDiff={((+leftInput - price) / price) * 100}
@@ -229,13 +226,13 @@ export const PoolInit: React.FC<IPoolInit> = ({
               const newRight = isXtoY
                 ? Math.max(Number(rightRange - tickSpacing), Number(leftRange + tickSpacing))
                 : Math.min(Number(rightRange + tickSpacing), Number(leftRange - tickSpacing))
-              changeRangeHandler(leftRange, BigInt(newRight))
+              changeRangeHandler(leftRange, newRight)
             }}
             increaseValue={() => {
               const newRight = isXtoY
-                ? Math.min(Number(getMaxTick(tickSpacing)), Number(rightRange + tickSpacing))
-                : Math.max(Number(getMinTick(tickSpacing)), Number(rightRange - tickSpacing))
-              changeRangeHandler(leftRange, BigInt(newRight))
+                ? Math.min(Number(get_max_tick(tickSpacing)), Number(rightRange + tickSpacing))
+                : Math.max(Number(get_min_tick(tickSpacing)), Number(rightRange - tickSpacing))
+              changeRangeHandler(leftRange, newRight)
             }}
             onBlur={() => {
               const newRight = isXtoY
@@ -248,7 +245,7 @@ export const PoolInit: React.FC<IPoolInit> = ({
                     Number(nearestTickIndex(+rightInput, tickSpacing, isXtoY, xDecimal, yDecimal))
                   )
 
-              changeRangeHandler(leftRange, BigInt(newRight))
+              changeRangeHandler(leftRange, newRight)
             }}
             diffLabel='Max - Current price'
             percentDiff={((+rightInput - price) / price) * 100}
@@ -262,8 +259,8 @@ export const PoolInit: React.FC<IPoolInit> = ({
             className={classes.button}
             onClick={() => {
               changeRangeHandler(
-                isXtoY ? getMinTick(tickSpacing) : getMaxTick(tickSpacing),
-                isXtoY ? getMaxTick(tickSpacing) : getMinTick(tickSpacing)
+                isXtoY ? get_min_tick(tickSpacing) : get_max_tick(tickSpacing),
+                isXtoY ? get_max_tick(tickSpacing) : get_min_tick(tickSpacing)
               )
             }}>
             Set full range
