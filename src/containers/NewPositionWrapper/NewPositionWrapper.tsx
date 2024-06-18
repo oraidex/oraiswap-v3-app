@@ -51,18 +51,9 @@ import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 export const ALL_FEE_TIERS_DATA: FeeTier[] = [
-  {
-    fee: 500000000,
-    tick_spacing: 100
-  },
-  {
-    fee: 3000000000,
-    tick_spacing: 100
-  },
-  {
-    fee: 10000000000,
-    tick_spacing: 100
-  }
+  { fee: 500000000, tick_spacing: 100 },
+  { fee: 100000000, tick_spacing: 100 },
+  { fee: 3000000000, tick_spacing: 100 }
 ]
 
 export interface IProps {
