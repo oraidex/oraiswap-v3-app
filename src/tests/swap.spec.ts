@@ -5,12 +5,11 @@ import fs from 'fs'
 import path from 'path'
 import { OraiswapV3Client, OraiswapV3Types } from '../sdk'
 import {
-  new_fee_tier,
-  new_pool_key,
-  calculate_sqrt_price,
-  get_global_max_sqrt_price,
-  to_percentage,
-  get_global_min_sqrt_price
+  newFeeTier,
+  newPoolKey,
+  calculateSqrtPrice,
+  toPercentage,
+  getGlobalMinSqrtPrice
 } from '@wasm'
 
 const senderAddress = 'orai1g4h64yjt0fvzv5v2j8tyfnpe5kmnetejvfgs7g'
@@ -44,7 +43,7 @@ const createToken = async (symbol: string, amount: string) => {
 
 describe('swap', () => {
   // decimals: 12 + scale 3 = e9
-  let protocol_fee = Number(to_percentage(6, 3))
+  let protocol_fee = Number(toPercentage(6, 3))
 
   console.log(protocol_fee)
 
@@ -74,18 +73,18 @@ describe('swap', () => {
   })
 
   it('test_swap_x_to_y', async () => {
-    let feeTier = new_fee_tier(protocol_fee, 10)
-    let res = await dex.addFeeTier({ feeTier })
+    let feeTier = newFeeTier(protocol_fee, 10)
+    await dex.addFeeTier({ feeTier })
 
     let initTick = 0
 
-    let initSqrtPrice = calculate_sqrt_price(initTick).toString()
+    let initSqrtPrice = calculateSqrtPrice(initTick).toString()
 
     let initialAmount = (1e10).toString()
     let tokenX = await createToken('tokenx', initialAmount)
     let tokenY = await createToken('tokeny', initialAmount)
 
-    res = await dex.createPool({
+    await dex.createPool({
       feeTier,
       initSqrtPrice,
       initTick,
@@ -96,8 +95,8 @@ describe('swap', () => {
     await tokenX.increaseAllowance({ amount: initialAmount, spender: dex.contractAddress })
     await tokenY.increaseAllowance({ amount: initialAmount, spender: dex.contractAddress })
 
-    let poolKey = new_pool_key(tokenX.contractAddress, tokenY.contractAddress, feeTier)
-    // let poolKey = new_pool_key(tokenX.contractAddress, tokenY.contractAddress, feeTier)
+    let poolKey = newPoolKey(tokenX.contractAddress, tokenY.contractAddress, feeTier)
+    // let poolKey = newPoolKey(tokenX.contractAddress, tokenY.contractAddress, feeTier)
 
     let lowerTickIndex = -20
     let middleTickIndex = -10
@@ -137,7 +136,7 @@ describe('swap', () => {
     tokenX.sender = bobAddress
     await tokenX.increaseAllowance({ amount: swapAmount, spender: dex.contractAddress })
 
-    let sqrtPriceLimit = get_global_min_sqrt_price().toString()
+    let sqrtPriceLimit = getGlobalMinSqrtPrice().toString()
 
     //simulate price from
     let { target_sqrt_price: targetSqrtPrice } = await dex.quote({

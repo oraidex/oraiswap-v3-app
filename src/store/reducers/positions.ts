@@ -38,8 +38,8 @@ export interface IPositionsStore {
 }
 export interface InitPositionData {
   poolKeyData: PoolKey
-  lowerTick: bigint
-  upperTick: bigint
+  lowerTick: number
+  upperTick: number
   liquidityDelta: Liquidity
   spotSqrtPrice: SqrtPrice
   slippageTolerance: bigint

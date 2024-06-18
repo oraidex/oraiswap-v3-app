@@ -16,7 +16,7 @@ import { PlotTickData, TickPlotPositionData } from '@store/reducers/positions'
 import React, { useEffect, useRef, useState } from 'react'
 import ConcentrationSlider from '../ConcentrationSlider/ConcentrationSlider'
 import useStyles from './style'
-import { get_max_tick, get_min_tick } from '@wasm'
+import { getMaxTick, getMinTick } from '@wasm'
 
 export interface IRangeSelector {
   data: PlotTickData[]
@@ -79,8 +79,8 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
 }) => {
   const { classes } = useStyles()
 
-  const [leftRange, setLeftRange] = useState(get_min_tick(tickSpacing))
-  const [rightRange, setRightRange] = useState(get_max_tick(tickSpacing))
+  const [leftRange, setLeftRange] = useState(getMinTick(tickSpacing))
+  const [rightRange, setRightRange] = useState(getMaxTick(tickSpacing))
 
   const [leftInput, setLeftInput] = useState('')
   const [rightInput, setRightInput] = useState('')
@@ -177,10 +177,7 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
         midPrice.x -
           calcPrice(
             BigInt(
-              Math.max(
-                Number(get_min_tick(tickSpacing)),
-                Number(midPrice.index - tickSpacing * 15n)
-              )
+              Math.max(Number(getMinTick(tickSpacing)), Number(midPrice.index - tickSpacing * 15n))
             ),
             isXtoY,
             xDecimal,
@@ -189,17 +186,11 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
       )
 
       const higherTick = BigInt(
-        Math.max(
-          Number(get_min_tick(tickSpacing)),
-          Number(midPrice.index) - Number(tickSpacing) * 10
-        )
+        Math.max(Number(getMinTick(tickSpacing)), Number(midPrice.index) - Number(tickSpacing) * 10)
       )
 
       const lowerTick = BigInt(
-        Math.min(
-          Number(get_max_tick(tickSpacing)),
-          Number(midPrice.index) + Number(tickSpacing) * 10
-        )
+        Math.min(Number(getMaxTick(tickSpacing)), Number(midPrice.index) + Number(tickSpacing) * 10)
       )
 
       changeRangeHandler(isXtoY ? higherTick : lowerTick, isXtoY ? lowerTick : higherTick)
@@ -231,10 +222,7 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
         midPrice.x -
           calcPrice(
             BigInt(
-              Math.max(
-                Number(get_min_tick(tickSpacing)),
-                Number(midPrice.index - tickSpacing * 15n)
-              )
+              Math.max(Number(getMinTick(tickSpacing)), Number(midPrice.index - tickSpacing * 15n))
             ),
             isXtoY,
             xDecimal,
@@ -264,19 +252,19 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
     const rightX = calcPrice(right, isXtoY, xDecimal, yDecimal)
 
     const higherLeftIndex = BigInt(
-      Math.max(Number(get_min_tick(tickSpacing)), Number(left - tickSpacing * 15n))
+      Math.max(Number(getMinTick(tickSpacing)), Number(left - tickSpacing * 15n))
     )
 
     const lowerLeftIndex = BigInt(
-      Math.min(Number(get_max_tick(tickSpacing)), Number(left + tickSpacing * 15n))
+      Math.min(Number(getMaxTick(tickSpacing)), Number(left + tickSpacing * 15n))
     )
 
     const lowerRightIndex = BigInt(
-      Math.min(Number(get_max_tick(tickSpacing)), Number(right + tickSpacing * 15n))
+      Math.min(Number(getMaxTick(tickSpacing)), Number(right + tickSpacing * 15n))
     )
 
     const higherRightIndex = BigInt(
-      Math.max(Number(get_min_tick(tickSpacing)), Number(right - tickSpacing * 15n))
+      Math.max(Number(getMinTick(tickSpacing)), Number(right - tickSpacing * 15n))
     )
 
     if (leftX < plotMin || rightX > plotMax || canZoomCloser) {
@@ -432,8 +420,8 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
             setValue={onLeftInputChange}
             decreaseValue={() => {
               const newLeft = isXtoY
-                ? Math.max(Number(get_min_tick(tickSpacing)), Number(leftRange - tickSpacing))
-                : Math.min(Number(get_max_tick(tickSpacing)), Number(leftRange + tickSpacing))
+                ? Math.max(Number(getMinTick(tickSpacing)), Number(leftRange - tickSpacing))
+                : Math.min(Number(getMaxTick(tickSpacing)), Number(leftRange + tickSpacing))
               changeRangeHandler(BigInt(newLeft), rightRange)
               autoZoomHandler(BigInt(newLeft), rightRange)
             }}
@@ -478,8 +466,8 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
             }}
             increaseValue={() => {
               const newRight = isXtoY
-                ? Math.min(Number(get_max_tick(tickSpacing)), Number(rightRange + tickSpacing))
-                : Math.max(Number(get_min_tick(tickSpacing)), Number(rightRange - tickSpacing))
+                ? Math.min(Number(getMaxTick(tickSpacing)), Number(rightRange + tickSpacing))
+                : Math.max(Number(getMinTick(tickSpacing)), Number(rightRange - tickSpacing))
               changeRangeHandler(leftRange, BigInt(newRight))
               autoZoomHandler(leftRange, BigInt(newRight))
             }}
@@ -532,8 +520,8 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
             <Button
               className={classes.button}
               onClick={() => {
-                const left = isXtoY ? get_min_tick(tickSpacing) : get_max_tick(tickSpacing)
-                const right = isXtoY ? get_max_tick(tickSpacing) : get_min_tick(tickSpacing)
+                const left = isXtoY ? getMinTick(tickSpacing) : getMaxTick(tickSpacing)
+                const right = isXtoY ? getMaxTick(tickSpacing) : getMinTick(tickSpacing)
                 changeRangeHandler(left, right)
                 autoZoomHandler(left, right)
               }}>

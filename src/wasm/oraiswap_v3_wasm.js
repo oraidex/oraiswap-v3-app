@@ -207,10 +207,10 @@ function debugString(val) {
 * @param {Percentage} fee
 * @returns {SwapResult}
 */
-export function compute_swap_step(current_sqrt_price, target_sqrt_price, liquidity, amount, by_amount_in, fee) {
+export function computeSwapStep(current_sqrt_price, target_sqrt_price, liquidity, amount, by_amount_in, fee) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.compute_swap_step(retptr, addHeapObject(current_sqrt_price), addHeapObject(target_sqrt_price), addHeapObject(liquidity), addHeapObject(amount), by_amount_in, addHeapObject(fee));
+        wasm.computeSwapStep(retptr, addHeapObject(current_sqrt_price), addHeapObject(target_sqrt_price), addHeapObject(liquidity), addHeapObject(amount), by_amount_in, addHeapObject(fee));
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         var r2 = getInt32Memory0()[retptr / 4 + 2];
@@ -230,10 +230,10 @@ export function compute_swap_step(current_sqrt_price, target_sqrt_price, liquidi
 * @param {boolean} rounding_up
 * @returns {TokenAmount}
 */
-export function get_delta_x(sqrt_price_a, sqrt_price_b, liquidity, rounding_up) {
+export function getDeltaX(sqrt_price_a, sqrt_price_b, liquidity, rounding_up) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.get_delta_x(retptr, addHeapObject(sqrt_price_a), addHeapObject(sqrt_price_b), addHeapObject(liquidity), rounding_up);
+        wasm.getDeltaX(retptr, addHeapObject(sqrt_price_a), addHeapObject(sqrt_price_b), addHeapObject(liquidity), rounding_up);
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         var r2 = getInt32Memory0()[retptr / 4 + 2];
@@ -253,10 +253,10 @@ export function get_delta_x(sqrt_price_a, sqrt_price_b, liquidity, rounding_up) 
 * @param {boolean} rounding_up
 * @returns {TokenAmount}
 */
-export function get_delta_y(sqrt_price_a, sqrt_price_b, liquidity, rounding_up) {
+export function getDeltaY(sqrt_price_a, sqrt_price_b, liquidity, rounding_up) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.get_delta_y(retptr, addHeapObject(sqrt_price_a), addHeapObject(sqrt_price_b), addHeapObject(liquidity), rounding_up);
+        wasm.getDeltaY(retptr, addHeapObject(sqrt_price_a), addHeapObject(sqrt_price_b), addHeapObject(liquidity), rounding_up);
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         var r2 = getInt32Memory0()[retptr / 4 + 2];
@@ -276,10 +276,10 @@ export function get_delta_y(sqrt_price_a, sqrt_price_b, liquidity, rounding_up) 
 * @param {boolean} x_to_y
 * @returns {SqrtPrice}
 */
-export function get_next_sqrt_price_from_input(starting_sqrt_price, liquidity, amount, x_to_y) {
+export function getNextSqrtPriceFromInput(starting_sqrt_price, liquidity, amount, x_to_y) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.get_next_sqrt_price_from_input(retptr, addHeapObject(starting_sqrt_price), addHeapObject(liquidity), addHeapObject(amount), x_to_y);
+        wasm.getNextSqrtPriceFromInput(retptr, addHeapObject(starting_sqrt_price), addHeapObject(liquidity), addHeapObject(amount), x_to_y);
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         var r2 = getInt32Memory0()[retptr / 4 + 2];
@@ -299,10 +299,10 @@ export function get_next_sqrt_price_from_input(starting_sqrt_price, liquidity, a
 * @param {boolean} x_to_y
 * @returns {SqrtPrice}
 */
-export function get_next_sqrt_price_from_output(starting_sqrt_price, liquidity, amount, x_to_y) {
+export function getNextSqrtPriceFromOutput(starting_sqrt_price, liquidity, amount, x_to_y) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.get_next_sqrt_price_from_output(retptr, addHeapObject(starting_sqrt_price), addHeapObject(liquidity), addHeapObject(amount), x_to_y);
+        wasm.getNextSqrtPriceFromOutput(retptr, addHeapObject(starting_sqrt_price), addHeapObject(liquidity), addHeapObject(amount), x_to_y);
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         var r2 = getInt32Memory0()[retptr / 4 + 2];
@@ -322,10 +322,10 @@ export function get_next_sqrt_price_from_output(starting_sqrt_price, liquidity, 
 * @param {boolean} add_x
 * @returns {SqrtPrice}
 */
-export function get_next_sqrt_price_x_up(starting_sqrt_price, liquidity, x, add_x) {
+export function getNextSqrtPriceXUp(starting_sqrt_price, liquidity, x, add_x) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.get_next_sqrt_price_x_up(retptr, addHeapObject(starting_sqrt_price), addHeapObject(liquidity), addHeapObject(x), add_x);
+        wasm.getNextSqrtPriceXUp(retptr, addHeapObject(starting_sqrt_price), addHeapObject(liquidity), addHeapObject(x), add_x);
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         var r2 = getInt32Memory0()[retptr / 4 + 2];
@@ -345,10 +345,10 @@ export function get_next_sqrt_price_x_up(starting_sqrt_price, liquidity, x, add_
 * @param {boolean} add_y
 * @returns {SqrtPrice}
 */
-export function get_next_sqrt_price_y_down(starting_sqrt_price, liquidity, y, add_y) {
+export function getNextSqrtPriceYDown(starting_sqrt_price, liquidity, y, add_y) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.get_next_sqrt_price_y_down(retptr, addHeapObject(starting_sqrt_price), addHeapObject(liquidity), addHeapObject(y), add_y);
+        wasm.getNextSqrtPriceYDown(retptr, addHeapObject(starting_sqrt_price), addHeapObject(liquidity), addHeapObject(y), add_y);
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         var r2 = getInt32Memory0()[retptr / 4 + 2];
@@ -370,10 +370,10 @@ export function get_next_sqrt_price_y_down(starting_sqrt_price, liquidity, y, ad
 * @param {number} lower_tick
 * @returns {AmountDeltaResult}
 */
-export function calculate_amount_delta(current_tick_index, current_sqrt_price, liquidity_delta, liquidity_sign, upper_tick, lower_tick) {
+export function calculateAmountDelta(current_tick_index, current_sqrt_price, liquidity_delta, liquidity_sign, upper_tick, lower_tick) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.calculate_amount_delta(retptr, current_tick_index, addHeapObject(current_sqrt_price), addHeapObject(liquidity_delta), liquidity_sign, upper_tick, lower_tick);
+        wasm.calculateAmountDelta(retptr, current_tick_index, addHeapObject(current_sqrt_price), addHeapObject(liquidity_delta), liquidity_sign, upper_tick, lower_tick);
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         var r2 = getInt32Memory0()[retptr / 4 + 2];
@@ -395,10 +395,10 @@ export function calculate_amount_delta(current_tick_index, current_sqrt_price, l
 * @param {boolean} x_to_y
 * @returns {boolean}
 */
-export function is_enough_amount_to_change_price(amount, starting_sqrt_price, liquidity, fee, by_amount_in, x_to_y) {
+export function isEnoughAmountToChangePrice(amount, starting_sqrt_price, liquidity, fee, by_amount_in, x_to_y) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.is_enough_amount_to_change_price(retptr, addHeapObject(amount), addHeapObject(starting_sqrt_price), addHeapObject(liquidity), addHeapObject(fee), by_amount_in, x_to_y);
+        wasm.isEnoughAmountToChangePrice(retptr, addHeapObject(amount), addHeapObject(starting_sqrt_price), addHeapObject(liquidity), addHeapObject(fee), by_amount_in, x_to_y);
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         var r2 = getInt32Memory0()[retptr / 4 + 2];
@@ -415,8 +415,8 @@ export function is_enough_amount_to_change_price(amount, starting_sqrt_price, li
 * @param {number} tick_spacing
 * @returns {Liquidity}
 */
-export function calculate_max_liquidity_per_tick(tick_spacing) {
-    const ret = wasm.calculate_max_liquidity_per_tick(tick_spacing);
+export function calculateMaxLiquidityPerTick(tick_spacing) {
+    const ret = wasm.calculateMaxLiquidityPerTick(tick_spacing);
     return takeObject(ret);
 }
 
@@ -425,10 +425,10 @@ export function calculate_max_liquidity_per_tick(tick_spacing) {
 * @param {number} tick_upper
 * @param {number} tick_spacing
 */
-export function check_ticks(tick_lower, tick_upper, tick_spacing) {
+export function checkTicks(tick_lower, tick_upper, tick_spacing) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.check_ticks(retptr, tick_lower, tick_upper, tick_spacing);
+        wasm.checkTicks(retptr, tick_lower, tick_upper, tick_spacing);
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         if (r1) {
@@ -443,10 +443,10 @@ export function check_ticks(tick_lower, tick_upper, tick_spacing) {
 * @param {number} tick_index
 * @param {number} tick_spacing
 */
-export function check_tick(tick_index, tick_spacing) {
+export function checkTick(tick_index, tick_spacing) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.check_tick(retptr, tick_index, tick_spacing);
+        wasm.checkTick(retptr, tick_index, tick_spacing);
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         if (r1) {
@@ -462,32 +462,32 @@ export function check_tick(tick_index, tick_spacing) {
 * @param {Percentage} slippage
 * @returns {TokenAmount}
 */
-export function calculate_min_amount_out(expected_amount_out, slippage) {
-    const ret = wasm.calculate_min_amount_out(addHeapObject(expected_amount_out), addHeapObject(slippage));
+export function calculateMinAmountOut(expected_amount_out, slippage) {
+    const ret = wasm.calculateMinAmountOut(addHeapObject(expected_amount_out), addHeapObject(slippage));
     return takeObject(ret);
 }
 
 /**
 * @returns {bigint}
 */
-export function get_global_max_sqrt_price() {
-    const ret = wasm.get_global_max_sqrt_price();
+export function getGlobalMaxSqrtPrice() {
+    const ret = wasm.getGlobalMaxSqrtPrice();
     return takeObject(ret);
 }
 
 /**
 * @returns {bigint}
 */
-export function get_global_min_sqrt_price() {
-    const ret = wasm.get_global_min_sqrt_price();
+export function getGlobalMinSqrtPrice() {
+    const ret = wasm.getGlobalMinSqrtPrice();
     return takeObject(ret);
 }
 
 /**
 * @returns {number}
 */
-export function get_tick_search_range() {
-    const ret = wasm.get_tick_search_range();
+export function getTickSearchRange() {
+    const ret = wasm.getTickSearchRange();
     return ret;
 }
 
@@ -495,56 +495,56 @@ export function get_tick_search_range() {
 * @param {number} tick_spacing
 * @returns {number}
 */
-export function get_max_chunk(tick_spacing) {
-    const ret = wasm.get_max_chunk(tick_spacing);
+export function getMaxChunk(tick_spacing) {
+    const ret = wasm.getMaxChunk(tick_spacing);
     return ret;
 }
 
 /**
 * @returns {number}
 */
-export function get_chunk_size() {
-    const ret = wasm.get_chunk_size();
+export function getChunkSize() {
+    const ret = wasm.getChunkSize();
     return ret;
 }
 
 /**
 * @returns {number}
 */
-export function get_max_tick_cross() {
-    const ret = wasm.get_max_tick_cross();
+export function getMaxTickCross() {
+    const ret = wasm.getMaxTickCross();
     return ret;
 }
 
 /**
 * @returns {number}
 */
-export function get_max_tickmap_query_size() {
-    const ret = wasm.get_max_tickmap_query_size();
+export function getMaxTickmapQuerySize() {
+    const ret = wasm.getMaxTickmapQuerySize();
     return ret >>> 0;
 }
 
 /**
 * @returns {number}
 */
-export function get_liquidity_ticks_limit() {
-    const ret = wasm.get_liquidity_ticks_limit();
+export function getLiquidityTicksLimit() {
+    const ret = wasm.getLiquidityTicksLimit();
     return ret >>> 0;
 }
 
 /**
 * @returns {number}
 */
-export function get_max_pool_keys_returned() {
-    const ret = wasm.get_max_pool_keys_returned();
+export function getMaxPoolKeysReturned() {
+    const ret = wasm.getMaxPoolKeysReturned();
     return ret;
 }
 
 /**
 * @returns {number}
 */
-export function get_max_pool_pairs_returned() {
-    const ret = wasm.get_max_pool_pairs_returned();
+export function getMaxPoolPairsReturned() {
+    const ret = wasm.getMaxPoolPairsReturned();
     return ret >>> 0;
 }
 
@@ -563,10 +563,10 @@ export function get_max_pool_pairs_returned() {
 * @param {Liquidity} position_liquidity
 * @returns {TokenAmounts}
 */
-export function calculate_fee(lower_tick_index, lower_tick_fee_growth_outside_x, lower_tick_fee_growth_outside_y, upper_tick_index, upper_tick_fee_growth_outside_x, upper_tick_fee_growth_outside_y, pool_current_tick_index, pool_fee_growth_global_x, pool_fee_growth_global_y, position_fee_growth_inside_x, position_fee_growth_inside_y, position_liquidity) {
+export function calculateFee(lower_tick_index, lower_tick_fee_growth_outside_x, lower_tick_fee_growth_outside_y, upper_tick_index, upper_tick_fee_growth_outside_x, upper_tick_fee_growth_outside_y, pool_current_tick_index, pool_fee_growth_global_x, pool_fee_growth_global_y, position_fee_growth_inside_x, position_fee_growth_inside_y, position_liquidity) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.calculate_fee(retptr, lower_tick_index, addHeapObject(lower_tick_fee_growth_outside_x), addHeapObject(lower_tick_fee_growth_outside_y), upper_tick_index, addHeapObject(upper_tick_fee_growth_outside_x), addHeapObject(upper_tick_fee_growth_outside_y), pool_current_tick_index, addHeapObject(pool_fee_growth_global_x), addHeapObject(pool_fee_growth_global_y), addHeapObject(position_fee_growth_inside_x), addHeapObject(position_fee_growth_inside_y), addHeapObject(position_liquidity));
+        wasm.calculateFee(retptr, lower_tick_index, addHeapObject(lower_tick_fee_growth_outside_x), addHeapObject(lower_tick_fee_growth_outside_y), upper_tick_index, addHeapObject(upper_tick_fee_growth_outside_x), addHeapObject(upper_tick_fee_growth_outside_y), pool_current_tick_index, addHeapObject(pool_fee_growth_global_x), addHeapObject(pool_fee_growth_global_y), addHeapObject(position_fee_growth_inside_x), addHeapObject(position_fee_growth_inside_y), addHeapObject(position_liquidity));
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         var r2 = getInt32Memory0()[retptr / 4 + 2];
@@ -584,14 +584,14 @@ export function calculate_fee(lower_tick_index, lower_tick_fee_growth_outside_x,
 * @param {string} token_to_compare
 * @returns {boolean}
 */
-export function is_token_x(token_candidate, token_to_compare) {
+export function isTokenX(token_candidate, token_to_compare) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
         const ptr0 = passStringToWasm0(token_candidate, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         const len0 = WASM_VECTOR_LEN;
         const ptr1 = passStringToWasm0(token_to_compare, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         const len1 = WASM_VECTOR_LEN;
-        wasm.is_token_x(retptr, ptr0, len0, ptr1, len1);
+        wasm.isTokenX(retptr, ptr0, len0, ptr1, len1);
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         var r2 = getInt32Memory0()[retptr / 4 + 2];
@@ -610,10 +610,10 @@ export function is_token_x(token_candidate, token_to_compare) {
 * @param {SqrtPrice} sqrt_price
 * @returns {boolean}
 */
-export function check_tick_to_sqrt_price_relationship(tick_index, tick_spacing, sqrt_price) {
+export function checkTickToSqrtPriceRelationship(tick_index, tick_spacing, sqrt_price) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.check_tick_to_sqrt_price_relationship(retptr, tick_index, tick_spacing, addHeapObject(sqrt_price));
+        wasm.checkTickToSqrtPriceRelationship(retptr, tick_index, tick_spacing, addHeapObject(sqrt_price));
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         var r2 = getInt32Memory0()[retptr / 4 + 2];
@@ -631,8 +631,8 @@ export function check_tick_to_sqrt_price_relationship(tick_index, tick_spacing, 
 * @param {number} tick_spacing
 * @returns {number}
 */
-export function align_tick_to_spacing(accurate_tick, tick_spacing) {
-    const ret = wasm.align_tick_to_spacing(accurate_tick, tick_spacing);
+export function alignTickToSpacing(accurate_tick, tick_spacing) {
+    const ret = wasm.alignTickToSpacing(accurate_tick, tick_spacing);
     return ret;
 }
 
@@ -641,10 +641,10 @@ export function align_tick_to_spacing(accurate_tick, tick_spacing) {
 * @param {number} tick_spacing
 * @returns {number}
 */
-export function get_tick_at_sqrt_price(sqrt_price, tick_spacing) {
+export function getTickAtSqrtPrice(sqrt_price, tick_spacing) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.get_tick_at_sqrt_price(retptr, addHeapObject(sqrt_price), tick_spacing);
+        wasm.getTickAtSqrtPrice(retptr, addHeapObject(sqrt_price), tick_spacing);
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         var r2 = getInt32Memory0()[retptr / 4 + 2];
@@ -665,10 +665,10 @@ export function get_tick_at_sqrt_price(sqrt_price, tick_spacing) {
 * @param {boolean} rounding_up
 * @returns {SingleTokenLiquidity}
 */
-export function get_liquidity_by_x(x, lower_tick, upper_tick, current_sqrt_price, rounding_up) {
+export function getLiquidityByX(x, lower_tick, upper_tick, current_sqrt_price, rounding_up) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.get_liquidity_by_x(retptr, addHeapObject(x), lower_tick, upper_tick, addHeapObject(current_sqrt_price), rounding_up);
+        wasm.getLiquidityByX(retptr, addHeapObject(x), lower_tick, upper_tick, addHeapObject(current_sqrt_price), rounding_up);
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         var r2 = getInt32Memory0()[retptr / 4 + 2];
@@ -689,10 +689,10 @@ export function get_liquidity_by_x(x, lower_tick, upper_tick, current_sqrt_price
 * @param {boolean} rounding_up
 * @returns {SingleTokenLiquidity}
 */
-export function get_liquidity_by_y(y, lower_tick, upper_tick, current_sqrt_price, rounding_up) {
+export function getLiquidityByY(y, lower_tick, upper_tick, current_sqrt_price, rounding_up) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.get_liquidity_by_y(retptr, addHeapObject(y), lower_tick, upper_tick, addHeapObject(current_sqrt_price), rounding_up);
+        wasm.getLiquidityByY(retptr, addHeapObject(y), lower_tick, upper_tick, addHeapObject(current_sqrt_price), rounding_up);
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         var r2 = getInt32Memory0()[retptr / 4 + 2];
@@ -710,10 +710,10 @@ export function get_liquidity_by_y(y, lower_tick, upper_tick, current_sqrt_price
 * @param {number} tick_spacing
 * @returns {FeeTier}
 */
-export function new_fee_tier(fee, tick_spacing) {
+export function newFeeTier(fee, tick_spacing) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.new_fee_tier(retptr, addHeapObject(fee), tick_spacing);
+        wasm.newFeeTier(retptr, addHeapObject(fee), tick_spacing);
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         var r2 = getInt32Memory0()[retptr / 4 + 2];
@@ -732,14 +732,14 @@ export function new_fee_tier(fee, tick_spacing) {
 * @param {FeeTier} fee_tier
 * @returns {PoolKey}
 */
-export function new_pool_key(token_0, token_1, fee_tier) {
+export function newPoolKey(token_0, token_1, fee_tier) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
         const ptr0 = passStringToWasm0(token_0, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         const len0 = WASM_VECTOR_LEN;
         const ptr1 = passStringToWasm0(token_1, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
         const len1 = WASM_VECTOR_LEN;
-        wasm.new_pool_key(retptr, ptr0, len0, ptr1, len1, addHeapObject(fee_tier));
+        wasm.newPoolKey(retptr, ptr0, len0, ptr1, len1, addHeapObject(fee_tier));
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         var r2 = getInt32Memory0()[retptr / 4 + 2];
@@ -755,28 +755,28 @@ export function new_pool_key(token_0, token_1, fee_tier) {
 /**
 * @returns {bigint}
 */
-export function get_fee_growth_scale() {
-    const ret = wasm.get_fee_growth_scale();
+export function getFeeGrowthScale() {
+    const ret = wasm.getFeeGrowthScale();
     return takeObject(ret);
 }
 
 /**
 * @returns {bigint}
 */
-export function get_fee_growth_denominator() {
-    const ret = wasm.get_fee_growth_denominator();
+export function getFeeGrowthDenominator() {
+    const ret = wasm.getFeeGrowthDenominator();
     return takeObject(ret);
 }
 
 /**
-* @param {number} js_val
+* @param {number} integer
 * @param {number} scale
 * @returns {bigint}
 */
-export function to_fee_growth(js_val, scale) {
+export function toFeeGrowth(integer, scale) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.to_fee_growth(retptr, js_val, scale);
+        wasm.toFeeGrowth(retptr, integer, scale);
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         var r2 = getInt32Memory0()[retptr / 4 + 2];
@@ -792,28 +792,28 @@ export function to_fee_growth(js_val, scale) {
 /**
 * @returns {bigint}
 */
-export function get_fixed_point_scale() {
-    const ret = wasm.get_fixed_point_scale();
+export function getFixedPointScale() {
+    const ret = wasm.getFixedPointScale();
     return takeObject(ret);
 }
 
 /**
 * @returns {bigint}
 */
-export function get_fixed_point_denominator() {
-    const ret = wasm.get_fixed_point_denominator();
+export function getFixedPointDenominator() {
+    const ret = wasm.getFixedPointDenominator();
     return takeObject(ret);
 }
 
 /**
-* @param {number} js_val
+* @param {number} integer
 * @param {number} scale
 * @returns {bigint}
 */
-export function to_fixed_point(js_val, scale) {
+export function toFixedPoint(integer, scale) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.to_fixed_point(retptr, js_val, scale);
+        wasm.toFixedPoint(retptr, integer, scale);
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         var r2 = getInt32Memory0()[retptr / 4 + 2];
@@ -829,28 +829,28 @@ export function to_fixed_point(js_val, scale) {
 /**
 * @returns {bigint}
 */
-export function get_liquidity_scale() {
-    const ret = wasm.get_liquidity_scale();
+export function getLiquidityScale() {
+    const ret = wasm.getLiquidityScale();
     return takeObject(ret);
 }
 
 /**
 * @returns {bigint}
 */
-export function get_liquidity_denominator() {
-    const ret = wasm.get_liquidity_denominator();
+export function getLiquidityDenominator() {
+    const ret = wasm.getLiquidityDenominator();
     return takeObject(ret);
 }
 
 /**
-* @param {number} js_val
+* @param {number} integer
 * @param {number} scale
 * @returns {bigint}
 */
-export function to_liquidity(js_val, scale) {
+export function toLiquidity(integer, scale) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.to_liquidity(retptr, js_val, scale);
+        wasm.toLiquidity(retptr, integer, scale);
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         var r2 = getInt32Memory0()[retptr / 4 + 2];
@@ -866,28 +866,28 @@ export function to_liquidity(js_val, scale) {
 /**
 * @returns {bigint}
 */
-export function get_percentage_scale() {
-    const ret = wasm.get_fixed_point_scale();
+export function getPercentageScale() {
+    const ret = wasm.getFixedPointScale();
     return takeObject(ret);
 }
 
 /**
 * @returns {bigint}
 */
-export function get_percentage_denominator() {
-    const ret = wasm.get_percentage_denominator();
+export function getPercentageDenominator() {
+    const ret = wasm.getPercentageDenominator();
     return takeObject(ret);
 }
 
 /**
-* @param {number} js_val
+* @param {number} integer
 * @param {number} scale
 * @returns {bigint}
 */
-export function to_percentage(js_val, scale) {
+export function toPercentage(integer, scale) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.to_percentage(retptr, js_val, scale);
+        wasm.toPercentage(retptr, integer, scale);
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         var r2 = getInt32Memory0()[retptr / 4 + 2];
@@ -903,28 +903,28 @@ export function to_percentage(js_val, scale) {
 /**
 * @returns {bigint}
 */
-export function get_price_scale() {
-    const ret = wasm.get_price_scale();
+export function getPriceScale() {
+    const ret = wasm.getPriceScale();
     return takeObject(ret);
 }
 
 /**
 * @returns {bigint}
 */
-export function get_price_denominator() {
-    const ret = wasm.get_price_denominator();
+export function getPriceDenominator() {
+    const ret = wasm.getPriceDenominator();
     return takeObject(ret);
 }
 
 /**
-* @param {number} js_val
+* @param {number} integer
 * @param {number} scale
 * @returns {bigint}
 */
-export function to_price(js_val, scale) {
+export function toPrice(integer, scale) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.to_price(retptr, js_val, scale);
+        wasm.toPrice(retptr, integer, scale);
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         var r2 = getInt32Memory0()[retptr / 4 + 2];
@@ -940,28 +940,28 @@ export function to_price(js_val, scale) {
 /**
 * @returns {bigint}
 */
-export function get_seconds_per_liquidity_scale() {
-    const ret = wasm.get_price_scale();
+export function getSecondsPerLiquidityScale() {
+    const ret = wasm.getPriceScale();
     return takeObject(ret);
 }
 
 /**
 * @returns {bigint}
 */
-export function get_seconds_per_liquidity_denominator() {
-    const ret = wasm.get_price_denominator();
+export function getSecondsPerLiquidityDenominator() {
+    const ret = wasm.getPriceDenominator();
     return takeObject(ret);
 }
 
 /**
-* @param {number} js_val
+* @param {number} integer
 * @param {number} scale
 * @returns {bigint}
 */
-export function to_seconds_per_liquidity(js_val, scale) {
+export function toSecondsPerLiquidity(integer, scale) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.to_seconds_per_liquidity(retptr, js_val, scale);
+        wasm.toSecondsPerLiquidity(retptr, integer, scale);
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         var r2 = getInt32Memory0()[retptr / 4 + 2];
@@ -977,28 +977,28 @@ export function to_seconds_per_liquidity(js_val, scale) {
 /**
 * @returns {bigint}
 */
-export function get_sqrt_price_scale() {
-    const ret = wasm.get_price_scale();
+export function getSqrtPriceScale() {
+    const ret = wasm.getPriceScale();
     return takeObject(ret);
 }
 
 /**
 * @returns {bigint}
 */
-export function get_sqrt_price_denominator() {
-    const ret = wasm.get_price_denominator();
+export function getSqrtPriceDenominator() {
+    const ret = wasm.getPriceDenominator();
     return takeObject(ret);
 }
 
 /**
-* @param {number} js_val
+* @param {number} integer
 * @param {number} scale
 * @returns {bigint}
 */
-export function to_sqrt_price(js_val, scale) {
+export function toSqrtPrice(integer, scale) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.to_sqrt_price(retptr, js_val, scale);
+        wasm.toSqrtPrice(retptr, integer, scale);
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         var r2 = getInt32Memory0()[retptr / 4 + 2];
@@ -1015,10 +1015,10 @@ export function to_sqrt_price(js_val, scale) {
 * @param {number} tick_index
 * @returns {SqrtPrice}
 */
-export function calculate_sqrt_price(tick_index) {
+export function calculateSqrtPrice(tick_index) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.calculate_sqrt_price(retptr, tick_index);
+        wasm.calculateSqrtPrice(retptr, tick_index);
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         var r2 = getInt32Memory0()[retptr / 4 + 2];
@@ -1035,8 +1035,8 @@ export function calculate_sqrt_price(tick_index) {
 * @param {number} tick_spacing
 * @returns {number}
 */
-export function get_max_tick(tick_spacing) {
-    const ret = wasm.get_max_tick(tick_spacing);
+export function getMaxTick(tick_spacing) {
+    const ret = wasm.getMaxTick(tick_spacing);
     return ret;
 }
 
@@ -1044,8 +1044,8 @@ export function get_max_tick(tick_spacing) {
 * @param {number} tick_spacing
 * @returns {number}
 */
-export function get_min_tick(tick_spacing) {
-    const ret = wasm.get_min_tick(tick_spacing);
+export function getMinTick(tick_spacing) {
+    const ret = wasm.getMinTick(tick_spacing);
     return ret;
 }
 
@@ -1053,8 +1053,8 @@ export function get_min_tick(tick_spacing) {
 * @param {number} tick_spacing
 * @returns {SqrtPrice}
 */
-export function get_max_sqrt_price(tick_spacing) {
-    const ret = wasm.get_max_sqrt_price(tick_spacing);
+export function getMaxSqrtPrice(tick_spacing) {
+    const ret = wasm.getMaxSqrtPrice(tick_spacing);
     return takeObject(ret);
 }
 
@@ -1062,36 +1062,36 @@ export function get_max_sqrt_price(tick_spacing) {
 * @param {number} tick_spacing
 * @returns {SqrtPrice}
 */
-export function get_min_sqrt_price(tick_spacing) {
-    const ret = wasm.get_min_sqrt_price(tick_spacing);
+export function getMinSqrtPrice(tick_spacing) {
+    const ret = wasm.getMinSqrtPrice(tick_spacing);
     return takeObject(ret);
 }
 
 /**
 * @returns {bigint}
 */
-export function get_token_amount_scale() {
-    const ret = wasm.get_token_amount_scale();
+export function getTokenAmountScale() {
+    const ret = wasm.getTokenAmountScale();
     return takeObject(ret);
 }
 
 /**
 * @returns {bigint}
 */
-export function get_token_amount_denominator() {
-    const ret = wasm.get_token_amount_denominator();
+export function getTokenAmountDenominator() {
+    const ret = wasm.getTokenAmountDenominator();
     return takeObject(ret);
 }
 
 /**
-* @param {number} js_val
+* @param {number} integer
 * @param {number} scale
 * @returns {bigint}
 */
-export function to_token_amount(js_val, scale) {
+export function toTokenAmount(integer, scale) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.to_token_amount(retptr, js_val, scale);
+        wasm.toTokenAmount(retptr, integer, scale);
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         var r2 = getInt32Memory0()[retptr / 4 + 2];
@@ -1115,10 +1115,10 @@ export function to_token_amount(js_val, scale) {
 * @param {SqrtPrice} sqrt_price_limit
 * @returns {CalculateSwapResult}
 */
-export function simulate_swap(tickmap, fee_tier, pool, ticks, x_to_y, amount, by_amount_in, sqrt_price_limit) {
+export function simulateSwap(tickmap, fee_tier, pool, ticks, x_to_y, amount, by_amount_in, sqrt_price_limit) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.simulate_swap(retptr, addHeapObject(tickmap), addHeapObject(fee_tier), addHeapObject(pool), addHeapObject(ticks), x_to_y, addHeapObject(amount), by_amount_in, addHeapObject(sqrt_price_limit));
+        wasm.simulateSwap(retptr, addHeapObject(tickmap), addHeapObject(fee_tier), addHeapObject(pool), addHeapObject(ticks), x_to_y, addHeapObject(amount), by_amount_in, addHeapObject(sqrt_price_limit));
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         var r2 = getInt32Memory0()[retptr / 4 + 2];
@@ -1136,10 +1136,10 @@ export function simulate_swap(tickmap, fee_tier, pool, ticks, x_to_y, amount, by
 * @param {number} tick_spacing
 * @returns {PositionResult}
 */
-export function tick_to_position_js(tick, tick_spacing) {
+export function tickToPositionJs(tick, tick_spacing) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.tick_to_position_js(retptr, tick, tick_spacing);
+        wasm.tickToPositionJs(retptr, tick, tick_spacing);
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         var r2 = getInt32Memory0()[retptr / 4 + 2];
@@ -1158,8 +1158,8 @@ export function tick_to_position_js(tick, tick_spacing) {
 * @param {number} tick_spacing
 * @returns {number}
 */
-export function position_to_tick(chunk, bit, tick_spacing) {
-    const ret = wasm.position_to_tick(chunk, bit, tick_spacing);
+export function positionToTick(chunk, bit, tick_spacing) {
+    const ret = wasm.positionToTick(chunk, bit, tick_spacing);
     return ret;
 }
 

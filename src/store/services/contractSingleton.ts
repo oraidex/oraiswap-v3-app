@@ -1,14 +1,7 @@
 import { CosmWasmClient, SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 import { OraiswapV3Client, OraiswapV3QueryClient } from '../../sdk'
 import { OraiswapTokenClient, OraiswapTokenQueryClient } from '@oraichain/oraidex-contracts-sdk'
-import {
-  Tickmap,
-  get_max_tick,
-  get_min_tick,
-  PoolKey,
-  LiquidityTick,
-  position_to_tick
-} from '@wasm'
+import { Tickmap, getMaxTick, getMinTick, PoolKey, LiquidityTick, positionToTick } from '@wasm'
 import {
   CHUNK_SIZE,
   LIQUIDITY_TICKS_LIMIT,
@@ -126,8 +119,8 @@ export default class SingletonOraiswapV3 {
   }
 
   public static async getFullTickmap(poolKey: PoolKey): Promise<Tickmap> {
-    const maxTick = get_max_tick(poolKey.fee_tier.tick_spacing)
-    let lowerTick = get_min_tick(poolKey.fee_tier.tick_spacing)
+    const maxTick = getMaxTick(poolKey.fee_tier.tick_spacing)
+    let lowerTick = getMinTick(poolKey.fee_tier.tick_spacing)
 
     const xToY = false
 
@@ -184,7 +177,7 @@ export default class SingletonOraiswapV3 {
       for (let bit = 0; bit < CHUNK_SIZE; bit++) {
         const checkedBit = chunk & (1n << BigInt(bit))
         if (checkedBit) {
-          const tickIndex = position_to_tick(Number(chunkIndex), bit, poolKey.fee_tier.tick_spacing)
+          const tickIndex = positionToTick(Number(chunkIndex), bit, poolKey.fee_tier.tick_spacing)
           tickIndexes.push(tickIndex)
         }
       }

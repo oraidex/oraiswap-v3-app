@@ -31,7 +31,7 @@ import { closeSnackbar } from 'notistack'
 import { all, call, fork, join, put, select, spawn, takeEvery, takeLatest } from 'typed-redux-saga'
 import { fetchTicksAndTickMaps } from './pools'
 import { fetchBalances } from './wallet'
-import { PoolKey, new_pool_key, calculate_sqrt_price, toSqrtPrice } from '@wasm'
+import { PoolKey, newPoolKey, calculateSqrtPrice, toSqrtPrice } from '@wasm'
 import { ExecuteResult } from '@cosmjs/cosmwasm-stargate'
 
 function* handleInitPosition(action: PayloadAction<InitPositionData>): Generator {
@@ -74,7 +74,7 @@ function* handleInitPosition(action: PayloadAction<InitPositionData>): Generator
     // const psp22 = yield* call([psp22Singleton, psp22Singleton.loadInstance], api, network)
 
     const [xAmountWithSlippage, yAmountWithSlippage] = calculateTokenAmountsWithSlippage(
-      BigInt(fee_tier.tick_spacing),
+      fee_tier.tick_spacing,
       spotSqrtPrice,
       liquidityDelta,
       lowerTick,
@@ -89,11 +89,11 @@ function* handleInitPosition(action: PayloadAction<InitPositionData>): Generator
     const YTokenTx = yield* call(approveToken, token_y, yAmountWithSlippage)
     txs.push(YTokenTx)
 
-    const poolKey = new_pool_key(token_x, token_y, fee_tier)
+    const poolKey = newPoolKey(token_x, token_y, fee_tier)
 
     if (initPool) {
       const initTick = 0
-      const initSqrtPrice = toSqrtPrice(1n, 0n)
+      const initSqrtPrice = toSqrtPrice(1, 0)
       const createTx = yield* call(createPoolTx, poolKey, initSqrtPrice.toString(), initTick)
       txs.push(createTx)
     }
@@ -249,7 +249,7 @@ export function* handleGetCurrentPlotTicks(
       const data = createPlaceholderLiquidityPlot(
         action.payload.isXtoY,
         0,
-        BigInt(poolKey.fee_tier.tick_spacing),
+        poolKey.fee_tier.tick_spacing,
         xDecimal,
         yDecimal
       )
@@ -259,7 +259,7 @@ export function* handleGetCurrentPlotTicks(
 
     const ticksData = createLiquidityPlot(
       rawTicks,
-      BigInt(poolKey.fee_tier.tick_spacing),
+      poolKey.fee_tier.tick_spacing,
       isXtoY,
       xDecimal,
       yDecimal
@@ -270,7 +270,7 @@ export function* handleGetCurrentPlotTicks(
     const data = createPlaceholderLiquidityPlot(
       action.payload.isXtoY,
       10,
-      BigInt(poolKey.fee_tier.tick_spacing),
+      poolKey.fee_tier.tick_spacing,
       xDecimal,
       yDecimal
     )
