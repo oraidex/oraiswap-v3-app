@@ -14,7 +14,7 @@ interface IProps {
   value?: string
   error?: string | null
   className?: string
-  decimal: bigint
+  decimal: number
   placeholder?: string
   style?: CSSProperties
   onMaxClick: () => void

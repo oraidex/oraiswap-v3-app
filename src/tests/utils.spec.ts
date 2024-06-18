@@ -1,4 +1,4 @@
-import { PRICE_SCALE, parse } from '@store/consts/utils'
+import { parse } from '@store/consts/utils'
 import { positionToTick, LiquidityTick } from '@wasm'
 
 describe('utils', () => {

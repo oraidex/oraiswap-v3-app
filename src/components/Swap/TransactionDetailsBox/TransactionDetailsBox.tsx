@@ -36,7 +36,7 @@ const TransactionDetailsBox: React.FC<IProps> = ({
 }) => {
   const { classes } = useStyles({ open })
 
-  const feePercent = Number(printBigint(fee, PERCENTAGE_SCALE - 2n))
+  const feePercent = Number(printBigint(fee, PERCENTAGE_SCALE - 2))
   const impact = priceImpact * 100
 
   return (

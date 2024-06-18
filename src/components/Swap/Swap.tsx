@@ -256,7 +256,7 @@ export const Swap: React.FC<ISwap> = ({
     console.log({ tokenFromIndex, tokenToIndex, swapData, amountFrom })
     if (tokenFromIndex !== null && tokenToIndex !== null && swapData) {
       if (inputRef === inputTarget.FROM) {
-        console.log("call simulate")
+        console.log('call simulate')
         dispatch(
           actions.getSimulateResult({
             fromToken: tokens[tokenFromIndex].assetAddress,
@@ -467,11 +467,11 @@ export const Swap: React.FC<ISwap> = ({
                   )
                 : '- -'
             }
-            decimal={tokenFromIndex !== null ? tokens[tokenFromIndex].decimals : 12n}
+            decimal={tokenFromIndex !== null ? tokens[tokenFromIndex].decimals : 12}
             className={classes.amountInput}
             setValue={value => {
               if (value.match(/^\d*\.?\d*$/)) {
-                console.log("set value", value)
+                console.log('set value', value)
                 setAmountFrom(value)
                 setInputRef(inputTarget.FROM)
               }
@@ -543,7 +543,7 @@ export const Swap: React.FC<ISwap> = ({
                 : '- -'
             }
             className={classes.amountInput}
-            decimal={tokenToIndex !== null ? tokens[tokenToIndex].decimals : 12n}
+            decimal={tokenToIndex !== null ? tokens[tokenToIndex].decimals : 12}
             setValue={value => {
               if (value.match(/^\d*\.?\d*$/)) {
                 setAmountTo(value)

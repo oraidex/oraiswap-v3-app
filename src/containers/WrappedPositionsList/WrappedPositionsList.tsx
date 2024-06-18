@@ -1,4 +1,3 @@
-import { Position } from '@wasm'
 import { useSigningClient } from '../../../src/contexts/cosmwasm'
 import { PositionsList } from '@components/PositionsList/PositionsList'
 import { FAUCET_LIST_TOKEN, POSITIONS_PER_PAGE } from '@store/consts/static'
@@ -12,8 +11,9 @@ import { actions } from '@store/reducers/positions'
 import { Status } from '@store/reducers/wallet'
 import {
   PoolWithPoolKeyAndIndex,
+  PositionWithPoolData,
   isLoadingPositionsList,
-  lastPageSelector,
+  lastPageSelector
 } from '@store/selectors/positions'
 import { address, status } from '@store/selectors/wallet'
 import SingletonOraiswapV3 from '@store/services/contractSingleton'
@@ -34,7 +34,7 @@ export const WrappedPositionsList: React.FC = () => {
   const { signingClient } = useSigningClient()
 
   useEffect(() => {
-    (async () => {
+    ;(async () => {
       if (signingClient && walletAddress && !list.length) {
         SingletonOraiswapV3.load(signingClient, walletAddress)
         const pools = await SingletonOraiswapV3.getAllPosition()
@@ -97,22 +97,20 @@ export const WrappedPositionsList: React.FC = () => {
   }
 
   const data = list
-    .map((position: Position | any, index) => {
+    .map((position: PositionWithPoolData, index) => {
       // console.log({ position })
 
       const lowerPrice = Number(
         calcYPerXPriceByTickIndex(
-          Number(position.lower_tick_index),
-          BigInt(position.tokenX.decimals),
-          BigInt(position.tokenY.decimals)
+          position.lower_tick_index,
+          position.tokenX.decimals,
+          position.tokenY.decimals
         )
       )
-      const upperPrice = Number(
-        calcYPerXPriceByTickIndex(
-          Number(position.upper_tick_index),
-          BigInt(position.tokenX.decimals),
-          BigInt(position.tokenY.decimals)
-        )
+      const upperPrice = calcYPerXPriceByTickIndex(
+        position.upper_tick_index,
+        position.tokenX.decimals,
+        position.tokenY.decimals
       )
 
       const min = Math.min(lowerPrice, upperPrice)
@@ -140,9 +138,9 @@ export const WrappedPositionsList: React.FC = () => {
       }
 
       const currentPrice = calcYPerXPriceByTickIndex(
-        Number(position.poolData?.currentTickIndex ?? 0n),
-        BigInt(position.tokenX.decimals),
-        BigInt(position.tokenY.decimals)
+        position.poolData?.pool.current_tick_index ?? 0,
+        position.tokenX.decimals,
+        position.tokenY.decimals
       )
 
       const valueX = tokenXLiq + tokenYLiq / currentPrice
@@ -153,7 +151,7 @@ export const WrappedPositionsList: React.FC = () => {
         tokenYName: position.tokenY.symbol,
         tokenXIcon: position.tokenX.logoURI,
         tokenYIcon: position.tokenY.logoURI,
-        fee: +printBigint(position.pool_key.fee_tier.fee, PERCENTAGE_SCALE - 2n),
+        fee: +printBigint(BigInt(position.pool_key.fee_tier.fee), PERCENTAGE_SCALE - 2),
         min,
         max,
         tokenXLiq,
