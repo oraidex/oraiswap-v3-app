@@ -71,6 +71,11 @@ export const WrappedSwap = () => {
       )
     }
   }, [isFetchingNewPool])
+
+  useEffect(() => {
+    console.log('swapSimulateResult', swapSimulateResult)
+  }, [swapSimulateResult])
+
   const lastTokenFrom = localStorage.getItem(`INVARIANT_LAST_TOKEN_FROM_${networkType}`)
   const lastTokenTo = localStorage.getItem(`INVARIANT_LAST_TOKEN_TO_${networkType}`)
 

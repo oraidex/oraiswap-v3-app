@@ -24,7 +24,7 @@ import { poolTicks, pools, tickMaps, tokens } from '@store/selectors/pools'
 import { closeSnackbar } from 'notistack'
 import { all, call, put, select, spawn, takeEvery } from 'typed-redux-saga'
 import { fetchBalances } from './wallet'
-import { SwapError, simulateSwap } from '@wasm'
+import { CalculateSwapResult, Pool, SqrtPrice, SwapError, simulateSwap } from '@wasm'
 import { fetchTicksAndTickMaps } from './pools'
 
 export function* handleSwap(action: PayloadAction<Omit<Swap, 'txid'>>): Generator {
@@ -459,11 +459,25 @@ export function* handleGetSimulateResult(action: PayloadAction<Simulate>) {
     for (const pool of filteredPools) {
       const xToY = fromToken.toString() === pool.pool_key.token_x
 
+      const poolInfo = allPools[poolKeyToString(pool.pool_key)].pool
+      const convertedPool = {
+        current_tick_index: poolInfo.current_tick_index,
+        fee_growth_global_x: BigInt(poolInfo.fee_growth_global_x),
+        fee_growth_global_y: BigInt(poolInfo.fee_growth_global_y),
+        fee_protocol_token_x:   BigInt(poolInfo.fee_protocol_token_x),
+        fee_protocol_token_y:  BigInt(poolInfo.fee_protocol_token_y),
+        fee_receiver: poolInfo.fee_receiver,
+        liquidity: BigInt(poolInfo.liquidity),
+        last_timestamp: Number(poolInfo.last_timestamp.toFixed(0)),
+        sqrt_price: BigInt(poolInfo.sqrt_price),
+        start_timestamp: Number(poolInfo.start_timestamp.toFixed(0)),
+      }
+      console.log({ convertedPool })
       try {
-        const result = simulateSwap(
+        const result: CalculateSwapResult = simulateSwap(
           deserializeTickmap(allTickmaps[poolKeyToString(pool.pool_key)]),
           pool.pool_key.fee_tier,
-          allPools[poolKeyToString(pool.pool_key)],
+          convertedPool,
           allTicks[poolKeyToString(pool.pool_key)],
           xToY,
           amount,
@@ -471,36 +485,34 @@ export function* handleGetSimulateResult(action: PayloadAction<Simulate>) {
           xToY ? MIN_SQRT_PRICE : MAX_SQRT_PRICE
         )
 
-        console.log({ result })
-
-        if (result.globalInsufficientLiquidity) {
+        if (result.global_insufficient_liquidity) {
           errors.push(SwapError.InsufficientLiquidity)
           continue
         }
 
-        if (result.maxTicksCrossed) {
+        if (result.max_ticks_crossed) {
           errors.push(SwapError.MaxTicksCrossed)
           continue
         }
 
-        if (result.stateOutdated) {
+        if (result.state_outdated) {
           errors.push(SwapError.StateOutdated)
           continue
         }
 
-        if (result.amountOut === 0n) {
+        if (result.amount_out === 0n) {
           errors.push(SwapError.AmountIsZero)
           continue
         }
 
-        if (byAmountIn ? result.amountOut > amountOut : result.amountIn + result.fee < amountOut) {
-          amountOut = byAmountIn ? result.amountOut : result.amountIn + result.fee
+        if (byAmountIn ? result.amount_out > amountOut : result.amount_in + result.fee < amountOut) {
+          amountOut = byAmountIn ? result.amount_out : result.amount_in + result.fee
           poolKey = pool.pool_key
           priceImpact = +printBigint(
-            calculatePriceImpact(BigInt(pool.pool.sqrt_price), result.targetSqrtPrice),
+            calculatePriceImpact(BigInt(pool.pool.sqrt_price), result.target_sqrt_price),
             PERCENTAGE_SCALE
           )
-          targetSqrtPrice = result.targetSqrtPrice
+          targetSqrtPrice = result.target_sqrt_price
         }
       } catch (e) {
         console.log(e)
