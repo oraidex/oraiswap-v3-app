@@ -851,16 +851,12 @@ export const getAllLiquidityTicks = async (
   }
 
   const liquidityTicks = await SingletonOraiswapV3.dex.liquidityTicks({ poolKey, tickIndexes: ticks });
+  console.log({ liquidityTicks })
   const convertedLiquidityTicks: LiquidityTick[] = liquidityTicks.map((tickData: any) => {
     return {
-      fee_growth_outside_x: BigInt(tickData.fee_growth_outside_x),
-      fee_growth_outside_y: BigInt(tickData.fee_growth_outside_y),
       index: tickData.index,
       liquidity_change: BigInt(tickData.liquidity_change),
-      sign: tickData.sign,
-      liquidity_gross: BigInt(tickData.liquidity_gross),
-      seconds_outside: tickData.seconds_outside,
-      sqrt_price: BigInt(tickData.sqrt_price)
+      sign: tickData.sign
     }
   });
 
@@ -1226,4 +1222,29 @@ export const positionList = async (ownerId: string): Promise<Position[]> => {
 export const approveToken = async (token: string, amount: bigint): Promise<string> => {
   const result = await SingletonOraiswapV3.approveToken(token, amount);
   return result.transactionHash
+}
+
+export const swapWithSlippageTx = async(
+  poolKey: PoolKey,
+  xToY: boolean,
+  amount: bigint,
+  byAmountIn: boolean,
+  estimatedSqrtPrice: bigint,
+  slippage: Percentage,
+): Promise<string> => {
+  const sqrtPriceAfterSlippage = calculateSqrtPriceAfterSlippage(
+    estimatedSqrtPrice,
+    slippage,
+    !xToY
+  )
+
+  const res = await SingletonOraiswapV3.dex.swap({
+    poolKey,
+    xToY,
+    amount: amount.toString(),
+    byAmountIn,
+    sqrtPriceLimit: sqrtPriceAfterSlippage.toString()
+  })
+
+  return res.transactionHash
 }

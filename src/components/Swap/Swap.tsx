@@ -120,14 +120,14 @@ export const Swap: React.FC<ISwap> = ({
   swapData,
   simulateResult
 }) => {
-  console.log(
-    newPrintBigInt(1000n, 0n),
-    newPrintBigInt(1000n, 1n),
-    newPrintBigInt(1004n, 1n),
-    newPrintBigInt(1000n, 7n),
-    newPrintBigInt(1000n, 8n),
-    newPrintBigInt(1003n, 12n)
-  )
+  // console.log(
+  //   newPrintBigInt(1000n, 0n),
+  //   newPrintBigInt(1000n, 1n),
+  //   newPrintBigInt(1004n, 1n),
+  //   newPrintBigInt(1000n, 7n),
+  //   newPrintBigInt(1000n, 8n),
+  //   newPrintBigInt(1003n, 12n)
+  // )
 
   const { classes } = useStyles()
   enum inputTarget {
@@ -254,8 +254,10 @@ export const Swap: React.FC<ISwap> = ({
   }
 
   const setSimulateAmount = async () => {
+    console.log({ tokenFromIndex, tokenToIndex, swapData, amountFrom })
     if (tokenFromIndex !== null && tokenToIndex !== null && swapData) {
       if (inputRef === inputTarget.FROM) {
+        console.log("call simulate")
         dispatch(
           actions.getSimulateResult({
             fromToken: tokens[tokenFromIndex].assetAddress,
@@ -466,6 +468,7 @@ export const Swap: React.FC<ISwap> = ({
             className={classes.amountInput}
             setValue={value => {
               if (value.match(/^\d*\.?\d*$/)) {
+                console.log("set value", value)
                 setAmountFrom(value)
                 setInputRef(inputTarget.FROM)
               }
