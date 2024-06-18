@@ -1,5 +1,5 @@
 import { parse } from '@store/consts/utils'
-import { position_to_tick, LiquidityTick } from '@wasm'
+import { positionToTick, LiquidityTick } from '@wasm'
 
 describe('utils', () => {
   it('test postion to tick', async () => {
@@ -15,7 +15,7 @@ describe('utils', () => {
     Object.entries(bitmap).forEach(([chunkIndex, chunk]) => {
       for (let i = 0; i < 64; i++) {
         if ((chunk & (1n << BigInt(i))) != 0n) {
-          const tickIndex = position_to_tick(Number(chunkIndex), i, tickSpacing)
+          const tickIndex = positionToTick(Number(chunkIndex), i, tickSpacing)
           ticks.push(Number(tickIndex.toString()))
         }
       }

@@ -9,7 +9,7 @@
 * @param {Percentage} fee
 * @returns {SwapResult}
 */
-export function compute_swap_step(current_sqrt_price: SqrtPrice, target_sqrt_price: SqrtPrice, liquidity: Liquidity, amount: TokenAmount, by_amount_in: boolean, fee: Percentage): SwapResult;
+export function computeSwapStep(current_sqrt_price: SqrtPrice, target_sqrt_price: SqrtPrice, liquidity: Liquidity, amount: TokenAmount, by_amount_in: boolean, fee: Percentage): SwapResult;
 /**
 * @param {SqrtPrice} sqrt_price_a
 * @param {SqrtPrice} sqrt_price_b
@@ -17,7 +17,7 @@ export function compute_swap_step(current_sqrt_price: SqrtPrice, target_sqrt_pri
 * @param {boolean} rounding_up
 * @returns {TokenAmount}
 */
-export function get_delta_x(sqrt_price_a: SqrtPrice, sqrt_price_b: SqrtPrice, liquidity: Liquidity, rounding_up: boolean): TokenAmount;
+export function getDeltaX(sqrt_price_a: SqrtPrice, sqrt_price_b: SqrtPrice, liquidity: Liquidity, rounding_up: boolean): TokenAmount;
 /**
 * @param {SqrtPrice} sqrt_price_a
 * @param {SqrtPrice} sqrt_price_b
@@ -25,7 +25,7 @@ export function get_delta_x(sqrt_price_a: SqrtPrice, sqrt_price_b: SqrtPrice, li
 * @param {boolean} rounding_up
 * @returns {TokenAmount}
 */
-export function get_delta_y(sqrt_price_a: SqrtPrice, sqrt_price_b: SqrtPrice, liquidity: Liquidity, rounding_up: boolean): TokenAmount;
+export function getDeltaY(sqrt_price_a: SqrtPrice, sqrt_price_b: SqrtPrice, liquidity: Liquidity, rounding_up: boolean): TokenAmount;
 /**
 * @param {SqrtPrice} starting_sqrt_price
 * @param {Liquidity} liquidity
@@ -33,7 +33,7 @@ export function get_delta_y(sqrt_price_a: SqrtPrice, sqrt_price_b: SqrtPrice, li
 * @param {boolean} x_to_y
 * @returns {SqrtPrice}
 */
-export function get_next_sqrt_price_from_input(starting_sqrt_price: SqrtPrice, liquidity: Liquidity, amount: TokenAmount, x_to_y: boolean): SqrtPrice;
+export function getNextSqrtPriceFromInput(starting_sqrt_price: SqrtPrice, liquidity: Liquidity, amount: TokenAmount, x_to_y: boolean): SqrtPrice;
 /**
 * @param {SqrtPrice} starting_sqrt_price
 * @param {Liquidity} liquidity
@@ -41,7 +41,7 @@ export function get_next_sqrt_price_from_input(starting_sqrt_price: SqrtPrice, l
 * @param {boolean} x_to_y
 * @returns {SqrtPrice}
 */
-export function get_next_sqrt_price_from_output(starting_sqrt_price: SqrtPrice, liquidity: Liquidity, amount: TokenAmount, x_to_y: boolean): SqrtPrice;
+export function getNextSqrtPriceFromOutput(starting_sqrt_price: SqrtPrice, liquidity: Liquidity, amount: TokenAmount, x_to_y: boolean): SqrtPrice;
 /**
 * @param {SqrtPrice} starting_sqrt_price
 * @param {Liquidity} liquidity
@@ -49,7 +49,7 @@ export function get_next_sqrt_price_from_output(starting_sqrt_price: SqrtPrice, 
 * @param {boolean} add_x
 * @returns {SqrtPrice}
 */
-export function get_next_sqrt_price_x_up(starting_sqrt_price: SqrtPrice, liquidity: Liquidity, x: TokenAmount, add_x: boolean): SqrtPrice;
+export function getNextSqrtPriceXUp(starting_sqrt_price: SqrtPrice, liquidity: Liquidity, x: TokenAmount, add_x: boolean): SqrtPrice;
 /**
 * @param {SqrtPrice} starting_sqrt_price
 * @param {Liquidity} liquidity
@@ -57,7 +57,7 @@ export function get_next_sqrt_price_x_up(starting_sqrt_price: SqrtPrice, liquidi
 * @param {boolean} add_y
 * @returns {SqrtPrice}
 */
-export function get_next_sqrt_price_y_down(starting_sqrt_price: SqrtPrice, liquidity: Liquidity, y: TokenAmount, add_y: boolean): SqrtPrice;
+export function getNextSqrtPriceYDown(starting_sqrt_price: SqrtPrice, liquidity: Liquidity, y: TokenAmount, add_y: boolean): SqrtPrice;
 /**
 * @param {number} current_tick_index
 * @param {SqrtPrice} current_sqrt_price
@@ -67,7 +67,7 @@ export function get_next_sqrt_price_y_down(starting_sqrt_price: SqrtPrice, liqui
 * @param {number} lower_tick
 * @returns {AmountDeltaResult}
 */
-export function calculate_amount_delta(current_tick_index: number, current_sqrt_price: SqrtPrice, liquidity_delta: Liquidity, liquidity_sign: boolean, upper_tick: number, lower_tick: number): AmountDeltaResult;
+export function calculateAmountDelta(current_tick_index: number, current_sqrt_price: SqrtPrice, liquidity_delta: Liquidity, liquidity_sign: boolean, upper_tick: number, lower_tick: number): AmountDeltaResult;
 /**
 * @param {TokenAmount} amount
 * @param {SqrtPrice} starting_sqrt_price
@@ -77,70 +77,70 @@ export function calculate_amount_delta(current_tick_index: number, current_sqrt_
 * @param {boolean} x_to_y
 * @returns {boolean}
 */
-export function is_enough_amount_to_change_price(amount: TokenAmount, starting_sqrt_price: SqrtPrice, liquidity: Liquidity, fee: Percentage, by_amount_in: boolean, x_to_y: boolean): boolean;
+export function isEnoughAmountToChangePrice(amount: TokenAmount, starting_sqrt_price: SqrtPrice, liquidity: Liquidity, fee: Percentage, by_amount_in: boolean, x_to_y: boolean): boolean;
 /**
 * @param {number} tick_spacing
 * @returns {Liquidity}
 */
-export function calculate_max_liquidity_per_tick(tick_spacing: number): Liquidity;
+export function calculateMaxLiquidityPerTick(tick_spacing: number): Liquidity;
 /**
 * @param {number} tick_lower
 * @param {number} tick_upper
 * @param {number} tick_spacing
 */
-export function check_ticks(tick_lower: number, tick_upper: number, tick_spacing: number): void;
+export function checkTicks(tick_lower: number, tick_upper: number, tick_spacing: number): void;
 /**
 * @param {number} tick_index
 * @param {number} tick_spacing
 */
-export function check_tick(tick_index: number, tick_spacing: number): void;
+export function checkTick(tick_index: number, tick_spacing: number): void;
 /**
 * @param {TokenAmount} expected_amount_out
 * @param {Percentage} slippage
 * @returns {TokenAmount}
 */
-export function calculate_min_amount_out(expected_amount_out: TokenAmount, slippage: Percentage): TokenAmount;
+export function calculateMinAmountOut(expected_amount_out: TokenAmount, slippage: Percentage): TokenAmount;
 /**
 * @returns {bigint}
 */
-export function get_global_max_sqrt_price(): bigint;
+export function getGlobalMaxSqrtPrice(): bigint;
 /**
 * @returns {bigint}
 */
-export function get_global_min_sqrt_price(): bigint;
+export function getGlobalMinSqrtPrice(): bigint;
 /**
 * @returns {number}
 */
-export function get_tick_search_range(): number;
+export function getTickSearchRange(): number;
 /**
 * @param {number} tick_spacing
 * @returns {number}
 */
-export function get_max_chunk(tick_spacing: number): number;
+export function getMaxChunk(tick_spacing: number): number;
 /**
 * @returns {number}
 */
-export function get_chunk_size(): number;
+export function getChunkSize(): number;
 /**
 * @returns {number}
 */
-export function get_max_tick_cross(): number;
+export function getMaxTickCross(): number;
 /**
 * @returns {number}
 */
-export function get_max_tickmap_query_size(): number;
+export function getMaxTickmapQuerySize(): number;
 /**
 * @returns {number}
 */
-export function get_liquidity_ticks_limit(): number;
+export function getLiquidityTicksLimit(): number;
 /**
 * @returns {number}
 */
-export function get_max_pool_keys_returned(): number;
+export function getMaxPoolKeysReturned(): number;
 /**
 * @returns {number}
 */
-export function get_max_pool_pairs_returned(): number;
+export function getMaxPoolPairsReturned(): number;
 /**
 * @param {number} lower_tick_index
 * @param {FeeGrowth} lower_tick_fee_growth_outside_x
@@ -156,32 +156,32 @@ export function get_max_pool_pairs_returned(): number;
 * @param {Liquidity} position_liquidity
 * @returns {TokenAmounts}
 */
-export function calculate_fee(lower_tick_index: number, lower_tick_fee_growth_outside_x: FeeGrowth, lower_tick_fee_growth_outside_y: FeeGrowth, upper_tick_index: number, upper_tick_fee_growth_outside_x: FeeGrowth, upper_tick_fee_growth_outside_y: FeeGrowth, pool_current_tick_index: number, pool_fee_growth_global_x: FeeGrowth, pool_fee_growth_global_y: FeeGrowth, position_fee_growth_inside_x: FeeGrowth, position_fee_growth_inside_y: FeeGrowth, position_liquidity: Liquidity): TokenAmounts;
+export function calculateFee(lower_tick_index: number, lower_tick_fee_growth_outside_x: FeeGrowth, lower_tick_fee_growth_outside_y: FeeGrowth, upper_tick_index: number, upper_tick_fee_growth_outside_x: FeeGrowth, upper_tick_fee_growth_outside_y: FeeGrowth, pool_current_tick_index: number, pool_fee_growth_global_x: FeeGrowth, pool_fee_growth_global_y: FeeGrowth, position_fee_growth_inside_x: FeeGrowth, position_fee_growth_inside_y: FeeGrowth, position_liquidity: Liquidity): TokenAmounts;
 /**
 * @param {string} token_candidate
 * @param {string} token_to_compare
 * @returns {boolean}
 */
-export function is_token_x(token_candidate: string, token_to_compare: string): boolean;
+export function isTokenX(token_candidate: string, token_to_compare: string): boolean;
 /**
 * @param {number} tick_index
 * @param {number} tick_spacing
 * @param {SqrtPrice} sqrt_price
 * @returns {boolean}
 */
-export function check_tick_to_sqrt_price_relationship(tick_index: number, tick_spacing: number, sqrt_price: SqrtPrice): boolean;
+export function checkTickToSqrtPriceRelationship(tick_index: number, tick_spacing: number, sqrt_price: SqrtPrice): boolean;
 /**
 * @param {number} accurate_tick
 * @param {number} tick_spacing
 * @returns {number}
 */
-export function align_tick_to_spacing(accurate_tick: number, tick_spacing: number): number;
+export function alignTickToSpacing(accurate_tick: number, tick_spacing: number): number;
 /**
 * @param {SqrtPrice} sqrt_price
 * @param {number} tick_spacing
 * @returns {number}
 */
-export function get_tick_at_sqrt_price(sqrt_price: SqrtPrice, tick_spacing: number): number;
+export function getTickAtSqrtPrice(sqrt_price: SqrtPrice, tick_spacing: number): number;
 /**
 * @param {TokenAmount} x
 * @param {number} lower_tick
@@ -190,7 +190,7 @@ export function get_tick_at_sqrt_price(sqrt_price: SqrtPrice, tick_spacing: numb
 * @param {boolean} rounding_up
 * @returns {SingleTokenLiquidity}
 */
-export function get_liquidity_by_x(x: TokenAmount, lower_tick: number, upper_tick: number, current_sqrt_price: SqrtPrice, rounding_up: boolean): SingleTokenLiquidity;
+export function getLiquidityByX(x: TokenAmount, lower_tick: number, upper_tick: number, current_sqrt_price: SqrtPrice, rounding_up: boolean): SingleTokenLiquidity;
 /**
 * @param {TokenAmount} y
 * @param {number} lower_tick
@@ -199,157 +199,157 @@ export function get_liquidity_by_x(x: TokenAmount, lower_tick: number, upper_tic
 * @param {boolean} rounding_up
 * @returns {SingleTokenLiquidity}
 */
-export function get_liquidity_by_y(y: TokenAmount, lower_tick: number, upper_tick: number, current_sqrt_price: SqrtPrice, rounding_up: boolean): SingleTokenLiquidity;
+export function getLiquidityByY(y: TokenAmount, lower_tick: number, upper_tick: number, current_sqrt_price: SqrtPrice, rounding_up: boolean): SingleTokenLiquidity;
 /**
 * @param {Percentage} fee
 * @param {number} tick_spacing
 * @returns {FeeTier}
 */
-export function new_fee_tier(fee: Percentage, tick_spacing: number): FeeTier;
+export function newFeeTier(fee: Percentage, tick_spacing: number): FeeTier;
 /**
 * @param {string} token_0
 * @param {string} token_1
 * @param {FeeTier} fee_tier
 * @returns {PoolKey}
 */
-export function new_pool_key(token_0: string, token_1: string, fee_tier: FeeTier): PoolKey;
+export function newPoolKey(token_0: string, token_1: string, fee_tier: FeeTier): PoolKey;
 /**
 * @returns {bigint}
 */
-export function get_fee_growth_scale(): bigint;
+export function getFeeGrowthScale(): bigint;
 /**
 * @returns {bigint}
 */
-export function get_fee_growth_denominator(): bigint;
+export function getFeeGrowthDenominator(): bigint;
 /**
-* @param {number} js_val
+* @param {number} integer
 * @param {number} scale
 * @returns {bigint}
 */
-export function to_fee_growth(js_val: number, scale: number): bigint;
+export function toFeeGrowth(integer: number, scale: number): bigint;
 /**
 * @returns {bigint}
 */
-export function get_fixed_point_scale(): bigint;
+export function getFixedPointScale(): bigint;
 /**
 * @returns {bigint}
 */
-export function get_fixed_point_denominator(): bigint;
+export function getFixedPointDenominator(): bigint;
 /**
-* @param {number} js_val
+* @param {number} integer
 * @param {number} scale
 * @returns {bigint}
 */
-export function to_fixed_point(js_val: number, scale: number): bigint;
+export function toFixedPoint(integer: number, scale: number): bigint;
 /**
 * @returns {bigint}
 */
-export function get_liquidity_scale(): bigint;
+export function getLiquidityScale(): bigint;
 /**
 * @returns {bigint}
 */
-export function get_liquidity_denominator(): bigint;
+export function getLiquidityDenominator(): bigint;
 /**
-* @param {number} js_val
+* @param {number} integer
 * @param {number} scale
 * @returns {bigint}
 */
-export function to_liquidity(js_val: number, scale: number): bigint;
+export function toLiquidity(integer: number, scale: number): bigint;
 /**
 * @returns {bigint}
 */
-export function get_percentage_scale(): bigint;
+export function getPercentageScale(): bigint;
 /**
 * @returns {bigint}
 */
-export function get_percentage_denominator(): bigint;
+export function getPercentageDenominator(): bigint;
 /**
-* @param {number} js_val
+* @param {number} integer
 * @param {number} scale
 * @returns {bigint}
 */
-export function to_percentage(js_val: number, scale: number): bigint;
+export function toPercentage(integer: number, scale: number): bigint;
 /**
 * @returns {bigint}
 */
-export function get_price_scale(): bigint;
+export function getPriceScale(): bigint;
 /**
 * @returns {bigint}
 */
-export function get_price_denominator(): bigint;
+export function getPriceDenominator(): bigint;
 /**
-* @param {number} js_val
+* @param {number} integer
 * @param {number} scale
 * @returns {bigint}
 */
-export function to_price(js_val: number, scale: number): bigint;
+export function toPrice(integer: number, scale: number): bigint;
 /**
 * @returns {bigint}
 */
-export function get_seconds_per_liquidity_scale(): bigint;
+export function getSecondsPerLiquidityScale(): bigint;
 /**
 * @returns {bigint}
 */
-export function get_seconds_per_liquidity_denominator(): bigint;
+export function getSecondsPerLiquidityDenominator(): bigint;
 /**
-* @param {number} js_val
+* @param {number} integer
 * @param {number} scale
 * @returns {bigint}
 */
-export function to_seconds_per_liquidity(js_val: number, scale: number): bigint;
+export function toSecondsPerLiquidity(integer: number, scale: number): bigint;
 /**
 * @returns {bigint}
 */
-export function get_sqrt_price_scale(): bigint;
+export function getSqrtPriceScale(): bigint;
 /**
 * @returns {bigint}
 */
-export function get_sqrt_price_denominator(): bigint;
+export function getSqrtPriceDenominator(): bigint;
 /**
-* @param {number} js_val
+* @param {number} integer
 * @param {number} scale
 * @returns {bigint}
 */
-export function to_sqrt_price(js_val: number, scale: number): bigint;
+export function toSqrtPrice(integer: number, scale: number): bigint;
 /**
 * @param {number} tick_index
 * @returns {SqrtPrice}
 */
-export function calculate_sqrt_price(tick_index: number): SqrtPrice;
+export function calculateSqrtPrice(tick_index: number): SqrtPrice;
 /**
 * @param {number} tick_spacing
 * @returns {number}
 */
-export function get_max_tick(tick_spacing: number): number;
+export function getMaxTick(tick_spacing: number): number;
 /**
 * @param {number} tick_spacing
 * @returns {number}
 */
-export function get_min_tick(tick_spacing: number): number;
+export function getMinTick(tick_spacing: number): number;
 /**
 * @param {number} tick_spacing
 * @returns {SqrtPrice}
 */
-export function get_max_sqrt_price(tick_spacing: number): SqrtPrice;
+export function getMaxSqrtPrice(tick_spacing: number): SqrtPrice;
 /**
 * @param {number} tick_spacing
 * @returns {SqrtPrice}
 */
-export function get_min_sqrt_price(tick_spacing: number): SqrtPrice;
+export function getMinSqrtPrice(tick_spacing: number): SqrtPrice;
 /**
 * @returns {bigint}
 */
-export function get_token_amount_scale(): bigint;
+export function getTokenAmountScale(): bigint;
 /**
 * @returns {bigint}
 */
-export function get_token_amount_denominator(): bigint;
+export function getTokenAmountDenominator(): bigint;
 /**
-* @param {number} js_val
+* @param {number} integer
 * @param {number} scale
 * @returns {bigint}
 */
-export function to_token_amount(js_val: number, scale: number): bigint;
+export function toTokenAmount(integer: number, scale: number): bigint;
 /**
 * @param {Tickmap} tickmap
 * @param {FeeTier} fee_tier
@@ -361,20 +361,20 @@ export function to_token_amount(js_val: number, scale: number): bigint;
 * @param {SqrtPrice} sqrt_price_limit
 * @returns {CalculateSwapResult}
 */
-export function simulate_swap(tickmap: Tickmap, fee_tier: FeeTier, pool: Pool, ticks: any, x_to_y: boolean, amount: TokenAmount, by_amount_in: boolean, sqrt_price_limit: SqrtPrice): CalculateSwapResult;
+export function simulateSwap(tickmap: Tickmap, fee_tier: FeeTier, pool: Pool, ticks: any, x_to_y: boolean, amount: TokenAmount, by_amount_in: boolean, sqrt_price_limit: SqrtPrice): CalculateSwapResult;
 /**
 * @param {number} tick
 * @param {number} tick_spacing
 * @returns {PositionResult}
 */
-export function tick_to_position_js(tick: number, tick_spacing: number): PositionResult;
+export function tickToPositionJs(tick: number, tick_spacing: number): PositionResult;
 /**
 * @param {number} chunk
 * @param {number} bit
 * @param {number} tick_spacing
 * @returns {number}
 */
-export function position_to_tick(chunk: number, bit: number, tick_spacing: number): number;
+export function positionToTick(chunk: number, bit: number, tick_spacing: number): number;
 /**
 */
 export enum SwapError {
@@ -554,70 +554,70 @@ export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembl
 
 export interface InitOutput {
   readonly memory: WebAssembly.Memory;
-  readonly compute_swap_step: (a: number, b: number, c: number, d: number, e: number, f: number, g: number) => void;
-  readonly get_delta_x: (a: number, b: number, c: number, d: number, e: number) => void;
-  readonly get_delta_y: (a: number, b: number, c: number, d: number, e: number) => void;
-  readonly get_next_sqrt_price_from_input: (a: number, b: number, c: number, d: number, e: number) => void;
-  readonly get_next_sqrt_price_from_output: (a: number, b: number, c: number, d: number, e: number) => void;
-  readonly get_next_sqrt_price_x_up: (a: number, b: number, c: number, d: number, e: number) => void;
-  readonly get_next_sqrt_price_y_down: (a: number, b: number, c: number, d: number, e: number) => void;
-  readonly calculate_amount_delta: (a: number, b: number, c: number, d: number, e: number, f: number, g: number) => void;
-  readonly is_enough_amount_to_change_price: (a: number, b: number, c: number, d: number, e: number, f: number, g: number) => void;
-  readonly calculate_max_liquidity_per_tick: (a: number) => number;
-  readonly check_ticks: (a: number, b: number, c: number, d: number) => void;
-  readonly check_tick: (a: number, b: number, c: number) => void;
-  readonly calculate_min_amount_out: (a: number, b: number) => number;
-  readonly get_global_max_sqrt_price: () => number;
-  readonly get_global_min_sqrt_price: () => number;
-  readonly get_tick_search_range: () => number;
-  readonly get_max_chunk: (a: number) => number;
-  readonly get_chunk_size: () => number;
-  readonly get_max_tick_cross: () => number;
-  readonly get_max_tickmap_query_size: () => number;
-  readonly get_liquidity_ticks_limit: () => number;
-  readonly get_max_pool_keys_returned: () => number;
-  readonly get_max_pool_pairs_returned: () => number;
-  readonly calculate_fee: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: number) => void;
-  readonly is_token_x: (a: number, b: number, c: number, d: number, e: number) => void;
-  readonly check_tick_to_sqrt_price_relationship: (a: number, b: number, c: number, d: number) => void;
-  readonly align_tick_to_spacing: (a: number, b: number) => number;
-  readonly get_tick_at_sqrt_price: (a: number, b: number, c: number) => void;
-  readonly get_liquidity_by_x: (a: number, b: number, c: number, d: number, e: number, f: number) => void;
-  readonly get_liquidity_by_y: (a: number, b: number, c: number, d: number, e: number, f: number) => void;
-  readonly new_fee_tier: (a: number, b: number, c: number) => void;
-  readonly new_pool_key: (a: number, b: number, c: number, d: number, e: number, f: number) => void;
-  readonly get_fee_growth_scale: () => number;
-  readonly get_fee_growth_denominator: () => number;
-  readonly to_fee_growth: (a: number, b: number, c: number) => void;
-  readonly get_fixed_point_scale: () => number;
-  readonly get_fixed_point_denominator: () => number;
-  readonly to_fixed_point: (a: number, b: number, c: number) => void;
-  readonly get_liquidity_scale: () => number;
-  readonly get_liquidity_denominator: () => number;
-  readonly to_liquidity: (a: number, b: number, c: number) => void;
-  readonly get_percentage_denominator: () => number;
-  readonly to_percentage: (a: number, b: number, c: number) => void;
-  readonly get_price_scale: () => number;
-  readonly get_price_denominator: () => number;
-  readonly to_price: (a: number, b: number, c: number) => void;
-  readonly to_seconds_per_liquidity: (a: number, b: number, c: number) => void;
-  readonly to_sqrt_price: (a: number, b: number, c: number) => void;
-  readonly calculate_sqrt_price: (a: number, b: number) => void;
-  readonly get_max_tick: (a: number) => number;
-  readonly get_min_tick: (a: number) => number;
-  readonly get_max_sqrt_price: (a: number) => number;
-  readonly get_min_sqrt_price: (a: number) => number;
-  readonly get_token_amount_scale: () => number;
-  readonly get_token_amount_denominator: () => number;
-  readonly to_token_amount: (a: number, b: number, c: number) => void;
-  readonly simulate_swap: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number) => void;
-  readonly tick_to_position_js: (a: number, b: number, c: number) => void;
-  readonly position_to_tick: (a: number, b: number, c: number) => number;
-  readonly get_seconds_per_liquidity_denominator: () => number;
-  readonly get_sqrt_price_denominator: () => number;
-  readonly get_percentage_scale: () => number;
-  readonly get_seconds_per_liquidity_scale: () => number;
-  readonly get_sqrt_price_scale: () => number;
+  readonly computeSwapStep: (a: number, b: number, c: number, d: number, e: number, f: number, g: number) => void;
+  readonly getDeltaX: (a: number, b: number, c: number, d: number, e: number) => void;
+  readonly getDeltaY: (a: number, b: number, c: number, d: number, e: number) => void;
+  readonly getNextSqrtPriceFromInput: (a: number, b: number, c: number, d: number, e: number) => void;
+  readonly getNextSqrtPriceFromOutput: (a: number, b: number, c: number, d: number, e: number) => void;
+  readonly getNextSqrtPriceXUp: (a: number, b: number, c: number, d: number, e: number) => void;
+  readonly getNextSqrtPriceYDown: (a: number, b: number, c: number, d: number, e: number) => void;
+  readonly calculateAmountDelta: (a: number, b: number, c: number, d: number, e: number, f: number, g: number) => void;
+  readonly isEnoughAmountToChangePrice: (a: number, b: number, c: number, d: number, e: number, f: number, g: number) => void;
+  readonly calculateMaxLiquidityPerTick: (a: number) => number;
+  readonly checkTicks: (a: number, b: number, c: number, d: number) => void;
+  readonly checkTick: (a: number, b: number, c: number) => void;
+  readonly calculateMinAmountOut: (a: number, b: number) => number;
+  readonly getGlobalMaxSqrtPrice: () => number;
+  readonly getGlobalMinSqrtPrice: () => number;
+  readonly getTickSearchRange: () => number;
+  readonly getMaxChunk: (a: number) => number;
+  readonly getChunkSize: () => number;
+  readonly getMaxTickCross: () => number;
+  readonly getMaxTickmapQuerySize: () => number;
+  readonly getLiquidityTicksLimit: () => number;
+  readonly getMaxPoolKeysReturned: () => number;
+  readonly getMaxPoolPairsReturned: () => number;
+  readonly calculateFee: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: number) => void;
+  readonly isTokenX: (a: number, b: number, c: number, d: number, e: number) => void;
+  readonly checkTickToSqrtPriceRelationship: (a: number, b: number, c: number, d: number) => void;
+  readonly alignTickToSpacing: (a: number, b: number) => number;
+  readonly getTickAtSqrtPrice: (a: number, b: number, c: number) => void;
+  readonly getLiquidityByX: (a: number, b: number, c: number, d: number, e: number, f: number) => void;
+  readonly getLiquidityByY: (a: number, b: number, c: number, d: number, e: number, f: number) => void;
+  readonly newFeeTier: (a: number, b: number, c: number) => void;
+  readonly newPoolKey: (a: number, b: number, c: number, d: number, e: number, f: number) => void;
+  readonly getFeeGrowthScale: () => number;
+  readonly getFeeGrowthDenominator: () => number;
+  readonly toFeeGrowth: (a: number, b: number, c: number) => void;
+  readonly getFixedPointScale: () => number;
+  readonly getFixedPointDenominator: () => number;
+  readonly toFixedPoint: (a: number, b: number, c: number) => void;
+  readonly getLiquidityScale: () => number;
+  readonly getLiquidityDenominator: () => number;
+  readonly toLiquidity: (a: number, b: number, c: number) => void;
+  readonly getPercentageDenominator: () => number;
+  readonly toPercentage: (a: number, b: number, c: number) => void;
+  readonly getPriceScale: () => number;
+  readonly getPriceDenominator: () => number;
+  readonly toPrice: (a: number, b: number, c: number) => void;
+  readonly toSecondsPerLiquidity: (a: number, b: number, c: number) => void;
+  readonly toSqrtPrice: (a: number, b: number, c: number) => void;
+  readonly calculateSqrtPrice: (a: number, b: number) => void;
+  readonly getMaxTick: (a: number) => number;
+  readonly getMinTick: (a: number) => number;
+  readonly getMaxSqrtPrice: (a: number) => number;
+  readonly getMinSqrtPrice: (a: number) => number;
+  readonly getTokenAmountScale: () => number;
+  readonly getTokenAmountDenominator: () => number;
+  readonly toTokenAmount: (a: number, b: number, c: number) => void;
+  readonly simulateSwap: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number) => void;
+  readonly tickToPositionJs: (a: number, b: number, c: number) => void;
+  readonly positionToTick: (a: number, b: number, c: number) => number;
+  readonly getSecondsPerLiquidityDenominator: () => number;
+  readonly getSqrtPriceDenominator: () => number;
+  readonly getPercentageScale: () => number;
+  readonly getSecondsPerLiquidityScale: () => number;
+  readonly getSqrtPriceScale: () => number;
   readonly __wbindgen_malloc: (a: number, b: number) => number;
   readonly __wbindgen_realloc: (a: number, b: number, c: number, d: number) => number;
   readonly __wbindgen_add_to_stack_pointer: (a: number) => number;

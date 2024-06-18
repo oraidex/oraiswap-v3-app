@@ -22,7 +22,7 @@ import { poolTicks, pools, tickMaps, tokens } from '@store/selectors/pools'
 import { closeSnackbar } from 'notistack'
 import { all, call, put, select, spawn, takeEvery } from 'typed-redux-saga'
 import { fetchBalances } from './wallet'
-import { CalculateSwapResult, SwapError, simulate_swap } from '@wasm'
+import { CalculateSwapResult, SwapError, simulateSwap } from '@wasm'
 import { fetchTicksAndTickMaps } from './pools'
 
 export function* handleSwap(action: PayloadAction<Omit<Swap, 'txid'>>): Generator {
@@ -483,7 +483,7 @@ export function* handleGetSimulateResult(action: PayloadAction<Simulate>) {
       }
       console.log({ convertedPool })
       try {
-        const result: CalculateSwapResult = simulate_swap(
+        const result: CalculateSwapResult = simulateSwap(
           deserializeTickmap(allTickmaps[poolKeyToString(pool.pool_key)]),
           pool.pool_key.fee_tier,
           convertedPool,

@@ -8,7 +8,7 @@ import { ILiquidityToken } from '../SinglePositionInfo/consts'
 import useStyles from './style'
 import { calcPrice, calcTicksAmountInRange, spacingMultiplicityGte } from '@store/consts/utils'
 import PriceRangePlot from '@components/PriceRangePlot/PriceRangePlot'
-import { get_min_tick } from '@wasm'
+import { getMinTick } from '@wasm'
 
 export interface ISinglePositionPlot {
   data: PlotTickData[] | any
@@ -60,7 +60,7 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
         calcPrice(
           
             Math.max(
-              spacingMultiplicityGte(Number(get_min_tick(Number(tickSpacing))), Number(tickSpacing)),
+              spacingMultiplicityGte(Number(getMinTick(Number(tickSpacing))), Number(tickSpacing)),
               Number(leftRange.index) - Number(tickSpacing) * 15
             )
           ,

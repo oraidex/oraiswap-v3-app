@@ -31,7 +31,7 @@ import { closeSnackbar } from 'notistack'
 import { all, call, fork, join, put, select, spawn, takeEvery, takeLatest } from 'typed-redux-saga'
 import { fetchTicksAndTickMaps } from './pools'
 import { fetchBalances } from './wallet'
-import { PoolKey, new_pool_key, to_sqrt_price } from '@wasm'
+import { PoolKey, newPoolKey, toSqrtPrice } from '@wasm'
 
 function* handleInitPosition(action: PayloadAction<InitPositionData>): Generator {
   const {
@@ -88,11 +88,11 @@ function* handleInitPosition(action: PayloadAction<InitPositionData>): Generator
     const YTokenTx = yield* call(approveToken, token_y, yAmountWithSlippage)
     txs.push(YTokenTx)
 
-    const poolKey = new_pool_key(token_x, token_y, fee_tier)
+    const poolKey = newPoolKey(token_x, token_y, fee_tier)
 
     if (initPool) {
       const initTick = 0
-      const initSqrtPrice = to_sqrt_price(1, 0)
+      const initSqrtPrice = toSqrtPrice(1, 0)
       const createTx = yield* call(createPoolTx, poolKey, initSqrtPrice.toString(), initTick)
       txs.push(createTx)
     }
