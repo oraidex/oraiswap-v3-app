@@ -31,7 +31,7 @@ import { closeSnackbar } from 'notistack'
 import { all, call, fork, join, put, select, spawn, takeEvery, takeLatest } from 'typed-redux-saga'
 import { fetchTicksAndTickMaps } from './pools'
 import { fetchBalances } from './wallet'
-import { PoolKey, _newPoolKey, calculateSqrtPrice, toSqrtPrice } from '@wasm'
+import { PoolKey, newPoolKey, calculateSqrtPrice, toSqrtPrice } from '@wasm'
 import { ExecuteResult } from '@cosmjs/cosmwasm-stargate'
 
 function* handleInitPosition(action: PayloadAction<InitPositionData>): Generator {
@@ -89,7 +89,7 @@ function* handleInitPosition(action: PayloadAction<InitPositionData>): Generator
     const YTokenTx = yield* call(approveToken, token_y, yAmountWithSlippage)
     txs.push(YTokenTx)
 
-    const poolKey = _newPoolKey(token_x, token_y, fee_tier)
+    const poolKey = newPoolKey(token_x, token_y, fee_tier)
 
     if (initPool) {
       const initTick = 0

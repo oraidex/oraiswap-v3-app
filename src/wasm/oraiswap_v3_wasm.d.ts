@@ -203,18 +203,18 @@ export function getLiquidityByX(js_x: any, js_lower_tick: any, js_upper_tick: an
 */
 export function getLiquidityByY(js_y: any, js_lower_tick: any, js_upper_tick: any, js_current_sqrt_price: any, js_rounding_up: any): any;
 /**
-* @param {any} js_fee
-* @param {any} js_tick_spacing
-* @returns {any}
+* @param {Percentage} fee
+* @param {number} tick_spacing
+* @returns {FeeTier}
 */
-export function _newFeeTier(js_fee: any, js_tick_spacing: any): any;
+export function newFeeTier(fee: Percentage, tick_spacing: number): FeeTier;
 /**
-* @param {any} token_0
-* @param {any} token_1
-* @param {any} fee_tier
-* @returns {any}
+* @param {string} token_0
+* @param {string} token_1
+* @param {FeeTier} fee_tier
+* @returns {PoolKey}
 */
-export function _newPoolKey(token_0: any, token_1: any, fee_tier: any): any;
+export function newPoolKey(token_0: string, token_1: string, fee_tier: FeeTier): PoolKey;
 /**
 * @returns {bigint}
 */
@@ -587,24 +587,24 @@ export interface InitOutput {
   readonly calculateTick: (a: number, b: number, c: number) => void;
   readonly getLiquidityByX: (a: number, b: number, c: number, d: number, e: number, f: number) => void;
   readonly getLiquidityByY: (a: number, b: number, c: number, d: number, e: number, f: number) => void;
-  readonly _newFeeTier: (a: number, b: number, c: number) => void;
-  readonly _newPoolKey: (a: number, b: number, c: number, d: number) => void;
+  readonly newFeeTier: (a: number, b: number, c: number) => void;
+  readonly newPoolKey: (a: number, b: number, c: number, d: number, e: number, f: number) => void;
   readonly getFeeGrowthScale: () => number;
   readonly getFeeGrowthDenominator: () => number;
-  readonly toFeeGrowth: (a: number, b: number) => number;
+  readonly toFeeGrowth: (a: number, b: number, c: number) => void;
   readonly getFixedPointScale: () => number;
   readonly getFixedPointDenominator: () => number;
-  readonly toFixedPoint: (a: number, b: number) => number;
+  readonly toFixedPoint: (a: number, b: number, c: number) => void;
   readonly getLiquidityScale: () => number;
   readonly getLiquidityDenominator: () => number;
-  readonly toLiquidity: (a: number, b: number) => number;
+  readonly toLiquidity: (a: number, b: number, c: number) => void;
   readonly getPercentageDenominator: () => number;
-  readonly toPercentage: (a: number, b: number) => number;
+  readonly toPercentage: (a: number, b: number, c: number) => void;
   readonly getPriceScale: () => number;
   readonly getPriceDenominator: () => number;
-  readonly toPrice: (a: number, b: number) => number;
-  readonly toSecondsPerLiquidity: (a: number, b: number) => number;
-  readonly toSqrtPrice: (a: number, b: number) => number;
+  readonly toPrice: (a: number, b: number, c: number) => void;
+  readonly toSecondsPerLiquidity: (a: number, b: number, c: number) => void;
+  readonly toSqrtPrice: (a: number, b: number, c: number) => void;
   readonly calculateSqrtPrice: (a: number, b: number) => void;
   readonly getMaxTick: (a: number, b: number) => void;
   readonly getMinTick: (a: number, b: number) => void;
@@ -612,7 +612,7 @@ export interface InitOutput {
   readonly getMinSqrtPrice: (a: number, b: number) => void;
   readonly getTokenAmountScale: () => number;
   readonly getTokenAmountDenominator: () => number;
-  readonly toTokenAmount: (a: number, b: number) => number;
+  readonly toTokenAmount: (a: number, b: number, c: number) => void;
   readonly simulateSwap: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number) => void;
   readonly tickIndexToPosition: (a: number, b: number, c: number) => void;
   readonly positionToTick: (a: number, b: number, c: number, d: number) => void;
