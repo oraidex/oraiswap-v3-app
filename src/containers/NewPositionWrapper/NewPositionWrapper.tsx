@@ -1,7 +1,7 @@
-import { FeeTier } from '@/sdk/OraiswapV3.types'
 import {
+  FeeTier,
   TokenAmount,
-  _newPoolKey,
+  newPoolKey,
   calculateSqrtPrice,
   getLiquidityByX,
   getLiquidityByY
@@ -56,11 +56,11 @@ export const ALL_FEE_TIERS_DATA: FeeTier[] = [
     tick_spacing: 100
   },
   {
-    fee: 1000000000,
+    fee: 3000000000,
     tick_spacing: 100
   },
   {
-    fee: 30000000000,
+    fee: 10000000000,
     tick_spacing: 100
   }
 ]
@@ -315,7 +315,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       })
       dispatch(
         poolsActions.getPoolData(
-          _newPoolKey(
+          newPoolKey(
             tokens[tokenAIndex].assetAddress.toString(),
             tokens[tokenBIndex].assetAddress.toString(),
             ALL_FEE_TIERS_DATA[feeIndex]
@@ -577,7 +577,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
           ) {
             dispatch(
               poolsActions.getPoolData(
-                _newPoolKey(
+                newPoolKey(
                   tokens[tokenA].assetAddress.toString(),
                   tokens[tokenB].assetAddress.toString(),
                   ALL_FEE_TIERS_DATA[feeTierIndex]
@@ -655,10 +655,10 @@ export const NewPositionWrapper: React.FC<IProps> = ({
 
         const lowerTickIndex = leftTickIndex < rightTickIndex ? leftTickIndex : rightTickIndex
         const upperTickIndex = rightTickIndex > leftTickIndex ? rightTickIndex : leftTickIndex
-
+        console.log({ beforeHandle: poolKey })
         dispatch(
           positionsActions.initPosition({
-            poolKeyData: _newPoolKey(
+            poolKeyData: newPoolKey(
               tokens[tokenAIndex].assetAddress.toString(),
               tokens[tokenBIndex].assetAddress.toString(),
               ALL_FEE_TIERS_DATA[feeIndex]

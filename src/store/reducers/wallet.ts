@@ -1,4 +1,4 @@
-import { TokenAmount } from '@/sdk/OraiswapV3.types'
+import { TokenAmount } from '@wasm'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { PayloadType } from '@store/consts/types'
 

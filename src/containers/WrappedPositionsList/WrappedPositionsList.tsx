@@ -1,11 +1,10 @@
-import { Position } from '@/sdk/OraiswapV3.types'
+import { Position } from '@wasm'
 import { useSigningClient } from '../../../src/contexts/cosmwasm'
 import { PositionsList } from '@components/PositionsList/PositionsList'
 import { FAUCET_LIST_TOKEN, POSITIONS_PER_PAGE } from '@store/consts/static'
 import {
   PERCENTAGE_SCALE,
   calcYPerXPriceByTickIndex,
-  calculateTokenAmounts,
   poolKeyToString,
   printBigint
 } from '@store/consts/utils'
@@ -15,7 +14,6 @@ import {
   PoolWithPoolKeyAndIndex,
   isLoadingPositionsList,
   lastPageSelector,
-  positionsWithPoolsData
 } from '@store/selectors/positions'
 import { address, status } from '@store/selectors/wallet'
 import SingletonOraiswapV3 from '@store/services/contractSingleton'
@@ -33,10 +31,10 @@ export const WrappedPositionsList: React.FC = () => {
   const walletStatus = useSelector(status)
   const navigate = useNavigate()
   const dispatch = useDispatch()
-  const { signingClient, connectWallet, disconnect } = useSigningClient()
+  const { signingClient } = useSigningClient()
 
   useEffect(() => {
-    ;(async () => {
+    (async () => {
       if (signingClient && walletAddress && !list.length) {
         SingletonOraiswapV3.load(signingClient, walletAddress)
         const pools = await SingletonOraiswapV3.getAllPosition()
@@ -100,7 +98,7 @@ export const WrappedPositionsList: React.FC = () => {
 
   const data = list
     .map((position: Position | any, index) => {
-      console.log({ position })
+      // console.log({ position })
 
       const lowerPrice = Number(
         calcYPerXPriceByTickIndex(

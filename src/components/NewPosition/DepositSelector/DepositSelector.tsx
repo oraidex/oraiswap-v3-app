@@ -3,13 +3,14 @@ import DepositAmountInput from '@components/Inputs/DepositAmountInput/DepositAmo
 import Select from '@components/Inputs/Select/Select'
 import { Grid, Typography } from '@mui/material'
 import SwapList from '@static/svg/swap-list.svg'
-import { ALL_FEE_TIERS_DATA, PositionOpeningMethod } from '@store/consts/static'
+import { PositionOpeningMethod } from '@store/consts/static'
 import { parsePathFeeToFeeString, tickerToAddress } from '@store/consts/uiUtiils'
 import { convertBalanceToBigint, getScaleFromString, printBigint } from '@store/consts/utils'
 import classNames from 'classnames'
 import React, { useCallback, useEffect, useState } from 'react'
 import FeeSwitch from '../FeeSwitch/FeeSwitch'
 import { useStyles } from './style'
+import { ALL_FEE_TIERS_DATA } from '@containers/NewPositionWrapper/NewPositionWrapper'
 export interface InputState {
   value: string
   setValue: (value: string) => void
@@ -116,7 +117,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
     const parsedFee = parsePathFeeToFeeString(initialFee)
 
     ALL_FEE_TIERS_DATA.forEach((feeTierData, index) => {
-      if (feeTierData.tier.fee.toString() === parsedFee) {
+      if (feeTierData.fee.toString() === parsedFee) {
         feeTierIndexFromPath = index
       }
     })

@@ -26,12 +26,13 @@ import {
   plotTicks,
   singlePositionData
 } from '@store/selectors/positions'
-import { status } from '@store/selectors/wallet'
+import { address, status } from '@store/selectors/wallet'
 import { VariantType } from 'notistack'
 import React, { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Navigate, useNavigate } from 'react-router-dom'
 import useStyles from './style'
+import { Pool } from '@wasm'
 
 export interface IProps {
   address: string
@@ -46,6 +47,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
 
   const allPools = useSelector(poolsArraySortedByFees)
   const currentNetwork = useSelector(networkType)
+  const walletAddress = useSelector(address)
   const position = useSelector(singlePositionData(id))
   const isLoadingList = useSelector(isLoadingPositionsList)
   const { data: ticksData, loading: ticksLoading, hasError: hasTicksError } = useSelector(plotTicks)
@@ -186,9 +188,34 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
     [position]
   )
 
+  /**
+   * liquidity: Liquidity;
+    sqrt_price: SqrtPrice;
+    current_tick_index: number;
+    fee_growth_global_x: FeeGrowth;
+    fee_growth_global_y: FeeGrowth;
+    fee_protocol_token_x: TokenAmount;
+    fee_protocol_token_y: TokenAmount;
+    start_timestamp: number;
+    last_timestamp: number;
+    fee_receiver: string;
+   */
+
   const [tokenXLiquidity, tokenYLiquidity] = useMemo(() => {
     if (position?.poolData) {
-      const [x, y] = calculateTokenAmounts(position.poolData.pool, position)
+      const convertedPool: Pool = {
+        liquidity: BigInt(position.poolData.pool.liquidity),
+        sqrt_price: BigInt(position.poolData.pool.sqrt_price),
+        current_tick_index: position.poolData.pool.current_tick_index,
+        fee_growth_global_x: BigInt(position.poolData.pool.fee_growth_global_x),
+        fee_growth_global_y: BigInt(position.poolData.pool.fee_growth_global_y),
+        fee_protocol_token_x: BigInt(position.poolData.pool.fee_protocol_token_x),
+        fee_protocol_token_y: BigInt(position.poolData.pool.fee_protocol_token_y),
+        start_timestamp: position.poolData.pool.start_timestamp,
+        last_timestamp: position.poolData.pool.last_timestamp,
+        fee_receiver: position.poolData.pool.fee_receiver
+      }
+      const [x, y] = calculateTokenAmounts(convertedPool, position)
 
       return [+printBigint(x, position.tokenX.decimals), +printBigint(y, position.tokenY.decimals)]
     }
@@ -204,7 +231,19 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
       typeof upperTick !== 'undefined' &&
       position.poolData
     ) {
-      const [bnX, bnY] = calculateFee(position.poolData.pool, position, lowerTick, upperTick)
+      const convertedPool: Pool = {
+        liquidity: BigInt(position.poolData.pool.liquidity),
+        sqrt_price: BigInt(position.poolData.pool.sqrt_price),
+        current_tick_index: position.poolData.pool.current_tick_index,
+        fee_growth_global_x: BigInt(position.poolData.pool.fee_growth_global_x),
+        fee_growth_global_y: BigInt(position.poolData.pool.fee_growth_global_y),
+        fee_protocol_token_x: BigInt(position.poolData.pool.fee_protocol_token_x),
+        fee_protocol_token_y: BigInt(position.poolData.pool.fee_protocol_token_y),
+        start_timestamp: position.poolData.pool.start_timestamp,
+        last_timestamp: position.poolData.pool.last_timestamp,
+        fee_receiver: position.poolData.pool.fee_receiver
+      }
+      const [bnX, bnY] = calculateFee(convertedPool, position, lowerTick, upperTick)
 
       setShowFeesLoader(false)
 
@@ -297,8 +336,8 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
   }, [walletStatus])
 
   useEffect(() => {
-    dispatch(actions.getSinglePosition(id))
-  }, [])
+    dispatch(actions.getPositionsList())
+  }, [walletAddress])
 
   if (position) {
     return (
