@@ -1,7 +1,7 @@
 import {
   FeeTier,
   TokenAmount,
-  _newPoolKey,
+  newPoolKey,
   calculateSqrtPrice,
   getLiquidityByX,
   getLiquidityByY
@@ -315,7 +315,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       })
       dispatch(
         poolsActions.getPoolData(
-          _newPoolKey(
+          newPoolKey(
             tokens[tokenAIndex].assetAddress.toString(),
             tokens[tokenBIndex].assetAddress.toString(),
             ALL_FEE_TIERS_DATA[feeIndex]
@@ -577,7 +577,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
           ) {
             dispatch(
               poolsActions.getPoolData(
-                _newPoolKey(
+                newPoolKey(
                   tokens[tokenA].assetAddress.toString(),
                   tokens[tokenB].assetAddress.toString(),
                   ALL_FEE_TIERS_DATA[feeTierIndex]
@@ -658,7 +658,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
         console.log({ beforeHandle: poolKey })
         dispatch(
           positionsActions.initPosition({
-            poolKeyData: _newPoolKey(
+            poolKeyData: newPoolKey(
               tokens[tokenAIndex].assetAddress.toString(),
               tokens[tokenBIndex].assetAddress.toString(),
               ALL_FEE_TIERS_DATA[feeIndex]

@@ -1,9 +1,9 @@
-import { newPoolKey } from '@store/consts/utils'
 import { poolKeyToString } from '@store/consts/utils'
 import type { Meta, StoryObj } from '@storybook/react'
 import { fn } from '@storybook/test'
 import { MemoryRouter } from 'react-router-dom'
 import NewPosition from './NewPosition'
+import { newPoolKey } from '@wasm'
 
 const meta = {
   title: 'PageComponent/NewPosition',

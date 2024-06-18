@@ -1,21 +1,13 @@
 import { CosmWasmClient, SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 import { OraiswapV3Client, OraiswapV3QueryClient } from '../../sdk'
 import { OraiswapTokenClient, OraiswapTokenQueryClient } from '@oraichain/oraidex-contracts-sdk'
-import {
-  Tickmap,
-  getMaxTick,
-  getMinTick,
-  _newPoolKey,
-  PoolKey,
-  LiquidityTick,
-  positionToTick,
-} from '@wasm'
+import { Tickmap, getMaxTick, getMinTick, PoolKey, LiquidityTick, positionToTick } from '@wasm'
 import {
   CHUNK_SIZE,
   LIQUIDITY_TICKS_LIMIT,
   MAX_TICKMAP_QUERY_SIZE,
   TokenDataOnChain,
-  parse,
+  parse
   // parse
 } from '@store/consts/utils'
 import { ArrayOfTupleOfUint16AndUint64, PoolWithPoolKey } from '@/sdk/OraiswapV3.types'
@@ -210,6 +202,9 @@ export default class SingletonOraiswapV3 {
   public static approveToken = async (token: string, amount: bigint) => {
     const tokenClient = new OraiswapTokenClient(this.dex.client, this.dex.sender, token)
 
-    return await tokenClient.increaseAllowance({ amount: amount.toString() , spender: this.dex.contractAddress })
+    return await tokenClient.increaseAllowance({
+      amount: amount.toString(),
+      spender: this.dex.contractAddress
+    })
   }
 }

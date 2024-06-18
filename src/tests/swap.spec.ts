@@ -4,8 +4,13 @@ import * as oraidexArtifacts from '@oraichain/oraidex-contracts-build'
 import fs from 'fs'
 import path from 'path'
 import { OraiswapV3Client, OraiswapV3Types } from '../sdk'
-import { newPoolKey } from '@store/consts/utils'
-import { calculateSqrtPrice, getGlobalMinSqrtPrice, toPercentage } from '@wasm'
+import {
+  newFeeTier,
+  newPoolKey,
+  calculateSqrtPrice,
+  getGlobalMinSqrtPrice,
+  toPercentage
+} from '@wasm'
 
 const senderAddress = 'orai1g4h64yjt0fvzv5v2j8tyfnpe5kmnetejvfgs7g'
 const bobAddress = 'orai1602dkqjvh4s7ryajnz2uwhr8vetrwr8nekpxv5'
@@ -40,6 +45,8 @@ describe('swap', () => {
   // decimals: 12 + scale 3 = e9
   let protocol_fee = Number(toPercentage(6, 3))
 
+  console.log(protocol_fee)
+
   let dex: OraiswapV3Client
 
   beforeEach(async () => {
@@ -66,9 +73,9 @@ describe('swap', () => {
   })
 
   it('test_swap_x_to_y', async () => {
-    let feeTier: OraiswapV3Types.FeeTier = { fee: protocol_fee, tick_spacing: 10 }
+    let feeTier = newFeeTier(protocol_fee, 10)
     let res = await dex.addFeeTier({ feeTier })
-    console.log(res)
+
     let initTick = 0
 
     let initSqrtPrice = calculateSqrtPrice(initTick)
@@ -89,6 +96,7 @@ describe('swap', () => {
     await tokenY.increaseAllowance({ amount: initialAmount, spender: dex.contractAddress })
 
     let poolKey = newPoolKey(tokenX.contractAddress, tokenY.contractAddress, feeTier)
+    // let poolKey = newPoolKey(tokenX.contractAddress, tokenY.contractAddress, feeTier)
 
     let lowerTickIndex = -20
     let middleTickIndex = -10

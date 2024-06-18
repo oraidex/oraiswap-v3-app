@@ -13,13 +13,12 @@ import {
   getPriceScale,
   toPercentage,
   getSqrtPriceDenominator,
-  _newFeeTier,
+  newFeeTier,
   // positionToTick,
   alignTickToSpacing,
   _calculateFee,
   calculateAmountDelta,
   calculateAmountDeltaResult,
-  _newPoolKey,
   getMaxTickmapQuerySize,
   getLiquidityTicksLimit,
   calculateTick,
@@ -37,7 +36,7 @@ import {
   getGlobalMinSqrtPrice,
   Tick,
   Position,
-  LiquidityTick,
+  LiquidityTick
 } from '@wasm'
 import { Token, TokenPriceData } from './static'
 import { PoolWithPoolKey } from '@/sdk/OraiswapV3.types'
@@ -90,12 +89,8 @@ const isObject = (value: any): boolean => {
   return typeof value === 'object' && value !== null
 }
 
-export const newPoolKey = (token0: string, token1: string, feeTier: FeeTier): PoolKey => {
-  return _newPoolKey(token0, token1, _newFeeTier(feeTier.fee, feeTier.tick_spacing))
-}
-
 export const calculateFeeTierWithLinearRatio = (tickCount: number): FeeTier => {
-  return _newFeeTier(tickCount * Number(toPercentage(1, 4)), tickCount)
+  return newFeeTier(tickCount * Number(toPercentage(1, 4)), tickCount)
 }
 
 // export const FEE_TIERS: FeeTier[] = [
@@ -536,13 +531,13 @@ export const createPoolTx = async (
   ).transactionHash
 }
 
-export const createPositionTx = async(
+export const createPositionTx = async (
   poolKey: PoolKey,
   lowerTick: bigint,
   upperTick: bigint,
   liquidityDelta: bigint,
   spotSqrtPrice: bigint,
-  slippageTolerance: bigint,
+  slippageTolerance: bigint
 ): Promise<string> => {
   const slippageLimitLower = calculateSqrtPriceAfterSlippage(
     spotSqrtPrice,
@@ -858,9 +853,9 @@ export const getAllLiquidityTicks = async (
       liquidity_change: BigInt(tickData.liquidity_change),
       sign: tickData.sign
     }
-  });
+  })
 
-  return convertedLiquidityTicks;
+  return convertedLiquidityTicks
 }
 
 export const calculateTickDelta = (
@@ -1220,7 +1215,7 @@ export const positionList = async (ownerId: string): Promise<Position[]> => {
 }
 
 export const approveToken = async (token: string, amount: bigint): Promise<string> => {
-  const result = await SingletonOraiswapV3.approveToken(token, amount);
+  const result = await SingletonOraiswapV3.approveToken(token, amount)
   return result.transactionHash
 }
 
