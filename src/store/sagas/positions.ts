@@ -89,12 +89,13 @@ function* handleInitPosition(action: PayloadAction<InitPositionData>): Generator
     txs.push(YTokenTx)
 
     const poolKey = _newPoolKey(token_x, token_y, fee_tier)
-    // if (initPool) {
-    //   const initTick = 0
-    //   const initSqrtPrice = toSqrtPrice(1n, 0n)
-    //   const createTx = yield* call(createPoolTx, poolKey, initSqrtPrice.toString(), initTick)
-    //   txs.push(createTx)
-    // }
+    
+    if (initPool) {
+      const initTick = 0
+      const initSqrtPrice = toSqrtPrice(1n, 0n)
+      const createTx = yield* call(createPoolTx, poolKey, initSqrtPrice.toString(), initTick)
+      txs.push(createTx)
+    }
 
     const tx = yield* call(createPositionTx, poolKey, lowerTick, upperTick, liquidityDelta, spotSqrtPrice, slippageTolerance);
     txs.push(tx)

@@ -2,7 +2,7 @@ export const TESTNET_BTC_ADDRESS = '5FEE8ptrT6387MYHqYmyB8ChWfkEsGEDpTMDpwUh4FCY
 export const TESTNET_ETH_ADDRESS = '5FmDoQPFS5qPMkSumdvVVekiTpsKVmL9E5DHxHEUXCdHFdYy'
 export const TESTNET_USDC_ADDRESS = '5EjKBBJMLE9R2HsXKJRw2CCMZW2q48Ps5bVAQqzsxyhH9jU5'
 
-import { FEE_TIERS, Network } from '@store/consts/utils'
+import { Network } from '@store/consts/utils'
 
 export enum OraichainNetworks {
   TEST = 'wss://ws.test.azero.dev',
@@ -279,10 +279,10 @@ export const WAZERO_WITHDRAW_OPTIONS = {
   proofSize: 50000
 }
 
-export const ALL_FEE_TIERS_DATA = FEE_TIERS.map((tier, index) => ({
-  tier,
-  primaryIndex: index
-}))
+// export const ALL_FEE_TIERS_DATA = FEE_TIERS.map((tier, index) => ({
+//   tier,
+//   primaryIndex: index
+// }))
 
 export const U128MAX = 2n ** 128n - 1n
 

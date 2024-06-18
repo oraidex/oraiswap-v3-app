@@ -98,14 +98,14 @@ export const calculateFeeTierWithLinearRatio = (tickCount: number): FeeTier => {
   return _newFeeTier(tickCount * Number(toPercentage(1, 4)), tickCount)
 }
 
-export const FEE_TIERS: FeeTier[] = [
-  calculateFeeTierWithLinearRatio(1),
-  calculateFeeTierWithLinearRatio(2),
-  calculateFeeTierWithLinearRatio(5),
-  calculateFeeTierWithLinearRatio(10),
-  calculateFeeTierWithLinearRatio(30),
-  calculateFeeTierWithLinearRatio(100)
-]
+// export const FEE_TIERS: FeeTier[] = [
+//   calculateFeeTierWithLinearRatio(1),
+//   calculateFeeTierWithLinearRatio(2),
+//   calculateFeeTierWithLinearRatio(5),
+//   calculateFeeTierWithLinearRatio(10),
+//   calculateFeeTierWithLinearRatio(30),
+//   calculateFeeTierWithLinearRatio(100)
+// ]
 
 export const MAX_SQRT_PRICE = getGlobalMaxSqrtPrice()
 export const MIN_SQRT_PRICE = getGlobalMinSqrtPrice()

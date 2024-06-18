@@ -56,11 +56,11 @@ export const ALL_FEE_TIERS_DATA: FeeTier[] = [
     tick_spacing: 100
   },
   {
-    fee: 1000000000,
+    fee: 3000000000,
     tick_spacing: 100
   },
   {
-    fee: 30000000000,
+    fee: 10000000000,
     tick_spacing: 100
   }
 ]
@@ -655,7 +655,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
 
         const lowerTickIndex = leftTickIndex < rightTickIndex ? leftTickIndex : rightTickIndex
         const upperTickIndex = rightTickIndex > leftTickIndex ? rightTickIndex : leftTickIndex
-
+        console.log({ beforeHandle: poolKey })
         dispatch(
           positionsActions.initPosition({
             poolKeyData: _newPoolKey(
