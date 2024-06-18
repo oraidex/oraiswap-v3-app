@@ -20,15 +20,15 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     marginBottom: 20
   },
   title: {
-    color: colors.invariant.text,
+    color: colors.oraidex.text,
     ...typography.heading4,
     fontWeight: 500
   },
   positionsNumber: {
     width: 28,
     height: 28,
-    color: colors.invariant.text,
-    background: colors.invariant.light,
+    color: colors.oraidex.text,
+    background: colors.oraidex.light,
     marginLeft: 8,
     borderRadius: '100%',
     display: 'flex',
@@ -50,16 +50,16 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     height: 32,
     padding: '7px 12px',
     borderRadius: 10,
-    background: colors.invariant.black,
+    background: colors.oraidex.black,
     border: '1px solid #202946',
-    color: colors.invariant.lightGrey,
+    color: colors.oraidex.lightGrey,
     ...typography.body2,
     [theme.breakpoints.down('xs')]: {
       maxWidth: 200
     }
   },
   button: {
-    color: colors.invariant.dark,
+    color: colors.oraidex.dark,
     ...typography.body1,
     textTransform: 'none',
     borderRadius: 14,
@@ -85,7 +85,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     paddingInline: 0,
     cursor: 'auto',
     marginLeft: 16,
-    background: `${colors.invariant.light} !important`,
+    background: `${colors.oraidex.light} !important`,
 
     '&:hover': {
       filter: 'brightness(1.15)'
@@ -97,7 +97,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   noPositionsText: {
     ...typography.heading1,
     textAlign: 'center',
-    color: colors.invariant.text
+    color: colors.oraidex.text
   },
   list: {
     position: 'relative',

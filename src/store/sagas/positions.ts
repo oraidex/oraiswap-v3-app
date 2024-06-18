@@ -216,8 +216,8 @@ export function* handleGetCurrentPlotTicks(
   const yDecimal = allTokens[poolKey.token_y].decimals
 
   try {
-    // const invariant = yield* call(
-    //   [invariantSingleton, invariantSingleton.loadInstance],
+    // const oraidex = yield* call(
+    //   [oraidexSingleton, oraidexSingleton.loadInstance],
     //   api,
     //   network,
     //   invAddress

@@ -5,10 +5,10 @@ import { MaterialDesignContent } from 'notistack'
 
 export const StyledMaterialDesignContent = styled(MaterialDesignContent)(({ theme }) => ({
   '&.notistack-MuiContent-success': {
-    backgroundColor: colors.invariant.component,
+    backgroundColor: colors.oraidex.component,
     borderStyle: 'solid',
     borderWidth: 1,
-    borderColor: colors.invariant.component,
+    borderColor: colors.oraidex.component,
     borderRadius: 10,
     ...typography.body2,
     maxWidth: 330,
@@ -22,7 +22,7 @@ export const StyledMaterialDesignContent = styled(MaterialDesignContent)(({ them
 
     '& SVG': {
       fontSize: '16px !important',
-      color: colors.invariant.green,
+      color: colors.oraidex.green,
       marginTop: -2,
       [theme.breakpoints.down('xs')]: {
         marginTop: 2
@@ -34,10 +34,10 @@ export const StyledMaterialDesignContent = styled(MaterialDesignContent)(({ them
     }
   },
   '&.notistack-MuiContent-error': {
-    backgroundColor: colors.invariant.component,
+    backgroundColor: colors.oraidex.component,
     borderStyle: 'solid',
     borderWidth: 1,
-    borderColor: colors.invariant.component,
+    borderColor: colors.oraidex.component,
     borderRadius: 10,
     ...typography.body2,
     maxWidth: 330,
@@ -51,7 +51,7 @@ export const StyledMaterialDesignContent = styled(MaterialDesignContent)(({ them
 
     '& SVG': {
       fontSize: '16px !important',
-      color: colors.invariant.Error,
+      color: colors.oraidex.Error,
       marginTop: -2,
       [theme.breakpoints.down('xs')]: {
         marginTop: 2
@@ -63,10 +63,10 @@ export const StyledMaterialDesignContent = styled(MaterialDesignContent)(({ them
     }
   },
   '&.notistack-MuiContent-info': {
-    backgroundColor: colors.invariant.component,
+    backgroundColor: colors.oraidex.component,
     borderStyle: 'solid',
     borderWidth: 1,
-    borderColor: colors.invariant.component,
+    borderColor: colors.oraidex.component,
     borderRadius: 10,
     ...typography.body2,
     maxWidth: 330,
@@ -80,7 +80,7 @@ export const StyledMaterialDesignContent = styled(MaterialDesignContent)(({ them
 
     '& SVG': {
       fontSize: '16px !important',
-      color: colors.invariant.textGrey,
+      color: colors.oraidex.textGrey,
       marginTop: -2,
       [theme.breakpoints.down('xs')]: {
         marginTop: 2
@@ -92,10 +92,10 @@ export const StyledMaterialDesignContent = styled(MaterialDesignContent)(({ them
     }
   },
   '&.notistack-MuiContent-warning': {
-    backgroundColor: colors.invariant.component,
+    backgroundColor: colors.oraidex.component,
     borderStyle: 'solid',
     borderWidth: 1,
-    borderColor: colors.invariant.component,
+    borderColor: colors.oraidex.component,
     borderRadius: 10,
     ...typography.body2,
     maxWidth: 330,
@@ -109,7 +109,7 @@ export const StyledMaterialDesignContent = styled(MaterialDesignContent)(({ them
 
     '& SVG': {
       fontSize: '16px !important',
-      color: colors.invariant.warning,
+      color: colors.oraidex.warning,
       marginTop: -2,
       [theme.breakpoints.down('xs')]: {
         marginTop: 2

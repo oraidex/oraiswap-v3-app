@@ -3,7 +3,7 @@ import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()(() => ({
   amountInput: {
-    background: colors.invariant.dark,
+    background: colors.oraidex.dark,
     color: colors.white.main,
     borderRadius: 15,
     ...typography.heading4,

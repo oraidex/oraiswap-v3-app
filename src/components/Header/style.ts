@@ -32,7 +32,7 @@ const useStyles = makeStyles()((theme: Theme) => {
       marginRight: 8
     },
     routers: {
-      backgroundColor: colors.invariant.black,
+      backgroundColor: colors.oraidex.black,
       borderRadius: '10px',
       transition: 'left 300ms',
       width: 'fit-content'
@@ -41,7 +41,7 @@ const useStyles = makeStyles()((theme: Theme) => {
       minWidth: 21,
       height: 21,
       marginRight: 0,
-      color: colors.invariant.green,
+      color: colors.oraidex.green,
       '& >circle': {
         boxShadow: '0px 0px 10px rgba(157, 212, 109, 0.5)'
       }

@@ -33,20 +33,20 @@ export const useStyles = makeStyles()(() => ({
     ...typography.body2,
     fontWeight: 500,
     lineHeight: '20px',
-    color: colors.invariant.lightHover
+    color: colors.oraidex.lightHover
   },
   button: {
     height: 40,
     width: 200,
     marginTop: 20,
-    color: colors.invariant.componentBcg,
+    color: colors.oraidex.componentBcg,
     ...typography.body1,
     textTransform: 'none',
     borderRadius: 14,
-    background: colors.invariant.pinkLinearGradientOpacity,
+    background: colors.oraidex.pinkLinearGradientOpacity,
 
     '&:hover': {
-      background: colors.invariant.pinkLinearGradient,
+      background: colors.oraidex.pinkLinearGradient,
       boxShadow: '0px 0px 16px rgba(239, 132, 245, 0.35)'
     }
   }

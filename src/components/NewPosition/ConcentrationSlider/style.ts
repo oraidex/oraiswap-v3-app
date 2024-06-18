@@ -4,7 +4,7 @@ import { makeStyles } from 'tss-react/mui'
 export const useThumbStyles = makeStyles()(() => {
   return {
     outerCircle: {
-      background: colors.invariant.pinkLinearGradient,
+      background: colors.oraidex.pinkLinearGradient,
       width: 28,
       height: 28,
       borderRadius: '100%',
@@ -34,21 +34,21 @@ export const useSliderStyles = makeStyles<{ valuesLength: number; disabledRange:
     rail: {
       background:
         disabledRange > 0
-          ? `linear-gradient(90deg, ${colors.invariant.lightGrey} 0%, ${
-              colors.invariant.lightGrey
-            } ${disabledRange}%, ${colors.invariant.green} ${disabledRange + 1}%, ${
-              colors.invariant.green
+          ? `linear-gradient(90deg, ${colors.oraidex.lightGrey} 0%, ${
+              colors.oraidex.lightGrey
+            } ${disabledRange}%, ${colors.oraidex.green} ${disabledRange + 1}%, ${
+              colors.oraidex.green
             } 100%)`
-          : colors.invariant.green,
+          : colors.oraidex.green,
       height: 6,
       opacity: 1
     },
     track: {
-      background: colors.invariant.lightGrey,
+      background: colors.oraidex.lightGrey,
       height: 6
     },
     markLabel: {
-      color: colors.invariant.text,
+      color: colors.oraidex.text,
       ...typography.body1,
       marginTop: 10,
       top: 26,
@@ -73,11 +73,11 @@ export const useSliderStyles = makeStyles<{ valuesLength: number; disabledRange:
       },
 
       '&[data-index="0"]': {
-        background: disabledRange > 0 ? colors.invariant.lightGrey : colors.invariant.green
+        background: disabledRange > 0 ? colors.oraidex.lightGrey : colors.oraidex.green
       },
 
       [`&[data-index="${valuesLength - 1}"]`]: {
-        background: colors.invariant.green
+        background: colors.oraidex.green
       }
     },
 
@@ -90,13 +90,13 @@ export const useSliderStyles = makeStyles<{ valuesLength: number; disabledRange:
       margin: 0,
       top: -8,
       borderRadius: 7,
-      background: colors.invariant.light,
+      background: colors.oraidex.light,
 
       '& span': {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        color: colors.invariant.text,
+        color: colors.oraidex.text,
         ...typography.caption1,
         minWidth: 28
       },
@@ -106,15 +106,15 @@ export const useSliderStyles = makeStyles<{ valuesLength: number; disabledRange:
     },
     valueLabelLabel: {
       width: 300,
-      background: colors.invariant.pink
+      background: colors.oraidex.pink
     },
     valueLabelCircle: {
       width: 120,
-      background: colors.invariant.pink
+      background: colors.oraidex.pink
     },
     valueLabelOpen: {
       width: 200,
-      background: colors.invariant.pink
+      background: colors.oraidex.pink
     }
   })
 )

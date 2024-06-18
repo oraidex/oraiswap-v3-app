@@ -10,7 +10,7 @@ export const useLabelStyles = makeStyles()(() => {
       lineHeight: '20px',
       letterSpacing: '-0.03px',
       textAlign: 'right',
-      color: `${colors.invariant.textGrey} !important`,
+      color: `${colors.oraidex.textGrey} !important`,
       paddingRight: 7
     },
     clipboardIcon: {

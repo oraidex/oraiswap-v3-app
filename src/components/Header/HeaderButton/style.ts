@@ -5,7 +5,7 @@ import { makeStyles } from 'tss-react/mui'
 const useStyles = makeStyles()((theme: Theme) => {
   return {
     headerButton: {
-      background: colors.invariant.light,
+      background: colors.oraidex.light,
       color: colors.white.main,
       paddingInline: 12,
       borderRadius: 10,
@@ -27,8 +27,8 @@ const useStyles = makeStyles()((theme: Theme) => {
       WebkitPaddingBefore: '2px'
     },
     headerButtonConnect: {
-      background: colors.invariant.pinkLinearGradientOpacity,
-      color: colors.invariant.newDark,
+      background: colors.oraidex.pinkLinearGradientOpacity,
+      color: colors.oraidex.newDark,
       paddingInline: 12,
       borderRadius: 10,
       textTransform: 'none',
@@ -42,12 +42,12 @@ const useStyles = makeStyles()((theme: Theme) => {
       },
 
       '&:hover': {
-        boxShadow: `0 0 15px ${colors.invariant.light}`,
-        backgroundColor: colors.invariant.light
+        boxShadow: `0 0 15px ${colors.oraidex.light}`,
+        backgroundColor: colors.oraidex.light
       }
     },
     headerButtonConnected: {
-      background: colors.invariant.light,
+      background: colors.oraidex.light,
       color: colors.white.main,
       paddingInline: 12,
       borderRadius: 10,

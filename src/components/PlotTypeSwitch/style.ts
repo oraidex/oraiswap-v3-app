@@ -19,12 +19,12 @@ export const useTabsStyles = makeStyles()(() => ({
     minHeight: 26,
     borderRadius: 9,
     width: 92,
-    backgroundColor: colors.invariant.black
+    backgroundColor: colors.oraidex.black
   },
   indicator: {
     height: 26,
     borderRadius: 9,
-    backgroundColor: colors.invariant.light
+    backgroundColor: colors.oraidex.light
   },
   scrollable: {
     overflow: 'hidden'
@@ -52,7 +52,7 @@ export const useSingleTabStyles = makeStyles()(() => ({
     },
 
     '&:hover': {
-      backgroundColor: `${colors.invariant.light}B0`,
+      backgroundColor: `${colors.oraidex.light}B0`,
       height: 26,
       borderRadius: 9
     }

@@ -27,7 +27,7 @@ const useStyles = makeStyles()(() => {
       alignItems: 'center'
     },
     tooltip: {
-      color: colors.invariant.textGrey,
+      color: colors.oraidex.textGrey,
       ...typography.caption4,
       lineHeight: '24px',
       background: colors.black.full,

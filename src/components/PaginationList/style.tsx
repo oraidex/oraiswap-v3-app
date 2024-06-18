@@ -21,35 +21,35 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     '& .MuiPaginationItem-page': {
       ...typography.heading4,
 
-      color: colors.invariant.light,
+      color: colors.oraidex.light,
       '&:hover': {
-        color: colors.invariant.lightGrey
+        color: colors.oraidex.lightGrey
       }
     },
 
     '& .MuiPaginationItem-page:hover': {
-      color: colors.invariant.textGrey
+      color: colors.oraidex.textGrey
     },
 
     '& .MuiPaginationItem-ellipsis': {
-      color: colors.invariant.light
+      color: colors.oraidex.light
     },
 
     '& .Mui-selected': {
-      color: colors.invariant.green
+      color: colors.oraidex.green
     },
     '& .Mui-selected:hover': {
-      color: `${colors.invariant.green} !important`
+      color: `${colors.oraidex.green} !important`
     },
 
     '& .MuiPaginationItem-page.Mui-selected': {
       backgroundColor: 'transparent',
       '&:hover': {
-        color: colors.invariant.green
+        color: colors.oraidex.green
       }
     },
     '& li:first-of-type button': {
-      backgroundColor: colors.invariant.green,
+      backgroundColor: colors.oraidex.green,
       minWidth: 40,
       minHeight: 40,
       opacity: 0.8
@@ -59,7 +59,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     },
 
     '& li:last-child button': {
-      backgroundColor: colors.invariant.green,
+      backgroundColor: colors.oraidex.green,
       minWidth: 40,
       minHeight: 40,
       opacity: 0.8

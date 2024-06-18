@@ -111,16 +111,16 @@ export const Handle: React.FC<HandleProps> = ({
         <MinHandle
           height={height}
           x={!isReversed() ? currentPosition - 37 : currentPosition}
-          fill={disabled ? colors.invariant.light : colors.invariant.pink}
-          textColor={disabled ? colors.invariant.lightHover : colors.invariant.componentBcg}
+          fill={disabled ? colors.oraidex.light : colors.oraidex.pink}
+          textColor={disabled ? colors.oraidex.lightHover : colors.oraidex.componentBcg}
           isReversed={isReversed()}
         />
       ) : (
         <MaxHandle
           height={height}
           x={!isReversed() ? currentPosition : currentPosition - 37}
-          fill={disabled ? colors.invariant.light : colors.invariant.pink}
-          textColor={disabled ? colors.invariant.lightHover : colors.invariant.componentBcg}
+          fill={disabled ? colors.oraidex.light : colors.oraidex.pink}
+          textColor={disabled ? colors.oraidex.lightHover : colors.oraidex.componentBcg}
           isReversed={isReversed()}
         />
       )}

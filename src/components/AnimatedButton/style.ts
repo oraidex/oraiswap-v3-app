@@ -9,22 +9,22 @@ const useStyles = makeStyles()(() => {
       textAlign: 'center',
       textTransform: 'none',
       ...typography.body1,
-      color: colors.invariant.componentBcg,
-      background: colors.invariant.pinkLinearGradient,
+      color: colors.oraidex.componentBcg,
+      background: colors.oraidex.pinkLinearGradient,
       transition: 'background-color 0ms ease, box-shadow 150ms linear',
       position: 'relative',
       overflow: 'hidden',
       zIndex: 4,
       '&:disabled': {
-        background: colors.invariant.light,
-        color: colors.invariant.componentBcg
+        background: colors.oraidex.light,
+        color: colors.oraidex.componentBcg
       }
     },
 
     buttonRelease: {
-      background: `${colors.invariant.component} !important`,
+      background: `${colors.oraidex.component} !important`,
       '&:hover': {
-        background: `${colors.invariant.component} !important`
+        background: `${colors.oraidex.component} !important`
       }
     },
     '@keyframes slide-start': {
@@ -65,7 +65,7 @@ const useStyles = makeStyles()(() => {
       zIndex: 1,
       top: 0,
       left: '-100%',
-      backgroundColor: colors.invariant.pink
+      backgroundColor: colors.oraidex.pink
     },
     backgroundRelease: {
       position: 'absolute',
@@ -77,7 +77,7 @@ const useStyles = makeStyles()(() => {
       top: '0%',
       animation: '$slide-start .4s ease-in',
       transition: 'all .2s',
-      backgroundColor: colors.invariant.pink
+      backgroundColor: colors.oraidex.pink
     },
     backgroundApprovedWithSuccess: {
       top: 0,
@@ -110,7 +110,7 @@ const useStyles = makeStyles()(() => {
     },
     btnStories: {
       padding: '8px 14px',
-      backgroundColor: colors.invariant.green,
+      backgroundColor: colors.oraidex.green,
       border: 'none',
       margin: '10px 14px 10px 0'
     }

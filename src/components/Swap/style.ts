@@ -89,7 +89,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     background: 'none !important',
     border: 'none',
     minWidth: 'auto',
-    color: colors.invariant.lightHover,
+    color: colors.oraidex.lightHover,
     '&:hover': {
       filter: 'brightness(1.15)',
       cursor: 'pointer'
@@ -100,7 +100,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     background: 'none !important',
     border: 'none',
     minWidth: 'auto',
-    color: colors.invariant.lightHover
+    color: colors.oraidex.lightHover
   },
 
   swapControls: {
@@ -133,7 +133,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     position: 'absolute'
   },
   root: {
-    background: colors.invariant.component,
+    background: colors.oraidex.component,
     borderRadius: 24,
     paddingInline: 24,
     paddingBottom: 22,
@@ -178,7 +178,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: colors.invariant.component,
+    backgroundColor: colors.oraidex.component,
     width: 50,
     height: 50,
     borderRadius: '50%',
@@ -195,7 +195,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     }
   },
   swapImgRoot: {
-    background: colors.invariant.newDark,
+    background: colors.oraidex.newDark,
     width: '40px',
     height: '40px',
     display: 'flex',
@@ -203,7 +203,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     justifyContent: 'center',
     borderRadius: 100,
     '&:hover': {
-      backgroundColor: colors.invariant.light
+      backgroundColor: colors.oraidex.light
     }
   },
 
@@ -229,7 +229,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   transactionDetailsWrapper: {
     display: 'flex',
     flexDirection: 'row',
-    backgroundColor: colors.invariant.light,
+    backgroundColor: colors.oraidex.light,
     margin: '16px 0 ',
     paddingInline: 15,
     borderRadius: '10px',
@@ -254,7 +254,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
 
   exchangeRoot: {
     position: 'relative',
-    background: colors.invariant.newDark,
+    background: colors.oraidex.newDark,
     borderRadius: 20
   },
   transactionTop: {
@@ -274,14 +274,14 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   },
 
   transtactionData: {
-    border: `1px solid ${colors.invariant.light}`,
+    border: `1px solid ${colors.oraidex.light}`,
     borderRadius: '10px',
     padding: '5px 15px 5px 15px',
-    color: colors.invariant.lightGrey
+    color: colors.oraidex.lightGrey
   },
 
   buttonSelectDisabled: {
-    background: `${colors.invariant.pinkLinearGradient} !important`,
+    background: `${colors.oraidex.pinkLinearGradient} !important`,
 
     '&:hover': {
       filter: 'brightness(1.15)',
@@ -291,7 +291,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   },
   ButtonSwapActive: {
     transition: 'filter 0.3s linear',
-    background: `${colors.invariant.greenLinearGradient} !important`,
+    background: `${colors.oraidex.greenLinearGradient} !important`,
     filter: 'brightness(0.8)',
     '&:hover': {
       filter: 'brightness(1.15)',

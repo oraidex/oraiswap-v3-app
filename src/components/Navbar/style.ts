@@ -6,7 +6,7 @@ const useStyles = makeStyles()(() => {
     button: {
       minWidth: 67,
       backgroundColor: 'transparent',
-      color: colors.invariant.light,
+      color: colors.oraidex.light,
       height: 32,
       borderRadius: 10,
       ...typography.body1,
@@ -15,16 +15,16 @@ const useStyles = makeStyles()(() => {
       margin: '4px',
       '&:hover': {
         background: 'transparent',
-        color: colors.invariant.lightGrey,
+        color: colors.oraidex.lightGrey,
         ...typography.body1
       }
     },
     active: {
-      background: colors.invariant.light,
+      background: colors.oraidex.light,
       color: colors.white.main,
       ...typography.body1,
       '&:hover': {
-        background: colors.invariant.light,
+        background: colors.oraidex.light,
         color: colors.white.main
       }
     },

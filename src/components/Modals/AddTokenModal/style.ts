@@ -5,7 +5,7 @@ import { makeStyles } from 'tss-react/mui'
 const useStyles = makeStyles()((theme: Theme) => {
   return {
     root: {
-      background: colors.invariant.component,
+      background: colors.oraidex.component,
       width: 480,
       height: 140,
       borderRadius: 24,
@@ -45,7 +45,7 @@ const useStyles = makeStyles()((theme: Theme) => {
       }
     },
     input: {
-      backgroundColor: colors.invariant.newDark,
+      backgroundColor: colors.oraidex.newDark,
       width: '100%',
       height: 60,
       color: colors.white.main,
@@ -55,7 +55,7 @@ const useStyles = makeStyles()((theme: Theme) => {
       fontWeight: 400,
       marginRight: 16,
       '&::placeholder': {
-        color: colors.invariant.light,
+        color: colors.oraidex.light,
         ...typography.heading4,
         fontWeight: 400
       },
@@ -66,15 +66,15 @@ const useStyles = makeStyles()((theme: Theme) => {
     add: {
       minWidth: 82,
       height: 60,
-      background: colors.invariant.greenLinearGradient,
+      background: colors.oraidex.greenLinearGradient,
       ...typography.heading3,
-      color: colors.invariant.black,
+      color: colors.oraidex.black,
       textTransform: 'none',
       borderRadius: 18,
 
       '&:disabled': {
-        background: colors.invariant.light,
-        color: colors.invariant.black
+        background: colors.oraidex.light,
+        color: colors.oraidex.black
       }
     }
   }

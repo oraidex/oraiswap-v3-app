@@ -14,7 +14,7 @@ export const useStyles = makeStyles()(() => {
       width: 306,
       display: 'flex',
       flexDirection: 'column',
-      backgroundColor: colors.invariant.component,
+      backgroundColor: colors.oraidex.component,
       padding: 16,
       borderRadius: 20,
       color: colors.white.main,
@@ -26,7 +26,7 @@ export const useStyles = makeStyles()(() => {
 
     label: {
       ...typography.body2,
-      color: colors.invariant.lightHover,
+      color: colors.oraidex.lightHover,
       marginBottom: 8
     },
 
@@ -48,16 +48,16 @@ export const useStyles = makeStyles()(() => {
       }
     },
     detailsInfoForm: {
-      border: `1px solid ${colors.invariant.component}`,
-      color: colors.invariant.light,
+      border: `1px solid ${colors.oraidex.component}`,
+      color: colors.oraidex.light,
       borderRadius: 15,
       width: '100%',
-      backgroundColor: colors.invariant.newDark,
+      backgroundColor: colors.oraidex.newDark,
       ...typography.heading4,
       fontWeight: 400,
       padding: 8,
       '&::placeholder': {
-        color: colors.invariant.light
+        color: colors.oraidex.light
       },
       '&:focus': {
         outline: 'none'
@@ -68,7 +68,7 @@ export const useStyles = makeStyles()(() => {
     },
     detailsInfoBtn: {
       minWidth: 49,
-      backgroundColor: colors.invariant.green,
+      backgroundColor: colors.oraidex.green,
       borderRadius: 9,
       border: 'none',
       padding: 0,

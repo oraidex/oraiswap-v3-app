@@ -4,7 +4,7 @@ import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()((theme: Theme) => ({
   root: {
-    background: colors.invariant.component,
+    background: colors.oraidex.component,
     width: 480,
     borderRadius: 24,
     padding: '20px 24px'
@@ -28,11 +28,11 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   },
   title: {
     ...typography.heading4,
-    color: colors.invariant.yellow
+    color: colors.oraidex.yellow
   },
   desc: {
     ...typography.body2,
-    color: colors.invariant.text,
+    color: colors.oraidex.text,
     marginBottom: 16
   },
   close: {
@@ -46,7 +46,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     }
   },
   input: {
-    backgroundColor: colors.invariant.newDark,
+    backgroundColor: colors.oraidex.newDark,
     width: '100%',
     height: 60,
     color: colors.white.main,
@@ -56,7 +56,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     fontWeight: 400,
     marginRight: 16,
     '&::placeholder': {
-      color: colors.invariant.light,
+      color: colors.oraidex.light,
       ...typography.heading4,
       fontWeight: 400
     },
@@ -66,40 +66,40 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   },
   closeButton: {
     height: 44,
-    background: colors.invariant.greenLinearGradientOpacity,
+    background: colors.oraidex.greenLinearGradientOpacity,
     ...typography.body1,
-    color: colors.invariant.black,
+    color: colors.oraidex.black,
     textTransform: 'none',
     borderRadius: 18,
     marginBottom: 10,
 
     '&:hover': {
-      background: colors.invariant.greenLinearGradient
+      background: colors.oraidex.greenLinearGradient
     }
   },
   claimButton: {
     height: 44,
-    background: colors.invariant.pinkLinearGradientOpacity,
+    background: colors.oraidex.pinkLinearGradientOpacity,
     ...typography.body1,
-    color: colors.invariant.black,
+    color: colors.oraidex.black,
     textTransform: 'none',
     borderRadius: 18,
 
     '&:hover': {
-      background: colors.invariant.pinkLinearGradient
+      background: colors.oraidex.pinkLinearGradient
     }
   },
   cancelButton: {
     height: 44,
-    background: colors.invariant.light,
+    background: colors.oraidex.light,
     ...typography.body1,
-    color: colors.invariant.black,
+    color: colors.oraidex.black,
     textTransform: 'none',
     borderRadius: 18,
     marginBottom: 10,
 
     '&:hover': {
-      background: colors.invariant.lightHover
+      background: colors.oraidex.lightHover
     }
   }
 }))

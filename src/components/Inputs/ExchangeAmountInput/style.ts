@@ -5,8 +5,8 @@ import { makeStyles } from 'tss-react/mui'
 export const useStyles = makeStyles<{ walletDisconnected: boolean }>()(
   (theme: Theme, { walletDisconnected }) => ({
     amountInput: {
-      background: colors.invariant.newDark,
-      color: colors.invariant.light,
+      background: colors.oraidex.newDark,
+      color: colors.oraidex.light,
       borderRadius: 20,
       ...typography.heading2,
       width: '100%',
@@ -17,7 +17,7 @@ export const useStyles = makeStyles<{ walletDisconnected: boolean }>()(
       }
     },
     maxButton: {
-      color: colors.invariant.componentBcg,
+      color: colors.oraidex.componentBcg,
       ...typography.tiny2,
       borderRadius: 4,
       width: 26,
@@ -30,7 +30,7 @@ export const useStyles = makeStyles<{ walletDisconnected: boolean }>()(
 
       '&:hover': {
         background: 'none',
-        backgroundColor: colors.invariant.green,
+        backgroundColor: colors.oraidex.green,
         boxShadow: '0px 0px 20px -10px white'
       },
       [theme.breakpoints.down('sm')]: {
@@ -41,9 +41,9 @@ export const useStyles = makeStyles<{ walletDisconnected: boolean }>()(
       }
     },
     maxButtonNotActive: {
-      backgroundColor: colors.invariant.light,
+      backgroundColor: colors.oraidex.light,
       '&:hover': {
-        backgroundColor: colors.invariant.light,
+        backgroundColor: colors.oraidex.light,
         cursor: 'default'
       }
     },
@@ -59,7 +59,7 @@ export const useStyles = makeStyles<{ walletDisconnected: boolean }>()(
     },
     label: {
       top: -1,
-      color: colors.invariant.dark
+      color: colors.oraidex.dark
     },
     balanceContainer: {
       display: 'flex',
@@ -70,7 +70,7 @@ export const useStyles = makeStyles<{ walletDisconnected: boolean }>()(
       marginRight: 10
     },
     BalanceTypography: {
-      color: colors.invariant.lightGrey,
+      color: colors.oraidex.lightGrey,
       ...typography.caption2,
       marginRight: 3,
       overflow: 'hidden',
@@ -80,14 +80,14 @@ export const useStyles = makeStyles<{ walletDisconnected: boolean }>()(
       alignItems: 'center'
     },
     walletBalanace: {
-      color: colors.invariant.lightGrey
+      color: colors.oraidex.lightGrey
     },
     exchangeContainer: {
       padding: `10px 15px ${walletDisconnected ? '10px' : '0'} 15px `,
       display: 'flex'
     },
     noData: {
-      color: colors.invariant.warning,
+      color: colors.oraidex.warning,
       ...typography.caption2,
       display: 'flex',
       flexDirection: 'row',
@@ -99,7 +99,7 @@ export const useStyles = makeStyles<{ walletDisconnected: boolean }>()(
       height: 9.5,
       width: 9.5,
       border: '1px solid #EFD063',
-      color: colors.invariant.warning,
+      color: colors.oraidex.warning,
       borderRadius: '50%',
       fontSize: 8,
       lineHeight: '10px',
@@ -118,8 +118,8 @@ export const useStyles = makeStyles<{ walletDisconnected: boolean }>()(
       height: 15
     },
     tooltip: {
-      background: colors.invariant.componentBcg,
-      border: `1px solid ${colors.invariant.lightGrey}`,
+      background: colors.oraidex.componentBcg,
+      border: `1px solid ${colors.oraidex.lightGrey}`,
       borderRadius: 12,
       padding: 10,
       ...typography.caption4,
@@ -144,16 +144,16 @@ export const useStyles = makeStyles<{ walletDisconnected: boolean }>()(
       marginTop: 1
     },
     percentagePositive: {
-      color: colors.invariant.green,
-      backgroundColor: `${colors.invariant.green}40`
+      color: colors.oraidex.green,
+      backgroundColor: `${colors.oraidex.green}40`
     },
     percentageNegative: {
-      color: colors.invariant.Error,
-      backgroundColor: `${colors.invariant.Error}40`
+      color: colors.oraidex.Error,
+      backgroundColor: `${colors.oraidex.Error}40`
     },
     caption2: {
       ...typography.caption2,
-      color: colors.invariant.lightHover,
+      color: colors.oraidex.lightHover,
       overflow: 'hidden',
       whiteSpace: 'nowrap',
       textOverflow: 'ellipsis',

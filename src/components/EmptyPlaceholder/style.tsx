@@ -12,11 +12,11 @@ export const useStyles = makeStyles()(() => ({
   title: {
     ...typography.heading2,
     marginBlock: 24,
-    color: colors.invariant.textGrey,
+    color: colors.oraidex.textGrey,
     opacity: 0.7
   },
   desc: {
-    color: colors.invariant.textGrey,
+    color: colors.oraidex.textGrey,
     opacity: 0.7,
     ...typography.heading4,
     fontWeight: 400,

@@ -283,14 +283,14 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
           filter='url(#shadow-global-price)'
           opacity='0.3'
         />
-        <rect x={19} y={20} width='3' height={innerHeight} fill={colors.invariant.yellow} />
+        <rect x={19} y={20} width='3' height={innerHeight} fill={colors.oraidex.yellow} />
       </svg>
     )
   }
 
   const bottomLineLayer: Layer = ({ innerWidth, innerHeight }) => {
     const bottomLine = innerHeight
-    return <rect x={0} y={bottomLine} width={innerWidth} height={1} fill={colors.invariant.light} />
+    return <rect x={0} y={bottomLine} width={innerWidth} height={1} fill={colors.oraidex.light} />
   }
 
   const lazyLoadingLayer: Layer = ({ innerWidth, innerHeight }) => {
@@ -408,7 +408,7 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
         ]}
         curve={isDiscrete ? (isXtoY ? 'stepAfter' : 'stepBefore') : 'basis'}
         margin={{ top: isSmDown ? 55 : 25, bottom: 15 }}
-        colors={[colors.invariant.pink, colors.invariant.green, colors.invariant.pink]}
+        colors={[colors.oraidex.pink, colors.oraidex.green, colors.oraidex.pink]}
         axisTop={null}
         axisRight={null}
         axisLeft={null}
