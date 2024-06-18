@@ -63,9 +63,9 @@ export const swapTokens = createSelector(
       const tokenSwap: SwapToken = {
         ...token,
         assetAddress: token.address,
-        balance: allAccounts[token.address.toString()]?.balance.toString() ?? '0'
+        balance: allAccounts[token.address]?.balance ?? 0n
       }
-      return tokenSwap;
+      return tokenSwap
     })
   }
 )
@@ -78,7 +78,7 @@ export const poolTokens = createSelector(
     return Object.values(tokens).map(token => ({
       ...token,
       assetAddress: token.address,
-      balance: allAccounts[token.address.toString()]?.balance.toString() ?? '0'
+      balance: allAccounts[token.address]?.balance ?? 0n
     }))
   }
 )
@@ -93,7 +93,7 @@ export const swapTokensDict = createSelector(
       swapTokens[key] = {
         ...val,
         assetAddress: val.address,
-        balance: allAccounts[val.address.toString()]?.balance.toString() ?? '0'
+        balance: allAccounts[val.address]?.balance ?? 0n
       }
     })
 
@@ -132,7 +132,7 @@ export const canCreateNewPosition = () =>
 
 export type TokenBalances = ITokenBalance & {
   symbol: string
-  usdValue: BN
+  usdValue: bigint
   assetDecimals: number
 }
 
