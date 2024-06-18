@@ -109,7 +109,7 @@ export const LIQUIDITY_TICKS_LIMIT = getLiquidityTicksLimit()
 export const PERCENTAGE_SCALE = getPercentageScale()
 export const PERCENTAGE_DENOMINATOR = getPercentageDenominator()
 export const CHUNK_SIZE = getChunkSize()
-export const PRICE_SCALE = getPriceScale()
+export const PRICE_SCALE = Number(getPriceScale())
 export const MAX_REF_TIME = 259058343000
 export const DEFAULT_REF_TIME = 1250000000000
 export const DEFAULT_PROOF_SIZE = 1250000000000
@@ -228,25 +228,25 @@ export const calculateFee = (
 
 export const calcYPerXPriceByTickIndex = (
   tickIndex: number,
-  xDecimal: bigint,
-  yDecimal: bigint
+  xDecimal: number,
+  yDecimal: number
 ): number => {
   const sqrt = +printBigint(calculateSqrtPrice(tickIndex), PRICE_SCALE)
 
   const proportion = sqrt * sqrt
 
-  return proportion / 10 ** Number(yDecimal - xDecimal)
+  return proportion / 10 ** (yDecimal - xDecimal)
 }
 export const calcYPerXPriceBySqrtPrice = (
   sqrtPrice: bigint,
-  xDecimal: bigint,
-  yDecimal: bigint
+  xDecimal: number,
+  yDecimal: number
 ): number => {
   const sqrt = +printBigint(sqrtPrice, PRICE_SCALE)
 
   const proportion = sqrt * sqrt
 
-  return proportion / 10 ** Number(yDecimal - xDecimal)
+  return proportion / 10 ** (yDecimal - xDecimal)
 }
 
 export const trimLeadingZeros = (amount: string): string => {
@@ -299,8 +299,8 @@ export const toMaxNumericPlaces = (num: number, places: number): string => {
 export const calcPrice = (
   amountTickIndex: number,
   isXtoY: boolean,
-  xDecimal: bigint,
-  yDecimal: bigint
+  xDecimal: number,
+  yDecimal: number
 ): number => {
   const price = calcYPerXPriceByTickIndex(amountTickIndex, xDecimal, yDecimal)
 
@@ -311,8 +311,8 @@ export const createPlaceholderLiquidityPlot = (
   isXtoY: boolean,
   yValueToFill: number,
   tickSpacing: number,
-  tokenXDecimal: bigint,
-  tokenYDecimal: bigint
+  tokenXDecimal: number,
+  tokenYDecimal: number
 ) => {
   const ticksData: PlotTickData[] = []
 
@@ -408,27 +408,23 @@ export const getMockedTokenPrice = (symbol: string, network: Network): TokenPric
   }
 }
 
-export const printBigint = (amount: TokenAmount | bigint, decimals: bigint): string => {
-  const parsedDecimals = Number(decimals)
+export const printBigint = (amount: TokenAmount, decimals: number): string => {
   const amountString = amount.toString()
   const isNegative = amountString.length > 0 && amountString[0] === '-'
 
   const balanceString = isNegative ? amountString.slice(1) : amountString
 
-  if (balanceString.length <= parsedDecimals) {
+  if (balanceString.length <= decimals) {
     return (
-      (isNegative ? '-' : '') +
-      '0.' +
-      '0'.repeat(parsedDecimals - balanceString.length) +
-      balanceString
+      (isNegative ? '-' : '') + '0.' + '0'.repeat(decimals - balanceString.length) + balanceString
     )
   } else {
     return (
       (isNegative ? '-' : '') +
       trimZeros(
-        balanceString.substring(0, balanceString.length - parsedDecimals) +
+        balanceString.substring(0, balanceString.length - decimals) +
           '.' +
-          balanceString.substring(balanceString.length - parsedDecimals)
+          balanceString.substring(balanceString.length - decimals)
       )
     )
   }
@@ -490,7 +486,7 @@ export type TokenDataOnChain = {
   symbol: string
   address: string
   name: string
-  decimals: bigint
+  decimals: number
   balance: bigint
 }
 
@@ -503,8 +499,8 @@ export const getTokenDataByAddresses = async (tokens: string[]): Promise<Record<
       symbol: token.symbol ? (token.symbol as string) : 'UNKNOWN',
       address: token.address,
       name: token.name ? (token.name as string) : '',
-      decimals: token.decimals as bigint,
-      balance: token.balance as bigint,
+      decimals: token.decimals,
+      balance: token.balance,
       logoURI: '/unknownToken.svg',
       isUnknown: true
     }
@@ -673,8 +669,8 @@ export const getTickAtSqrtPriceFromBalance = (
   price: number,
   spacing: number,
   isXtoY: boolean,
-  xDecimal: bigint,
-  yDecimal: bigint
+  xDecimal: number,
+  yDecimal: number
 ) => {
   const minTick = getMinTick(spacing)
   const maxTick = getMaxTick(spacing)
@@ -698,12 +694,12 @@ export const nearestTickIndex = (
   price: number,
   spacing: number,
   isXtoY: boolean,
-  xDecimal: bigint,
-  yDecimal: bigint
+  xDecimal: number,
+  yDecimal: number
 ) => {
   const tick = getTickAtSqrtPriceFromBalance(price, spacing, isXtoY, xDecimal, yDecimal)
 
-  return BigInt(nearestSpacingMultiplicity(tick, Number(spacing)))
+  return nearestSpacingMultiplicity(tick, spacing)
 }
 
 export const getConcentrationArray = (
@@ -871,21 +867,19 @@ export const calculateConcentration = (tickSpacing: number, minimumRange: number
 }
 
 export const calculateConcentrationRange = (
-  tickSpacing: bigint,
+  tickSpacing: number,
   concentration: number,
   minimumRange: number,
-  currentTick: bigint,
+  currentTick: number,
   isXToY: boolean
 ) => {
-  const parsedTickSpacing = Number(tickSpacing)
-  const parsedCurrentTick = Number(currentTick)
-  const tickDelta = getTickAtSqrtPriceDelta(parsedTickSpacing, minimumRange, concentration)
-  const lowerTick = parsedCurrentTick - (minimumRange / 2 + tickDelta) * parsedTickSpacing
-  const upperTick = parsedCurrentTick + (minimumRange / 2 + tickDelta) * parsedTickSpacing
+  const tickDelta = getTickAtSqrtPriceDelta(tickSpacing, minimumRange, concentration)
+  const lowerTick = currentTick - (minimumRange / 2 + tickDelta) * tickSpacing
+  const upperTick = currentTick + (minimumRange / 2 + tickDelta) * tickSpacing
 
   return {
-    leftRange: BigInt(isXToY ? lowerTick : upperTick),
-    rightRange: BigInt(isXToY ? upperTick : lowerTick)
+    leftRange: isXToY ? lowerTick : upperTick,
+    rightRange: isXToY ? upperTick : lowerTick
   }
 }
 
@@ -990,8 +984,8 @@ export const createLiquidityPlot = (
   rawTicks: LiquidityTick[],
   tickSpacing: number,
   isXtoY: boolean,
-  tokenXDecimal: bigint,
-  tokenYDecimal: bigint
+  tokenXDecimal: number,
+  tokenYDecimal: number
 ): PlotTickData[] => {
   const sortedTicks = rawTicks.sort((a, b) => Number(a.index - b.index))
   const parsedTicks = rawTicks.length ? calculateLiquidityBreakpoints(sortedTicks) : []
@@ -1029,7 +1023,7 @@ export const createLiquidityPlot = (
       const price = calcPrice(tickIndex - tickSpacing, isXtoY, tokenXDecimal, tokenYDecimal)
       ticksData.push({
         x: price,
-        y: +printBigint(ticks[i - 1].liqudity, 12n), // TODO use constant
+        y: +printBigint(ticks[i - 1].liqudity, 12), // TODO use constant
         index: tickIndex - tickSpacing
       })
     }
@@ -1037,7 +1031,7 @@ export const createLiquidityPlot = (
     const price = calcPrice(tickIndex, isXtoY, tokenXDecimal, tokenYDecimal)
     ticksData.push({
       x: price,
-      y: +printBigint(ticks[i].liqudity, 12n), // TODO use constant
+      y: +printBigint(ticks[i].liqudity, 12), // TODO use constant
       index: tickIndex
     })
   })

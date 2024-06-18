@@ -19,7 +19,7 @@ export interface IPriceRangePlot {
   midPrice?: TickPlotPositionData
   leftRange: TickPlotPositionData
   rightRange: TickPlotPositionData
-  onChangeRange?: (left: bigint, right: bigint) => void
+  onChangeRange?: (left: number, right: number) => void
   style?: React.CSSProperties
   className?: string
   disabled?: boolean
@@ -29,9 +29,9 @@ export interface IPriceRangePlot {
   zoomPlus: () => void
   loading?: boolean
   isXtoY: boolean
-  xDecimal: bigint
-  yDecimal: bigint
-  tickSpacing: bigint
+  xDecimal: number
+  yDecimal: number
+  tickSpacing: number
   isDiscrete?: boolean
   coverOnLoading?: boolean
   hasError?: boolean
@@ -326,31 +326,31 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
     position => {
       const nearest = nearestTickIndex(
         plotMin + position * (plotMax - plotMin),
-        Number(tickSpacing),
+        tickSpacing,
         isXtoY,
         xDecimal,
         yDecimal
       )
       onChangeRange?.(
         isXtoY
-          ? BigInt(Math.min(Number(rightRange.index - Number(tickSpacing)), Number(nearest)))
-          : BigInt(Math.max(Number(rightRange.index + Number(tickSpacing)), Number(nearest))),
-        BigInt(rightRange.index)
+          ? Math.min(rightRange.index - tickSpacing, nearest)
+          : Math.max(rightRange.index + tickSpacing, nearest),
+        rightRange.index
       )
     },
     position => {
       const nearest = nearestTickIndex(
         plotMin + position * (plotMax - plotMin),
-        Number(tickSpacing),
+        tickSpacing,
         isXtoY,
         xDecimal,
         yDecimal
       )
       onChangeRange?.(
-        BigInt(leftRange.index),
+        leftRange.index,
         isXtoY
-          ? BigInt(Math.max(Number(leftRange.index + Number(tickSpacing)), Number(nearest)))
-          : BigInt(Math.min(Number(leftRange.index - Number(tickSpacing)), Number(nearest)))
+          ? Math.max(leftRange.index + tickSpacing, nearest)
+          : Math.min(leftRange.index - tickSpacing, nearest)
       )
     },
     plotMin,

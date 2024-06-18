@@ -180,7 +180,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
         ? tokens[tokenAIndex].decimals
         : tokens[tokenBIndex].decimals
     }
-    return 0n
+    return 0
   }, [tokenAIndex, tokenBIndex, tokens])
 
   const yDecimal = useMemo(() => {
@@ -190,7 +190,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
         ? tokens[tokenBIndex].decimals
         : tokens[tokenAIndex].decimals
     }
-    return 0n
+    return 0
   }, [tokenAIndex, tokenBIndex, tokens])
 
   const [feeIndex, setFeeIndex] = useState(0)
@@ -594,7 +594,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       isXtoY={isXtoY}
       xDecimal={xDecimal}
       yDecimal={yDecimal}
-      tickSpacing={BigInt(10)}
+      tickSpacing={10}
       isWaitingForNewPool={isWaitingForNewPool}
       poolIndex={poolIndex}
       currentPairReversed={currentPairReversed}

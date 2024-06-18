@@ -17,10 +17,10 @@ import { Price, getMaxTick, getMinTick } from '@wasm'
 export interface IPoolInit {
   tokenASymbol: string
   tokenBSymbol: string
-  onChangeRange: (leftIndex: number | bigint, rightIndex: number | bigint) => void
+  onChangeRange: (leftIndex: number, rightIndex: number) => void
   isXtoY: boolean
-  xDecimal: bigint
-  yDecimal: bigint
+  xDecimal: number
+  yDecimal: number
   tickSpacing: number
   midPrice: number
   onChangeMidPrice: (mid: Price) => void

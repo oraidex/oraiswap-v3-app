@@ -81,9 +81,9 @@ export const Primary: Story = {
       <NewPosition
         midPrice={{ x: 1234, index: 23 }}
         currentPriceSqrt={123n}
-        tickSpacing={0n}
-        xDecimal={9n}
-        yDecimal={12n}
+        tickSpacing={0}
+        xDecimal={9}
+        yDecimal={12}
         commonTokens={[]}
         handleAddToken={fn()}
         onChangePositionTokens={fn()}

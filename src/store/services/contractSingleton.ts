@@ -91,7 +91,7 @@ export default class SingletonOraiswapV3 {
           address: token,
           balance: BigInt(balance.balance),
           symbol: symbol,
-          decimals: BigInt(decimals),
+          decimals,
           name: name
         }
       })

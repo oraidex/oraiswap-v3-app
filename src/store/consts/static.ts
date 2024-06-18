@@ -24,7 +24,7 @@ export interface TokenPriceData {
 export interface Token {
   symbol: string
   address: string
-  decimals: bigint
+  decimals: number
   name: string
   logoURI: string
   balance?: bigint
@@ -141,7 +141,7 @@ export const FaucetTokenList = {
 export const TOKEN1: Token = {
   symbol: 'TOKEN1',
   address: 'orai1z3zd5fk60ev5tf8slmr5tjuhp2qmhkvhcf84ajk27un5h0tgz4fql075rt',
-  decimals: 6n,
+  decimals: 6,
   name: 'TOKEN1',
   logoURI:
     'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/9n4nbM75f5Ui33ZbPYXn59EwSgE8CGsHtAeTH5YFeJ9E/logo.png',
@@ -150,7 +150,7 @@ export const TOKEN1: Token = {
 export const TOKEN2: Token = {
   symbol: 'TOKEN2',
   address: 'orai154a9fxn9wcyfsxnjkgm4ql4spyvhfu7j5twpzwwx2077ts0uwtps66y70s',
-  decimals: 6n,
+  decimals: 6,
   name: 'TOKEN2',
   logoURI:
     'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/9n4nbM75f5Ui33ZbPYXn59EwSgE8CGsHtAeTH5YFeJ9E/logo.png',
@@ -160,7 +160,7 @@ export const TOKEN2: Token = {
 export const BTC: Token = {
   symbol: 'BTC',
   address: TESTNET_BTC_ADDRESS,
-  decimals: 8n,
+  decimals: 8,
   name: 'Bitcoin',
   logoURI:
     'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/9n4nbM75f5Ui33ZbPYXn59EwSgE8CGsHtAeTH5YFeJ9E/logo.png',
@@ -170,7 +170,7 @@ export const BTC: Token = {
 export const ETH: Token = {
   symbol: 'ETH',
   address: TESTNET_ETH_ADDRESS,
-  decimals: 18n,
+  decimals: 18,
   name: 'Ether',
   logoURI:
     'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/2FPyTwcZLUg1MDrwsyoP4D6s1tM7hAkHYRjkNb5w6Pxk/logo.png',
@@ -180,7 +180,7 @@ export const ETH: Token = {
 export const USDC: Token = {
   symbol: 'USDC',
   address: TESTNET_USDC_ADDRESS,
-  decimals: 6n,
+  decimals: 6,
   name: 'USDC',
   logoURI:
     'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png',
@@ -190,7 +190,7 @@ export const USDC: Token = {
 export const ORAI: Token = {
   symbol: 'ORAI',
   address: 'orai',
-  decimals: 6n,
+  decimals: 6,
   name: 'Oraichain Native Token',
   logoURI: 'https://assets.coingecko.com/coins/images/12931/standard/orai.png',
   coingeckoId: 'oraichain-token'
@@ -199,7 +199,7 @@ export const ORAI: Token = {
 export const USDT: Token = {
   symbol: 'USDT',
   address: 'orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh',
-  decimals: 6n,
+  decimals: 6,
   name: 'Tether USD',
   logoURI: 'https://assets.coingecko.com/coins/images/325/standard/Tether.png',
   coingeckoId: 'tether'

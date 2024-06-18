@@ -42,8 +42,8 @@ export interface INewPosition {
   midPrice: TickPlotPositionData
   setMidPrice: (mid: TickPlotPositionData) => void
   addLiquidityHandler: (
-    leftTickIndex: bigint,
-    rightTickIndex: bigint,
+    leftTickIndex: number,
+    rightTickIndex: number,
     xAmount: TokenAmount,
     yAmount: TokenAmount,
     slippage: bigint
@@ -69,9 +69,9 @@ export interface INewPosition {
   noConnectedBlockerProps: INoConnected
   progress: ProgressState
   isXtoY: boolean
-  xDecimal: bigint
-  yDecimal: bigint
-  tickSpacing: bigint
+  xDecimal: number
+  yDecimal: number
+  tickSpacing: number
   isWaitingForNewPool: boolean
   poolIndex: number | null
   currentPairReversed: boolean | null
@@ -224,12 +224,12 @@ export const NewPosition: React.FC<INewPosition> = ({
     return trimLeadingZeros(printBigint(result, tokens[printIndex].decimals))
   }
 
-  const getTicksInsideRange = (left: bigint, right: bigint, isXtoY: boolean) => {
-    const leftMax = isXtoY ? getMinTick(Number(tickSpacing)) : getMaxTick(Number(tickSpacing))
-    const rightMax = isXtoY ? getMaxTick(Number(tickSpacing)) : getMinTick(Number(tickSpacing))
+  const getTicksInsideRange = (left: number, right: number, isXtoY: boolean) => {
+    const leftMax = isXtoY ? getMinTick(tickSpacing) : getMaxTick(tickSpacing)
+    const rightMax = isXtoY ? getMaxTick(tickSpacing) : getMinTick(tickSpacing)
 
-    let leftInRange
-    let rightInRange
+    let leftInRange: number
+    let rightInRange: number
 
     if (isXtoY) {
       leftInRange = left < leftMax ? leftMax : left
@@ -242,9 +242,9 @@ export const NewPosition: React.FC<INewPosition> = ({
     return { leftInRange, rightInRange }
   }
 
-  const onChangeRange = (left: bigint, right: bigint) => {
-    let leftRange: bigint
-    let rightRange: bigint
+  const onChangeRange = (left: number, right: number) => {
+    let leftRange: number
+    let rightRange: number
 
     if (positionOpeningMethod === 'range') {
       const { leftInRange, rightInRange } = getTicksInsideRange(left, right, isXtoY)
@@ -357,15 +357,11 @@ export const NewPosition: React.FC<INewPosition> = ({
         tickSpacing,
         value,
         2,
-        BigInt(midPrice.index),
+        midPrice.index,
         isXtoY
       )
 
-      const { leftInRange, rightInRange } = getTicksInsideRange(
-        BigInt(leftRange),
-        BigInt(rightRange),
-        isXtoY
-      )
+      const { leftInRange, rightInRange } = getTicksInsideRange(leftRange, rightRange, isXtoY)
 
       if (leftInRange !== leftRange || rightInRange !== rightRange) {
         minimumSliderIndex = index + 1
@@ -387,7 +383,7 @@ export const NewPosition: React.FC<INewPosition> = ({
 
   useEffect(() => {
     if (!ticksLoading && positionOpeningMethod === 'range') {
-      onChangeRange(BigInt(leftRange), BigInt(rightRange))
+      onChangeRange(leftRange, rightRange)
     }
   }, [midPrice.index])
 
@@ -499,8 +495,8 @@ export const NewPosition: React.FC<INewPosition> = ({
               const tokenBDecimals = tokens[tokenBIndex].decimals
               console.log({ tokenADeposit, tokenBDeposit, PERCENTAGE_DENOMINATOR })
               addLiquidityHandler(
-                BigInt(leftRange),
-                BigInt(rightRange),
+                leftRange,
+                rightRange,
                 isXtoY
                   ? convertBalanceToBigint(tokenADeposit, tokenADecimals)
                   : convertBalanceToBigint(tokenBDeposit, tokenBDecimals),
