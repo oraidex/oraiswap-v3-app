@@ -30,7 +30,7 @@ import MarketIdLabel from './MarketIdLabel/MarketIdLabel'
 import PoolInit from './PoolInit/PoolInit'
 import RangeSelector from './RangeSelector/RangeSelector'
 import useStyles from './style'
-import { Price, TokenAmount, getMaxTick, getMinTick } from '@wasm'
+import { Price, TokenAmount, get_max_tick, get_min_tick } from '@wasm'
 
 export interface INewPosition {
   initialTokenFrom: string
@@ -155,8 +155,8 @@ export const NewPosition: React.FC<INewPosition> = ({
     initialOpeningPositionMethod
   )
 
-  const [leftRange, setLeftRange] = useState(getMinTick(tickSpacing))
-  const [rightRange, setRightRange] = useState(getMaxTick(tickSpacing))
+  const [leftRange, setLeftRange] = useState(get_min_tick(tickSpacing))
+  const [rightRange, setRightRange] = useState(get_max_tick(tickSpacing))
 
   const [tokenAIndex, setTokenAIndex] = useState<number | null>(null)
   const [tokenBIndex, setTokenBIndex] = useState<number | null>(null)
@@ -225,8 +225,8 @@ export const NewPosition: React.FC<INewPosition> = ({
   }
 
   const getTicksInsideRange = (left: bigint, right: bigint, isXtoY: boolean) => {
-    const leftMax = isXtoY ? getMinTick(tickSpacing) : getMaxTick(tickSpacing)
-    const rightMax = isXtoY ? getMaxTick(tickSpacing) : getMinTick(tickSpacing)
+    const leftMax = isXtoY ? get_min_tick(tickSpacing) : get_max_tick(tickSpacing)
+    const rightMax = isXtoY ? get_max_tick(tickSpacing) : get_min_tick(tickSpacing)
 
     let leftInRange
     let rightInRange

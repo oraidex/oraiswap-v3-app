@@ -1,7 +1,14 @@
 import { CosmWasmClient, SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 import { OraiswapV3Client, OraiswapV3QueryClient } from '../../sdk'
 import { OraiswapTokenClient, OraiswapTokenQueryClient } from '@oraichain/oraidex-contracts-sdk'
-import { Tickmap, getMaxTick, getMinTick, PoolKey, LiquidityTick, positionToTick } from '@wasm'
+import {
+  Tickmap,
+  get_max_tick,
+  get_min_tick,
+  PoolKey,
+  LiquidityTick,
+  position_to_tick
+} from '@wasm'
 import {
   CHUNK_SIZE,
   LIQUIDITY_TICKS_LIMIT,
@@ -64,13 +71,13 @@ export default class SingletonOraiswapV3 {
 
   public static async getRawTickmap(
     poolKey: PoolKey,
-    lowerTick: bigint,
-    upperTick: bigint,
+    lowerTick: number,
+    upperTick: number,
     xToY: boolean
   ): Promise<ArrayOfTupleOfUint16AndUint64> {
     const tickmaps = await this.dex.tickMap({
-      lowerTickIndex: Number(lowerTick),
-      upperTickIndex: Number(upperTick),
+      lowerTickIndex: lowerTick,
+      upperTickIndex: upperTick,
       xToY,
       poolKey
     })
@@ -119,20 +126,20 @@ export default class SingletonOraiswapV3 {
   }
 
   public static async getFullTickmap(poolKey: PoolKey): Promise<Tickmap> {
-    const maxTick = getMaxTick(poolKey.fee_tier.tick_spacing)
-    let lowerTick = getMinTick(poolKey.fee_tier.tick_spacing)
+    const maxTick = get_max_tick(poolKey.fee_tier.tick_spacing)
+    let lowerTick = get_min_tick(poolKey.fee_tier.tick_spacing)
 
     const xToY = false
 
     const promises = []
-    const tickSpacing = BigInt(poolKey.fee_tier.tick_spacing)
+    const tickSpacing = poolKey.fee_tier.tick_spacing
     assert(tickSpacing <= 100)
 
     assert(MAX_TICKMAP_QUERY_SIZE > 3)
-    assert(CHUNK_SIZE * 2n > tickSpacing)
+    assert(CHUNK_SIZE * 2 > tickSpacing)
     // move back 1 chunk since the range is inclusive
     // then move back additional 2 chunks to ensure that adding tickspacing won't exceed the query limit
-    const jump = (MAX_TICKMAP_QUERY_SIZE - 3n) * CHUNK_SIZE
+    const jump = (MAX_TICKMAP_QUERY_SIZE - 3) * CHUNK_SIZE
 
     while (lowerTick <= maxTick) {
       let nextTick = lowerTick + jump
@@ -150,8 +157,8 @@ export default class SingletonOraiswapV3 {
         upperTick = maxTick
       }
 
-      assert(upperTick % tickSpacing === 0n)
-      assert(lowerTick % tickSpacing === 0n)
+      assert(upperTick % tickSpacing === 0)
+      assert(lowerTick % tickSpacing === 0)
 
       const result = this.getRawTickmap(poolKey, lowerTick, upperTick, xToY).then(
         tickmap => tickmap.map(([a, b]) => [BigInt(a), BigInt(b)]) as [bigint, bigint][]
@@ -172,17 +179,17 @@ export default class SingletonOraiswapV3 {
     poolKey: PoolKey,
     tickmap: Tickmap
   ): Promise<LiquidityTick[]> {
-    const tickIndexes: bigint[] = []
+    const tickIndexes: number[] = []
     for (const [chunkIndex, chunk] of tickmap.bitmap.entries()) {
-      for (let bit = 0n; bit < CHUNK_SIZE; bit++) {
-        const checkedBit = chunk & (1n << bit)
+      for (let bit = 0; bit < CHUNK_SIZE; bit++) {
+        const checkedBit = chunk & (1n << BigInt(bit))
         if (checkedBit) {
-          const tickIndex = positionToTick(chunkIndex, bit, poolKey.fee_tier.tick_spacing)
+          const tickIndex = position_to_tick(Number(chunkIndex), bit, poolKey.fee_tier.tick_spacing)
           tickIndexes.push(tickIndex)
         }
       }
     }
-    const tickLimit = integerSafeCast(LIQUIDITY_TICKS_LIMIT)
+    const tickLimit = LIQUIDITY_TICKS_LIMIT
     const promises: Promise<LiquidityTick[]>[] = []
     for (let i = 0; i < tickIndexes.length; i += tickLimit) {
       promises.push(

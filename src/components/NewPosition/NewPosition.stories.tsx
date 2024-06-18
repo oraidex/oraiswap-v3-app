@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { fn } from '@storybook/test'
 import { MemoryRouter } from 'react-router-dom'
 import NewPosition from './NewPosition'
-import { newPoolKey } from '@wasm'
+import { new_pool_key } from '@wasm'
 
 const meta = {
   title: 'PageComponent/NewPosition',
@@ -69,7 +69,7 @@ export const Primary: Story = {
     calcAmount: fn(),
     loadingTicksAndTickMaps: false,
     poolKey: poolKeyToString(
-      newPoolKey('0x123132423423', '0x123132423423', { fee: 1, tick_spacing: 1 })
+      new_pool_key('0x123132423423', '0x123132423423', { fee: 1, tick_spacing: 1 })
     ),
     noConnectedBlockerProps: {
       onConnect: fn(),
@@ -79,7 +79,7 @@ export const Primary: Story = {
   render: () => {
     return (
       <NewPosition
-        midPrice={{ x: 1234, index: 23n }}
+        midPrice={{ x: 1234, index: 23 }}
         currentPriceSqrt={123n}
         tickSpacing={0n}
         xDecimal={9n}
@@ -126,7 +126,7 @@ export const Primary: Story = {
         calcAmount={() => 1n}
         loadingTicksAndTickMaps={false}
         poolKey={poolKeyToString(
-          newPoolKey('0x123132423423', '0x123132423423', { fee: 1, tick_spacing: 1 })
+          new_pool_key('0x123132423423', '0x123132423423', { fee: 1, tick_spacing: 1 })
         )}
         noConnectedBlockerProps={{
           onConnect: fn(),

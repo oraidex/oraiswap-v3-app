@@ -18,6 +18,7 @@ import {
   createLoaderKey,
   deserializeTickmap,
   findPairs,
+  parse,
   poolKeyToString,
   printBigint
 } from '@store/consts/utils'
@@ -30,7 +31,7 @@ import SingletonOraiswapV3 from '@store/services/contractSingleton'
 import { closeSnackbar } from 'notistack'
 import { all, call, put, select, spawn, takeEvery } from 'typed-redux-saga'
 import { fetchBalances } from './wallet'
-import { SwapError, simulateSwap } from '@wasm'
+import { Pool, SwapError, simulate_swap } from '@wasm'
 
 export async function handleSwap(action: PayloadAction<Omit<Swap, 'txid'>>) {
   const { poolKey, tokenFrom, slippage, amountIn, byAmountIn, estimatedPriceAfterSwap, tokenTo } =
@@ -54,7 +55,11 @@ export async function handleSwap(action: PayloadAction<Omit<Swap, 'txid'>>) {
 
   const xToY = tokenFrom.toString() === poolKey.token_x
 
-  const sqrtPriceLimit = calculateSqrtPriceAfterSlippage(estimatedPriceAfterSwap, slippage, !xToY)
+  const sqrtPriceLimit = calculateSqrtPriceAfterSlippage(
+    BigInt(estimatedPriceAfterSwap),
+    slippage,
+    !xToY
+  )
 
   let calculatedAmountIn = amountIn
   if (!byAmountIn) {
@@ -198,10 +203,10 @@ export function* handleGetSimulateResult(action: PayloadAction<Simulate>) {
       const xToY = fromToken.toString() === pool.pool_key.token_x
 
       try {
-        const result = simulateSwap(
+        const result = simulate_swap(
           deserializeTickmap(allTickmaps[poolKeyToString(pool.pool_key)]),
           pool.pool_key.fee_tier,
-          allPools[poolKeyToString(pool.pool_key)],
+          parse(allPools[poolKeyToString(pool.pool_key)].pool),
           allTicks[poolKeyToString(pool.pool_key)],
           xToY,
           byAmountIn
@@ -211,22 +216,22 @@ export function* handleGetSimulateResult(action: PayloadAction<Simulate>) {
           xToY ? MIN_SQRT_PRICE : MAX_SQRT_PRICE
         )
 
-        if (result.globalInsufficientLiquidity) {
+        if (result.global_insufficient_liquidity) {
           errors.push(SwapError.InsufficientLiquidity)
           continue
         }
 
-        if (result.maxTicksCrossed) {
+        if (result.max_ticks_crossed) {
           errors.push(SwapError.MaxTicksCrossed)
           continue
         }
 
-        if (result.stateOutdated) {
+        if (result.state_outdated) {
           errors.push(SwapError.StateOutdated)
           continue
         }
 
-        const calculatedAmountOut = byAmountIn ? result.amountOut : result.amountOut + result.fee
+        const calculatedAmountOut = byAmountIn ? result.amount_out : result.amount_out + result.fee
 
         if (calculatedAmountOut === 0n) {
           errors.push(SwapError.AmountIsZero)
@@ -237,10 +242,10 @@ export function* handleGetSimulateResult(action: PayloadAction<Simulate>) {
           amountOut = calculatedAmountOut
           poolKey = pool.pool_key
           priceImpact = +printBigint(
-            calculatePriceImpact(BigInt(pool.pool.sqrt_price), BigInt(result.targetSqrtPrice)),
+            calculatePriceImpact(BigInt(pool.pool.sqrt_price), BigInt(result.target_sqrt_price)),
             PERCENTAGE_SCALE
           )
-          targetSqrtPrice = result.targetSqrtPrice
+          targetSqrtPrice = result.target_sqrt_price
         }
       } catch (e) {
         console.log(e)
