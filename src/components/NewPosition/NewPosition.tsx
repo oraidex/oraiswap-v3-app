@@ -155,8 +155,8 @@ export const NewPosition: React.FC<INewPosition> = ({
     initialOpeningPositionMethod
   )
 
-  const [leftRange, setLeftRange] = useState(get_min_tick(tickSpacing))
-  const [rightRange, setRightRange] = useState(get_max_tick(tickSpacing))
+  const [leftRange, setLeftRange] = useState(get_min_tick(Number(tickSpacing)))
+  const [rightRange, setRightRange] = useState(get_max_tick(Number(tickSpacing)))
 
   const [tokenAIndex, setTokenAIndex] = useState<number | null>(null)
   const [tokenBIndex, setTokenBIndex] = useState<number | null>(null)
@@ -225,8 +225,8 @@ export const NewPosition: React.FC<INewPosition> = ({
   }
 
   const getTicksInsideRange = (left: bigint, right: bigint, isXtoY: boolean) => {
-    const leftMax = isXtoY ? get_min_tick(tickSpacing) : get_max_tick(tickSpacing)
-    const rightMax = isXtoY ? get_max_tick(tickSpacing) : get_min_tick(tickSpacing)
+    const leftMax = isXtoY ? get_min_tick(Number(tickSpacing)) : get_max_tick(Number(tickSpacing))
+    const rightMax = isXtoY ? get_max_tick(Number(tickSpacing)) : get_min_tick(Number(tickSpacing))
 
     let leftInRange
     let rightInRange
@@ -257,8 +257,8 @@ export const NewPosition: React.FC<INewPosition> = ({
     leftRange = left
     rightRange = right
 
-    setLeftRange(left)
-    setRightRange(right)
+    setLeftRange(Number(left))
+    setRightRange(Number(right))
 
     if (
       tokenAIndex !== null &&
@@ -303,8 +303,8 @@ export const NewPosition: React.FC<INewPosition> = ({
   const onChangeMidPrice = (mid: Price) => {
     const convertedMid = BigInt(mid)
     setMidPrice({
-      index: convertedMid,
-      x: calcPrice(convertedMid, isXtoY, xDecimal, yDecimal)
+      index: Number(convertedMid),
+      x: calcPrice(Number(convertedMid), isXtoY, xDecimal, yDecimal)
     })
     if (tokenAIndex !== null && (isXtoY ? rightRange > convertedMid : rightRange < convertedMid)) {
       const deposit = tokenADeposit
@@ -357,7 +357,7 @@ export const NewPosition: React.FC<INewPosition> = ({
         tickSpacing,
         value,
         2,
-        midPrice.index,
+        BigInt(midPrice.index),
         isXtoY
       )
 
@@ -387,7 +387,7 @@ export const NewPosition: React.FC<INewPosition> = ({
 
   useEffect(() => {
     if (!ticksLoading && positionOpeningMethod === 'range') {
-      onChangeRange(leftRange, rightRange)
+      onChangeRange(BigInt(leftRange), BigInt(rightRange))
     }
   }, [midPrice.index])
 
@@ -499,8 +499,8 @@ export const NewPosition: React.FC<INewPosition> = ({
               const tokenBDecimals = tokens[tokenBIndex].decimals
               console.log({ tokenADeposit, tokenBDeposit, PERCENTAGE_DENOMINATOR })
               addLiquidityHandler(
-                leftRange,
-                rightRange,
+                BigInt(leftRange),
+                BigInt(rightRange),
                 isXtoY
                   ? convertBalanceToBigint(tokenADeposit, tokenADecimals)
                   : convertBalanceToBigint(tokenBDeposit, tokenBDecimals),
@@ -534,8 +534,8 @@ export const NewPosition: React.FC<INewPosition> = ({
               !isWaitingForNewPool &&
               determinePositionTokenBlock(
                 BigInt(currentPriceSqrt),
-                BigInt(Math.min(Number(leftRange), Number(rightRange))),
-                BigInt(Math.max(Number(leftRange), Number(rightRange))),
+                Math.min(Number(leftRange), Number(rightRange)),
+                Math.max(Number(leftRange), Number(rightRange)),
                 isXtoY
               ) === PositionTokenBlock.A,
 
@@ -564,8 +564,8 @@ export const NewPosition: React.FC<INewPosition> = ({
               !isWaitingForNewPool &&
               determinePositionTokenBlock(
                 BigInt(currentPriceSqrt),
-                BigInt(Math.min(Number(leftRange), Number(rightRange))),
-                BigInt(Math.max(Number(leftRange), Number(rightRange))),
+                Math.min(Number(leftRange), Number(rightRange)),
+                Math.max(Number(leftRange), Number(rightRange)),
                 isXtoY
               ) === PositionTokenBlock.B,
             blockerInfo: 'Range only for single-asset deposit.',
@@ -653,7 +653,7 @@ export const NewPosition: React.FC<INewPosition> = ({
           <PoolInit
             onChangeRange={onChangeRange}
             isXtoY={isXtoY}
-            tickSpacing={tickSpacing}
+            tickSpacing={Number(tickSpacing)}
             xDecimal={xDecimal}
             yDecimal={yDecimal}
             tokenASymbol={

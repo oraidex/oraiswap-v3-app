@@ -11,7 +11,6 @@ import {
   createLoaderKey,
   deserializeTickmap,
   findPairs,
-  parse,
   poolKeyToString,
   printBigint,
   swapWithSlippageTx
@@ -23,7 +22,7 @@ import { poolTicks, pools, tickMaps, tokens } from '@store/selectors/pools'
 import { closeSnackbar } from 'notistack'
 import { all, call, put, select, spawn, takeEvery } from 'typed-redux-saga'
 import { fetchBalances } from './wallet'
-import { CalculateSwapResult, Pool, SqrtPrice, SwapError, simulate_swap } from '@wasm'
+import { CalculateSwapResult, SwapError, simulate_swap } from '@wasm'
 import { fetchTicksAndTickMaps } from './pools'
 
 export function* handleSwap(action: PayloadAction<Omit<Swap, 'txid'>>): Generator {

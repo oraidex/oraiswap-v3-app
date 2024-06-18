@@ -1,14 +1,12 @@
 import { PayloadAction } from '@reduxjs/toolkit'
-import { FaucetTokenList, TokenAirdropAmount } from '@store/consts/static'
-import { Network, createLoaderKey, getTokenBalances } from '@store/consts/utils'
+import { FaucetTokenList } from '@store/consts/static'
+import { getTokenBalances } from '@store/consts/utils'
 import { actions as positionsActions } from '@store/reducers/positions'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
 import { ITokenBalance, Status, actions, actions as walletActions } from '@store/reducers/wallet'
-import { networkType } from '@store/selectors/connection'
-import { address, status } from '@store/selectors/wallet'
+import { status } from '@store/selectors/wallet'
 import SingletonOraiswapV3 from '@store/services/contractSingleton'
 
-import { closeSnackbar } from 'notistack'
 import {
   SagaGenerator,
   all,
@@ -32,6 +30,7 @@ type FrameSystemAccountInfo = {
   providers: number
   sufficients: number
 }
+
 export function* getBalance(walletAddress: string): SagaGenerator<string> {
   return ''
 }

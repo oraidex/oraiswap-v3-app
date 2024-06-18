@@ -102,26 +102,26 @@ export const WrappedPositionsList: React.FC = () => {
 
       const lowerPrice = Number(
         calcYPerXPriceByTickIndex(
-          BigInt(position.lower_tick_index),
-          position.tokenX.decimals,
-          position.tokenY.decimals
+          Number(position.lower_tick_index),
+          BigInt(position.tokenX.decimals),
+          BigInt(position.tokenY.decimals)
         )
       )
       const upperPrice = Number(
         calcYPerXPriceByTickIndex(
-          BigInt(position.upper_tick_index),
-          position.tokenX.decimals,
-          position.tokenY.decimals
+          Number(position.upper_tick_index),
+          BigInt(position.tokenX.decimals),
+          BigInt(position.tokenY.decimals)
         )
       )
 
       const min = Math.min(lowerPrice, upperPrice)
       const max = Math.max(lowerPrice, upperPrice)
 
-      let tokenXLiq, tokenYLiq
+      let tokenXLiq: any, tokenYLiq: any
 
-      let x = 0n
-      let y = 0n
+      const x = 0n
+      const y = 0n
 
       if (position.poolData) {
         // ;[x, y] = calculateTokenAmounts(position.poolData, position)
@@ -140,9 +140,9 @@ export const WrappedPositionsList: React.FC = () => {
       }
 
       const currentPrice = calcYPerXPriceByTickIndex(
-        position.poolData?.currentTickIndex ?? 0n,
-        position.tokenX.decimals,
-        position.tokenY.decimals
+        Number(position.poolData?.currentTickIndex ?? 0n),
+        BigInt(position.tokenX.decimals),
+        BigInt(position.tokenY.decimals)
       )
 
       const valueX = tokenXLiq + tokenYLiq / currentPrice

@@ -31,8 +31,7 @@ import { closeSnackbar } from 'notistack'
 import { all, call, fork, join, put, select, spawn, takeEvery, takeLatest } from 'typed-redux-saga'
 import { fetchTicksAndTickMaps } from './pools'
 import { fetchBalances } from './wallet'
-import { PoolKey, new_pool_key, calculate_sqrt_price, toSqrtPrice } from '@wasm'
-import { ExecuteResult } from '@cosmjs/cosmwasm-stargate'
+import { PoolKey, new_pool_key, to_sqrt_price } from '@wasm'
 
 function* handleInitPosition(action: PayloadAction<InitPositionData>): Generator {
   const {
@@ -40,8 +39,8 @@ function* handleInitPosition(action: PayloadAction<InitPositionData>): Generator
     lowerTick,
     upperTick,
     spotSqrtPrice,
-    tokenXAmount,
-    tokenYAmount,
+    // tokenXAmount,
+    // tokenYAmount,
     liquidityDelta,
     initPool,
     slippageTolerance
@@ -74,11 +73,11 @@ function* handleInitPosition(action: PayloadAction<InitPositionData>): Generator
     // const psp22 = yield* call([psp22Singleton, psp22Singleton.loadInstance], api, network)
 
     const [xAmountWithSlippage, yAmountWithSlippage] = calculateTokenAmountsWithSlippage(
-      BigInt(fee_tier.tick_spacing),
+      fee_tier.tick_spacing,
       spotSqrtPrice,
       liquidityDelta,
-      lowerTick,
-      upperTick,
+      Number(lowerTick),
+      Number(upperTick),
       Number(slippageTolerance),
       true
     )
@@ -93,7 +92,7 @@ function* handleInitPosition(action: PayloadAction<InitPositionData>): Generator
 
     if (initPool) {
       const initTick = 0
-      const initSqrtPrice = toSqrtPrice(1n, 0n)
+      const initSqrtPrice = to_sqrt_price(1, 0)
       const createTx = yield* call(createPoolTx, poolKey, initSqrtPrice.toString(), initTick)
       txs.push(createTx)
     }
@@ -249,7 +248,7 @@ export function* handleGetCurrentPlotTicks(
       const data = createPlaceholderLiquidityPlot(
         action.payload.isXtoY,
         0,
-        BigInt(poolKey.fee_tier.tick_spacing),
+        poolKey.fee_tier.tick_spacing,
         xDecimal,
         yDecimal
       )
@@ -259,7 +258,7 @@ export function* handleGetCurrentPlotTicks(
 
     const ticksData = createLiquidityPlot(
       rawTicks,
-      BigInt(poolKey.fee_tier.tick_spacing),
+      poolKey.fee_tier.tick_spacing,
       isXtoY,
       xDecimal,
       yDecimal
@@ -270,7 +269,7 @@ export function* handleGetCurrentPlotTicks(
     const data = createPlaceholderLiquidityPlot(
       action.payload.isXtoY,
       10,
-      BigInt(poolKey.fee_tier.tick_spacing),
+      poolKey.fee_tier.tick_spacing,
       xDecimal,
       yDecimal
     )
@@ -287,7 +286,7 @@ export async function handleClaimFeeSingleton(index?: bigint) {
 }
 
 export function* handleClaimFee(action: PayloadAction<HandleClaimFee>) {
-  const { index, addressTokenX, addressTokenY } = action.payload
+  const { index } = action.payload
 
   const loaderKey = createLoaderKey()
   const loaderSigningTx = createLoaderKey()
@@ -348,102 +347,102 @@ export function* handleClaimFee(action: PayloadAction<HandleClaimFee>) {
   }
 }
 
-export function* handleClaimFeeWithAZERO(action: PayloadAction<HandleClaimFee>) {
-  const loaderKey = createLoaderKey()
-  const loaderSigningTx = createLoaderKey()
+// export function* handleClaimFeeWithAZERO(action: PayloadAction<HandleClaimFee>) {
+//   const loaderKey = createLoaderKey()
+//   const loaderSigningTx = createLoaderKey()
 
-  try {
-    yield put(
-      snackbarsActions.add({
-        message: 'Claiming fee...',
-        variant: 'pending',
-        persist: true,
-        key: loaderKey
-      })
-    )
+//   try {
+//     yield put(
+//       snackbarsActions.add({
+//         message: 'Claiming fee...',
+//         variant: 'pending',
+//         persist: true,
+//         key: loaderKey
+//       })
+//     )
 
-    // const psp22 = yield* call([psp22Singleton, psp22Singleton.loadInstance], api, network)
+//     // const psp22 = yield* call([psp22Singleton, psp22Singleton.loadInstance], api, network)
 
-    const txs = []
-    // const claimTx = invariant.claimFeeTx(index, INVARIANT_CLAIM_FEE_OPTIONS)
-    const claimTx = yield* call(SingletonOraiswapV3.dex.claimFee, {
-      index: Number(action.payload.index)
-    })
-    txs.push(claimTx)
+//     const txs = []
+//     // const claimTx = invariant.claimFeeTx(index, INVARIANT_CLAIM_FEE_OPTIONS)
+//     const claimTx = yield* call(SingletonOraiswapV3.dex.claimFee, {
+//       index: Number(action.payload.index)
+//     })
+//     txs.push(claimTx)
 
-    // const approveTx = psp22.approveTx(
-    //   invAddress,
-    //   U128MAX,
+//     // const approveTx = psp22.approveTx(
+//     //   invAddress,
+//     //   U128MAX,
 
-    //   PSP22_APPROVE_OPTIONS
-    // )
-    // txs.push(approveTx)
+//     //   PSP22_APPROVE_OPTIONS
+//     // )
+//     // txs.push(approveTx)
 
-    // const unwrapTx = invariant.withdrawAllWAZEROTx(
+//     // const unwrapTx = invariant.withdrawAllWAZEROTx(
 
-    //   INVARIANT_WITHDRAW_ALL_WAZERO
-    // )
-    // txs.push(unwrapTx)
+//     //   INVARIANT_WITHDRAW_ALL_WAZERO
+//     // )
+//     // txs.push(unwrapTx)
 
-    // const resetApproveTx = psp22.approveTx(
-    //   invAddress,
-    //   0n,
+//     // const resetApproveTx = psp22.approveTx(
+//     //   invAddress,
+//     //   0n,
 
-    //   PSP22_APPROVE_OPTIONS
-    // )
-    txs.push(resetApproveTx)
+//     //   PSP22_APPROVE_OPTIONS
+//     // )
+//     txs.push(resetApproveTx)
 
-    const batchedTx = api.tx.utility.batchAll(txs)
+//     const batchedTx = api.tx.utility.batchAll(txs)
 
-    yield put(
-      snackbarsActions.add({
-        message: 'Signing transaction...',
-        variant: 'pending',
-        persist: true,
-        key: loaderSigningTx
-      })
-    )
+//     yield put(
+//       snackbarsActions.add({
+//         message: 'Signing transaction...',
+//         variant: 'pending',
+//         persist: true,
+//         key: loaderSigningTx
+//       })
+//     )
 
-    const signedBatchedTx = yield* call([batchedTx, batchedTx.signAsync], walletAddress, {
-      signer: adapter.signer as Signer
-    })
+//     const signedBatchedTx = yield* call([batchedTx, batchedTx.signAsync], walletAddress, {
+//       signer: adapter.signer as Signer
+//     })
 
-    closeSnackbar(loaderSigningTx)
-    yield put(snackbarsActions.remove(loaderSigningTx))
+//     closeSnackbar(loaderSigningTx)
+//     yield put(snackbarsActions.remove(loaderSigningTx))
 
-    const txResult = yield* call(sendTx, signedBatchedTx)
+//     const txResult = yield* call(sendTx, signedBatchedTx)
 
-    closeSnackbar(loaderKey)
-    yield put(snackbarsActions.remove(loaderKey))
-    yield put(
-      snackbarsActions.add({
-        message: 'Fee successfully created',
-        variant: 'success',
-        persist: false,
-        txid: txResult.hash
-      })
-    )
+//     closeSnackbar(loaderKey)
+//     yield put(snackbarsActions.remove(loaderKey))
+//     yield put(
+//       snackbarsActions.add({
+//         message: 'Fee successfully created',
+//         variant: 'success',
+//         persist: false,
+//         txid: txResult.hash
+//       })
+//     )
 
-    yield put(actions.getSinglePosition(index))
+//     yield put(actions.getSinglePosition(index))
 
-    yield* call(fetchBalances, [addressTokenX, addressTokenY])
-  } catch (e) {
-    closeSnackbar(loaderSigningTx)
-    yield put(snackbarsActions.remove(loaderSigningTx))
-    closeSnackbar(loaderKey)
-    yield put(snackbarsActions.remove(loaderKey))
+//     yield* call(fetchBalances, [addressTokenX, addressTokenY])
+//   } catch (e) {
+//     closeSnackbar(loaderSigningTx)
+//     yield put(snackbarsActions.remove(loaderSigningTx))
+//     closeSnackbar(loaderKey)
+//     yield put(snackbarsActions.remove(loaderKey))
 
-    yield put(
-      snackbarsActions.add({
-        message: 'Failed to claim fee. Please try again.',
-        variant: 'error',
-        persist: false
-      })
-    )
+//     yield put(
+//       snackbarsActions.add({
+//         message: 'Failed to claim fee. Please try again.',
+//         variant: 'error',
+//         persist: false
+//       })
+//     )
 
-    console.log(e)
-  }
-}
+//     console.log(e)
+//   }
+// }
 
 export function* handleGetSinglePosition(action: PayloadAction<bigint>) {
   const walletAddress = yield* select(address)
@@ -534,84 +533,84 @@ export function* handleClosePosition(action: PayloadAction<ClosePositionData>) {
   }
 }
 
-export function* handleClosePositionWithAZERO(action: PayloadAction<ClosePositionData>) {
-  const loaderSigningTx = createLoaderKey()
-  const loaderKey = createLoaderKey()
+// export function* handleClosePositionWithAZERO(action: PayloadAction<ClosePositionData>) {
+//   const loaderSigningTx = createLoaderKey()
+//   const loaderKey = createLoaderKey()
 
-  try {
-    yield put(
-      snackbarsActions.add({
-        message: 'Removing position...',
-        variant: 'pending',
-        persist: true,
-        key: loaderKey
-      })
-    )
+//   try {
+//     yield put(
+//       snackbarsActions.add({
+//         message: 'Removing position...',
+//         variant: 'pending',
+//         persist: true,
+//         key: loaderKey
+//       })
+//     )
 
-    const { addressTokenX, addressTokenY, positionIndex, onSuccess } = action.payload
+//     const { addressTokenX, addressTokenY, positionIndex, onSuccess } = action.payload
 
-    const txs = []
+//     const txs = []
 
-    const removePositionTx = SingletonOraiswapV3.dex.removePosition({
-      index: Number(positionIndex)
-    })
-    txs.push(removePositionTx)
+//     const removePositionTx = SingletonOraiswapV3.dex.removePosition({
+//       index: Number(positionIndex)
+//     })
+//     txs.push(removePositionTx)
 
-    // const approveTx = psp22.approveTx(invAddress, U128MAX, TESTNET_WAZERO_ADDRESS)
-    // txs.push(approveTx)
+//     // const approveTx = psp22.approveTx(invAddress, U128MAX, TESTNET_WAZERO_ADDRESS)
+//     // txs.push(approveTx)
 
-    // const unwrapTx = invariant.withdrawAllWAZEROTx(TESTNET_WAZERO_ADDRESS)
-    // txs.push(unwrapTx)
+//     // const unwrapTx = invariant.withdrawAllWAZEROTx(TESTNET_WAZERO_ADDRESS)
+//     // txs.push(unwrapTx)
 
-    // const resetApproveTx = psp22.approveTx(invAddress, 0n, TESTNET_WAZERO_ADDRESS)
-    // txs.push(resetApproveTx)
+//     // const resetApproveTx = psp22.approveTx(invAddress, 0n, TESTNET_WAZERO_ADDRESS)
+//     // txs.push(resetApproveTx)
 
-    yield put(
-      snackbarsActions.add({
-        message: 'Signing transaction...',
-        variant: 'pending',
-        persist: true,
-        key: loaderSigningTx
-      })
-    )
+//     yield put(
+//       snackbarsActions.add({
+//         message: 'Signing transaction...',
+//         variant: 'pending',
+//         persist: true,
+//         key: loaderSigningTx
+//       })
+//     )
 
-    closeSnackbar(loaderSigningTx)
-    yield put(snackbarsActions.remove(loaderSigningTx))
+//     closeSnackbar(loaderSigningTx)
+//     yield put(snackbarsActions.remove(loaderSigningTx))
 
-    const txResult = yield* call(sendTx, signedBatchedTx)
+//     const txResult = yield* call(sendTx, signedBatchedTx)
 
-    closeSnackbar(loaderKey)
-    yield put(snackbarsActions.remove(loaderKey))
-    yield put(
-      snackbarsActions.add({
-        message: 'Position successfully removed',
-        variant: 'success',
-        persist: false,
-        txid: txResult.hash
-      })
-    )
+//     closeSnackbar(loaderKey)
+//     yield put(snackbarsActions.remove(loaderKey))
+//     yield put(
+//       snackbarsActions.add({
+//         message: 'Position successfully removed',
+//         variant: 'success',
+//         persist: false,
+//         txid: txResult.hash
+//       })
+//     )
 
-    yield* put(actions.getPositionsList())
-    onSuccess()
+//     yield* put(actions.getPositionsList())
+//     onSuccess()
 
-    yield* call(fetchBalances, [addressTokenX, addressTokenY])
-  } catch (e) {
-    closeSnackbar(loaderSigningTx)
-    yield put(snackbarsActions.remove(loaderSigningTx))
-    closeSnackbar(loaderKey)
-    yield put(snackbarsActions.remove(loaderKey))
+//     yield* call(fetchBalances, [addressTokenX, addressTokenY])
+//   } catch (e) {
+//     closeSnackbar(loaderSigningTx)
+//     yield put(snackbarsActions.remove(loaderSigningTx))
+//     closeSnackbar(loaderKey)
+//     yield put(snackbarsActions.remove(loaderKey))
 
-    yield put(
-      snackbarsActions.add({
-        message: 'Failed to close position. Please try again.',
-        variant: 'error',
-        persist: false
-      })
-    )
+//     yield put(
+//       snackbarsActions.add({
+//         message: 'Failed to close position. Please try again.',
+//         variant: 'error',
+//         persist: false
+//       })
+//     )
 
-    console.log(e)
-  }
-}
+//     console.log(e)
+//   }
+// }
 
 export function* initPositionHandler(): Generator {
   yield* takeEvery(actions.initPosition, handleInitPosition)

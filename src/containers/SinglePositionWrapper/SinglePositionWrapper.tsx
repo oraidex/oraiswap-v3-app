@@ -15,7 +15,7 @@ import {
   printBigint
 } from '@store/consts/utils'
 import { actions as poolsActions } from '@store/reducers/pools'
-import { actions } from '@store/reducers/positions'
+import { TickPlotPositionData, actions } from '@store/reducers/positions'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
 import { Status } from '@store/reducers/wallet'
 import { networkType } from '@store/selectors/connection'
@@ -100,14 +100,15 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
 
   const midPrice = useMemo(() => {
     if (position?.poolData) {
-      return {
-        index: BigInt(position.poolData.pool.current_tick_index),
+      const price: TickPlotPositionData = {
+        index: position.poolData.pool.current_tick_index,
         x: calcYPerXPriceByTickIndex(
           position.poolData.pool.current_tick_index,
           position.tokenX.decimals,
           position.tokenY.decimals
         )
       }
+      return price
     }
 
     return {
@@ -121,7 +122,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
       return {
         index: BigInt(position.lower_tick_index),
         x: calcPrice(
-          BigInt(position.lower_tick_index),
+          position.lower_tick_index,
           true,
           position.tokenX.decimals,
           position.tokenY.decimals
@@ -140,7 +141,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
       return {
         index: BigInt(position.upper_tick_index),
         x: calcPrice(
-          BigInt(position.upper_tick_index),
+          position.upper_tick_index,
           true,
           position.tokenX.decimals,
           position.tokenY.decimals
@@ -215,7 +216,9 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
         last_timestamp: position.poolData.pool.last_timestamp,
         fee_receiver: position.poolData.pool.fee_receiver
       }
-      const [x, y] = calculateTokenAmounts(convertedPool, position)
+      const res = calculateTokenAmounts(convertedPool, position)
+      const x = res.x;
+      const y = res.y;
 
       return [+printBigint(x, position.tokenX.decimals), +printBigint(y, position.tokenY.decimals)]
     }
@@ -243,7 +246,9 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
         last_timestamp: position.poolData.pool.last_timestamp,
         fee_receiver: position.poolData.pool.fee_receiver
       }
-      const [bnX, bnY] = calculateFee(convertedPool, position, lowerTick, upperTick)
+      const res = calculateFee(convertedPool, position, lowerTick, upperTick);
+      const bnX = res.x;
+      const bnY = res.y;
 
       setShowFeesLoader(false)
 
@@ -261,7 +266,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
       return createPlaceholderLiquidityPlot(
         true,
         10,
-        BigInt(position.pool_key.fee_tier.tick_spacing),
+        position.pool_key.fee_tier.tick_spacing,
         position.tokenX.decimals,
         position.tokenY.decimals
       )
@@ -347,9 +352,9 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
         poolAddress={position ? poolKeyToString(position.pool_key) : ''}
         copyPoolAddressHandler={copyPoolAddressHandler}
         detailsData={data}
-        midPrice={midPrice}
-        leftRange={leftRange}
-        rightRange={rightRange}
+        midPrice={midPrice as any}
+        leftRange={leftRange as any}
+        rightRange={rightRange as any}
         currentPrice={current}
         onClickClaimFee={() =>
           dispatch(

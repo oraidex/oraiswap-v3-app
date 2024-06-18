@@ -11,7 +11,7 @@ import PriceRangePlot from '@components/PriceRangePlot/PriceRangePlot'
 import { get_min_tick } from '@wasm'
 
 export interface ISinglePositionPlot {
-  data: PlotTickData[]
+  data: PlotTickData[] | any
   leftRange: TickPlotPositionData
   rightRange: TickPlotPositionData
   midPrice: TickPlotPositionData
@@ -58,12 +58,12 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
     const initSideDist = Math.abs(
       leftRange.x -
         calcPrice(
-          BigInt(
+          
             Math.max(
-              spacingMultiplicityGte(Number(get_min_tick(tickSpacing)), Number(tickSpacing)),
+              spacingMultiplicityGte(Number(get_min_tick(Number(tickSpacing))), Number(tickSpacing)),
               Number(leftRange.index) - Number(tickSpacing) * 15
             )
-          ),
+          ,
           xToY,
           tokenX.decimal,
           tokenY.decimal

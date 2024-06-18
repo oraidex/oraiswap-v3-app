@@ -326,31 +326,31 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
     position => {
       const nearest = nearestTickIndex(
         plotMin + position * (plotMax - plotMin),
-        tickSpacing,
+        Number(tickSpacing),
         isXtoY,
         xDecimal,
         yDecimal
       )
       onChangeRange?.(
         isXtoY
-          ? BigInt(Math.min(Number(rightRange.index - tickSpacing), Number(nearest)))
-          : BigInt(Math.max(Number(rightRange.index + tickSpacing), Number(nearest))),
-        rightRange.index
+          ? BigInt(Math.min(Number(rightRange.index - Number(tickSpacing)), Number(nearest)))
+          : BigInt(Math.max(Number(rightRange.index + Number(tickSpacing)), Number(nearest))),
+        BigInt(rightRange.index)
       )
     },
     position => {
       const nearest = nearestTickIndex(
         plotMin + position * (plotMax - plotMin),
-        tickSpacing,
+        Number(tickSpacing),
         isXtoY,
         xDecimal,
         yDecimal
       )
       onChangeRange?.(
-        leftRange.index,
+        BigInt(leftRange.index),
         isXtoY
-          ? BigInt(Math.max(Number(leftRange.index + tickSpacing), Number(nearest)))
-          : BigInt(Math.min(Number(leftRange.index - tickSpacing), Number(nearest)))
+          ? BigInt(Math.max(Number(leftRange.index + Number(tickSpacing)), Number(nearest)))
+          : BigInt(Math.min(Number(leftRange.index - Number(tickSpacing)), Number(nearest)))
       )
     },
     plotMin,

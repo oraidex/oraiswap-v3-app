@@ -7,21 +7,19 @@ import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useLocation } from 'react-router-dom'
 import SingletonOraiswapV3 from '@store/services/contractSingleton'
-import { address } from '@store/selectors/wallet'
 import { FaucetTokenList } from '@store/consts/static'
 import { getTokenBalances } from '@store/consts/utils'
 
 export const HeaderWrapper: React.FC = () => {
   const dispatch = useDispatch()
   const currentNetwork = useSelector(networkType)
-  const wallet = useSelector(address)
 
   const location = useLocation()
 
   const { walletAddress, signingClient, connectWallet, disconnect } = useSigningClient()
 
   useEffect(() => {
-    ;(async () => {
+    (async () => {
       if (walletAddress == '') {
         connectWallet()
       }
@@ -38,14 +36,13 @@ export const HeaderWrapper: React.FC = () => {
         const tokens = Object.values(FaucetTokenList)
         const balances = await getTokenBalances(tokens)
 
-        const convertedBalances = balances.map((balance, index) => ({
+        const convertedBalances = balances.map((balance) => ({
           address: balance[0],
           balance: balance[1]
         }))
 
         dispatch(walletActions.addTokenBalances(convertedBalances))
         dispatch(walletActions.setIsBalanceLoading(false))
-        dispatch()
       }
 
       window.addEventListener('keplr_keystorechange', connectWallet)
@@ -58,7 +55,7 @@ export const HeaderWrapper: React.FC = () => {
   return (
     <Header
       address={walletAddress}
-      onNetworkSelect={(network, rpcAddress, rpcName) => {}}
+      onNetworkSelect={() => {}}
       onConnectWallet={connectWallet}
       landing={location.pathname.substring(1)}
       walletConnected={walletAddress.length !== 0}

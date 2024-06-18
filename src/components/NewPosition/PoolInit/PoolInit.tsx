@@ -17,7 +17,7 @@ import { Price, get_max_tick, get_min_tick } from '@wasm'
 export interface IPoolInit {
   tokenASymbol: string
   tokenBSymbol: string
-  onChangeRange: (leftIndex: number, rightIndex: number) => void
+  onChangeRange: (leftIndex: number | bigint, rightIndex: number | bigint) => void
   isXtoY: boolean
   xDecimal: bigint
   yDecimal: bigint

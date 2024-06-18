@@ -2,7 +2,7 @@ import { ProgressState } from '@components/AnimatedButton/AnimatedButton'
 import { Swap } from '@components/Swap/Swap'
 
 import { TokenPriceData, commonTokensForNetworks } from '@store/consts/static'
-import { getCoingeckoTokenPrice } from '@store/consts/utils'
+import { getCoingeckoTokenPrice, getMockedTokenPrice } from '@store/consts/utils'
 import { actions as poolsActions } from '@store/reducers/pools'
 import { actions } from '@store/reducers/swap'
 import { actions as walletActions } from '@store/reducers/wallet'
@@ -142,19 +142,19 @@ export const WrappedSwap = () => {
 
     const id = tokensDict[tokenFrom.toString()].coingeckoId ?? ''
 
-    // if (id.length) {
-    //   setPriceFromLoading(true)
-    //   getCoingeckoTokenPrice(id)
-    //     .then(data => setTokenFromPriceData(data))
-    //     .catch(() =>
-    //       setTokenFromPriceData(
-    //         getMockedTokenPrice(tokensDict[tokenFrom.toString()].symbol, network)
-    //       )
-    //     )
-    //     .finally(() => setPriceFromLoading(false))
-    // } else {
-    //   setTokenFromPriceData(undefined)
-    // }
+    if (id.length) {
+      setPriceFromLoading(true)
+      getCoingeckoTokenPrice(id)
+        .then(data => setTokenFromPriceData(data))
+        .catch(() =>
+          setTokenFromPriceData(
+            getMockedTokenPrice(tokensDict[tokenFrom.toString()].symbol, network)
+          )
+        )
+        .finally(() => setPriceFromLoading(false))
+    } else {
+      setTokenFromPriceData(undefined)
+    }
   }, [tokenFrom])
 
   const [tokenToPriceData, setTokenToPriceData] = useState<TokenPriceData | undefined>(undefined)
@@ -165,17 +165,17 @@ export const WrappedSwap = () => {
     }
 
     const id = tokensDict[tokenTo.toString()].coingeckoId ?? ''
-    // if (id.length) {
-    //   setPriceToLoading(true)
-    //   getCoingeckoTokenPrice(id)
-    //     .then(data => setTokenToPriceData(data))
-    //     .catch(() =>
-    //       setTokenToPriceData(getMockedTokenPrice(tokensDict[tokenTo.toString()].symbol, network))
-    //     )
-    //     .finally(() => setPriceToLoading(false))
-    // } else {
-    //   setTokenToPriceData(undefined)
-    // }
+    if (id.length) {
+      setPriceToLoading(true)
+      getCoingeckoTokenPrice(id)
+        .then(data => setTokenToPriceData(data))
+        .catch(() =>
+          setTokenToPriceData(getMockedTokenPrice(tokensDict[tokenTo.toString()].symbol, network))
+        )
+        .finally(() => setPriceToLoading(false))
+    } else {
+      setTokenToPriceData(undefined)
+    }
   }, [tokenTo])
 
   const initialSlippage = localStorage.getItem('INVARIANT_SWAP_SLIPPAGE') ?? '1'
@@ -204,33 +204,33 @@ export const WrappedSwap = () => {
 
     const idTo = tokensDict[tokenTo.toString()].coingeckoId ?? ''
 
-    // if (idTo.length) {
-    //   setPriceToLoading(true)
-    //   getCoingeckoTokenPrice(idTo)
-    //     .then(data => setTokenToPriceData(data))
-    //     .catch(() =>
-    //       setTokenToPriceData(getMockedTokenPrice(tokensDict[tokenTo.toString()].symbol, network))
-    //     )
-    //     .finally(() => setPriceToLoading(false))
-    // } else {
-    //   setTokenToPriceData(undefined)
-    // }
+    if (idTo.length) {
+      setPriceToLoading(true)
+      getCoingeckoTokenPrice(idTo)
+        .then(data => setTokenToPriceData(data))
+        .catch(() =>
+          setTokenToPriceData(getMockedTokenPrice(tokensDict[tokenTo.toString()].symbol, network))
+        )
+        .finally(() => setPriceToLoading(false))
+    } else {
+      setTokenToPriceData(undefined)
+    }
 
     const idFrom = tokensDict[tokenFrom.toString()].coingeckoId ?? ''
 
-    // if (idFrom.length) {
-    //   setPriceFromLoading(true)
-    //   getCoingeckoTokenPrice(idFrom)
-    //     .then(data => setTokenFromPriceData(data))
-    //     .catch(() =>
-    //       setTokenFromPriceData(
-    //         getMockedTokenPrice(tokensDict[tokenFrom.toString()].symbol, network)
-    //       )
-    //     )
-    //     .finally(() => setPriceFromLoading(false))
-    // } else {
-    //   setTokenFromPriceData(undefined)
-    // }
+    if (idFrom.length) {
+      setPriceFromLoading(true)
+      getCoingeckoTokenPrice(idFrom)
+        .then(data => setTokenFromPriceData(data))
+        .catch(() =>
+          setTokenFromPriceData(
+            getMockedTokenPrice(tokensDict[tokenFrom.toString()].symbol, network)
+          )
+        )
+        .finally(() => setPriceFromLoading(false))
+    } else {
+      setTokenFromPriceData(undefined)
+    }
   }
 
   return (

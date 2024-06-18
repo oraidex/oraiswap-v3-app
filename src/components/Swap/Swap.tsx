@@ -13,7 +13,6 @@ import {
   PERCENTAGE_DENOMINATOR,
   SimulateResult,
   convertBalanceToBigint,
-  newPrintBigInt,
   printBigint,
   trimLeadingZeros
 } from '@store/consts/utils'
@@ -28,7 +27,7 @@ import ExchangeRate from './ExchangeRate/ExchangeRate'
 import TransactionDetailsBox from './TransactionDetailsBox/TransactionDetailsBox'
 import useStyles from './style'
 import { PoolKey, PoolWithPoolKey, Tick, TokenAmount } from '@/sdk/OraiswapV3.types'
-import { Price, SwapError } from '@/wasm'
+import { Price } from '@/wasm'
 
 export interface Pools {
   tokenX: string
@@ -295,12 +294,12 @@ export const Swap: React.FC<ISwap> = ({
     }
   }
 
-  const isError = (error: SwapError): boolean => {
-    if (simulateResult.errors) {
-      return simulateResult.errors.some(err => err === error)
-    }
-    return false
-  }
+  // const isError = (error: SwapError): boolean => {
+  //   if (simulateResult.errors) {
+  //     return simulateResult.errors.some(err => err === error)
+  //   }
+  //   return false
+  // }
 
   const getStateMessage = () => {
     if ((tokenFromIndex !== null && tokenToIndex !== null && throttle) || isWaitingForNewPool) {
