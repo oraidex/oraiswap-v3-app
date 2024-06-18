@@ -176,7 +176,7 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
       const initSideDist = Math.abs(
         midPrice.x -
           calcPrice(
-            Math.max(getMinTick(tickSpacing), midPrice.index - tickSpacing * 15),
+            Math.max(getMinTick(tickSpacing), Number(midPrice.index) - tickSpacing * 15),
             isXtoY,
             xDecimal,
             yDecimal

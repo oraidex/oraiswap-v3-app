@@ -138,7 +138,7 @@ export const WrappedPositionsList: React.FC = () => {
       }
 
       const currentPrice = calcYPerXPriceByTickIndex(
-        position.poolData?.pool.current_tick_index ?? 0,
+        position.poolData?.pool?.current_tick_index ?? 0,
         position.tokenX.decimals,
         position.tokenY.decimals
       )
