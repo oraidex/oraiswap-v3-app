@@ -8,6 +8,7 @@ import settingIcon from '@static/svg/settings.svg'
 import { BestTier, PositionOpeningMethod, TokenPriceData } from '@store/consts/static'
 import {
   PERCENTAGE_DENOMINATOR,
+  // PERCENTAGE_DENOMINATOR,
   PositionTokenBlock,
   calcPrice,
   calculateConcentrationRange,
@@ -496,7 +497,7 @@ export const NewPosition: React.FC<INewPosition> = ({
             if (tokenAIndex !== null && tokenBIndex !== null) {
               const tokenADecimals = tokens[tokenAIndex].decimals
               const tokenBDecimals = tokens[tokenBIndex].decimals
-
+              console.log({ tokenADeposit, tokenBDeposit, PERCENTAGE_DENOMINATOR })
               addLiquidityHandler(
                 leftRange,
                 rightRange,

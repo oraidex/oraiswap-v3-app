@@ -1,9 +1,13 @@
 import { PayloadAction } from '@reduxjs/toolkit'
 import {
+  approveToken,
   calculateTokenAmountsWithSlippage,
+  // calculateTokenAmountsWithSlippage,
   createLiquidityPlot,
   createLoaderKey,
   createPlaceholderLiquidityPlot,
+  createPoolTx,
+  createPositionTx,
   deserializeTickmap,
   getAllLiquidityTicks,
   getPosition,
@@ -20,7 +24,6 @@ import {
   actions
 } from '@store/reducers/positions'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
-import { dexAddress, networkType } from '@store/selectors/connection'
 import { poolsArraySortedByFees, tickMaps, tokens } from '@store/selectors/pools'
 import { address } from '@store/selectors/wallet'
 import SingletonOraiswapV3 from '@store/services/contractSingleton'
@@ -28,7 +31,7 @@ import { closeSnackbar } from 'notistack'
 import { all, call, fork, join, put, select, spawn, takeEvery, takeLatest } from 'typed-redux-saga'
 import { fetchTicksAndTickMaps } from './pools'
 import { fetchBalances } from './wallet'
-import { PoolKey, calculateSqrtPrice } from '@wasm'
+import { PoolKey, _newPoolKey, calculateSqrtPrice, toSqrtPrice } from '@wasm'
 
 function* handleInitPosition(action: PayloadAction<InitPositionData>): Generator {
   const {
@@ -43,6 +46,15 @@ function* handleInitPosition(action: PayloadAction<InitPositionData>): Generator
     slippageTolerance
   } = action.payload
 
+  const { token_x, token_y, fee_tier } = poolKeyData
+
+  // if ( -> call native init position
+  //   (tokenX === TESTNET_WAZERO_ADDRESS && tokenXAmount !== 0n) ||
+  //   (tokenY === TESTNET_WAZERO_ADDRESS && tokenYAmount !== 0n)
+  // ) {
+  //   return yield* call(handleInitPositionWithAZERO, action)
+  // }
+
   const loaderCreatePosition = createLoaderKey()
   const loaderSigningTx = createLoaderKey()
 
@@ -56,11 +68,12 @@ function* handleInitPosition(action: PayloadAction<InitPositionData>): Generator
       })
     )
 
-    console.log({ slippageTolerance: slippageTolerance * BigInt(1e14) })
-
     const txs = []
+
+    // const psp22 = yield* call([psp22Singleton, psp22Singleton.loadInstance], api, network)
+
     const [xAmountWithSlippage, yAmountWithSlippage] = calculateTokenAmountsWithSlippage(
-      BigInt(poolKeyData.fee_tier.tick_spacing),
+      BigInt(fee_tier.tick_spacing),
       spotSqrtPrice,
       liquidityDelta,
       lowerTick,
@@ -69,44 +82,22 @@ function* handleInitPosition(action: PayloadAction<InitPositionData>): Generator
       true
     )
 
-    let XTokenTx: any
+    const XTokenTx = yield* call(approveToken, token_x, xAmountWithSlippage)
     txs.push(XTokenTx)
 
-    let YTokenTx: any
+    const YTokenTx = yield* call(approveToken, token_y, yAmountWithSlippage)
     txs.push(YTokenTx)
-    let initTick = 0
 
-    let initSqrtPrice = calculateSqrtPrice(BigInt(initTick))
-
+    const poolKey = _newPoolKey(token_x, token_y, fee_tier)
     // if (initPool) {
-    //   const createPoolTx = yield SingletonOraiswapV3.dex.createPool(
-    //     {
-    //       feeTier: poolKeyData.fee_tier,
-    //       initSqrtPrice: initSqrtPrice.toString(),
-    //       initTick,
-    //       token0: poolKeyData.token_x,
-    //       token1: poolKeyData.token_y
-    //     },
-    //     'auto',
-    //     ''
-    //   )
-    //   txs.push(createPoolTx)
-    //   // yield* call(fetchAllPools)
+    //   const initTick = 0
+    //   const initSqrtPrice = toSqrtPrice(1n, 0n)
+    //   const createTx = yield* call(createPoolTx, poolKey, initSqrtPrice.toString(), initTick)
+    //   txs.push(createTx)
     // }
 
-    const tx = yield SingletonOraiswapV3.dex.createPosition({
-      liquidityDelta: liquidityDelta.toString(),
-      lowerTick: Number(lowerTick),
-      poolKey: poolKeyData,
-      slippageLimitLower: xAmountWithSlippage.toString(),
-      slippageLimitUpper: yAmountWithSlippage.toString(),
-      // slippageLimitLower: '557153061',
-      // slippageLimitUpper: '240282366920938463463374607431768211455',
-      upperTick: Number(upperTick)
-    })
+    const tx = yield* call(createPositionTx, poolKey, lowerTick, upperTick, liquidityDelta, spotSqrtPrice, slippageTolerance);
     txs.push(tx)
-
-    // const batchedTx = api.tx.utility.batchAll(txs)
 
     yield put(
       snackbarsActions.add({
@@ -116,10 +107,6 @@ function* handleInitPosition(action: PayloadAction<InitPositionData>): Generator
         key: loaderSigningTx
       })
     )
-
-    // const signedBatchedTx = yield* call([batchedTx, batchedTx.signAsync], walletAddress, {
-    //   signer: adapter.signer as Signer
-    // })
 
     closeSnackbar(loaderSigningTx)
     yield put(snackbarsActions.remove(loaderSigningTx))
@@ -136,15 +123,17 @@ function* handleInitPosition(action: PayloadAction<InitPositionData>): Generator
         message: 'Position successfully created',
         variant: 'success',
         persist: false,
-        txid: ''
+        txid: tx
       })
     )
 
     yield put(actions.getPositionsList())
 
-    yield* call(fetchBalances, [poolKeyData.token_x, poolKeyData.token_y])
-  } catch (error) {
-    console.log(error)
+    yield* call(fetchBalances, [token_x, token_y])
+
+    yield* put(poolsActions.getPoolKeys())
+  } catch (e: any) {
+    console.log(e)
 
     yield* put(actions.setInitPositionSuccess(false))
 
@@ -153,13 +142,23 @@ function* handleInitPosition(action: PayloadAction<InitPositionData>): Generator
     closeSnackbar(loaderSigningTx)
     yield put(snackbarsActions.remove(loaderSigningTx))
 
-    yield put(
-      snackbarsActions.add({
-        message: 'Failed to send. Please try again.',
-        variant: 'error',
-        persist: false
-      })
-    )
+    if (e.message) {
+      yield put(
+        snackbarsActions.add({
+          message: e.message,
+          variant: 'error',
+          persist: false
+        })
+      )
+    } else {
+      yield put(
+        snackbarsActions.add({
+          message: 'Failed to send. Please try again.',
+          variant: 'error',
+          persist: false
+        })
+      )
+    }
   }
 }
 

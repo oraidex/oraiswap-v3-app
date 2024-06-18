@@ -7,11 +7,15 @@ import {
   getMinTick,
   _newPoolKey,
   PoolKey,
+  LiquidityTick,
+  positionToTick,
 } from '@wasm'
 import {
   CHUNK_SIZE,
+  LIQUIDITY_TICKS_LIMIT,
   MAX_TICKMAP_QUERY_SIZE,
   TokenDataOnChain,
+  parse,
   // parse
 } from '@store/consts/utils'
 import { ArrayOfTupleOfUint16AndUint64, PoolWithPoolKey } from '@/sdk/OraiswapV3.types'
@@ -172,34 +176,40 @@ export default class SingletonOraiswapV3 {
     return { bitmap: storedTickmap }
   }
 
-  // public static async getAllLiquidityTicks(
-  //   poolKey: PoolKey,
-  //   tickmap: Tickmap
-  // ): Promise<LiquidityTick[]> {
-  //   const tickIndexes: bigint[] = []
-  //   for (const [chunkIndex, chunk] of tickmap.bitmap.entries()) {
-  //     for (let bit = 0n; bit < CHUNK_SIZE; bit++) {
-  //       const checkedBit = chunk & (1n << bit)
-  //       if (checkedBit) {
-  //         const tickIndex = positionToTick(chunkIndex, bit, poolKey.fee_tier.tick_spacing)
-  //         tickIndexes.push(tickIndex)
-  //       }
-  //     }
-  //   }
-  //   const tickLimit = integerSafeCast(LIQUIDITY_TICKS_LIMIT)
-  //   const promises: Promise<LiquidityTick[]>[] = []
-  //   for (let i = 0; i < tickIndexes.length; i += tickLimit) {
-  //     promises.push(
-  //       this.dex
-  //         .liquidityTicks({
-  //           poolKey,
-  //           tickIndexes: tickIndexes.slice(i, i + tickLimit).map(Number)
-  //         })
-  //         .then(parse)
-  //     )
-  //   }
+  public static async getAllLiquidityTicks(
+    poolKey: PoolKey,
+    tickmap: Tickmap
+  ): Promise<LiquidityTick[]> {
+    const tickIndexes: bigint[] = []
+    for (const [chunkIndex, chunk] of tickmap.bitmap.entries()) {
+      for (let bit = 0n; bit < CHUNK_SIZE; bit++) {
+        const checkedBit = chunk & (1n << bit)
+        if (checkedBit) {
+          const tickIndex = positionToTick(chunkIndex, bit, poolKey.fee_tier.tick_spacing)
+          tickIndexes.push(tickIndex)
+        }
+      }
+    }
+    const tickLimit = integerSafeCast(LIQUIDITY_TICKS_LIMIT)
+    const promises: Promise<LiquidityTick[]>[] = []
+    for (let i = 0; i < tickIndexes.length; i += tickLimit) {
+      promises.push(
+        this.dex
+          .liquidityTicks({
+            poolKey,
+            tickIndexes: tickIndexes.slice(i, i + tickLimit).map(Number)
+          })
+          .then(parse)
+      )
+    }
 
-  //   const tickResults = await Promise.all(promises)
-  //   return tickResults.flat(1)
-  // }
+    const tickResults = await Promise.all(promises)
+    return tickResults.flat(1)
+  }
+
+  public static approveToken = async (token: string, amount: bigint) => {
+    const tokenClient = new OraiswapTokenClient(this.dex.client, this.dex.sender, token)
+
+    return await tokenClient.increaseAllowance({ amount: amount.toString() , spender: this.dex.contractAddress })
+  }
 }

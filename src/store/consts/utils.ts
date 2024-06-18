@@ -536,6 +536,37 @@ export const createPoolTx = async (
   ).transactionHash
 }
 
+export const createPositionTx = async(
+  poolKey: PoolKey,
+  lowerTick: bigint,
+  upperTick: bigint,
+  liquidityDelta: bigint,
+  spotSqrtPrice: bigint,
+  slippageTolerance: bigint,
+): Promise<string> => {
+  const slippageLimitLower = calculateSqrtPriceAfterSlippage(
+    spotSqrtPrice,
+    Number(slippageTolerance),
+    false
+  )
+  const slippageLimitUpper = calculateSqrtPriceAfterSlippage(
+    spotSqrtPrice,
+    Number(slippageTolerance),
+    true
+  )
+
+  const res = await SingletonOraiswapV3.dex.createPosition({
+    poolKey,
+    lowerTick: Number(lowerTick),
+    upperTick: Number(upperTick),
+    liquidityDelta: liquidityDelta.toString(),
+    slippageLimitLower: slippageLimitLower.toString(),
+    slippageLimitUpper: slippageLimitUpper.toString()
+  })
+
+  return res.transactionHash
+}
+
 export const getPool = async (poolKey: PoolKey): Promise<PoolWithPoolKey> => {
   return {
     pool: await SingletonOraiswapV3.dex.pool({
@@ -1190,4 +1221,9 @@ export const positionList = async (ownerId: string): Promise<Position[]> => {
     tokens_owed_x: BigInt(position.tokens_owed_x),
     tokens_owed_y: BigInt(position.tokens_owed_y)
   }))
+}
+
+export const approveToken = async (token: string, amount: bigint): Promise<string> => {
+  const result = await SingletonOraiswapV3.approveToken(token, amount);
+  return result.transactionHash
 }
