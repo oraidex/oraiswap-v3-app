@@ -32,6 +32,7 @@ import { all, call, fork, join, put, select, spawn, takeEvery, takeLatest } from
 import { fetchTicksAndTickMaps } from './pools'
 import { fetchBalances } from './wallet'
 import { PoolKey, _newPoolKey, calculateSqrtPrice, toSqrtPrice } from '@wasm'
+import { ExecuteResult } from '@cosmjs/cosmwasm-stargate'
 
 function* handleInitPosition(action: PayloadAction<InitPositionData>): Generator {
   const {
@@ -89,7 +90,7 @@ function* handleInitPosition(action: PayloadAction<InitPositionData>): Generator
     txs.push(YTokenTx)
 
     const poolKey = _newPoolKey(token_x, token_y, fee_tier)
-    
+
     if (initPool) {
       const initTick = 0
       const initSqrtPrice = toSqrtPrice(1n, 0n)
@@ -97,7 +98,15 @@ function* handleInitPosition(action: PayloadAction<InitPositionData>): Generator
       txs.push(createTx)
     }
 
-    const tx = yield* call(createPositionTx, poolKey, lowerTick, upperTick, liquidityDelta, spotSqrtPrice, slippageTolerance);
+    const tx = yield* call(
+      createPositionTx,
+      poolKey,
+      lowerTick,
+      upperTick,
+      liquidityDelta,
+      spotSqrtPrice,
+      slippageTolerance
+    )
     txs.push(tx)
 
     yield put(
@@ -164,7 +173,7 @@ function* handleInitPosition(action: PayloadAction<InitPositionData>): Generator
 }
 
 export function* handleGetPositionsList() {
-  const positions = yield* call(positionList, SingletonOraiswapV3.dex.sender);
+  const positions = yield* call(positionList, SingletonOraiswapV3.dex.sender)
 
   const pools: PoolKey[] = []
   const poolSet: Set<string> = new Set()
@@ -269,7 +278,7 @@ export function* handleGetCurrentPlotTicks(
   }
 }
 
-export async function handleClaimFeeSingleton(index?: number) {
+export async function handleClaimFeeSingleton(index?: bigint) {
   const txResult = await SingletonOraiswapV3.dex.claimFee({
     index: Number(index)
   })
@@ -357,7 +366,9 @@ export function* handleClaimFeeWithAZERO(action: PayloadAction<HandleClaimFee>) 
 
     const txs = []
     // const claimTx = invariant.claimFeeTx(index, INVARIANT_CLAIM_FEE_OPTIONS)
-    const claimTx = yield SingletonOraiswapV3.dex.claimFee(Number(action.payload))
+    const claimTx = yield* call(SingletonOraiswapV3.dex.claimFee, {
+      index: Number(action.payload.index)
+    })
     txs.push(claimTx)
 
     // const approveTx = psp22.approveTx(
@@ -452,7 +463,10 @@ export function* handleGetSinglePosition(action: PayloadAction<bigint>) {
     })
   )
   yield* put(
-    poolsActions.getPoolsDataForList({ poolKeys: [position.pool_key], listType: ListType.POSITIONS })
+    poolsActions.getPoolsDataForList({
+      poolKeys: [position.pool_key],
+      listType: ListType.POSITIONS
+    })
   )
 }
 
@@ -481,7 +495,7 @@ export function* handleClosePosition(action: PayloadAction<ClosePositionData>) {
         key: loaderSigningTx
       })
     )
-    
+
     closeSnackbar(loaderSigningTx)
     yield put(snackbarsActions.remove(loaderSigningTx))
 
