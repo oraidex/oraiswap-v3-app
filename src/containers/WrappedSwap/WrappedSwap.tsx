@@ -246,12 +246,12 @@ export const WrappedSwap = () => {
         dispatch(
           actions.swap({
             poolKey,
-            slippage,
-            estimatedPriceAfterSwap,
+            slippage: Number(slippage),
+            estimatedPriceAfterSwap: estimatedPriceAfterSwap.toString(),
             tokenFrom,
             tokenTo,
-            amountIn,
-            amountOut,
+            amountIn: BigInt(amountIn),
+            amountOut: BigInt(amountOut),
             byAmountIn
           })
         )

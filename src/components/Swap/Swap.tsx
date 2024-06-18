@@ -28,7 +28,7 @@ import ExchangeRate from './ExchangeRate/ExchangeRate'
 import TransactionDetailsBox from './TransactionDetailsBox/TransactionDetailsBox'
 import useStyles from './style'
 import { PoolKey, PoolWithPoolKey, Tick, TokenAmount } from '@/sdk/OraiswapV3.types'
-import { Price } from '@/wasm'
+import { Price, SwapError } from '@/wasm'
 
 export interface Pools {
   tokenX: string
@@ -321,36 +321,37 @@ export const Swap: React.FC<ISwap> = ({
       return 'No route found'
     }
 
-    if (
-      simulateResult.poolKey === null &&
-      (isError(SwapError.InsufficientLiquidity) || isError(SwapError.MaxTicksCrossed))
-    ) {
-      return 'Insufficient liquidity'
-    }
+    // if (
+    //   simulateResult.poolKey === null &&
+    //   (isError(SwapError.InsufficientLiquidity) || isError(SwapError.MaxTicksCrossed))
+    // ) {
+    //   return 'Insufficient liquidity'
+    // }
 
-    if (
-      convertBalanceToBigint(amountFrom, Number(tokens[tokenFromIndex].decimals)) >
-      tokens[tokenFromIndex].balance
-    ) {
-      return 'Insufficient balance'
-    }
+    // if (
+    //   convertBalanceToBigint(amountFrom, Number(tokens[tokenFromIndex].decimals)) >
+    //   tokens[tokenFromIndex].balance
+    // ) {
+    //   return 'Insufficient balance'
+    // }
 
-    if (
-      convertBalanceToBigint(amountFrom, Number(tokens[tokenFromIndex].decimals)) === 0n ||
-      (simulateResult.poolKey === null && isError(SwapError.AmountIsZero))
-    ) {
-      return 'Insufficient volume'
-    }
+    // if (
+    //   convertBalanceToBigint(amountFrom, Number(tokens[tokenFromIndex].decimals)) === 0n ||
+    //   (simulateResult.poolKey === null && isError(SwapError.AmountIsZero))
+    // ) {
+    //   return 'Insufficient volume'
+    // }
 
     return 'Swap tokens'
   }
   const hasShowRateMessage = () => {
     return (
-      getStateMessage() === 'Insufficient balance' ||
+      // getStateMessage() === 'Insufficient balance' ||
       getStateMessage() === 'Swap tokens' ||
       getStateMessage() === 'Loading' ||
-      getStateMessage() === 'Connect a wallet' ||
-      getStateMessage() === 'Insufficient liquidity'
+      getStateMessage() === 'Connect a wallet'
+      // ||
+      // getStateMessage() === 'Insufficient liquidity'
     )
   }
   const setSlippage = (slippage: string): void => {
@@ -459,7 +460,10 @@ export const Swap: React.FC<ISwap> = ({
             value={amountFrom}
             balance={
               tokenFromIndex !== null
-                ? printBigint(tokens[tokenFromIndex].balance, tokens[tokenFromIndex].decimals)
+                ? printBigint(
+                    BigInt(tokens[tokenFromIndex].balance),
+                    tokens[tokenFromIndex].decimals
+                  )
                 : '- -'
             }
             decimal={tokenFromIndex !== null ? tokens[tokenFromIndex].decimals : 12n}
@@ -475,7 +479,10 @@ export const Swap: React.FC<ISwap> = ({
               if (tokenFromIndex !== null) {
                 setInputRef(inputTarget.FROM)
                 setAmountFrom(
-                  printBigint(tokens[tokenFromIndex].balance, tokens[tokenFromIndex].decimals)
+                  printBigint(
+                    BigInt(tokens[tokenFromIndex].balance),
+                    tokens[tokenFromIndex].decimals
+                  )
                 )
               }
             }}
@@ -530,7 +537,7 @@ export const Swap: React.FC<ISwap> = ({
             value={amountTo}
             balance={
               tokenToIndex !== null
-                ? printBigint(tokens[tokenToIndex].balance, tokens[tokenToIndex].decimals)
+                ? printBigint(BigInt(tokens[tokenToIndex].balance), tokens[tokenToIndex].decimals)
                 : '- -'
             }
             className={classes.amountInput}
@@ -546,7 +553,10 @@ export const Swap: React.FC<ISwap> = ({
               if (tokenFromIndex !== null) {
                 setInputRef(inputTarget.FROM)
                 setAmountFrom(
-                  printBigint(tokens[tokenFromIndex].balance, tokens[tokenFromIndex].decimals)
+                  printBigint(
+                    BigInt(tokens[tokenFromIndex].balance),
+                    tokens[tokenFromIndex].decimals
+                  )
                 )
               }
             }}

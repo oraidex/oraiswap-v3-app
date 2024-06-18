@@ -21,18 +21,19 @@ import {
   poolKeyToString,
   printBigint
 } from '@store/consts/utils'
-import { actions as poolActions } from '@store/reducers/pools'
+import { FetchTicksAndTickMaps, actions as poolActions } from '@store/reducers/pools'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
 import { Simulate, Swap, actions } from '@store/reducers/swap'
 import { poolTicks, pools, tickMaps, tokens } from '@store/selectors/pools'
 import { address, balance } from '@store/selectors/wallet'
 import SingletonOraiswapV3 from '@store/services/contractSingleton'
 import { closeSnackbar } from 'notistack'
-import { all, call, put, select, spawn, takeEvery } from 'typed-redux-saga'
+import { all, call, fork, join, put, select, spawn, takeEvery } from 'typed-redux-saga'
 import { fetchBalances } from './wallet'
 import { SwapError, simulateSwap } from '@wasm'
+import { fetchTicksAndTickMaps } from './pools'
 
-export async function handleSwap(action: PayloadAction<Omit<Swap, 'txid'>>) {
+export function* handleSwap(action: PayloadAction<Omit<Swap, 'txid'>>) {
   const { poolKey, tokenFrom, slippage, amountIn, byAmountIn, estimatedPriceAfterSwap, tokenTo } =
     action.payload
 
@@ -54,7 +55,11 @@ export async function handleSwap(action: PayloadAction<Omit<Swap, 'txid'>>) {
 
   const xToY = tokenFrom.toString() === poolKey.token_x
 
-  const sqrtPriceLimit = calculateSqrtPriceAfterSlippage(estimatedPriceAfterSwap, slippage, !xToY)
+  const sqrtPriceLimit = calculateSqrtPriceAfterSlippage(
+    BigInt(estimatedPriceAfterSwap),
+    slippage,
+    !xToY
+  )
 
   let calculatedAmountIn = amountIn
   if (!byAmountIn) {
@@ -63,90 +68,74 @@ export async function handleSwap(action: PayloadAction<Omit<Swap, 'txid'>>) {
 
   // check allowance to approve instead of combine message
   if (xToY) {
-    await SingletonOraiswapV3.tokens[poolKey.token_x].increaseAllowance({
+    yield SingletonOraiswapV3.tokens[poolKey.token_x].increaseAllowance({
       spender: SingletonOraiswapV3.dex.contractAddress,
       amount: calculatedAmountIn.toString()
     })
   } else {
-    await SingletonOraiswapV3.tokens[poolKey.token_y].increaseAllowance({
+    yield SingletonOraiswapV3.tokens[poolKey.token_y].increaseAllowance({
       spender: SingletonOraiswapV3.dex.contractAddress,
       amount: calculatedAmountIn.toString()
     })
   }
 
-  const swapTx = await SingletonOraiswapV3.dex.swap({
-    poolKey,
-    xToY,
-    amount: amountIn.toString(),
-    byAmountIn,
-    sqrtPriceLimit: sqrtPriceLimit.toString()
-  })
-
-  put(
-    snackbarsActions.add({
-      message: 'Signing transaction...',
-      variant: 'pending',
-      persist: true,
-      key: loaderSigningTx
+  try {
+    closeSnackbar(loaderSigningTx)
+    yield put(snackbarsActions.remove(loaderSigningTx))
+    const swapTx = yield SingletonOraiswapV3.dex.swap({
+      poolKey,
+      xToY,
+      amount: amountIn.toString(),
+      byAmountIn,
+      sqrtPriceLimit: sqrtPriceLimit.toString()
     })
-  )
 
-  //   const signedBatchedTx = yield* call([batchedTx, batchedTx.signAsync], walletAddress, {
-  //     signer: adapter.signer as Signer
-  //   })
+    closeSnackbar(loaderSwappingTokens)
 
-  //   closeSnackbar(loaderSigningTx)
-  //   yield put(snackbarsActions.remove(loaderSigningTx))
+    yield put(snackbarsActions.remove(loaderSwappingTokens))
 
-  //   const txResult = yield* call(sendTx, signedBatchedTx)
+    yield put(
+      snackbarsActions.add({
+        message: 'Tokens swapped successfully.',
+        variant: 'success',
+        persist: false,
+        txid: swapTx.transactionHash
+      })
+    )
 
-  //   closeSnackbar(loaderSwappingTokens)
-  //   yield put(snackbarsActions.remove(loaderSwappingTokens))
+    yield call(fetchBalances, [poolKey.token_x, poolKey.token_y])
 
-  //   yield put(
-  //     snackbarsActions.add({
-  //       message: 'Tokens swapped successfully.',
-  //       variant: 'success',
-  //       persist: false,
-  //       txid: txResult.hash
-  //     })
-  //   )
+    yield put(actions.setSwapSuccess(true))
 
-  //   yield* call(fetchBalances, [poolKey.tokenX, poolKey.tokenY])
+    yield put(
+      poolActions.getAllPoolsForPairData({
+        first: tokenFrom,
+        second: tokenTo
+      })
+    )
+  } catch (error) {
+    console.log(error)
+    yield put(actions.setSwapSuccess(false))
 
-  //   yield put(actions.setSwapSuccess(true))
+    closeSnackbar(loaderSwappingTokens)
+    yield put(snackbarsActions.remove(loaderSwappingTokens))
+    closeSnackbar(loaderSigningTx)
+    yield put(snackbarsActions.remove(loaderSigningTx))
 
-  //   yield put(
-  //     poolActions.getAllPoolsForPairData({
-  //       first: tokenFrom,
-  //       second: tokenTo
-  //     })
-  //   )
-  // } catch (error) {
-  //   console.log(error)
-
-  //   yield put(actions.setSwapSuccess(false))
-
-  //   closeSnackbar(loaderSwappingTokens)
-  //   yield put(snackbarsActions.remove(loaderSwappingTokens))
-  //   closeSnackbar(loaderSigningTx)
-  //   yield put(snackbarsActions.remove(loaderSigningTx))
-
-  //   yield put(
-  //     snackbarsActions.add({
-  //       message: 'Tokens swapping failed. Please try again.',
-  //       variant: 'error',
-  //       persist: false
-  //     })
-  //   )
-
-  //   yield put(
-  //     poolActions.getAllPoolsForPairData({
-  //       first: tokenFrom,
-  //       second: tokenTo
-  //     })
-  //   )
-  // }
+    yield put(
+      snackbarsActions.add({
+        message: 'Tokens swapping failed. Please try again.',
+        variant: 'error',
+        persist: false
+      })
+    )
+    yield put(
+      poolActions.getAllPoolsForPairData({
+        first: tokenFrom,
+        second: tokenTo
+      })
+    )
+  }
 }
 
 export function* handleGetSimulateResult(action: PayloadAction<Simulate>) {
