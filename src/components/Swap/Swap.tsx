@@ -27,8 +27,8 @@ import { useDispatch } from 'react-redux'
 import ExchangeRate from './ExchangeRate/ExchangeRate'
 import TransactionDetailsBox from './TransactionDetailsBox/TransactionDetailsBox'
 import useStyles from './style'
-import { PoolKey, Price, SwapError, Tick, TokenAmount } from '@wasm'
-import { PoolWithPoolKey } from '@/sdk/OraiswapV3.types'
+import { PoolKey, PoolWithPoolKey, Tick, TokenAmount } from '@/sdk/OraiswapV3.types'
+import { Price, SwapError } from '@/wasm'
 
 export interface Pools {
   tokenX: string
@@ -120,14 +120,14 @@ export const Swap: React.FC<ISwap> = ({
   swapData,
   simulateResult
 }) => {
-  console.log(
-    newPrintBigInt(1000n, 0n),
-    newPrintBigInt(1000n, 1n),
-    newPrintBigInt(1004n, 1n),
-    newPrintBigInt(1000n, 7n),
-    newPrintBigInt(1000n, 8n),
-    newPrintBigInt(1003n, 12n)
-  )
+  // console.log(
+  //   newPrintBigInt(1000n, 0n),
+  //   newPrintBigInt(1000n, 1n),
+  //   newPrintBigInt(1004n, 1n),
+  //   newPrintBigInt(1000n, 7n),
+  //   newPrintBigInt(1000n, 8n),
+  //   newPrintBigInt(1003n, 12n)
+  // )
 
   const { classes } = useStyles()
   enum inputTarget {
@@ -254,8 +254,10 @@ export const Swap: React.FC<ISwap> = ({
   }
 
   const setSimulateAmount = async () => {
+    console.log({ tokenFromIndex, tokenToIndex, swapData, amountFrom })
     if (tokenFromIndex !== null && tokenToIndex !== null && swapData) {
       if (inputRef === inputTarget.FROM) {
+        console.log("call simulate")
         dispatch(
           actions.getSimulateResult({
             fromToken: tokens[tokenFromIndex].assetAddress,
@@ -321,36 +323,37 @@ export const Swap: React.FC<ISwap> = ({
       return 'No route found'
     }
 
-    if (
-      simulateResult.poolKey === null &&
-      (isError(SwapError.InsufficientLiquidity) || isError(SwapError.MaxTicksCrossed))
-    ) {
-      return 'Insufficient liquidity'
-    }
+    // if (
+    //   simulateResult.poolKey === null &&
+    //   (isError(SwapError.InsufficientLiquidity) || isError(SwapError.MaxTicksCrossed))
+    // ) {
+    //   return 'Insufficient liquidity'
+    // }
 
-    if (
-      convertBalanceToBigint(amountFrom, Number(tokens[tokenFromIndex].decimals)) >
-      BigInt(tokens[tokenFromIndex].balance)
-    ) {
-      return 'Insufficient balance'
-    }
+    // if (
+    //   convertBalanceToBigint(amountFrom, Number(tokens[tokenFromIndex].decimals)) >
+    //   tokens[tokenFromIndex].balance
+    // ) {
+    //   return 'Insufficient balance'
+    // }
 
-    if (
-      convertBalanceToBigint(amountFrom, Number(tokens[tokenFromIndex].decimals)) === 0n ||
-      (simulateResult.poolKey === null && isError(SwapError.AmountIsZero))
-    ) {
-      return 'Insufficient volume'
-    }
+    // if (
+    //   convertBalanceToBigint(amountFrom, Number(tokens[tokenFromIndex].decimals)) === 0n ||
+    //   (simulateResult.poolKey === null && isError(SwapError.AmountIsZero))
+    // ) {
+    //   return 'Insufficient volume'
+    // }
 
     return 'Swap tokens'
   }
   const hasShowRateMessage = () => {
     return (
-      getStateMessage() === 'Insufficient balance' ||
+      // getStateMessage() === 'Insufficient balance' ||
       getStateMessage() === 'Swap tokens' ||
       getStateMessage() === 'Loading' ||
-      getStateMessage() === 'Connect a wallet' ||
-      getStateMessage() === 'Insufficient liquidity'
+      getStateMessage() === 'Connect a wallet'
+      // ||
+      // getStateMessage() === 'Insufficient liquidity'
     )
   }
   const setSlippage = (slippage: string): void => {
@@ -459,13 +462,17 @@ export const Swap: React.FC<ISwap> = ({
             value={amountFrom}
             balance={
               tokenFromIndex !== null
-                ? printBigint(BigInt(tokens[tokenFromIndex].balance), tokens[tokenFromIndex].decimals)
+                ? printBigint(
+                    BigInt(tokens[tokenFromIndex].balance),
+                    tokens[tokenFromIndex].decimals
+                  )
                 : '- -'
             }
             decimal={tokenFromIndex !== null ? tokens[tokenFromIndex].decimals : 12n}
             className={classes.amountInput}
             setValue={value => {
               if (value.match(/^\d*\.?\d*$/)) {
+                console.log("set value", value)
                 setAmountFrom(value)
                 setInputRef(inputTarget.FROM)
               }
@@ -475,7 +482,10 @@ export const Swap: React.FC<ISwap> = ({
               if (tokenFromIndex !== null) {
                 setInputRef(inputTarget.FROM)
                 setAmountFrom(
-                  printBigint(BigInt(tokens[tokenFromIndex].balance), tokens[tokenFromIndex].decimals)
+                  printBigint(
+                    BigInt(tokens[tokenFromIndex].balance),
+                    tokens[tokenFromIndex].decimals
+                  )
                 )
               }
             }}
@@ -546,7 +556,10 @@ export const Swap: React.FC<ISwap> = ({
               if (tokenFromIndex !== null) {
                 setInputRef(inputTarget.FROM)
                 setAmountFrom(
-                  printBigint(BigInt(tokens[tokenFromIndex].balance), tokens[tokenFromIndex].decimals)
+                  printBigint(
+                    BigInt(tokens[tokenFromIndex].balance),
+                    tokens[tokenFromIndex].decimals
+                  )
                 )
               }
             }}
@@ -660,8 +673,8 @@ export const Swap: React.FC<ISwap> = ({
                 simulateResult.targetSqrtPrice,
                 tokens[tokenFromIndex].assetAddress,
                 tokens[tokenToIndex].assetAddress,
-                convertBalanceToBigint(amountFrom, tokens[tokenFromIndex].decimals),
-                convertBalanceToBigint(amountTo, tokens[tokenToIndex].decimals),
+                convertBalanceToBigint(amountFrom, tokens[tokenFromIndex].decimals).toString(),
+                convertBalanceToBigint(amountTo, tokens[tokenToIndex].decimals).toString(),
                 inputRef === inputTarget.FROM
               )
             }}

@@ -71,6 +71,11 @@ export const WrappedSwap = () => {
       )
     }
   }, [isFetchingNewPool])
+
+  useEffect(() => {
+    console.log('swapSimulateResult', swapSimulateResult)
+  }, [swapSimulateResult])
+
   const lastTokenFrom = localStorage.getItem(`INVARIANT_LAST_TOKEN_FROM_${networkType}`)
   const lastTokenTo = localStorage.getItem(`INVARIANT_LAST_TOKEN_TO_${networkType}`)
 
@@ -246,12 +251,12 @@ export const WrappedSwap = () => {
         dispatch(
           actions.swap({
             poolKey,
-            slippage,
-            estimatedPriceAfterSwap,
+            slippage: Number(slippage),
+            estimatedPriceAfterSwap: estimatedPriceAfterSwap.toString(),
             tokenFrom,
             tokenTo,
-            amountIn,
-            amountOut,
+            amountIn: BigInt(amountIn),
+            amountOut: BigInt(amountOut),
             byAmountIn
           })
         )

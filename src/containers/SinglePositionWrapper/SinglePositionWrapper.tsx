@@ -378,28 +378,28 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
           name: position.tokenX.symbol,
           icon: position.tokenX.logoURI,
           decimal: position.tokenX.decimals,
-          balance: +printBigint(position.tokenX.balance ?? 0n, position.tokenX.decimals),
+          balance: +printBigint(BigInt(position.tokenX.balance) ?? 0n, position.tokenX.decimals),
           liqValue: tokenXLiquidity,
           claimValue: tokenXClaim,
           usdValue:
             typeof tokenXPriceData?.price === 'undefined'
               ? undefined
               : tokenXPriceData.price *
-                +printBigint(position.tokenX.balance ?? 0n, position.tokenX.decimals)
+                +printBigint(BigInt(position.tokenX.balance) ?? 0n, position.tokenX.decimals)
         }}
         tokenXPriceData={tokenXPriceData}
         tokenY={{
           name: position.tokenY.symbol,
           icon: position.tokenY.logoURI,
           decimal: position.tokenY.decimals,
-          balance: +printBigint(position.tokenY.balance ?? 0n, position.tokenY.decimals),
+          balance: +printBigint(BigInt(position.tokenY.balance) ?? 0n, position.tokenY.decimals),
           liqValue: tokenYLiquidity,
           claimValue: tokenYClaim,
           usdValue:
             typeof tokenYPriceData?.price === 'undefined'
               ? undefined
               : tokenYPriceData.price *
-                +printBigint(position.tokenY.balance ?? 0n, position.tokenY.decimals)
+                +printBigint(BigInt(position.tokenY.balance) ?? 0n, position.tokenY.decimals)
         }}
         tokenYPriceData={tokenYPriceData}
         fee={BigInt(position.pool_key.fee_tier.fee)}
