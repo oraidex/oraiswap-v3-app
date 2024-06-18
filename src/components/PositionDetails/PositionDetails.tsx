@@ -32,7 +32,7 @@ interface IProps {
   onClickClaimFee: () => void
   closePosition: (claimFarmRewards?: boolean) => void
   ticksLoading: boolean
-  tickSpacing: bigint
+  tickSpacing: number
   fee: bigint
   min: number
   max: number
@@ -91,7 +91,7 @@ const PositionDetails: React.FC<IProps> = ({
         </Link>
 
         <SinglePositionInfo
-          fee={+printBigint(fee, PERCENTAGE_SCALE - 2n)}
+          fee={+printBigint(fee, PERCENTAGE_SCALE - 2)}
           onClickClaimFee={onClickClaimFee}
           closePosition={closePosition}
           tokenX={tokenX}

@@ -1,4 +1,4 @@
-import { newPoolKey } from '@store/consts/utils'
+import { newPoolKey } from '@wasm'
 import { Status } from '@store/reducers/wallet'
 import type { Meta, StoryObj } from '@storybook/react'
 import { fn } from '@storybook/test'
@@ -88,29 +88,29 @@ export const Primary: Story = {
             {
               index: 1,
               sign: true,
-              liquidity_change: '100',
-              liquidity_gross: '200',
-              sqrtPrice: BigInt(300),
-              feeGrowthOutsideX: BigInt(400),
-              feeGrowthOutsideY: BigInt(500),
-              secondsOutside: BigInt(600)
+              liquidity_change: 100n,
+              liquidity_gross: 200n,
+              sqrt_price: 300n,
+              fee_growth_outside_x: 400n,
+              fee_growth_outside_y: 500n,
+              seconds_outside: 600
             }
           ],
           pool2: [
             {
               index: 2,
               sign: false,
-              liquidityChange: BigInt(700),
-              liquidityGross: BigInt(800),
-              sqrtPrice: BigInt(900),
-              feeGrowthOutsideX: BigInt(1000),
-              feeGrowthOutsideY: BigInt(1100),
-              secondsOutside: BigInt(1200)
+              liquidity_change: 700n,
+              liquidity_gross: 800n,
+              sqrt_price: 900n,
+              fee_growth_outside_x: 1000n,
+              fee_growth_outside_y: 1100n,
+              seconds_outside: 1200
             }
           ]
         }}
         swapData={{
-          slippage: 1n,
+          slippage: 1,
           estimatedPriceAfterSwap: 123n,
           tokenFrom: '0x123132423423',
           tokenTo: '0x123132423423',

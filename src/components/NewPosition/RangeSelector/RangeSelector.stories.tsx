@@ -41,9 +41,9 @@ export const Primary: Story = {
         {...args}
         concentrationIndex={concentrationIndex}
         setConcentrationIndex={setConcentrationIndex}
-        tickSpacing={0n}
-        xDecimal={9n}
-        yDecimal={12n}
+        tickSpacing={0}
+        xDecimal={9}
+        yDecimal={12}
         poolIndex={0}
       />
     )

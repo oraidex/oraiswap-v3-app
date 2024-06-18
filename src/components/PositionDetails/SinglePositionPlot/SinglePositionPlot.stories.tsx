@@ -37,7 +37,7 @@ export const Primary: Story = {
     onDiscreteChange: fn(),
     reloadHandler: fn(),
     ticksLoading: false,
-    tickSpacing: 0n,
+    tickSpacing: 0,
     tokenX: {
       name: 'BTC',
       decimal: 9 as any
@@ -55,24 +55,24 @@ export const Primary: Story = {
         {...args}
         currentPrice={10000}
         leftRange={{
-          index: 2n,
+          index: 2,
           x: 10000
         }}
         rightRange={{
-          index: 2n,
+          index: 2,
           x: 10000
         }}
         midPrice={{
-          index: 2n,
+          index: 2,
           x: 1020
         }}
         tokenX={{
           name: 'BTC',
-          decimal: 9n
+          decimal: 9
         }}
         tokenY={{
           name: 'ETH',
-          decimal: 12n
+          decimal: 12
         }}
       />
     )

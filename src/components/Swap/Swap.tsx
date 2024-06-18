@@ -26,8 +26,8 @@ import { useDispatch } from 'react-redux'
 import ExchangeRate from './ExchangeRate/ExchangeRate'
 import TransactionDetailsBox from './TransactionDetailsBox/TransactionDetailsBox'
 import useStyles from './style'
-import { PoolKey, PoolWithPoolKey, Tick, TokenAmount } from '@/sdk/OraiswapV3.types'
-import { Price } from '@/wasm'
+import { PoolWithPoolKey } from '@/sdk/OraiswapV3.types'
+import { Price, Tick, PoolKey, TokenAmount } from '@wasm'
 
 export interface Pools {
   tokenX: string
@@ -672,8 +672,8 @@ export const Swap: React.FC<ISwap> = ({
                 simulateResult.targetSqrtPrice,
                 tokens[tokenFromIndex].assetAddress,
                 tokens[tokenToIndex].assetAddress,
-                convertBalanceToBigint(amountFrom, tokens[tokenFromIndex].decimals).toString(),
-                convertBalanceToBigint(amountTo, tokens[tokenToIndex].decimals).toString(),
+                convertBalanceToBigint(amountFrom, tokens[tokenFromIndex].decimals),
+                convertBalanceToBigint(amountTo, tokens[tokenToIndex].decimals),
                 inputRef === inputTarget.FROM
               )
             }}

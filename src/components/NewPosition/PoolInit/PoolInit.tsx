@@ -22,7 +22,7 @@ export interface IPoolInit {
   xDecimal: number
   yDecimal: number
   tickSpacing: number
-  midPrice: number
+  midPrice: bigint
   onChangeMidPrice: (mid: Price) => void
   currentPairReversed: boolean | null
 }
@@ -55,7 +55,7 @@ export const PoolInit: React.FC<IPoolInit> = ({
   const [rightInputRounded, setRightInputRounded] = useState((+rightInput).toFixed(12))
 
   const [midPriceInput, setMidPriceInput] = useState(
-    calcPrice(midPrice, isXtoY, xDecimal, yDecimal).toString()
+    calcPrice(Number(midPrice), isXtoY, xDecimal, yDecimal).toString()
   )
 
   useEffect(() => {
@@ -132,7 +132,7 @@ export const PoolInit: React.FC<IPoolInit> = ({
   }, [currentPairReversed])
 
   const price = useMemo(
-    () => calcPrice(midPrice, isXtoY, xDecimal, yDecimal),
+    () => calcPrice(Number(midPrice), isXtoY, xDecimal, yDecimal),
     [midPrice, isXtoY, xDecimal, yDecimal]
   )
 

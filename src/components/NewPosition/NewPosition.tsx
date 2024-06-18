@@ -658,7 +658,7 @@ export const NewPosition: React.FC<INewPosition> = ({
             tokenBSymbol={
               tokenBIndex !== null && tokens[tokenBIndex] ? tokens[tokenBIndex].symbol : 'XYZ'
             }
-            midPrice={midPrice.index}
+            midPrice={BigInt(midPrice.index)}
             onChangeMidPrice={onChangeMidPrice}
             currentPairReversed={currentPairReversed}
           />

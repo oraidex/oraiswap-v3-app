@@ -51,7 +51,7 @@ export const Primary: Story = {
         tokenX={{
           name: 'BTC',
           icon: 'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/9n4nbM75f5Ui33ZbPYXn59EwSgE8CGsHtAeTH5YFeJ9E/logo.png',
-          decimal: 9n,
+          decimal: 9,
           liqValue: 10000.23532,
           claimValue: 21.37,
           balance: 9.11
@@ -59,7 +59,7 @@ export const Primary: Story = {
         tokenY={{
           name: 'ETH',
           icon: 'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/9n4nbM75f5Ui33ZbPYXn59EwSgE8CGsHtAeTH5YFeJ9E/logo.png',
-          decimal: 12n,
+          decimal: 12,
           liqValue: 10000.23532,
           claimValue: 21.37,
           balance: 9.11

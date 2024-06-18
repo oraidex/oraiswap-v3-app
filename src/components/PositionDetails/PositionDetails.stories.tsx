@@ -39,7 +39,7 @@ export const Primary: Story = {
     onDiscreteChange: fn(),
     reloadHandler: fn(),
     ticksLoading: false,
-    tickSpacing: 0n,
+    tickSpacing: 0,
     closePosition: fn(),
     tokenX: {
       name: 'BTC',
@@ -85,22 +85,22 @@ export const Primary: Story = {
         {...args}
         currentPrice={1000}
         leftRange={{
-          index: 2n,
+          index: 2,
           x: 23
         }}
         rightRange={{
-          index: 2n,
+          index: 2,
           x: 45354
         }}
         midPrice={{
-          index: 32n,
+          index: 32,
           x: 4535
         }}
         tokenX={{
           name: 'BTC',
           balance: 10000,
           claimValue: 10000,
-          decimal: 9n,
+          decimal: 9,
           icon: 'https://assets.coingecko.com/coins/images/1/large/bitcoin.png?1547033579',
           liqValue: 10000,
           usdValue: 123
@@ -109,7 +109,7 @@ export const Primary: Story = {
           name: 'ETH',
           balance: 432,
           claimValue: 21,
-          decimal: 9n,
+          decimal: 9,
           icon: 'https://assets.coingecko.com/coins/images/1/large/bitcoin.png?1547033579',
           liqValue: 321,
           usdValue: 3246
@@ -118,12 +118,12 @@ export const Primary: Story = {
           {
             x: 12,
             y: 1234,
-            index: 1n
+            index: 1
           },
           {
             x: 123,
             y: 432,
-            index: 2n
+            index: 2
           }
         ]}
         fee={1n}

@@ -31,7 +31,7 @@ type FrameSystemAccountInfo = {
   sufficients: number
 }
 
-export function* getBalance(walletAddress: string): SagaGenerator<string> {
+export function* getBalance(_walletAddress: string): SagaGenerator<string> {
   return ''
 }
 
@@ -251,16 +251,16 @@ export function* init(): Generator {
   try {
     yield* put(actions.setStatus(Status.Init))
 
-    const walletAdapter = yield* call(getWallet)
-    yield* call([walletAdapter, walletAdapter.connect])
-    const accounts = yield* call([walletAdapter.accounts, walletAdapter.accounts.get])
+    // const walletAdapter = yield* call(getWallet)
+    // yield* call([walletAdapter, walletAdapter.connect])
+    // const accounts = yield* call([walletAdapter.accounts, walletAdapter.accounts.get])
 
-    yield* put(actions.setAddress(accounts[0].address))
+    yield* put(actions.setAddress(SingletonOraiswapV3.dex.sender))
     yield* put(actions.setIsBalanceLoading(true))
 
-    const balance = yield* call(getBalance, accounts[0].address)
+    const balance = yield* call(getBalance, SingletonOraiswapV3.dex.sender)
 
-    yield* put(actions.setBalance(balance))
+    yield* put(actions.setBalance(BigInt(balance)))
     yield* put(actions.setStatus(Status.Initialized))
     yield* call(fetchTokensBalances)
     yield* put(actions.setIsBalanceLoading(false))
@@ -308,7 +308,7 @@ export function* handleDisconnect(): Generator {
 
 export function* fetchBalances(tokens: string[]): Generator {
   const balance = yield* call(getBalance, SingletonOraiswapV3.dex.sender)
-  yield* put(walletActions.setBalance(balance))
+  yield* put(walletActions.setBalance(BigInt(balance)))
 
   const tokenBalances = yield* call(getTokenBalances, tokens)
   yield* put(

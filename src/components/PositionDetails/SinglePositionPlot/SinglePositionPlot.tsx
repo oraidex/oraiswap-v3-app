@@ -19,7 +19,7 @@ export interface ISinglePositionPlot {
   tokenY: Pick<ILiquidityToken, 'name' | 'decimal'>
   tokenX: Pick<ILiquidityToken, 'name' | 'decimal'>
   ticksLoading: boolean
-  tickSpacing: bigint
+  tickSpacing: number
   min: number
   max: number
   xToY: boolean
@@ -58,12 +58,10 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
     const initSideDist = Math.abs(
       leftRange.x -
         calcPrice(
-          
-            Math.max(
-              spacingMultiplicityGte(Number(getMinTick(Number(tickSpacing))), Number(tickSpacing)),
-              Number(leftRange.index) - Number(tickSpacing) * 15
-            )
-          ,
+          Math.max(
+            spacingMultiplicityGte(Number(getMinTick(Number(tickSpacing))), Number(tickSpacing)),
+            Number(leftRange.index) - Number(tickSpacing) * 15
+          ),
           xToY,
           tokenX.decimal,
           tokenY.decimal

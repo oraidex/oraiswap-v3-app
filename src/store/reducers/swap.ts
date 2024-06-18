@@ -7,7 +7,7 @@ import { SimulateResult } from '@store/consts/utils'
 export interface Swap {
   poolKey?: PoolKey
   slippage: number
-  estimatedPriceAfterSwap: string
+  estimatedPriceAfterSwap: bigint
   tokenFrom: string
   tokenTo: string
   amountIn: bigint
@@ -33,7 +33,7 @@ export interface ISwapStore {
 export const defaultState: ISwapStore = {
   swap: {
     slippage: 0,
-    estimatedPriceAfterSwap: '0',
+    estimatedPriceAfterSwap: 0n,
     tokenFrom: '',
     tokenTo: '',
     amountIn: 0n,

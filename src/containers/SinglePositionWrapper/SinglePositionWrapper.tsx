@@ -217,8 +217,8 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
         fee_receiver: position.poolData.pool.fee_receiver
       }
       const res = calculateTokenAmounts(convertedPool, position)
-      const x = res.x;
-      const y = res.y;
+      const x = res.x
+      const y = res.y
 
       return [+printBigint(x, position.tokenX.decimals), +printBigint(y, position.tokenY.decimals)]
     }
@@ -246,9 +246,9 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
         last_timestamp: position.poolData.pool.last_timestamp,
         fee_receiver: position.poolData.pool.fee_receiver
       }
-      const res = calculateFee(convertedPool, position, lowerTick, upperTick);
-      const bnX = res.x;
-      const bnY = res.y;
+      const res = calculateFee(convertedPool, position, lowerTick, upperTick)
+      const bnX = res.x
+      const bnY = res.y
 
       setShowFeesLoader(false)
 
@@ -378,7 +378,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
           )
         }
         ticksLoading={ticksLoading}
-        tickSpacing={BigInt(position.pool_key.fee_tier.tick_spacing)}
+        tickSpacing={position.pool_key.fee_tier.tick_spacing}
         tokenX={{
           name: position.tokenX.symbol,
           icon: position.tokenX.logoURI,

@@ -58,7 +58,7 @@ export const swapTokens = createSelector(
   tokensBalances,
   tokens,
   balance,
-  (allAccounts, tokens, a0Balance) => {
+  (allAccounts, tokens, _a0Balance) => {
     return Object.values(tokens).map(token => {
       const tokenSwap: SwapToken = {
         ...token,
@@ -74,7 +74,7 @@ export const poolTokens = createSelector(
   tokensBalances,
   tokens,
   balance,
-  (allAccounts, tokens, a0Balance) => {
+  (allAccounts, tokens, _a0Balance) => {
     return Object.values(tokens).map(token => ({
       ...token,
       assetAddress: token.address,
@@ -87,7 +87,7 @@ export const swapTokensDict = createSelector(
   tokensBalances,
   tokens,
   balance,
-  (allAccounts, tokens, a0Balance) => {
+  (allAccounts, tokens, _a0Balance) => {
     const swapTokens: Record<string, SwapToken> = {}
     Object.entries(tokens).forEach(([key, val]) => {
       swapTokens[key] = {

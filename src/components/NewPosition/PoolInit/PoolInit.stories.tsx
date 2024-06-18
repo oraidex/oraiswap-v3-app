@@ -31,9 +31,9 @@ export const Primary: Story = {
         {...args}
         midPrice={midPrice}
         onChangeMidPrice={setMidPrice}
-        tickSpacing={1n}
-        xDecimal={9n}
-        yDecimal={12n}
+        tickSpacing={1}
+        xDecimal={9}
+        yDecimal={12}
       />
     )
   }
