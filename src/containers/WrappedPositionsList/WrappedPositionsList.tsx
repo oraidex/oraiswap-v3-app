@@ -98,7 +98,7 @@ export const WrappedPositionsList: React.FC = () => {
 
   const data = list
     .map((position: Position | any, index) => {
-      console.log({ position })
+      // console.log({ position })
 
       const lowerPrice = Number(
         calcYPerXPriceByTickIndex(
