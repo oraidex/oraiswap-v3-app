@@ -22,7 +22,7 @@ const useStyles = makeStyles()(theme => {
       marginRight: 12
     },
     backText: {
-      color: colors.invariant.lightHover,
+      color: colors.oraidex.lightHover,
       WebkitPaddingBefore: '2px',
       ...typography.body2
     },

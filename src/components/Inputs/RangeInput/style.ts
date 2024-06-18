@@ -10,7 +10,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
-    backgroundColor: colors.invariant.light,
+    backgroundColor: colors.oraidex.light,
     borderRadius: 11,
 
     [theme.breakpoints.down('sm')]: {
@@ -31,7 +31,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     }
   },
   tokens: {
-    color: colors.invariant.lightHover,
+    color: colors.oraidex.lightHover,
     ...typography.body2,
     textOverflow: 'ellipsis',
     overflow: 'hidden',
@@ -46,7 +46,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     }
   },
   controls: {
-    backgroundColor: colors.invariant.componentBcg,
+    backgroundColor: colors.oraidex.componentBcg,
     borderRadius: 10,
     '& input.Mui-disabled': {
       WebkitTextFillColor: colors.white.main + '!important'
@@ -62,8 +62,8 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     zIndex: 1,
 
     '&:hover': {
-      backgroundColor: colors.invariant.green,
-      boxShadow: `0 0 10px ${colors.invariant.green}`
+      backgroundColor: colors.oraidex.green,
+      boxShadow: `0 0 10px ${colors.oraidex.green}`
     },
 
     [theme.breakpoints.down('sm')]: {
@@ -75,13 +75,13 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   buttonIcon: {
     width: 22,
     height: 'auto',
-    fill: colors.invariant.dark
+    fill: colors.oraidex.dark
   },
   value: {
     color: colors.white.main,
     ...typography.body3,
     lineHeight: 24,
-    backgroundColor: colors.invariant.componentBcg,
+    backgroundColor: colors.oraidex.componentBcg,
     height: 36,
     paddingInline: 5,
     borderRadius: 10,
@@ -105,19 +105,19 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   diffWrapper: {
     borderRadius: 11,
     height: 36,
-    backgroundColor: colors.invariant.black
+    backgroundColor: colors.oraidex.black
   },
   diffLabelWrapper: {
     borderRadius: 11,
     height: 36,
-    backgroundColor: colors.invariant.light,
+    backgroundColor: colors.oraidex.light,
     display: 'flex',
     alignItems: 'center',
     paddingInline: 10
   },
   diffLabel: {
     ...typography.caption2,
-    color: colors.invariant.text,
+    color: colors.oraidex.text,
     width: 'fit-content',
     textOverflow: 'ellipsis',
     overflow: 'hidden',

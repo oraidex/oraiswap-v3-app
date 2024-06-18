@@ -5,7 +5,7 @@ export const useStyles = makeStyles()(() => {
   return {
     wrapper: {
       borderRadius: 10,
-      backgroundColor: colors.invariant.component,
+      backgroundColor: colors.oraidex.component,
       padding: 24,
       paddingTop: 16,
       flex: '1 1 0%'
@@ -17,14 +17,14 @@ export const useStyles = makeStyles()(() => {
     },
     sectionWrapper: {
       borderRadius: 8,
-      backgroundColor: colors.invariant.component,
+      backgroundColor: colors.oraidex.component,
       paddingTop: 0,
       width: '100%'
     },
     inputLabel: {
       ...typography.body3,
       lineHeight: '16px',
-      color: colors.invariant.light,
+      color: colors.oraidex.light,
       marginBottom: 3
     },
     selects: {
@@ -38,7 +38,7 @@ export const useStyles = makeStyles()(() => {
       width: '100%',
       justifyContent: 'flex-start',
       border: 'none',
-      backgroundColor: colors.invariant.componentBcg,
+      backgroundColor: colors.oraidex.componentBcg,
       borderRadius: 13,
       paddingInline: 13,
       height: 44,
@@ -48,7 +48,7 @@ export const useStyles = makeStyles()(() => {
       },
 
       '&:hover': {
-        backgroundColor: colors.invariant.light
+        backgroundColor: colors.oraidex.light
       }
     },
     addButton: {
@@ -59,7 +59,7 @@ export const useStyles = makeStyles()(() => {
     hoverButton: {
       '&:hover': {
         filter: 'brightness(1.2)',
-        boxShadow: `0 0 10px ${colors.invariant.pink}`,
+        boxShadow: `0 0 10px ${colors.oraidex.pink}`,
         transition: '.2s all',
         cursor: 'pointer'
       }

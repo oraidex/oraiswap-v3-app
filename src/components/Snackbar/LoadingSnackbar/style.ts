@@ -7,10 +7,10 @@ import { SnackbarContent } from 'notistack'
 export const StyledSnackbarContent = styled(SnackbarContent)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
-  backgroundColor: colors.invariant.component,
+  backgroundColor: colors.oraidex.component,
   borderStyle: 'solid',
   borderWidth: 1,
-  borderColor: colors.invariant.component,
+  borderColor: colors.oraidex.component,
   borderRadius: 10,
   maxWidth: 330,
   width: 330,
@@ -22,7 +22,7 @@ export const StyledSnackbarContent = styled(SnackbarContent)(({ theme }) => ({
     '0px 3px 5px -1px rgba(0,0,0,0.2),0px 6px 10px 0px rgba(0,0,0,0.14),0px 1px 18px 0px rgba(0,0,0,0.12)',
 
   '& .MuiCircularProgress-colorPrimary': {
-    color: colors.invariant.textGrey
+    color: colors.oraidex.textGrey
   },
 
   [theme.breakpoints.down('xs')]: {
@@ -43,7 +43,7 @@ export const StyledContainer = styled('div')({
 
 export const StyledTitle = styled(Typography)({
   marginLeft: 8,
-  color: colors.invariant.text,
+  color: colors.oraidex.text,
   ...typography.body2
 })
 
@@ -66,7 +66,7 @@ export const StyledCloseButton = styled('button')({
 })
 
 export const StyledCircularProgress = styled(CircularProgress)({
-  color: colors.invariant.textGrey,
+  color: colors.oraidex.textGrey,
   display: 'flex',
   alignItems: 'center',
 

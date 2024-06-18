@@ -5,7 +5,7 @@ const useStyles = makeStyles()(theme => {
   return {
     wrapper: {
       borderRadius: 10,
-      backgroundColor: colors.invariant.component,
+      backgroundColor: colors.oraidex.component,
       padding: '16px 24px 8px 24px',
       flex: '1 1 0%'
     },
@@ -18,7 +18,7 @@ const useStyles = makeStyles()(theme => {
     },
     innerWrapper: {
       borderRadius: 8,
-      backgroundColor: colors.invariant.component,
+      backgroundColor: colors.oraidex.component,
       width: '100%',
       position: 'relative',
       gap: 4
@@ -56,7 +56,7 @@ const useStyles = makeStyles()(theme => {
       textTransform: 'none',
       height: 36,
       paddingInline: 8,
-      backgroundColor: colors.invariant.light,
+      backgroundColor: colors.oraidex.light,
       borderRadius: 11,
 
       [theme.breakpoints.down('sm')]: {
@@ -96,7 +96,7 @@ const useStyles = makeStyles()(theme => {
       justifyContent: 'center',
       height: '100%',
       ...typography.heading4,
-      color: colors.invariant.lightHover,
+      color: colors.oraidex.lightHover,
       zIndex: 99
     },
     buttons: {
@@ -122,7 +122,7 @@ const useStyles = makeStyles()(theme => {
     },
     unsafeWarning: {
       ...typography.body2,
-      color: colors.invariant.Error,
+      color: colors.oraidex.Error,
 
       [theme.breakpoints.down('xs')]: {
         ...typography.caption4
@@ -134,7 +134,7 @@ const useStyles = makeStyles()(theme => {
       marginLeft: 5
     },
     tooltip: {
-      background: colors.invariant.componentBcg,
+      background: colors.oraidex.componentBcg,
       borderRadius: 12,
       width: 300,
       textAlign: 'justify',
@@ -154,7 +154,7 @@ const useStyles = makeStyles()(theme => {
       marginBottom: 16
     },
     activeLiquidity: {
-      color: colors.invariant.text,
+      color: colors.oraidex.text,
       ...typography.caption2,
       display: 'flex',
       flexDirection: 'row',
@@ -166,7 +166,7 @@ const useStyles = makeStyles()(theme => {
       height: 14,
       width: 14,
       border: '1px solid #FFFFFF',
-      color: colors.invariant.text,
+      color: colors.oraidex.text,
       borderRadius: '50%',
       fontSize: 8,
       lineHeight: '10px',
@@ -177,7 +177,7 @@ const useStyles = makeStyles()(theme => {
       cursor: 'default'
     },
     liquidityTooltip: {
-      background: colors.invariant.component,
+      background: colors.oraidex.component,
       boxShadow: '0px 4px 18px rgba(0, 0, 0, 0.35)',
       borderRadius: 20,
       padding: 16,
@@ -189,16 +189,16 @@ const useStyles = makeStyles()(theme => {
       }
     },
     liquidityTitle: {
-      color: colors.invariant.text,
+      color: colors.oraidex.text,
       ...typography.heading4,
       marginBottom: 12
     },
     liquidityDesc: {
-      color: colors.invariant.text,
+      color: colors.oraidex.text,
       ...typography.caption2
     },
     liquidityNote: {
-      color: colors.invariant.textGrey,
+      color: colors.oraidex.textGrey,
       ...typography.caption2
     },
     liquidityImg: {
@@ -209,7 +209,7 @@ const useStyles = makeStyles()(theme => {
     },
     currentPrice: {
       display: 'inline-block',
-      color: colors.invariant.yellow,
+      color: colors.oraidex.yellow,
       ...typography.caption2,
       textAlign: 'right'
     }

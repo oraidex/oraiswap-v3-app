@@ -65,7 +65,7 @@ export function* handleSwap(action: PayloadAction<Omit<Swap, 'txid'>>): Generato
     // const network = yield* select(networkType)
     // const walletAddress = yield* select(address)
     // const adapter = yield* call(getAlephZeroWallet)
-    // const invAddress = yield* select(invariantAddress)
+    // const invAddress = yield* select(oraidexAddress)
 
     const tokenX = allTokens[poolKey.token_x]
     const tokenY = allTokens[poolKey.token_y]
@@ -216,7 +216,7 @@ export function* handleSwap(action: PayloadAction<Omit<Swap, 'txid'>>): Generato
 //     const walletAddress = yield* select(address)
 //     const adapter = yield* call(getAlephZeroWallet)
 //     const swapSimulateResult = yield* select(simulateResult)
-//     const invAddress = yield* select(invariantAddress)
+//     const invAddress = yield* select(oraidexAddress)
 
 //     const tokenX = allTokens[poolKey.tokenX]
 //     const tokenY = allTokens[poolKey.tokenY]
@@ -230,8 +230,8 @@ export function* handleSwap(action: PayloadAction<Omit<Swap, 'txid'>>): Generato
 //       network
 //     )
 //     const psp22 = yield* call([psp22Singleton, psp22Singleton.loadInstance], api, network)
-//     const invariant = yield* call(
-//       [invariantSingleton, invariantSingleton.loadInstance],
+//     const oraidex = yield* call(
+//       [oraidexSingleton, oraidexSingleton.loadInstance],
 //       api,
 //       network,
 //       invAddress
@@ -275,7 +275,7 @@ export function* handleSwap(action: PayloadAction<Omit<Swap, 'txid'>>): Generato
 //       txs.push(approveTx)
 //     }
 
-//     const swapTx = invariant.swapTx(
+//     const swapTx = oraidex.swapTx(
 //       poolKey,
 //       xToY,
 //       amountIn,
@@ -301,7 +301,7 @@ export function* handleSwap(action: PayloadAction<Omit<Swap, 'txid'>>): Generato
 //     )
 //     txs.push(approveTx)
 
-//     const unwrapTx = invariant.withdrawAllWAZEROTx(
+//     const unwrapTx = oraidex.withdrawAllWAZEROTx(
 //       TESTNET_WAZERO_ADDRESS,
 //       INVARIANT_WITHDRAW_ALL_WAZERO
 //     )

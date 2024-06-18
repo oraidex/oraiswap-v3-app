@@ -5,7 +5,7 @@ export const useStyles = makeStyles<{ open: boolean }>()((_theme, { open }) => (
   wrapper: {
     borderRadius: 10,
     padding: 0,
-    background: colors.invariant.newDark,
+    background: colors.oraidex.newDark,
     overflow: 'hidden',
     transition: 'max-height 300ms',
     maxHeight: open ? 160 : 0,

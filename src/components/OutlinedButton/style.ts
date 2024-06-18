@@ -13,7 +13,7 @@ const useStyles = makeStyles()(() => ({
     marginTop: 1,
     textTransform: 'none',
     '&:hover': {
-      background: `${colors.invariant.green} !important`
+      background: `${colors.oraidex.green} !important`
     },
 
     [theme.breakpoints.down('sm')]: {
@@ -26,7 +26,7 @@ const useStyles = makeStyles()(() => ({
   },
 
   activeButton: {
-    background: `${colors.invariant.green} !important`
+    background: `${colors.oraidex.green} !important`
   },
 
   disabled: {
@@ -34,10 +34,10 @@ const useStyles = makeStyles()(() => ({
     width: 20,
     maxWidth: 26,
     height: 15,
-    color: `${colors.invariant.dark} !important`,
-    background: `${colors.invariant.light} !important`,
+    color: `${colors.oraidex.dark} !important`,
+    background: `${colors.oraidex.light} !important`,
     '&:hover': {
-      background: colors.invariant.light,
+      background: colors.oraidex.light,
       cursor: 'default'
     }
   }

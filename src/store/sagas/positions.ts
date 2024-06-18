@@ -217,8 +217,8 @@ export function* handleGetCurrentPlotTicks(
   const yDecimal = allTokens[poolKey.token_y].decimals
 
   try {
-    // const invariant = yield* call(
-    //   [invariantSingleton, invariantSingleton.loadInstance],
+    // const oraidex = yield* call(
+    //   [oraidexSingleton, oraidexSingleton.loadInstance],
     //   api,
     //   network,
     //   invAddress
@@ -365,7 +365,7 @@ export function* handleClaimFeeWithAZERO(action: PayloadAction<HandleClaimFee>) 
     // const psp22 = yield* call([psp22Singleton, psp22Singleton.loadInstance], api, network)
 
     const txs = []
-    // const claimTx = invariant.claimFeeTx(index, INVARIANT_CLAIM_FEE_OPTIONS)
+    // const claimTx = oraidex.claimFeeTx(index, INVARIANT_CLAIM_FEE_OPTIONS)
     const claimTx = yield* call(SingletonOraiswapV3.dex.claimFee, {
       index: Number(action.payload.index)
     })
@@ -379,7 +379,7 @@ export function* handleClaimFeeWithAZERO(action: PayloadAction<HandleClaimFee>) 
     // )
     // txs.push(approveTx)
 
-    // const unwrapTx = invariant.withdrawAllWAZEROTx(
+    // const unwrapTx = oraidex.withdrawAllWAZEROTx(
 
     //   INVARIANT_WITHDRAW_ALL_WAZERO
     // )
@@ -560,7 +560,7 @@ export function* handleClosePositionWithAZERO(action: PayloadAction<ClosePositio
     // const approveTx = psp22.approveTx(invAddress, U128MAX, TESTNET_WAZERO_ADDRESS)
     // txs.push(approveTx)
 
-    // const unwrapTx = invariant.withdrawAllWAZEROTx(TESTNET_WAZERO_ADDRESS)
+    // const unwrapTx = oraidex.withdrawAllWAZEROTx(TESTNET_WAZERO_ADDRESS)
     // txs.push(unwrapTx)
 
     // const resetApproveTx = psp22.approveTx(invAddress, 0n, TESTNET_WAZERO_ADDRESS)

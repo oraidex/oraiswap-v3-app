@@ -16,7 +16,7 @@ const useStyles = makeStyles()((theme: Theme) => {
     container: {
       overflow: 'hidden',
       padding: 24,
-      backgroundColor: colors.invariant.component,
+      backgroundColor: colors.oraidex.component,
       borderRadius: 20,
       width: 500,
       [theme.breakpoints.down('xs')]: {
@@ -58,18 +58,18 @@ const useStyles = makeStyles()((theme: Theme) => {
       }
     },
     selectTokenInput: {
-      backgroundColor: colors.invariant.newDark,
+      backgroundColor: colors.oraidex.newDark,
       width: '100%',
       fontSize: 16,
       fontWeight: 600,
       position: 'relative',
       color: 'white',
-      border: `1px solid ${colors.invariant.newDark}`,
-      borderColor: colors.invariant.newDark,
+      border: `1px solid ${colors.oraidex.newDark}`,
+      borderColor: colors.oraidex.newDark,
       borderRadius: 15,
       padding: '18px 10px 17px 10px',
       '&::placeholder': {
-        color: colors.invariant.light,
+        color: colors.oraidex.light,
         ...typography.body1
       },
       '&:focus': {
@@ -97,7 +97,7 @@ const useStyles = makeStyles()((theme: Theme) => {
       cursor: 'pointer',
       justifyContent: 'center',
       alignItems: 'center',
-      background: colors.invariant.dark,
+      background: colors.oraidex.dark,
       borderRadius: 12,
       padding: '6px 11px',
       marginRight: 6,
@@ -108,7 +108,7 @@ const useStyles = makeStyles()((theme: Theme) => {
       },
 
       '&:hover': {
-        background: colors.invariant.light
+        background: colors.oraidex.light
       }
     },
     commonTokenIcon: {
@@ -118,8 +118,8 @@ const useStyles = makeStyles()((theme: Theme) => {
       marginRight: 8
     },
     tokenList: {
-      background: colors.invariant.component,
-      borderTop: `1px solid ${colors.invariant.light}`,
+      background: colors.oraidex.component,
+      borderTop: `1px solid ${colors.oraidex.light}`,
       width: 451,
       height: 352,
       paddingTop: 20
@@ -142,7 +142,7 @@ const useStyles = makeStyles()((theme: Theme) => {
       },
 
       '&:hover': {
-        background: colors.invariant.light,
+        background: colors.oraidex.light,
         borderRadius: 24
       }
     },
@@ -152,14 +152,14 @@ const useStyles = makeStyles()((theme: Theme) => {
       lineHeight: '20px'
     },
     tokenDescrpiption: {
-      color: colors.invariant.lightGrey,
+      color: colors.oraidex.lightGrey,
       ...typography.caption4,
       lineHeight: '16px',
       whiteSpace: 'nowrap'
     },
     tokenBalanceStatus: {
       filter: 'brightness(0.8)',
-      color: colors.invariant.lightGrey,
+      color: colors.oraidex.lightGrey,
       ...typography.caption2,
       minWidth: 'auto'
     },
@@ -174,11 +174,11 @@ const useStyles = makeStyles()((theme: Theme) => {
     },
     tokenBalance: {
       ...typography.body2,
-      color: colors.invariant.textGrey,
+      color: colors.oraidex.textGrey,
       whiteSpace: 'nowrap'
     },
     searchIcon: {
-      color: colors.invariant.light
+      color: colors.oraidex.light
     },
 
     hideScroll: {
@@ -188,7 +188,7 @@ const useStyles = makeStyles()((theme: Theme) => {
     },
 
     scrollbarThumb: {
-      background: colors.invariant.pink,
+      background: colors.oraidex.pink,
       borderRadius: 10,
       width: 5
     },
@@ -227,14 +227,14 @@ const useStyles = makeStyles()((theme: Theme) => {
       textTransform: 'none',
       boxShadow: 'none',
       borderRadius: 5,
-      backgroundColor: colors.invariant.component,
-      color: colors.invariant.textGrey,
+      backgroundColor: colors.oraidex.component,
+      color: colors.oraidex.textGrey,
       height: 26,
       width: '100%',
       textAlign: 'center',
       marginTop: 4,
       '&:hover': {
-        backgroundColor: colors.invariant.light,
+        backgroundColor: colors.oraidex.light,
         boxShadow: 'none',
         color: colors.white.main
       },
@@ -244,14 +244,14 @@ const useStyles = makeStyles()((theme: Theme) => {
     },
     filterList: {
       borderRadius: 5,
-      background: colors.invariant.component,
+      background: colors.oraidex.component,
       minWidth: 100,
       height: 102,
       padding: 4
     },
     filterListText: {
       borderRadius: 5,
-      background: colors.invariant.component,
+      background: colors.oraidex.component,
       minWidth: 115,
       height: 102,
       padding: 4
@@ -262,7 +262,7 @@ const useStyles = makeStyles()((theme: Theme) => {
       cursor: 'pointer',
       position: 'relative',
       '&:hover': {
-        background: colors.invariant.component
+        background: colors.oraidex.component
       }
     },
     filterItemText: {
@@ -271,17 +271,17 @@ const useStyles = makeStyles()((theme: Theme) => {
       cursor: 'pointer',
       position: 'relative',
       '&:hover': {
-        background: colors.invariant.light
+        background: colors.oraidex.light
       }
     },
     filterNameText: {
       position: 'absolute',
       left: 6,
-      color: colors.invariant.textGrey,
+      color: colors.oraidex.textGrey,
       ...typography.body2
     },
     filterName: {
-      color: colors.invariant.textGrey,
+      color: colors.oraidex.textGrey,
       position: 'absolute',
       left: 28,
       ...typography.body2

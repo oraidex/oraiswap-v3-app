@@ -51,10 +51,10 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     ...typography.body2
   },
   button: {
-    color: colors.invariant.black,
+    color: colors.oraidex.black,
     ...typography.body1,
     textTransform: 'none',
-    background: colors.invariant.pinkLinearGradientOpacity,
+    background: colors.oraidex.pinkLinearGradientOpacity,
     borderRadius: 14,
     height: 40,
     width: 130,
@@ -64,8 +64,8 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     letterSpacing: -0.03,
 
     '&:hover': {
-      background: colors.invariant.pinkLinearGradient,
-      boxShadow: `0 0 16px ${colors.invariant.pink}`
+      background: colors.oraidex.pinkLinearGradient,
+      boxShadow: `0 0 16px ${colors.oraidex.pink}`
     }
   },
   buttonStartIcon: {

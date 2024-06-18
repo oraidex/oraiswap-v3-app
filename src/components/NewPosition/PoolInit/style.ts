@@ -5,7 +5,7 @@ const useStyles = makeStyles()(theme => {
   return {
     wrapper: {
       borderRadius: 10,
-      backgroundColor: colors.invariant.component,
+      backgroundColor: colors.oraidex.component,
       padding: '16px 24px 8px 24px',
       flex: '1 1 0%'
     },
@@ -17,7 +17,7 @@ const useStyles = makeStyles()(theme => {
     },
     innerWrapper: {
       borderRadius: 8,
-      backgroundColor: colors.invariant.component,
+      backgroundColor: colors.oraidex.component,
       width: '100%',
       position: 'relative',
       gap: 4
@@ -54,7 +54,7 @@ const useStyles = makeStyles()(theme => {
       textTransform: 'none',
       height: 36,
       paddingInline: 8,
-      backgroundColor: colors.invariant.light,
+      backgroundColor: colors.oraidex.light,
       borderRadius: 11,
 
       [theme.breakpoints.down('sm')]: {
@@ -86,7 +86,7 @@ const useStyles = makeStyles()(theme => {
       marginBottom: 8
     },
     priceWrapper: {
-      backgroundColor: colors.invariant.light,
+      backgroundColor: colors.oraidex.light,
       paddingInline: 12,
       paddingBlock: 10,
       borderRadius: 13,
@@ -94,7 +94,7 @@ const useStyles = makeStyles()(theme => {
     },
     priceLabel: {
       ...typography.body2,
-      color: colors.invariant.textGrey
+      color: colors.oraidex.textGrey
     },
     priceValue: {
       ...typography.body1,

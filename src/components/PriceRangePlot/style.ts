@@ -37,8 +37,8 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     },
 
     '&:hover': {
-      backgroundColor: colors.invariant.green,
-      boxShadow: `0 0 10px ${colors.invariant.green}`
+      backgroundColor: colors.oraidex.green,
+      boxShadow: `0 0 10px ${colors.oraidex.green}`
     },
 
     [theme.breakpoints.down('sm')]: {
@@ -62,7 +62,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     }
   },
   loadingText: {
-    fill: colors.invariant.black,
+    fill: colors.oraidex.black,
     ...typography.heading4
   },
   errorWrapper: {
@@ -76,14 +76,14 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     width: 130,
     height: 40,
     borderRadius: 14,
-    background: colors.invariant.pinkLinearGradientOpacity,
-    color: colors.invariant.dark,
+    background: colors.oraidex.pinkLinearGradientOpacity,
+    color: colors.oraidex.dark,
     ...typography.body1,
     marginTop: 24,
     textTransform: 'none',
 
     '&:hover': {
-      background: colors.invariant.pinkLinearGradient
+      background: colors.oraidex.pinkLinearGradient
     }
   },
   cover: {

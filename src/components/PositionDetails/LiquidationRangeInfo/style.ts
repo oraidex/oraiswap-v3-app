@@ -5,7 +5,7 @@ import { makeStyles } from 'tss-react/mui'
 export const useStyles = makeStyles()((theme: Theme) => ({
   infoTypeLabel: {
     textTransform: 'uppercase',
-    color: colors.invariant.lightGrey,
+    color: colors.oraidex.lightGrey,
     ...typography.body2,
     lineHeight: '35px',
     [theme.breakpoints.down('md')]: {
@@ -19,13 +19,13 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   },
   infoTypeSwap: {
     display: 'flex',
-    backgroundColor: colors.invariant.dark,
+    backgroundColor: colors.oraidex.dark,
     borderRadius: 13,
     lineHeight: '20px',
     alignItems: 'center'
   },
   infoType: {
-    backgroundColor: colors.invariant.light,
+    backgroundColor: colors.oraidex.light,
     borderRadius: 13,
     textAlign: 'center',
     marginRight: 6,
@@ -42,7 +42,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     width: '100%'
   },
   infoAmount: {
-    color: colors.invariant.text,
+    color: colors.oraidex.text,
     paddingRight: 8,
     ...typography.body1,
     lineHeight: '35px',
@@ -53,7 +53,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     }
   },
   infoSwapToken: {
-    color: colors.invariant.lightGrey,
+    color: colors.oraidex.lightGrey,
     ...typography.body1,
     overflow: 'hidden',
     textOverflow: 'ellipsis',

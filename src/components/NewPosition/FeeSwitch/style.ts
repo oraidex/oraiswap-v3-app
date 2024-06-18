@@ -6,11 +6,11 @@ export const useStyles = makeStyles()(() => {
     wrapper: {
       width: '100%',
       borderRadius: 13,
-      backgroundColor: colors.invariant.componentBcg,
+      backgroundColor: colors.oraidex.componentBcg,
       marginBottom: 8
     },
     bestText: {
-      color: colors.invariant.green,
+      color: colors.oraidex.green,
       position: 'absolute',
       ...typography.caption1,
       textAlign: 'center',
@@ -31,7 +31,7 @@ export const useTabsStyles = makeStyles()(() => {
     indicator: {
       height: 36,
       borderRadius: 10,
-      backgroundColor: colors.invariant.light,
+      backgroundColor: colors.oraidex.light,
       top: 0
     },
     flexContainer: {
@@ -40,10 +40,10 @@ export const useTabsStyles = makeStyles()(() => {
     scrollButtons: {
       width: 24,
       '& svg': {
-        fill: colors.invariant.light
+        fill: colors.oraidex.light
       },
       '&:hover svg': {
-        fill: colors.invariant.text
+        fill: colors.oraidex.text
       }
     }
   }
@@ -57,7 +57,7 @@ export const useSingleTabStyles = makeStyles()(() => {
       ...typography.body3,
       height: 36,
       minHeight: 36,
-      color: colors.invariant.light,
+      color: colors.oraidex.light,
       paddingInline: 0,
       minWidth: 65,
       width: 65,
@@ -66,8 +66,8 @@ export const useSingleTabStyles = makeStyles()(() => {
       overflow: 'visible',
 
       '&:hover': {
-        color: colors.invariant.lightHover,
-        backgroundColor: colors.invariant.light,
+        color: colors.oraidex.lightHover,
+        backgroundColor: colors.oraidex.light,
         height: 36,
         borderRadius: 10
       },
@@ -77,12 +77,12 @@ export const useSingleTabStyles = makeStyles()(() => {
       }
     },
     best: {
-      color: colors.invariant.green,
-      border: `2px solid ${colors.invariant.green}`,
+      color: colors.oraidex.green,
+      border: `2px solid ${colors.oraidex.green}`,
       borderRadius: 10,
 
       '&:hover': {
-        color: colors.invariant.green
+        color: colors.oraidex.green
       }
     },
     selected: {

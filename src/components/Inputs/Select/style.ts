@@ -13,7 +13,7 @@ export const useStyles = makeStyles()((theme: Theme) => {
       height: 36,
       minWidth: 'auto',
       fontFamily: 'Mukta',
-      backgroundColor: colors.invariant.light,
+      backgroundColor: colors.oraidex.light,
       ...typography.body3,
       padding: 15,
 
@@ -21,7 +21,7 @@ export const useStyles = makeStyles()((theme: Theme) => {
 
       '&:hover': {
         filter: 'brightness(1)',
-        backgroundColor: colors.invariant.light
+        backgroundColor: colors.oraidex.light
       },
 
       [theme.breakpoints.down('xs')]: {

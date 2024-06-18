@@ -155,7 +155,7 @@ export const RangeInput: React.FC<IRangeInput> = ({
         <Typography
           className={classes.diff}
           style={{
-            color: percentDiff >= 0 ? colors.invariant.green : colors.invariant.Error
+            color: percentDiff >= 0 ? colors.oraidex.green : colors.oraidex.Error
           }}>
           {percentDiff >= 0 ? '+' : ''}
           {percentDiff

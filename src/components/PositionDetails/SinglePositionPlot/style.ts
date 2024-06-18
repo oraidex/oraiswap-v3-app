@@ -5,7 +5,7 @@ import { makeStyles } from 'tss-react/mui'
 export const useStyles = makeStyles()((theme: Theme) => ({
   root: {
     width: '100%',
-    backgroundColor: colors.invariant.component,
+    backgroundColor: colors.oraidex.component,
     padding: 24,
     paddingTop: 18,
     borderRadius: 24
@@ -36,8 +36,8 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     borderRadius: 11
   },
   currentPriceLabel: {
-    backgroundColor: colors.invariant.light,
-    color: colors.invariant.lightGrey,
+    backgroundColor: colors.oraidex.light,
+    color: colors.oraidex.lightGrey,
     textAlign: 'center',
     borderRadius: '11px!important',
     '& p': {
@@ -51,11 +51,11 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     }
   },
   currentPriceAmonut: {
-    backgroundColor: colors.invariant.dark,
+    backgroundColor: colors.oraidex.dark,
     textAlign: 'center',
     borderRadius: '11px!important',
     '& span': {
-      color: colors.invariant.text,
+      color: colors.oraidex.text,
       ...typography.body1,
       lineHeight: '35px',
       paddingRight: 5
@@ -72,7 +72,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   plot: {
     width: '100%',
     height: 255,
-    backgroundColor: colors.invariant.component,
+    backgroundColor: colors.oraidex.component,
     borderRadius: 10,
 
     [theme.breakpoints.down('xs')]: {
@@ -83,7 +83,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     marginBottom: 16
   },
   activeLiquidity: {
-    color: colors.invariant.text,
+    color: colors.oraidex.text,
     ...typography.caption2,
     display: 'flex',
     flexDirection: 'row',
@@ -95,7 +95,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     height: 14,
     width: 14,
     border: '1px solid #FFFFFF',
-    color: colors.invariant.text,
+    color: colors.oraidex.text,
     borderRadius: '50%',
     fontSize: 8,
     lineHeight: '10px',
@@ -106,7 +106,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     cursor: 'default'
   },
   liquidityTooltip: {
-    background: colors.invariant.component,
+    background: colors.oraidex.component,
     boxShadow: '0px 4px 18px rgba(0, 0, 0, 0.35)',
     borderRadius: 20,
     padding: 16,
@@ -118,16 +118,16 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     }
   },
   liquidityTitle: {
-    color: colors.invariant.text,
+    color: colors.oraidex.text,
     ...typography.heading4,
     marginBottom: 12
   },
   liquidityDesc: {
-    color: colors.invariant.text,
+    color: colors.oraidex.text,
     ...typography.caption2
   },
   liquidityNote: {
-    color: colors.invariant.textGrey,
+    color: colors.oraidex.textGrey,
     ...typography.caption2
   },
   liquidityImg: {
@@ -137,7 +137,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     marginLeft: 16
   },
   currentPrice: {
-    color: colors.invariant.yellow,
+    color: colors.oraidex.yellow,
     ...typography.caption2,
     textAlign: 'right'
   }

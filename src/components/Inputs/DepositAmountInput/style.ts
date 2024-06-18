@@ -14,7 +14,7 @@ export const useStyles = makeStyles()((theme: Theme) => {
     },
     root: {
       width: '100%',
-      backgroundColor: colors.invariant.componentBcg,
+      backgroundColor: colors.oraidex.componentBcg,
       borderRadius: 20,
       padding: '6px 12px',
       ...typography.heading2
@@ -27,7 +27,7 @@ export const useStyles = makeStyles()((theme: Theme) => {
       }
     },
     input: {
-      color: colors.invariant.light,
+      color: colors.oraidex.light,
       ...typography.heading2,
       width: '100%',
       textAlign: 'right',
@@ -49,7 +49,7 @@ export const useStyles = makeStyles()((theme: Theme) => {
       width: 'fit-content',
       flexShrink: 0,
       borderRadius: 11,
-      backgroundColor: colors.invariant.light,
+      backgroundColor: colors.oraidex.light,
       padding: '6px 12px 6px 12px',
       cursor: 'default',
 
@@ -76,12 +76,12 @@ export const useStyles = makeStyles()((theme: Theme) => {
       marginTop: 1
     },
     percentagePositive: {
-      color: colors.invariant.green,
-      backgroundColor: `${colors.invariant.green}40`
+      color: colors.oraidex.green,
+      backgroundColor: `${colors.oraidex.green}40`
     },
     percentageNegative: {
-      color: colors.invariant.Error,
-      backgroundColor: `${colors.invariant.Error}40`
+      color: colors.oraidex.Error,
+      backgroundColor: `${colors.oraidex.Error}40`
     },
     currencyIcon: {
       minWidth: 20,
@@ -106,7 +106,7 @@ export const useStyles = makeStyles()((theme: Theme) => {
     },
     caption2: {
       ...typography.caption2,
-      color: colors.invariant.lightHover,
+      color: colors.oraidex.lightHover,
       overflow: 'hidden',
       whiteSpace: 'nowrap',
       textOverflow: 'ellipsis',
@@ -116,7 +116,7 @@ export const useStyles = makeStyles()((theme: Theme) => {
       }
     },
     maxButton: {
-      color: colors.invariant.componentBcg,
+      color: colors.oraidex.componentBcg,
       ...typography.tiny2,
       borderRadius: 4,
       width: 26,
@@ -129,7 +129,7 @@ export const useStyles = makeStyles()((theme: Theme) => {
 
       '&:hover': {
         background: 'none',
-        backgroundColor: colors.invariant.green,
+        backgroundColor: colors.oraidex.green,
         boxShadow: '0px 0px 20px -10px white'
       },
       [theme.breakpoints.down('sm')]: {
@@ -140,14 +140,14 @@ export const useStyles = makeStyles()((theme: Theme) => {
       }
     },
     maxButtonNotActive: {
-      backgroundColor: colors.invariant.light,
+      backgroundColor: colors.oraidex.light,
       '&:hover': {
-        backgroundColor: colors.invariant.light,
+        backgroundColor: colors.oraidex.light,
         cursor: 'default'
       }
     },
     noData: {
-      color: colors.invariant.warning,
+      color: colors.oraidex.warning,
       ...typography.caption2,
       cursor: 'default',
       display: 'flex',
@@ -158,7 +158,7 @@ export const useStyles = makeStyles()((theme: Theme) => {
       height: 9.5,
       width: 9.5,
       border: '1px solid #EFD063',
-      color: colors.invariant.warning,
+      color: colors.oraidex.warning,
       borderRadius: '50%',
       fontSize: 8,
       lineHeight: '10px',
@@ -186,15 +186,15 @@ export const useStyles = makeStyles()((theme: Theme) => {
     },
     blockedInfo: {
       ...typography.body2,
-      color: colors.invariant.lightHover
+      color: colors.oraidex.lightHover
     },
     loading: {
       width: 15,
       height: 15
     },
     tooltip: {
-      background: colors.invariant.componentBcg,
-      border: `1px solid ${colors.invariant.lightGrey}`,
+      background: colors.oraidex.componentBcg,
+      border: `1px solid ${colors.oraidex.lightGrey}`,
       borderRadius: 12,
       padding: 10,
       ...typography.caption4,

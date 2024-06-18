@@ -63,7 +63,7 @@ export const colors = {
     '5756B3': '#5756B3',
     '807ADC': '#807ADC'
   },
-  invariant: {
+  oraidex: {
     warning: '#EFD063',
     pink: '#EF84F5',
     violet: '#9C3EBD',

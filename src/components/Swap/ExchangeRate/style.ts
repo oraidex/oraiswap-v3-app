@@ -3,7 +3,7 @@ import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()(() => ({
   rateText: {
-    color: colors.invariant.lightGrey,
+    color: colors.oraidex.lightGrey,
     ...typography.caption2,
     justifyContent: 'center',
     whiteSpace: 'nowrap',
@@ -26,7 +26,7 @@ export const useStyles = makeStyles()(() => ({
     marginTop: 6
   },
   ableToHover: {
-    border: `1px solid ${colors.invariant.light}`,
+    border: `1px solid ${colors.oraidex.light}`,
     borderRadius: '10px',
     paddingInline: 15,
     cursor: 'pointer',

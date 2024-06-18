@@ -4,7 +4,7 @@ import { makeStyles } from 'tss-react/mui'
 const useStyles = makeStyles()(() => {
   return {
     root: {
-      background: colors.invariant.component,
+      background: colors.oraidex.component,
       width: 160,
       borderRadius: 20,
       marginTop: 24,
@@ -12,7 +12,7 @@ const useStyles = makeStyles()(() => {
     },
     listItem: {
       paddingTop: 2,
-      color: colors.invariant.lightGrey,
+      color: colors.oraidex.lightGrey,
       borderRadius: 11,
       textAlign: 'center',
       width: '100%',
@@ -22,7 +22,7 @@ const useStyles = makeStyles()(() => {
         marginBottom: 8
       },
       '&:hover': {
-        background: colors.invariant.light,
+        background: colors.oraidex.light,
 
         '& p': {
           color: colors.white.main,
@@ -32,7 +32,7 @@ const useStyles = makeStyles()(() => {
     },
     name: {
       textTransform: 'capitalize',
-      color: colors.invariant.light,
+      color: colors.oraidex.light,
       ...typography.heading4
     },
     current: {

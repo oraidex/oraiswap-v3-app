@@ -4,7 +4,7 @@ import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()((theme: Theme) => ({
   root: {
-    background: colors.invariant.component,
+    background: colors.oraidex.component,
     borderRadius: 24,
     padding: 20,
     flexWrap: 'nowrap',
@@ -14,7 +14,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     },
 
     '&:hover': {
-      background: `${colors.invariant.component}B0`
+      background: `${colors.oraidex.component}B0`
     },
 
     [theme.breakpoints.down('md')]: {
@@ -59,7 +59,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     textOverflow: 'ellipsis',
     overflow: 'hidden',
     ...typography.heading2,
-    color: colors.invariant.text,
+    color: colors.oraidex.text,
     lineHeight: '40px',
     whiteSpace: 'nowrap',
     width: 180,
@@ -77,7 +77,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   },
   infoText: {
     ...typography.body1,
-    color: colors.invariant.lightGrey,
+    color: colors.oraidex.lightGrey,
     whiteSpace: 'nowrap',
     textOverflow: 'ellipsis',
     overflow: 'hidden',
@@ -86,11 +86,11 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     }
   },
   activeInfoText: {
-    color: colors.invariant.black
+    color: colors.oraidex.black
   },
   greenText: {
     ...typography.body1,
-    color: colors.invariant.green,
+    color: colors.oraidex.green,
     whiteSpace: 'nowrap',
     textOverflow: 'ellipsis',
     overflow: 'hidden',
@@ -99,7 +99,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     }
   },
   liquidity: {
-    background: colors.invariant.light,
+    background: colors.oraidex.light,
     borderRadius: 11,
     height: 36,
     width: 170,
@@ -110,7 +110,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     }
   },
   fee: {
-    background: colors.invariant.light,
+    background: colors.oraidex.light,
     borderRadius: 11,
     height: 36,
     width: 90,
@@ -121,13 +121,13 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     }
   },
   activeFee: {
-    background: colors.invariant.green
+    background: colors.oraidex.green
   },
   infoCenter: {
     flex: '1 1 0%'
   },
   minMax: {
-    background: colors.invariant.light,
+    background: colors.oraidex.light,
     borderRadius: 11,
     height: 36,
     width: 320,
@@ -141,7 +141,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     }
   },
   value: {
-    background: colors.invariant.light,
+    background: colors.oraidex.light,
     borderRadius: 11,
     height: 36,
     width: 160,
@@ -181,8 +181,8 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     marginRight: 2
   },
   tooltip: {
-    background: colors.invariant.componentBcg,
-    border: `1px solid ${colors.invariant.lightGrey}`,
+    background: colors.oraidex.componentBcg,
+    border: `1px solid ${colors.oraidex.lightGrey}`,
     borderRadius: 12,
     padding: 10,
     ...typography.caption4,

@@ -4,7 +4,7 @@ import { makeStyles } from 'tss-react/mui'
 const useStyles = makeStyles()(() => {
   return {
     root: {
-      background: colors.invariant.component,
+      background: colors.oraidex.component,
       width: 170,
       borderRadius: 20,
       marginTop: 8,
@@ -15,8 +15,8 @@ const useStyles = makeStyles()(() => {
       marginTop: 7
     },
     listItem: {
-      color: colors.invariant.textGrey,
-      background: colors.invariant.component,
+      color: colors.oraidex.textGrey,
+      background: colors.oraidex.component,
       borderRadius: 11,
       padding: '6px 7px',
       width: '100%',
@@ -24,7 +24,7 @@ const useStyles = makeStyles()(() => {
       display: 'flex',
       alignItems: 'center',
       '&:hover': {
-        background: colors.invariant.light,
+        background: colors.oraidex.light,
         color: colors.white.main
       },
       '&:first-of-type': {
@@ -44,7 +44,7 @@ const useStyles = makeStyles()(() => {
     dotIcon: {
       width: 12,
       marginLeft: 'auto',
-      color: colors.invariant.green,
+      color: colors.oraidex.green,
       display: 'none'
     },
     name: {
@@ -62,7 +62,7 @@ const useStyles = makeStyles()(() => {
       opacity: 1
     },
     active: {
-      background: colors.invariant.light,
+      background: colors.oraidex.light,
       color: colors.white.main,
       '& $icon': {
         opacity: 1

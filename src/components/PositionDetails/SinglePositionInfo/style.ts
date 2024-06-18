@@ -34,8 +34,8 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   },
   text: {
     ...typography.body1,
-    color: colors.invariant.lightGrey,
-    backgroundColor: colors.invariant.component,
+    color: colors.oraidex.lightGrey,
+    backgroundColor: colors.oraidex.component,
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
@@ -93,7 +93,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   },
   name: {
     ...typography.heading3,
-    color: colors.invariant.text,
+    color: colors.oraidex.text,
     lineHeight: '28px',
 
     [theme.breakpoints.down('xs')]: {
@@ -101,7 +101,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     }
   },
   bottomGrid: {
-    background: colors.invariant.component,
+    background: colors.oraidex.component,
     marginTop: 20,
     padding: 24,
     borderRadius: 24,
@@ -125,28 +125,28 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   },
   title: {
     ...typography.heading4,
-    color: colors.invariant.text
+    color: colors.oraidex.text
   },
   titleValue: {
     ...typography.heading3,
-    color: colors.invariant.text,
+    color: colors.oraidex.text,
     fontFamily: 'Mukta'
   },
   violetButton: {
-    background: colors.invariant.pinkLinearGradientOpacity,
+    background: colors.oraidex.pinkLinearGradientOpacity,
     borderRadius: 11,
     textTransform: 'none',
-    color: colors.invariant.dark,
+    color: colors.oraidex.dark,
     width: 116,
     height: 32,
     ...typography.body1,
     '&:hover': {
-      background: colors.invariant.pinkLinearGradient,
+      background: colors.oraidex.pinkLinearGradient,
       boxShadow: '0px 0px 16px rgba(46, 224, 154, 0.35)'
     },
     '&:disabled': {
-      background: colors.invariant.light,
-      color: colors.invariant.dark
+      background: colors.oraidex.light,
+      color: colors.oraidex.dark
     },
 
     [theme.breakpoints.down('xs')]: {
@@ -166,7 +166,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     }
   },
   tokenArea: {
-    backgroundColor: colors.invariant.dark,
+    backgroundColor: colors.oraidex.dark,
     borderRadius: 16,
     flexDirection: 'row',
     width: '100%',
@@ -188,7 +188,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     paddingTop: 16
   },
   token: {
-    backgroundColor: colors.invariant.light,
+    backgroundColor: colors.oraidex.light,
     borderRadius: 12,
     display: 'flex',
     flexDirection: 'row',
@@ -201,7 +201,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     fontWeight: 400
   },
   tokenValue: {
-    color: colors.invariant.lightGrey,
+    color: colors.oraidex.lightGrey,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -216,8 +216,8 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     ...typography.caption2
   },
   closeButton: {
-    color: colors.invariant.dark,
-    background: colors.invariant.greenLinearGradientOpacity,
+    color: colors.oraidex.dark,
+    background: colors.oraidex.greenLinearGradientOpacity,
     height: 36,
     width: 116,
     textTransform: 'none',
@@ -227,7 +227,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     ...typography.body1,
 
     '&:hover': {
-      background: colors.invariant.greenLinearGradient,
+      background: colors.oraidex.greenLinearGradient,
       boxShadow: '0px 0px 16px rgba(46, 224, 154, 0.35)'
     },
     [theme.breakpoints.down('md')]: {
@@ -241,10 +241,10 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     }
   },
   button: {
-    color: colors.invariant.black,
+    color: colors.oraidex.black,
     ...typography.body1,
     textTransform: 'none',
-    background: colors.invariant.pinkLinearGradientOpacity,
+    background: colors.oraidex.pinkLinearGradientOpacity,
     borderRadius: 12,
     height: 40,
     width: 130,
@@ -253,8 +253,8 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     letterSpacing: -0.03,
 
     '&:hover': {
-      background: colors.invariant.pinkLinearGradient,
-      boxShadow: `0 0 16px ${colors.invariant.pink}`
+      background: colors.oraidex.pinkLinearGradient,
+      boxShadow: `0 0 16px ${colors.oraidex.pink}`
     },
     [theme.breakpoints.down('xs')]: {
       width: '50%',
@@ -294,7 +294,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   cover: {
     width: '100%',
     height: 'calc(100% - 12px)',
-    background: `${colors.invariant.black}dd`,
+    background: `${colors.oraidex.black}dd`,
     position: 'absolute',
     borderRadius: 10,
     zIndex: 1

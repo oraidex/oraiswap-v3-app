@@ -8,7 +8,7 @@ export const useTabsStyles = makeStyles<{ value: number }>()((_theme, { value })
     minHeight: 28,
     borderRadius: 9,
     width: 160,
-    backgroundColor: colors.invariant.black,
+    backgroundColor: colors.oraidex.black,
 
     [_theme.breakpoints.down('xs')]: {
       width: 90
@@ -17,8 +17,7 @@ export const useTabsStyles = makeStyles<{ value: number }>()((_theme, { value })
   indicator: {
     height: 28,
     borderRadius: 9,
-    background:
-      value === 0 ? colors.invariant.greenLinearGradient : colors.invariant.pinkLinearGradient
+    background: value === 0 ? colors.oraidex.greenLinearGradient : colors.oraidex.pinkLinearGradient
   },
   scrollable: {
     overflow: 'hidden'
@@ -39,11 +38,11 @@ export const useSingleTabStyles = makeStyles()(theme => {
       minWidth: 80,
       width: 80,
       ...typography.caption2,
-      color: colors.invariant.light,
+      color: colors.oraidex.light,
       transition: 'color 300ms',
 
       '&:hover': {
-        color: colors.invariant.lightHover
+        color: colors.oraidex.lightHover
       },
 
       [theme.breakpoints.down('xs')]: {
@@ -53,10 +52,10 @@ export const useSingleTabStyles = makeStyles()(theme => {
     },
     selected: {
       ...typography.caption1,
-      color: colors.invariant.black + ' !important',
+      color: colors.oraidex.black + ' !important',
 
       '&:hover': {
-        color: colors.invariant.black
+        color: colors.oraidex.black
       }
     }
   }
