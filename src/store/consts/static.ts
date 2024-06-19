@@ -130,95 +130,96 @@ export const FaucetTokenList = {
   // BTC: TESTNET_BTC_ADDRESS,
   // ETH: TESTNET_ETH_ADDRESS,
   // USDC: TESTNET_USDC_ADDRESS,
-  TOKEN1: 'orai1z3zd5fk60ev5tf8slmr5tjuhp2qmhkvhcf84ajk27un5h0tgz4fql075rt',
-  TOKEN2: 'orai154a9fxn9wcyfsxnjkgm4ql4spyvhfu7j5twpzwwx2077ts0uwtps66y70s',
-  DEFI1: 'orai1vllp59yyjuhealdu0srm6kwvynx9c2hv72sfxr8f8ufhc2zvc5fqghjgny',
-  DEFI2: 'orai1lnn4t206eq464z3amy7fwkjl0rxm9euap9gcf7de9j27l00uwvuqfa0sdt',
-  DEFI3: 'orai1rsx2fr97wnunevl7n09tzlvrau5u5875jq36mjx04e53mdyxnrwq9n90kh',
-  DEFI4: 'orai1gfru0p5n0w4hl0sc7gj8dsaud7zerv8wdu9e4jdh77ghydhahv2q0ecxj7',
-  DEFI5: 'orai1etr7495tul34lvrjk4zxzlnpltf5383sp497prm97pwjmwzhs73sc2umfp',
-  DEFI6: 'orai1a7fdtl4vpylkt4l2vyweaadl687g9s9jjxzz5panlx075kq96k8sfpwjhz',
-  ORAI: 'orai',
-  USDT: 'orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh'
-}
-
-export const DEFI1: Token = {
-  symbol: 'DEFI1',
-  address: 'orai1vllp59yyjuhealdu0srm6kwvynx9c2hv72sfxr8f8ufhc2zvc5fqghjgny',
-  decimals: 6,
-  name: 'DEFI1',
-  logoURI: 'https://assets.coingecko.com/coins/images/12931/standard/orai.png',
-  coingeckoId: 'tether'
-}
-export const DEFI2: Token = {
-  symbol: 'DEFI2',
-  address: 'orai1lnn4t206eq464z3amy7fwkjl0rxm9euap9gcf7de9j27l00uwvuqfa0sdt',
-  decimals: 6,
-  name: 'DEFI2',
-  logoURI: 'https://assets.coingecko.com/coins/images/12931/standard/orai.png',
-  coingeckoId: 'tether'
-}
-export const DEFI3: Token = {
-  symbol: 'DEFI3',
-  address: 'orai1rsx2fr97wnunevl7n09tzlvrau5u5875jq36mjx04e53mdyxnrwq9n90kh',
-  decimals: 6,
-  name: 'DEFI3',
-  logoURI: 'https://assets.coingecko.com/coins/images/12931/standard/orai.png',
-  coingeckoId: 'tether'
-}
-export const DEFI4: Token = {
-  symbol: 'DEFI4',
-  address: 'orai1gfru0p5n0w4hl0sc7gj8dsaud7zerv8wdu9e4jdh77ghydhahv2q0ecxj7',
-  decimals: 6,
-  name: 'DEFI4',
-  logoURI: 'https://assets.coingecko.com/coins/images/12931/standard/orai.png',
-  coingeckoId: 'tether'
-}
-export const DEFI5: Token = {
-  symbol: 'DEFI5',
-  address: 'orai1etr7495tul34lvrjk4zxzlnpltf5383sp497prm97pwjmwzhs73sc2umfp',
-  decimals: 6,
-  name: 'DEFI5',
-  logoURI: 'https://assets.coingecko.com/coins/images/12931/standard/orai.png',
-  coingeckoId: 'tether'
-}
-export const DEFI6: Token = {
-  symbol: 'DEFI6',
-  address: 'orai1a7fdtl4vpylkt4l2vyweaadl687g9s9jjxzz5panlx075kq96k8sfpwjhz',
-  decimals: 6,
-  name: 'DEFI6',
-  logoURI: 'https://assets.coingecko.com/coins/images/12931/standard/orai.png',
-  coingeckoId: 'tether'
-}
-
-export const TOKEN1: Token = {
-  symbol: 'TOKEN1',
-  address: 'orai1z3zd5fk60ev5tf8slmr5tjuhp2qmhkvhcf84ajk27un5h0tgz4fql075rt',
-  decimals: 6,
-  name: 'TOKEN1',
-  logoURI:
-    'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/9n4nbM75f5Ui33ZbPYXn59EwSgE8CGsHtAeTH5YFeJ9E/logo.png',
-  coingeckoId: 'tether'
-}
-export const TOKEN2: Token = {
-  symbol: 'TOKEN2',
-  address: 'orai154a9fxn9wcyfsxnjkgm4ql4spyvhfu7j5twpzwwx2077ts0uwtps66y70s',
-  decimals: 6,
-  name: 'TOKEN2',
-  logoURI:
-    'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/9n4nbM75f5Ui33ZbPYXn59EwSgE8CGsHtAeTH5YFeJ9E/logo.png',
-  coingeckoId: 'tether'
+  USDT: 'orai1z3zd5fk60ev5tf8slmr5tjuhp2qmhkvhcf84ajk27un5h0tgz4fql075rt',
+  USDC: 'orai154a9fxn9wcyfsxnjkgm4ql4spyvhfu7j5twpzwwx2077ts0uwtps66y70s',
+  BTC: 'orai1vllp59yyjuhealdu0srm6kwvynx9c2hv72sfxr8f8ufhc2zvc5fqghjgny',
+  OCH: 'orai1lnn4t206eq464z3amy7fwkjl0rxm9euap9gcf7de9j27l00uwvuqfa0sdt',
+  // DEFI3: 'orai1rsx2fr97wnunevl7n09tzlvrau5u5875jq36mjx04e53mdyxnrwq9n90kh',
+  // DEFI4: 'orai1gfru0p5n0w4hl0sc7gj8dsaud7zerv8wdu9e4jdh77ghydhahv2q0ecxj7',
+  // DEFI5: 'orai1etr7495tul34lvrjk4zxzlnpltf5383sp497prm97pwjmwzhs73sc2umfp',
+  // DEFI6: 'orai1a7fdtl4vpylkt4l2vyweaadl687g9s9jjxzz5panlx075kq96k8sfpwjhz',
+  ORAI: 'orai'
+  // USDT: 'orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh'
 }
 
 export const BTC: Token = {
   symbol: 'BTC',
-  address: TESTNET_BTC_ADDRESS,
-  decimals: 8,
-  name: 'Bitcoin',
+  address: 'orai1vllp59yyjuhealdu0srm6kwvynx9c2hv72sfxr8f8ufhc2zvc5fqghjgny',
+  decimals: 6,
+  name: 'BTC',
   logoURI:
     'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/9n4nbM75f5Ui33ZbPYXn59EwSgE8CGsHtAeTH5YFeJ9E/logo.png',
   coingeckoId: 'bitcoin'
 }
+export const OCH: Token = {
+  symbol: 'OCH',
+  address: 'orai1lnn4t206eq464z3amy7fwkjl0rxm9euap9gcf7de9j27l00uwvuqfa0sdt',
+  decimals: 6,
+  name: 'OCH',
+  logoURI:
+    'https://assets.coingecko.com/coins/images/34236/standard/orchai_logo_white_copy_4x-8_%281%29.png?1704307670',
+  coingeckoId: 'och'
+}
+// export const DEFI3: Token = {
+//   symbol: 'DEFI3',
+//   address: 'orai1rsx2fr97wnunevl7n09tzlvrau5u5875jq36mjx04e53mdyxnrwq9n90kh',
+//   decimals: 6,
+//   name: 'DEFI3',
+//   logoURI: 'https://assets.coingecko.com/coins/images/12931/standard/orai.png',
+//   coingeckoId: 'tether'
+// }
+// export const DEFI4: Token = {
+//   symbol: 'DEFI4',
+//   address: 'orai1gfru0p5n0w4hl0sc7gj8dsaud7zerv8wdu9e4jdh77ghydhahv2q0ecxj7',
+//   decimals: 6,
+//   name: 'DEFI4',
+//   logoURI: 'https://assets.coingecko.com/coins/images/12931/standard/orai.png',
+//   coingeckoId: 'tether'
+// }
+// export const DEFI5: Token = {
+//   symbol: 'DEFI5',
+//   address: 'orai1etr7495tul34lvrjk4zxzlnpltf5383sp497prm97pwjmwzhs73sc2umfp',
+//   decimals: 6,
+//   name: 'DEFI5',
+//   logoURI: 'https://assets.coingecko.com/coins/images/12931/standard/orai.png',
+//   coingeckoId: 'tether'
+// }
+// export const DEFI6: Token = {
+//   symbol: 'DEFI6',
+//   address: 'orai1a7fdtl4vpylkt4l2vyweaadl687g9s9jjxzz5panlx075kq96k8sfpwjhz',
+//   decimals: 6,
+//   name: 'DEFI6',
+//   logoURI: 'https://assets.coingecko.com/coins/images/12931/standard/orai.png',
+//   coingeckoId: 'tether'
+// }
+
+export const USDT: Token = {
+  symbol: 'USDT',
+  address: 'orai1z3zd5fk60ev5tf8slmr5tjuhp2qmhkvhcf84ajk27un5h0tgz4fql075rt',
+  decimals: 6,
+  name: 'USDT',
+  logoURI: 'https://assets.coingecko.com/coins/images/325/standard/Tether.png',
+  coingeckoId: 'tether'
+}
+export const USDC: Token = {
+  symbol: 'USDC',
+  address: 'orai154a9fxn9wcyfsxnjkgm4ql4spyvhfu7j5twpzwwx2077ts0uwtps66y70s',
+  decimals: 6,
+  name: 'USDC',
+  logoURI:
+    'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png',
+  coingeckoId: 'usd-coin'
+}
+
+// export const BTC: Token = {
+//   symbol: 'BTC',
+//   address: TESTNET_BTC_ADDRESS,
+//   decimals: 8,
+//   name: 'Bitcoin',
+//   logoURI:
+//     'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/9n4nbM75f5Ui33ZbPYXn59EwSgE8CGsHtAeTH5YFeJ9E/logo.png',
+//   coingeckoId: 'bitcoin'
+// }
 
 export const ETH: Token = {
   symbol: 'ETH',
@@ -230,15 +231,15 @@ export const ETH: Token = {
   coingeckoId: 'ethereum'
 }
 
-export const USDC: Token = {
-  symbol: 'USDC',
-  address: TESTNET_USDC_ADDRESS,
-  decimals: 6,
-  name: 'USDC',
-  logoURI:
-    'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png',
-  coingeckoId: 'usdc'
-}
+// export const USDC: Token = {
+//   symbol: 'USDC',
+//   address: TESTNET_USDC_ADDRESS,
+//   decimals: 6,
+//   name: 'USDC',
+//   logoURI:
+//     'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png',
+//   coingeckoId: 'usdc'
+// }
 
 export const ORAI: Token = {
   symbol: 'ORAI',
@@ -249,27 +250,16 @@ export const ORAI: Token = {
   coingeckoId: 'oraichain-token'
 }
 
-export const USDT: Token = {
-  symbol: 'USDT',
-  address: 'orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh',
-  decimals: 6,
-  name: 'Tether USD',
-  logoURI: 'https://assets.coingecko.com/coins/images/325/standard/Tether.png',
-  coingeckoId: 'tether'
-}
+// export const USDT: Token = {
+//   symbol: 'USDT',
+//   address: 'orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh',
+//   decimals: 6,
+//   name: 'Tether USD',
+//   logoURI: 'https://assets.coingecko.com/coins/images/325/standard/Tether.png',
+//   coingeckoId: 'tether'
+// }
 
-export const FAUCET_LIST_TOKEN = [
-  TOKEN1,
-  TOKEN2,
-  DEFI1,
-  DEFI2,
-  DEFI3,
-  DEFI4,
-  DEFI5,
-  DEFI6,
-  ORAI,
-  USDT
-]
+export const FAUCET_LIST_TOKEN = [USDT, USDC, OCH, BTC, ORAI]
 
 export const DEFAULT_INVARIANT_OPTIONS = {
   storageDepositLimit: null,
