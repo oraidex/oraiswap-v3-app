@@ -60,7 +60,7 @@ jobs:
             #   env:
             #       ENV_SENTRY_PROD: ${{secrets.ENV_SENTRY_PROD}}
             - name: Set firebase project alias
-              run: yarn firebase deploy --only hosting:oraidex-amm-v3-prod --token ${{ secrets.FIREBASE_TOKEN }}"
+              run: yarn firebase deploy --only hosting:oraidex-amm-v3-prod --token ${{ secrets.FIREBASE_TOKEN }}
             - name: Send discord message
               uses: appleboy/discord-action@master
               with:
