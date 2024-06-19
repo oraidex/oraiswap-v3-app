@@ -20,31 +20,34 @@ type Story = StoryObj<typeof meta>
 
 export const Primary: Story = {
   args: {
-    currentPrice: 10000 as any,
+    currentPrice: 10000,
     data: [],
     initialIsDiscreteValue: false,
     leftRange: {
-      index: 2 as any,
-      x: 10000 as any
+      index: 2,
+      x: 10000
     },
     rightRange: {
-      index: 2 as any,
-      x: 10000 as any
+      index: 2,
+      x: 10000
     },
     max: 100,
     min: 0,
-    midPrice: {} as any,
+    midPrice: {
+      x: 1,
+      index: 1
+    },
     onDiscreteChange: fn(),
     reloadHandler: fn(),
     ticksLoading: false,
-    tickSpacing: 0,
+    tickSpacing: 1,
     tokenX: {
       name: 'BTC',
-      decimal: 9 as any
+      decimal: 9
     },
     tokenY: {
       name: 'ETH',
-      decimal: 12 as any
+      decimal: 12
     },
     xToY: true,
     hasTicksError: false

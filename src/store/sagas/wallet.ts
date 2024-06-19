@@ -311,16 +311,7 @@ export function* fetchBalances(tokens: string[]): Generator {
   yield* put(walletActions.setBalance(BigInt(balance)))
 
   const tokenBalances = yield* call(getTokenBalances, tokens)
-  yield* put(
-    walletActions.addTokenBalances(
-      tokenBalances.map(([address, balance]) => {
-        return {
-          address,
-          balance
-        }
-      })
-    )
-  )
+  yield* put(walletActions.addTokenBalances(tokenBalances))
 }
 
 export function* connectHandler(): Generator {

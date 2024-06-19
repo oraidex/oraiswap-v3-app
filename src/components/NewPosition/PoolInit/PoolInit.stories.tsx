@@ -15,14 +15,14 @@ export const Primary: Story = {
   args: {
     currentPairReversed: false,
     isXtoY: true,
-    midPrice: 0 as any, //Storybook doesn't support bigint correctly
+    midPrice: 1n, //Storybook doesn't support bigint correctly
     onChangeMidPrice: fn(),
     onChangeRange: fn(),
-    tickSpacing: 1 as any,
+    tickSpacing: 1,
     tokenASymbol: 'BTC',
     tokenBSymbol: 'ETH',
-    xDecimal: 9 as any,
-    yDecimal: 12 as any
+    xDecimal: 9,
+    yDecimal: 12
   },
   render: args => {
     const [midPrice, setMidPrice] = useState(0n)

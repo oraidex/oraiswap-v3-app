@@ -36,36 +36,36 @@ export const Primary: Story = {
         {
           index: 1,
           sign: true,
-          liquidityChange: 100,
-          liquidityGross: 200,
-          sqrtPrice: 300,
-          feeGrowthOutsideX: 400,
-          feeGrowthOutsideY: 500,
-          secondsOutside: 600
+          liquidity_change: 100n,
+          liquidity_gross: 200n,
+          sqrt_price: 300n,
+          fee_growth_outside_x: 400n,
+          fee_growth_outside_y: 500n,
+          seconds_outside: 600
         }
       ],
       pool2: [
         {
           index: 2,
           sign: false,
-          liquidityChange: 700,
-          liquidityGross: 800,
-          sqrtPrice: 900,
-          feeGrowthOutsideX: 1000,
-          feeGrowthOutsideY: 1100,
-          secondsOutside: 1200
+          liquidity_change: 700n,
+          liquidity_gross: 800n,
+          sqrt_price: 900n,
+          fee_growth_outside_x: 1000n,
+          fee_growth_outside_y: 1100n,
+          seconds_outside: 1200
         }
       ]
-    } as any,
+    },
     progress: 'none',
     swapData: {
-      slippage: 1 as any,
-      estimatedPriceAfterSwap: 123 as any,
+      slippage: 1,
+      estimatedPriceAfterSwap: 123n,
       tokenFrom: '0x123132423423',
       tokenTo: '0x123132423423',
-      amountIn: 123 as any,
+      amountIn: 123n,
       byAmountIn: false,
-      amountOut: 1114 as any,
+      amountOut: 1114n,
       poolKey: newPoolKey('0x123132423423', '0x123132423423', { fee: 1, tick_spacing: 1 })
     },
     tickmap: {},

@@ -25,15 +25,21 @@ export const Primary: Story = {
     currentPairReversed: false,
     isXtoY: true,
     addLiquidityHandler: fn(),
-    midPrice: { x: 1234, index: 23 } as any,
+    midPrice: { x: 1234, index: 23 },
     bestTiers: [],
     canCreateNewPool: true,
     canCreateNewPosition: true,
     commonTokens: [],
     copyPoolAddressHandler: fn(),
     currentFeeIndex: 0,
-    currentPriceSqrt: 123 as any,
-    data: [],
+    currentPriceSqrt: 123n,
+    data: [
+      {
+        index: 1,
+        x: 1,
+        y: 1
+      }
+    ],
     feeTiers: [
       { feeValue: 0.1 },
       { feeValue: 0.2 },
@@ -61,10 +67,10 @@ export const Primary: Story = {
     reloadHandler: fn(),
     setMidPrice: fn(),
     ticksLoading: false,
-    tickSpacing: 0 as any,
+    tickSpacing: 1,
     tokens: [],
-    xDecimal: 9 as any,
-    yDecimal: 12 as any,
+    xDecimal: 9,
+    yDecimal: 12,
     hasTicksError: false,
     calcAmount: fn(),
     loadingTicksAndTickMaps: false,
@@ -81,7 +87,7 @@ export const Primary: Story = {
       <NewPosition
         midPrice={{ x: 1234, index: 23 }}
         currentPriceSqrt={123n}
-        tickSpacing={0}
+        tickSpacing={1}
         xDecimal={9}
         yDecimal={12}
         commonTokens={[]}

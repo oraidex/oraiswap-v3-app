@@ -112,7 +112,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
     }
 
     return {
-      index: 0n,
+      index: 0,
       x: 0
     }
   }, [position?.pool_key])
@@ -120,7 +120,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
   const leftRange = useMemo(() => {
     if (position) {
       return {
-        index: BigInt(position.lower_tick_index),
+        index: position.lower_tick_index,
         x: calcPrice(
           position.lower_tick_index,
           true,
@@ -131,7 +131,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
     }
 
     return {
-      index: 0n,
+      index: 0,
       x: 0
     }
   }, [position?.pool_key])
@@ -139,7 +139,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
   const rightRange = useMemo(() => {
     if (position) {
       return {
-        index: BigInt(position.upper_tick_index),
+        index: position.upper_tick_index,
         x: calcPrice(
           position.upper_tick_index,
           true,
@@ -150,7 +150,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
     }
 
     return {
-      index: 0n,
+      index: 0,
       x: 0
     }
   }, [position?.pool_key])
@@ -352,9 +352,9 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
         poolAddress={position ? poolKeyToString(position.pool_key) : ''}
         copyPoolAddressHandler={copyPoolAddressHandler}
         detailsData={data}
-        midPrice={midPrice as any}
-        leftRange={leftRange as any}
-        rightRange={rightRange as any}
+        midPrice={midPrice}
+        leftRange={leftRange}
+        rightRange={rightRange}
         currentPrice={current}
         onClickClaimFee={() =>
           dispatch(

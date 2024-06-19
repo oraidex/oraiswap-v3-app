@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useState } from 'react'
 import { connectKeplr } from '../services/keplr'
 import { Tendermint37Client, Tendermint34Client } from '@cosmjs/tendermint-rpc'
@@ -14,7 +13,9 @@ CosmWasmClient.prototype.getHeight = async function () {
   return status.syncInfo.latestBlockHeight
 }
 
+// @ts-ignore
 Tendermint34Client.detectVersion = Tendermint37Client.detectVersion = () => {}
+// @ts-ignore
 Tendermint34Client.prototype.status = Tendermint37Client.prototype.status = () => {
   return {
     nodeInfo: {
@@ -61,7 +62,7 @@ export const useSigningCosmWasmClient = (): ISigningCosmWasmClientContext => {
       await window.keplr.enable(PUBLIC_CHAIN_ID)
 
       // get offline signer for signing txs
-      const offlineSigner = await (window as any).getOfflineSigner(PUBLIC_CHAIN_ID)
+      const offlineSigner = window.keplr.getOfflineSigner(PUBLIC_CHAIN_ID)
 
       // make client
       const client = await SigningCosmWasmClient.connectWithSigner(
@@ -78,7 +79,6 @@ export const useSigningCosmWasmClient = (): ISigningCosmWasmClientContext => {
       const [{ address }] = await offlineSigner.getAccounts()
       setWalletAddress(address)
       dispatch(walletActions.setStatus(Status.Initialized))
-
     } catch (error) {
       // make fallback client
       const client = await SigningCosmWasmClient.connectWithSigner(PUBLIC_RPC_ENDPOINT, null)

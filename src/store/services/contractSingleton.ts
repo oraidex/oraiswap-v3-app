@@ -27,7 +27,8 @@ export const integerSafeCast = (value: bigint): number => {
 }
 
 export default class SingletonOraiswapV3 {
-  private static _tokens: { [key: string]: OraiswapTokenClient | any } = {}
+  private static _tokens: { [key: string]: OraiswapTokenClient } = {}
+  private static _nativeTokens: { [key: string]: string } = {}
   private static _dex: OraiswapV3Client
 
   private constructor() {}
@@ -38,6 +39,10 @@ export default class SingletonOraiswapV3 {
 
   public static get tokens() {
     return this._tokens
+  }
+
+  public static get nativeTokens() {
+    return this._nativeTokens
   }
 
   public static async load(signingClient: SigningCosmWasmClient, sender: string) {
@@ -55,7 +60,7 @@ export default class SingletonOraiswapV3 {
   }
 
   public static async loadNative(tokenDenom: string) {
-    this._tokens[tokenDenom] = tokenDenom
+    this._nativeTokens[tokenDenom] = tokenDenom
   }
 
   public static async queryBalance(tokenDenom: string = 'orai') {

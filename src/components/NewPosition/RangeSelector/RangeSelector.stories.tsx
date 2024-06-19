@@ -15,24 +15,30 @@ export const Primary: Story = {
   args: {
     currentPairReversed: false,
     isXtoY: true,
-    midPrice: { x: 1, index: 1n },
+    midPrice: { x: 1, index: 1 },
     concentrationArray: [0.1, 0.2, 0.3, 0.4, 0.5],
     concentrationIndex: 2,
-    data: [],
+    data: [
+      {
+        index: 1,
+        x: 1,
+        y: 1
+      }
+    ],
     getTicksInsideRange: fn(),
     initialIsDiscreteValue: false,
     minimumSliderIndex: 0,
     onChangeRange: fn(),
     onDiscreteChange: fn(),
-    poolIndex: 0 as any,
+    poolIndex: 0,
     reloadHandler: fn(),
     setConcentrationIndex: fn(),
     ticksLoading: false,
-    tickSpacing: 0 as any,
+    tickSpacing: 1,
     tokenASymbol: 'BTC',
     tokenBSymbol: 'ETH',
-    xDecimal: 9 as any,
-    yDecimal: 12 as any
+    xDecimal: 9,
+    yDecimal: 12
   },
   render: args => {
     const [concentrationIndex, setConcentrationIndex] = useState(2)
@@ -41,7 +47,7 @@ export const Primary: Story = {
         {...args}
         concentrationIndex={concentrationIndex}
         setConcentrationIndex={setConcentrationIndex}
-        tickSpacing={0}
+        tickSpacing={1}
         xDecimal={9}
         yDecimal={12}
         poolIndex={0}

@@ -19,8 +19,8 @@ import useStyles from './style'
 import { getMaxTick, getMinTick } from '@wasm'
 
 export interface IRangeSelector {
-  data: PlotTickData[] | any
-  midPrice: TickPlotPositionData | any
+  data: PlotTickData[]
+  midPrice: TickPlotPositionData
   tokenASymbol: string
   tokenBSymbol: string
   onChangeRange: (leftIndex: number, rightIndex: number) => void

@@ -99,7 +99,7 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
   )
 
   const currentLessThanRange = useMemo(() => {
-    if (disabled || leftRange.x < Math.max(plotMin, data[0].x)) {
+    if (!data.length || disabled || leftRange.x < Math.max(plotMin, data[0].x)) {
       return []
     }
 
@@ -132,6 +132,7 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
   }, [disabled, leftRange, data, plotMin, plotMax, pointsOmitter])
 
   const currentRange = useMemo(() => {
+    if (!data.length) return
     if (disabled) {
       const outMinData: Array<{ x: number; y: number }> = data.filter(
         tick => tick.x < Math.max(plotMin, data[0].x)
@@ -230,7 +231,7 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
   }, [disabled, data, leftRange, rightRange, plotMin, plotMax, pointsOmitter])
 
   const currentGreaterThanRange = useMemo(() => {
-    if (disabled || rightRange.x > plotMax) {
+    if (!data.length || disabled || rightRange.x > plotMax) {
       return []
     }
 

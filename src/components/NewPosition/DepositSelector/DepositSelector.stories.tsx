@@ -70,7 +70,7 @@ export const Primary: Story = {
     onAddLiquidity: fn(),
     onHideUnknownTokensChange: fn(),
     onReverseTokens: fn(),
-    poolIndex: 0 as any,
+    poolIndex: 0,
     positionOpeningMethod: 'range',
     progress: 'success',
     setPositionTokens: fn(),

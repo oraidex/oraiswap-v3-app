@@ -131,12 +131,12 @@ const poolsSlice = createSlice({
       }
       return state
     },
-    updateTokenBalances(state, action: PayloadAction<[string, bigint][]>) {
+    updateTokenBalances(state, action: PayloadAction<{ address: string; balance: bigint }[]>) {
       console.log('updateTokenBalances')
       action.payload.map(pair => {
-        state.tokens[pair[0]] = {
-          ...state.tokens[pair[0]],
-          balance: pair[1]
+        state.tokens[pair.address] = {
+          ...state.tokens[pair.address],
+          balance: pair.balance
         }
       })
       return state

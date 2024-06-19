@@ -151,7 +151,7 @@ const PositionDetails: React.FC<IProps> = ({
                 : detailsData.map(tick => ({ ...tick, x: 1 / tick.x })).reverse()
               : Array(100)
                   .fill(1)
-                  .map((_e, index) => ({ x: index, y: index, index: BigInt(index) }))
+                  .map((_e, index) => ({ x: index, y: index, index }))
           }
           leftRange={xToY ? leftRange : { ...rightRange, x: 1 / rightRange.x }}
           rightRange={xToY ? rightRange : { ...leftRange, x: 1 / leftRange.x }}
