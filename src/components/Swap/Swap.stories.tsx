@@ -3,10 +3,20 @@ import { Status } from '@store/reducers/wallet'
 import type { Meta, StoryObj } from '@storybook/react'
 import { fn } from '@storybook/test'
 import Swap from './Swap'
+import { Provider } from 'react-redux'
+import { store } from '../../store'
+import { tokens } from '../../stories/data'
 
 const meta = {
   title: 'Components/Swap',
-  component: Swap
+  component: Swap,
+  decorators: [
+    Story => (
+      <Provider store={store}>
+        <Story />
+      </Provider>
+    )
+  ]
 } satisfies Meta<typeof Swap>
 
 export default meta
@@ -61,18 +71,18 @@ export const Primary: Story = {
     swapData: {
       slippage: 1,
       estimatedPriceAfterSwap: 123n,
-      tokenFrom: '0x123132423423',
-      tokenTo: '0x123132423423',
+      tokenFrom: 'tokenx',
+      tokenTo: 'tokeny',
       amountIn: 123n,
       byAmountIn: false,
       amountOut: 1114n,
-      poolKey: newPoolKey('0x123132423423', '0x123132423423', { fee: 1, tick_spacing: 1 })
+      poolKey: newPoolKey('tokenx', 'tokeny', { fee: 1, tick_spacing: 1 })
     },
     tickmap: {},
-    tokens: [],
+    tokens,
     walletStatus: Status.Initialized,
     simulateResult: {
-      poolKey: newPoolKey('0x123132423423', '0x123132423423', { fee: 1, tick_spacing: 1 }),
+      poolKey: newPoolKey('tokenx', 'tokeny', { fee: 1, tick_spacing: 1 }),
       amountOut: 1000000000000n,
       priceImpact: 1.23,
       targetSqrtPrice: 1000000000000000000000000n,
@@ -112,12 +122,12 @@ export const Primary: Story = {
         swapData={{
           slippage: 1,
           estimatedPriceAfterSwap: 123n,
-          tokenFrom: '0x123132423423',
-          tokenTo: '0x123132423423',
+          tokenFrom: 'tokenx',
+          tokenTo: 'tokeny',
           amountIn: 123n,
           byAmountIn: false,
           amountOut: 1114n,
-          poolKey: newPoolKey('0x123132423423', '0x123132423423', { fee: 1, tick_spacing: 1 })
+          poolKey: newPoolKey('tokenx', 'tokeny', { fee: 1, tick_spacing: 1 })
         }}
       />
     )

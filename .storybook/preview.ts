@@ -92,6 +92,7 @@ const preview: Preview = {
       GlobalStyles: CssBaseline
     })
     // withRouter
+    // withStore
   ]
 }
 

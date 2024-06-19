@@ -14,6 +14,6 @@ export const Primary: Story = {
   args: {
     copyPoolAddressHandler: fn(),
     displayLength: 5,
-    marketId: '0x12332412312313512312'
+    marketId: 'orai1h6u9m24mnvmyadj8pmcfvcd0yrjfwur4lrcn4hy25wn80mannz0qwt67m7'
   }
 }

@@ -32,7 +32,7 @@ const data = [
     valueX: 10000.45,
     valueY: 2137.4,
     id: 1,
-    address: '0x123132423423'
+    address: 'tokenx'
   },
   {
     tokenXName: 'BTC',
@@ -47,7 +47,7 @@ const data = [
     valueX: 10000.45,
     valueY: 2137.4,
     id: 2,
-    address: '0x123132423423'
+    address: 'tokeny'
   },
   {
     tokenXName: 'BTC',
@@ -62,7 +62,7 @@ const data = [
     valueX: 10000.45,
     valueY: 2137.4,
     id: 3,
-    address: '0x123132423423'
+    address: 'tokenx'
   },
   {
     tokenXName: 'BTC',
@@ -77,7 +77,7 @@ const data = [
     valueX: 10000.45,
     valueY: 2137.4,
     id: 4,
-    address: '0x123132423423'
+    address: 'tokeny'
   }
 ]
 

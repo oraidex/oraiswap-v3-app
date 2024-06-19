@@ -21,13 +21,13 @@ type Story = StoryObj<typeof meta>
 
 export const Primary: Story = {
   args: {
-    address: '0x1234567890123456789012345678901234567890',
-    defaultTestnetRPC: 'https://rpc.testnet.moonbeam.network',
+    address: 'orai1h6u9m24mnvmyadj8pmcfvcd0yrjfwur4lrcn4hy25wn80mannz0qwt67m7',
+    defaultTestnetRPC: 'https://testnet.rpc.orai.io',
     landing: '',
     onConnectWallet: fn(),
     onDisconnectWallet: fn(),
     onNetworkSelect: fn(),
-    rpc: 'https://rpc.testnet.moonbeam.network',
+    rpc: 'https://rpc.orai.io',
     typeOfNetwork: 'Testnet',
     walletConnected: true,
     onFaucet: fn()

@@ -75,9 +75,9 @@ export const Primary: Story = {
     ],
     fee: 1n,
     onClickClaimFee: fn(),
-    poolAddress: '0x1234567890',
-    tokenXAddress: '0x1234567890',
-    tokenYAddress: '0x1234567890'
+    poolAddress: 'orai1h6u9m24mnvmyadj8pmcfvcd0yrjfwur4lrcn4hy25wn80mannz0qwt67m7',
+    tokenXAddress: 'orai1h6u9m24mnvmyadj8pmcfvcd0yrjfwur4lrcn4hy25wn80mannz0qwt67m7',
+    tokenYAddress: 'orai1h6u9m24mnvmyadj8pmcfvcd0yrjfwur4lrcn4hy25wn80mannz0qwt67m7'
   },
   render: args => {
     return (

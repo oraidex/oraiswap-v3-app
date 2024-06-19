@@ -75,9 +75,7 @@ export const Primary: Story = {
     hasTicksError: false,
     calcAmount: fn(),
     loadingTicksAndTickMaps: false,
-    poolKey: poolKeyToString(
-      newPoolKey('0x123132423423', '0x123132423423', { fee: 1, tick_spacing: 1 })
-    ),
+    poolKey: poolKeyToString(newPoolKey('tokenx', 'tokeny', { fee: 1, tick_spacing: 1 })),
     noConnectedBlockerProps: {
       onConnect: fn(),
       descCustomText: 'Cannot add any liquidity.'
@@ -143,9 +141,7 @@ export const Primary: Story = {
         canCreateNewPosition={true}
         calcAmount={() => 1n}
         loadingTicksAndTickMaps={false}
-        poolKey={poolKeyToString(
-          newPoolKey('0x123132423423', '0x123132423423', { fee: 1, tick_spacing: 1 })
-        )}
+        poolKey={poolKeyToString(newPoolKey('tokenx', 'tokeny', { fee: 1, tick_spacing: 1 }))}
         noConnectedBlockerProps={{
           onConnect: fn(),
           descCustomText: 'Cannot add any liquidity.'
