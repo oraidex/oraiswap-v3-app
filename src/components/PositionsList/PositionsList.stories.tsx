@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { BrowserRouter } from 'react-router-dom'
 import { PositionsList } from './PositionsList'
-import { TOKEN1, TOKEN2 } from '@store/consts/static'
+import { tokens } from '../../stories/data'
 
 const meta = {
   title: 'PositionsList',
@@ -22,8 +22,8 @@ const data = [
   {
     tokenXName: 'BTC',
     tokenYName: 'AZERO',
-    tokenXIcon: TOKEN1.logoURI,
-    tokenYIcon: TOKEN2.logoURI,
+    tokenXIcon: tokens[0].logoURI,
+    tokenYIcon: tokens[1].logoURI,
     tokenXLiq: 5000,
     tokenYLiq: 300.2,
     min: 2149.6,
@@ -37,8 +37,8 @@ const data = [
   {
     tokenXName: 'BTC',
     tokenYName: 'AZERO',
-    tokenXIcon: TOKEN1.logoURI,
-    tokenYIcon: TOKEN2.logoURI,
+    tokenXIcon: tokens[0].logoURI,
+    tokenYIcon: tokens[1].logoURI,
     tokenXLiq: 5000,
     tokenYLiq: 300.2,
     min: 2149.6,
@@ -52,8 +52,8 @@ const data = [
   {
     tokenXName: 'BTC',
     tokenYName: 'AZERO',
-    tokenXIcon: TOKEN1.logoURI,
-    tokenYIcon: TOKEN2.logoURI,
+    tokenXIcon: tokens[0].logoURI,
+    tokenYIcon: tokens[1].logoURI,
     tokenXLiq: 5000,
     tokenYLiq: 300.2,
     min: 2149.6,
@@ -67,8 +67,8 @@ const data = [
   {
     tokenXName: 'BTC',
     tokenYName: 'AZERO',
-    tokenXIcon: TOKEN1.logoURI,
-    tokenYIcon: TOKEN2.logoURI,
+    tokenXIcon: tokens[0].logoURI,
+    tokenYIcon: tokens[1].logoURI,
     tokenXLiq: 5000,
     tokenYLiq: 300.2,
     min: 2149.6,
