@@ -76,14 +76,14 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     width: 130,
     height: 40,
     borderRadius: 14,
-    background: colors.oraidex.pinkLinearGradientOpacity,
+    background: colors.oraidex.greenLinearGradientOpacity,
     color: colors.oraidex.dark,
     ...typography.body1,
     marginTop: 24,
     textTransform: 'none',
 
     '&:hover': {
-      background: colors.oraidex.pinkLinearGradient
+      background: colors.oraidex.greenLinearGradient
     }
   },
   cover: {

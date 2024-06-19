@@ -54,7 +54,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     color: colors.oraidex.black,
     ...typography.body1,
     textTransform: 'none',
-    background: colors.oraidex.pinkLinearGradientOpacity,
+    background: colors.oraidex.greenLinearGradientOpacity,
     borderRadius: 14,
     height: 40,
     width: 130,
@@ -64,7 +64,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     letterSpacing: -0.03,
 
     '&:hover': {
-      background: colors.oraidex.pinkLinearGradient,
+      background: colors.oraidex.greenLinearGradient,
       boxShadow: `0 0 16px ${colors.oraidex.pink}`
     }
   },

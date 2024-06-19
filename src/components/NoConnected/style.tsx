@@ -43,10 +43,10 @@ export const useStyles = makeStyles()(() => ({
     ...typography.body1,
     textTransform: 'none',
     borderRadius: 14,
-    background: colors.oraidex.pinkLinearGradientOpacity,
+    background: colors.oraidex.greenLinearGradientOpacity,
 
     '&:hover': {
-      background: colors.oraidex.pinkLinearGradient,
+      background: colors.oraidex.greenLinearGradient,
       boxShadow: '0px 0px 16px rgba(239, 132, 245, 0.35)'
     }
   }

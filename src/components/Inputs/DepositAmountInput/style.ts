@@ -27,7 +27,7 @@ export const useStyles = makeStyles()((theme: Theme) => {
       }
     },
     input: {
-      color: colors.oraidex.light,
+      color: colors.oraidex.text,
       ...typography.heading2,
       width: '100%',
       textAlign: 'right',

@@ -71,7 +71,12 @@ export const Header: React.FC<IHeader> = ({
   ]
 
   return (
-    <Grid container>
+    <Grid
+      container
+      sx={{
+        backgroundColor: '#121511',
+        borderBottom: '1px solid #232521'
+      }}>
       <Grid container className={classes.root} direction='row' alignItems='center' wrap='nowrap'>
         <Grid
           container

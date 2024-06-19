@@ -10,7 +10,7 @@ const useStyles = makeStyles()(() => {
       textTransform: 'none',
       ...typography.body1,
       color: colors.oraidex.componentBcg,
-      background: colors.oraidex.pinkLinearGradient,
+      background: colors.oraidex.greenLinearGradient,
       transition: 'background-color 0ms ease, box-shadow 150ms linear',
       position: 'relative',
       overflow: 'hidden',
