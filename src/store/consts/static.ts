@@ -134,8 +134,63 @@ export const FaucetTokenList = {
   // USDC: TESTNET_USDC_ADDRESS,
   TOKEN1: 'orai1z3zd5fk60ev5tf8slmr5tjuhp2qmhkvhcf84ajk27un5h0tgz4fql075rt',
   TOKEN2: 'orai154a9fxn9wcyfsxnjkgm4ql4spyvhfu7j5twpzwwx2077ts0uwtps66y70s',
+  DEFI1: 'orai1vllp59yyjuhealdu0srm6kwvynx9c2hv72sfxr8f8ufhc2zvc5fqghjgny',
+  DEFI2: 'orai1lnn4t206eq464z3amy7fwkjl0rxm9euap9gcf7de9j27l00uwvuqfa0sdt',
+  DEFI3: 'orai1rsx2fr97wnunevl7n09tzlvrau5u5875jq36mjx04e53mdyxnrwq9n90kh',
+  DEFI4: 'orai1gfru0p5n0w4hl0sc7gj8dsaud7zerv8wdu9e4jdh77ghydhahv2q0ecxj7',
+  DEFI5: 'orai1etr7495tul34lvrjk4zxzlnpltf5383sp497prm97pwjmwzhs73sc2umfp',
+  DEFI6: 'orai1a7fdtl4vpylkt4l2vyweaadl687g9s9jjxzz5panlx075kq96k8sfpwjhz',
   ORAI: 'orai',
   USDT: 'orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh'
+}
+
+export const DEFI1: Token = {
+  symbol: 'DEFI1',
+  address: 'orai1vllp59yyjuhealdu0srm6kwvynx9c2hv72sfxr8f8ufhc2zvc5fqghjgny',
+  decimals: 6,
+  name: 'DEFI1',
+  logoURI: 'https://assets.coingecko.com/coins/images/12931/standard/orai.png',
+  coingeckoId: 'tether'
+}
+export const DEFI2: Token = {
+  symbol: 'DEFI2',
+  address: 'orai1lnn4t206eq464z3amy7fwkjl0rxm9euap9gcf7de9j27l00uwvuqfa0sdt',
+  decimals: 6,
+  name: 'DEFI2',
+  logoURI: 'https://assets.coingecko.com/coins/images/12931/standard/orai.png',
+  coingeckoId: 'tether'
+}
+export const DEFI3: Token = {
+  symbol: 'DEFI3',
+  address: 'orai1rsx2fr97wnunevl7n09tzlvrau5u5875jq36mjx04e53mdyxnrwq9n90kh',
+  decimals: 6,
+  name: 'DEFI3',
+  logoURI: 'https://assets.coingecko.com/coins/images/12931/standard/orai.png',
+  coingeckoId: 'tether'
+}
+export const DEFI4: Token = {
+  symbol: 'DEFI4',
+  address: 'orai1gfru0p5n0w4hl0sc7gj8dsaud7zerv8wdu9e4jdh77ghydhahv2q0ecxj7',
+  decimals: 6,
+  name: 'DEFI4',
+  logoURI: 'https://assets.coingecko.com/coins/images/12931/standard/orai.png',
+  coingeckoId: 'tether'
+}
+export const DEFI5: Token = {
+  symbol: 'DEFI5',
+  address: 'orai1etr7495tul34lvrjk4zxzlnpltf5383sp497prm97pwjmwzhs73sc2umfp',
+  decimals: 6,
+  name: 'DEFI5',
+  logoURI: 'https://assets.coingecko.com/coins/images/12931/standard/orai.png',
+  coingeckoId: 'tether'
+}
+export const DEFI6: Token = {
+  symbol: 'DEFI6',
+  address: 'orai1a7fdtl4vpylkt4l2vyweaadl687g9s9jjxzz5panlx075kq96k8sfpwjhz',
+  decimals: 6,
+  name: 'DEFI6',
+  logoURI: 'https://assets.coingecko.com/coins/images/12931/standard/orai.png',
+  coingeckoId: 'tether'
 }
 
 export const TOKEN1: Token = {
@@ -205,7 +260,18 @@ export const USDT: Token = {
   coingeckoId: 'tether'
 }
 
-export const FAUCET_LIST_TOKEN = [TOKEN1, TOKEN2, ORAI, USDT]
+export const FAUCET_LIST_TOKEN = [
+  TOKEN1,
+  TOKEN2,
+  DEFI1,
+  DEFI2,
+  DEFI3,
+  DEFI4,
+  DEFI5,
+  DEFI6,
+  ORAI,
+  USDT
+]
 
 export const DEFAULT_INVARIANT_OPTIONS = {
   storageDepositLimit: null,

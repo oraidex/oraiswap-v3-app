@@ -403,6 +403,18 @@ export const getMockedTokenPrice = (symbol: string, network: Network): TokenPric
       return prices[symbol + sufix]
     case 'TOKEN2':
       return prices[symbol + sufix]
+    case 'DEFI1':
+      return prices[symbol + sufix]
+    case 'DEFI2':
+      return prices[symbol + sufix]
+    case 'DEFI3':
+      return prices[symbol + sufix]
+    case 'DEFI4':
+      return prices[symbol + sufix]
+    case 'DEFI5':
+      return prices[symbol + sufix]
+    case 'DEFI6':
+      return prices[symbol + sufix]
     default:
       return { price: 0 }
   }
