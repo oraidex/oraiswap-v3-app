@@ -1,12 +1,12 @@
 # This is a basic workflow to help you get started with Actions
 
-name: Staging
+name: Prod
 
 # Controls when the action will run.
 on:
     # Triggers the workflow on push or pull request events but only for the master branch
     push:
-        branches: [dev]
+        branches: [main]
 
     # Allows you to run this workflow manually from the Actions tab
     workflow_dispatch:
@@ -60,11 +60,11 @@ jobs:
             #   env:
             #       ENV_SENTRY_PROD: ${{secrets.ENV_SENTRY_PROD}}
             - name: Set firebase project alias
-              run: yarn firebase deploy --only hosting:oraidex-amm-v3-staging --token ${{ secrets.FIREBASE_TOKEN }}"
+              run: yarn firebase deploy --only hosting:oraidex-amm-v3-prod --token ${{ secrets.FIREBASE_TOKEN }}"
             - name: Send discord message
               uses: appleboy/discord-action@master
               with:
                   webhook_id: ${{ secrets.DISCORD_WEBHOOK_ID }}
                   webhook_token: ${{ secrets.DISCORD_WEBHOOK_TOKEN }}
                   username: "GitBot"
-                  message: ':loudspeaker: [staging] Repo ``oraiswap-v3-app`` has just published by ${{ github.event.head_commit.author.name }}'
+                  message: ':loudspeaker: [prod] Repo ``oraiswap-v3-app`` has just published by ${{ github.event.head_commit.author.name }}'
