@@ -11,6 +11,7 @@ import {
   // parse
 } from '@store/consts/utils'
 import { ArrayOfTupleOfUint16AndUint64, PoolWithPoolKey } from '@/sdk/OraiswapV3.types'
+import { defaultState } from '@store/reducers/connection'
 
 export const assert = (condition: boolean, message?: string) => {
   if (!condition) {
@@ -26,7 +27,8 @@ export const integerSafeCast = (value: bigint): number => {
 }
 
 export default class SingletonOraiswapV3 {
-  private static _tokens: { [key: string]: OraiswapTokenClient | any } = {}
+  private static _tokens: { [key: string]: OraiswapTokenClient } = {}
+  private static _nativeTokens: { [key: string]: string } = {}
   private static _dex: OraiswapV3Client
 
   private constructor() {}
@@ -39,9 +41,13 @@ export default class SingletonOraiswapV3 {
     return this._tokens
   }
 
+  public static get nativeTokens() {
+    return this._nativeTokens
+  }
+
   public static async load(signingClient: SigningCosmWasmClient, sender: string) {
-    if (!this.dex || import.meta.env.VITE_CONTRACT_ADDRESS !== this.dex.contractAddress) {
-      this._dex = new OraiswapV3Client(signingClient, sender, import.meta.env.VITE_CONTRACT_ADDRESS)
+    if (!this.dex || defaultState.dexAddress !== this.dex.contractAddress) {
+      this._dex = new OraiswapV3Client(signingClient, sender, defaultState.dexAddress)
     }
   }
 
@@ -54,7 +60,7 @@ export default class SingletonOraiswapV3 {
   }
 
   public static async loadNative(tokenDenom: string) {
-    this._tokens[tokenDenom] = tokenDenom
+    this._nativeTokens[tokenDenom] = tokenDenom
   }
 
   public static async queryBalance(tokenDenom: string = 'orai') {
@@ -100,21 +106,18 @@ export default class SingletonOraiswapV3 {
 
   public static async getPools(): Promise<PoolWithPoolKey[]> {
     const client = await CosmWasmClient.connect(import.meta.env.VITE_CHAIN_RPC_ENDPOINT)
-    const queryClient = new OraiswapV3QueryClient(client, import.meta.env.VITE_CONTRACT_ADDRESS)
+    const queryClient = new OraiswapV3QueryClient(client, defaultState.dexAddress)
     return await queryClient.pools({})
   }
 
   public static async getAllPosition(limit?: number, offset?: PoolKey): Promise<any> {
-    const position = await this.dex.client.queryContractSmart(
-      import.meta.env.VITE_CONTRACT_ADDRESS,
-      {
-        positions: {
-          limit,
-          offset,
-          owner_id: this.dex.sender
-        }
+    const position = await this.dex.client.queryContractSmart(defaultState.dexAddress, {
+      positions: {
+        limit,
+        offset,
+        owner_id: this.dex.sender
       }
-    )
+    })
     return position
   }
 

@@ -17,7 +17,8 @@ export const useTabsStyles = makeStyles<{ value: number }>()((_theme, { value })
   indicator: {
     height: 28,
     borderRadius: 9,
-    background: value === 0 ? colors.oraidex.greenLinearGradient : colors.oraidex.pinkLinearGradient
+    background:
+      value === 0 ? colors.oraidex.greenLinearGradient : colors.oraidex.greenLinearGradient
   },
   scrollable: {
     overflow: 'hidden'
@@ -38,7 +39,7 @@ export const useSingleTabStyles = makeStyles()(theme => {
       minWidth: 80,
       width: 80,
       ...typography.caption2,
-      color: colors.oraidex.light,
+      color: colors.oraidex.text,
       transition: 'color 300ms',
 
       '&:hover': {

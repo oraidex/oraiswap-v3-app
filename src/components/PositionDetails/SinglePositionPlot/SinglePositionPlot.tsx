@@ -11,7 +11,7 @@ import PriceRangePlot from '@components/PriceRangePlot/PriceRangePlot'
 import { getMinTick } from '@wasm'
 
 export interface ISinglePositionPlot {
-  data: PlotTickData[] | any
+  data: PlotTickData[]
   leftRange: TickPlotPositionData
   rightRange: TickPlotPositionData
   midPrice: TickPlotPositionData

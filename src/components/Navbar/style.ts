@@ -6,7 +6,7 @@ const useStyles = makeStyles()(() => {
     button: {
       minWidth: 67,
       backgroundColor: 'transparent',
-      color: colors.oraidex.light,
+      color: colors.oraidex.text,
       height: 32,
       borderRadius: 10,
       ...typography.body1,

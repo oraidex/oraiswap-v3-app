@@ -79,14 +79,14 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   },
   claimButton: {
     height: 44,
-    background: colors.oraidex.pinkLinearGradientOpacity,
+    background: colors.oraidex.greenLinearGradientOpacity,
     ...typography.body1,
     color: colors.oraidex.black,
     textTransform: 'none',
     borderRadius: 18,
 
     '&:hover': {
-      background: colors.oraidex.pinkLinearGradient
+      background: colors.oraidex.greenLinearGradient
     }
   },
   cancelButton: {

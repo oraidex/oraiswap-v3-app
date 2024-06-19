@@ -4,7 +4,7 @@ import { makeStyles } from 'tss-react/mui'
 export const useThumbStyles = makeStyles()(() => {
   return {
     outerCircle: {
-      background: colors.oraidex.pinkLinearGradient,
+      background: colors.oraidex.greenLinearGradient,
       width: 28,
       height: 28,
       borderRadius: '100%',

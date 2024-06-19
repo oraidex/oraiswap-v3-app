@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import SelectTestnetRPC from './SelectTestnetRPC'
-import { Network } from '@store/consts/utils'
 
 const meta = {
   title: 'Modals/SelectRPC',
@@ -11,7 +10,7 @@ const meta = {
     handleClose: () => {},
     networks: [
       {
-        networkType: Network.Testnet,
+        networkType: 'Testnet',
         rpc: 'https://testnet-mock.com',
         rpcName: 'Testnet'
       }

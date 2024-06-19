@@ -57,7 +57,7 @@ export const useSingleTabStyles = makeStyles()(() => {
       ...typography.body3,
       height: 36,
       minHeight: 36,
-      color: colors.oraidex.light,
+      color: colors.oraidex.text,
       paddingInline: 0,
       minWidth: 65,
       width: 65,

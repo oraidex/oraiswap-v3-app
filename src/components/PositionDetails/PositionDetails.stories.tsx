@@ -20,32 +20,32 @@ type Story = StoryObj<typeof meta>
 
 export const Primary: Story = {
   args: {
-    currentPrice: 10000 as any,
+    currentPrice: 10000,
     initialIsDiscreteValue: false,
     leftRange: {
-      index: 2 as any,
-      x: 23 as any
+      index: 2,
+      x: 23
     },
     rightRange: {
-      index: 2 as any,
-      x: 45354 as any
+      index: 2,
+      x: 45354
     },
     max: 100,
     min: 0,
     midPrice: {
-      index: 2 as any,
-      x: 45354 as any
+      index: 2,
+      x: 45354
     },
     onDiscreteChange: fn(),
     reloadHandler: fn(),
     ticksLoading: false,
-    tickSpacing: 0,
+    tickSpacing: 1,
     closePosition: fn(),
     tokenX: {
       name: 'BTC',
       balance: 10000,
       claimValue: 10000,
-      decimal: 9 as any,
+      decimal: 9,
       icon: 'https://assets.coingecko.com/coins/images/1/large/bitcoin.png?1547033579',
       liqValue: 10000,
       usdValue: 123
@@ -54,7 +54,7 @@ export const Primary: Story = {
       name: 'ETH',
       balance: 432,
       claimValue: 21,
-      decimal: 9 as any,
+      decimal: 9,
       icon: 'https://assets.coingecko.com/coins/images/1/large/bitcoin.png?1547033579',
       liqValue: 321,
       usdValue: 3246
@@ -63,17 +63,17 @@ export const Primary: Story = {
     copyPoolAddressHandler: fn(),
     detailsData: [
       {
-        x: 12 as any,
-        y: 1234 as any,
-        index: 1 as any
+        x: 12,
+        y: 1234,
+        index: 1
       },
       {
-        x: 123 as any,
-        y: 432 as any,
-        index: 2 as any
+        x: 123,
+        y: 432,
+        index: 2
       }
     ],
-    fee: 1 as any,
+    fee: 1n,
     onClickClaimFee: fn(),
     poolAddress: '0x1234567890',
     tokenXAddress: '0x1234567890',

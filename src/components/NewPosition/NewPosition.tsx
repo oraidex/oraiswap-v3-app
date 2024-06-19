@@ -197,10 +197,10 @@ export const NewPosition: React.FC<INewPosition> = ({
   const noRangePlaceholderProps = {
     data: Array(100)
       .fill(1)
-      .map((_e, index) => ({ x: index, y: index, index: BigInt(index) })),
+      .map((_e, index) => ({ x: index, y: index, index: index })),
     midPrice: {
       x: 50,
-      index: 50n
+      index: 50
     },
     tokenASymbol: 'ABC',
     tokenBSymbol: 'XYZ'
@@ -301,17 +301,17 @@ export const NewPosition: React.FC<INewPosition> = ({
   }
 
   const onChangeMidPrice = (mid: Price) => {
-    const convertedMid = BigInt(mid)
+    const convertedMid = Number(mid)
     setMidPrice({
-      index: Number(convertedMid),
-      x: calcPrice(Number(convertedMid), isXtoY, xDecimal, yDecimal)
+      index: convertedMid,
+      x: calcPrice(convertedMid, isXtoY, xDecimal, yDecimal)
     })
     if (tokenAIndex !== null && (isXtoY ? rightRange > convertedMid : rightRange < convertedMid)) {
       const deposit = tokenADeposit
       const amount = getOtherTokenAmount(
-        convertBalanceToBigint(deposit, Number(tokens[tokenAIndex].decimals)),
-        Number(leftRange),
-        Number(rightRange),
+        convertBalanceToBigint(deposit, tokens[tokenAIndex].decimals),
+        leftRange,
+        rightRange,
         true
       )
       if (tokenBIndex !== null && +deposit !== 0) {
@@ -323,9 +323,9 @@ export const NewPosition: React.FC<INewPosition> = ({
     if (tokenBIndex !== null && (isXtoY ? leftRange < convertedMid : leftRange > convertedMid)) {
       const deposit = tokenBDeposit
       const amount = getOtherTokenAmount(
-        convertBalanceToBigint(deposit, Number(tokens[tokenBIndex].decimals)),
-        Number(leftRange),
-        Number(rightRange),
+        convertBalanceToBigint(deposit, tokens[tokenBIndex].decimals),
+        leftRange,
+        rightRange,
         false
       )
       if (tokenAIndex !== null && +deposit !== 0) {

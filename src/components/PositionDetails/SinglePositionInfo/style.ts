@@ -34,7 +34,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   },
   text: {
     ...typography.body1,
-    color: colors.oraidex.lightGrey,
+    color: colors.oraidex.text,
     backgroundColor: colors.oraidex.component,
     display: 'flex',
     justifyContent: 'center',
@@ -133,7 +133,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     fontFamily: 'Mukta'
   },
   violetButton: {
-    background: colors.oraidex.pinkLinearGradientOpacity,
+    background: colors.oraidex.greenLinearGradientOpacity,
     borderRadius: 11,
     textTransform: 'none',
     color: colors.oraidex.dark,
@@ -141,7 +141,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     height: 32,
     ...typography.body1,
     '&:hover': {
-      background: colors.oraidex.pinkLinearGradient,
+      background: colors.oraidex.greenLinearGradient,
       boxShadow: '0px 0px 16px rgba(46, 224, 154, 0.35)'
     },
     '&:disabled': {
@@ -244,7 +244,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     color: colors.oraidex.black,
     ...typography.body1,
     textTransform: 'none',
-    background: colors.oraidex.pinkLinearGradientOpacity,
+    background: colors.oraidex.greenLinearGradientOpacity,
     borderRadius: 12,
     height: 40,
     width: 130,
@@ -253,7 +253,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     letterSpacing: -0.03,
 
     '&:hover': {
-      background: colors.oraidex.pinkLinearGradient,
+      background: colors.oraidex.greenLinearGradient,
       boxShadow: `0 0 16px ${colors.oraidex.pink}`
     },
     [theme.breakpoints.down('xs')]: {

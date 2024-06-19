@@ -8,5 +8,8 @@
   }
 </style>
 <script>
+  BigInt.prototype.toJSON = function () {
+    return this.toString()
+  }
   window.global = window
 </script>

@@ -19,7 +19,7 @@ export const HeaderWrapper: React.FC = () => {
   const { walletAddress, signingClient, connectWallet, disconnect } = useSigningClient()
 
   useEffect(() => {
-    (async () => {
+    ;(async () => {
       if (walletAddress == '') {
         connectWallet()
       }
@@ -31,17 +31,12 @@ export const HeaderWrapper: React.FC = () => {
         dispatch(walletActions.setIsBalanceLoading(true))
 
         const balance = await SingletonOraiswapV3.queryBalance()
-        dispatch(walletActions.setBalance(BigInt(balance.toString()) as any))
+        dispatch(walletActions.setBalance(BigInt(balance)))
         dispatch(walletActions.setStatus(Status.Initialized))
         const tokens = Object.values(FaucetTokenList)
         const balances = await getTokenBalances(tokens)
 
-        const convertedBalances = balances.map((balance) => ({
-          address: balance[0],
-          balance: balance[1]
-        }))
-
-        dispatch(walletActions.addTokenBalances(convertedBalances))
+        dispatch(walletActions.addTokenBalances(balances))
         dispatch(walletActions.setIsBalanceLoading(false))
       }
 

@@ -5,7 +5,6 @@ import useStyles from './styles'
 import { ISelectNetwork } from '@store/consts/types'
 import { Button, Grid, Input, Popover, Typography } from '@mui/material'
 import DotIcon from '@mui/icons-material/FiberManualRecord'
-import { Network } from '@store/consts/utils'
 
 export interface ISelectTestnetRPC {
   networks: ISelectNetwork[]
@@ -91,7 +90,7 @@ export const SelectTestnetRPC: React.FC<ISelectTestnetRPC> = ({
           <Button
             className={classes.add}
             onClick={() => {
-              onSelect(Network.Testnet, address, 'Custom')
+              onSelect('Mainnet', address, 'Custom')
               handleClose()
             }}
             disableRipple

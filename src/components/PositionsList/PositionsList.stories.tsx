@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { BrowserRouter } from 'react-router-dom'
 import { PositionsList } from './PositionsList'
+import { TOKEN1, TOKEN2 } from '@store/consts/static'
 
 const meta = {
   title: 'PositionsList',
@@ -21,8 +22,8 @@ const data = [
   {
     tokenXName: 'BTC',
     tokenYName: 'AZERO',
-    tokenXIcon: '',
-    tokenYIcon: '',
+    tokenXIcon: TOKEN1.logoURI,
+    tokenYIcon: TOKEN2.logoURI,
     tokenXLiq: 5000,
     tokenYLiq: 300.2,
     min: 2149.6,
@@ -36,8 +37,8 @@ const data = [
   {
     tokenXName: 'BTC',
     tokenYName: 'AZERO',
-    tokenXIcon: '',
-    tokenYIcon: '',
+    tokenXIcon: TOKEN1.logoURI,
+    tokenYIcon: TOKEN2.logoURI,
     tokenXLiq: 5000,
     tokenYLiq: 300.2,
     min: 2149.6,
@@ -51,8 +52,8 @@ const data = [
   {
     tokenXName: 'BTC',
     tokenYName: 'AZERO',
-    tokenXIcon: '',
-    tokenYIcon: '',
+    tokenXIcon: TOKEN1.logoURI,
+    tokenYIcon: TOKEN2.logoURI,
     tokenXLiq: 5000,
     tokenYLiq: 300.2,
     min: 2149.6,
@@ -66,8 +67,8 @@ const data = [
   {
     tokenXName: 'BTC',
     tokenYName: 'AZERO',
-    tokenXIcon: '',
-    tokenYIcon: '',
+    tokenXIcon: TOKEN1.logoURI,
+    tokenYIcon: TOKEN2.logoURI,
     tokenXLiq: 5000,
     tokenYLiq: 300.2,
     min: 2149.6,

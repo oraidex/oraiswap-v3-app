@@ -2,11 +2,9 @@ export const TESTNET_BTC_ADDRESS = '5FEE8ptrT6387MYHqYmyB8ChWfkEsGEDpTMDpwUh4FCY
 export const TESTNET_ETH_ADDRESS = '5FmDoQPFS5qPMkSumdvVVekiTpsKVmL9E5DHxHEUXCdHFdYy'
 export const TESTNET_USDC_ADDRESS = '5EjKBBJMLE9R2HsXKJRw2CCMZW2q48Ps5bVAQqzsxyhH9jU5'
 
-import { Network } from '@store/consts/utils'
-
 export enum OraichainNetworks {
-  TEST = 'wss://ws.test.azero.dev',
-  DEV = 'wss://ws.dev.azero.dev'
+  TEST = 'https://testnet.rpc.orai.io',
+  MAIN = 'https://rpc.orai.io'
 }
 
 export const TESTNET_DEX_ADDRESS = ''
@@ -33,9 +31,9 @@ export interface Token {
 }
 
 export const tokensPrices: Record<Network, Record<string, TokenPriceData>> = {
-  [Network.Testnet]: { USDC_TEST: { price: 1 }, BTC_TEST: { price: 64572.0 } },
-  [Network.Mainnet]: {},
-  [Network.Local]: {}
+  ['Testnet']: { USDC_TEST: { price: 1 }, BTC_TEST: { price: 64572.0 } },
+  ['Mainnet']: { USDC_TEST: { price: 1 }, BTC_TEST: { price: 64572.0 } },
+  ['Local']: {}
 }
 export interface BestTier {
   tokenX: string
@@ -106,15 +104,15 @@ export interface BestTier {
 
 export const bestTiers: Record<Network, BestTier[]> = {
   //TODO add best Tiers
-  [Network.Testnet]: [],
-  [Network.Mainnet]: [],
-  [Network.Local]: []
+  ['Testnet']: [],
+  ['Mainnet']: [],
+  ['Local']: []
 }
 
 export const commonTokensForNetworks: Record<Network, string[]> = {
-  [Network.Testnet]: [],
-  [Network.Mainnet]: [],
-  [Network.Local]: []
+  ['Testnet']: [],
+  ['Mainnet']: [],
+  ['Local']: []
 }
 
 export const FAUCET_DEPLOYER_MNEMONIC =

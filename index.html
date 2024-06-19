@@ -3,6 +3,10 @@
   <head>
     <script>
       window.global = window
+      // @ts-ignore
+      BigInt.prototype.toJSON = function () {
+        return this.toString()
+      }
     </script>
     <!-- <script type="module" src="/src/shims.ts"></script> -->
     <meta charset="UTF-8" />

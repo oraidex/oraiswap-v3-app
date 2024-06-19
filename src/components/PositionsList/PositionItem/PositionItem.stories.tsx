@@ -1,3 +1,4 @@
+import { TOKEN1, TOKEN2 } from '@store/consts/static'
 import { PositionItem } from './PositionItem'
 
 import type { Meta, StoryObj } from '@storybook/react'
@@ -14,8 +15,8 @@ export const Primary: Story = {
   args: {
     tokenXName: 'BTC',
     tokenYName: 'AZERO',
-    tokenXIcon: '',
-    tokenYIcon: '',
+    tokenXIcon: TOKEN1.logoURI,
+    tokenYIcon: TOKEN2.logoURI,
     tokenXLiq: 5000,
     tokenYLiq: 300.2,
     min: 2149.6,

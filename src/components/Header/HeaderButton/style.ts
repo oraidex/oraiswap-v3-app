@@ -27,7 +27,7 @@ const useStyles = makeStyles()((theme: Theme) => {
       WebkitPaddingBefore: '2px'
     },
     headerButtonConnect: {
-      background: colors.oraidex.pinkLinearGradientOpacity,
+      background: colors.oraidex.greenLinearGradientOpacity,
       color: colors.oraidex.newDark,
       paddingInline: 12,
       borderRadius: 10,

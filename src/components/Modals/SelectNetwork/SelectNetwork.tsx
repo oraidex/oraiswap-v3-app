@@ -5,7 +5,6 @@ import useStyles from './style'
 import { ISelectNetwork } from '@store/consts/types'
 import { Grid, Popover, Typography } from '@mui/material'
 import DotIcon from '@mui/icons-material/FiberManualRecordRounded'
-import { Network } from '@store/consts/utils'
 
 export interface ISelectNetworkModal {
   networks: ISelectNetwork[]
@@ -23,6 +22,7 @@ export const SelectNetwork: React.FC<ISelectNetworkModal> = ({
   handleClose,
   activeNetwork
 }) => {
+  console.log(networks)
   const { classes } = useStyles()
   return (
     <Popover

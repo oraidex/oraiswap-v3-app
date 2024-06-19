@@ -2,7 +2,6 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { fn } from '@storybook/test'
 import Header from './Header'
 import { MemoryRouter } from 'react-router-dom'
-import { Network } from '@store/consts/utils'
 
 const meta = {
   title: 'Layout/Header',
@@ -29,7 +28,7 @@ export const Primary: Story = {
     onDisconnectWallet: fn(),
     onNetworkSelect: fn(),
     rpc: 'https://rpc.testnet.moonbeam.network',
-    typeOfNetwork: Network.Testnet,
+    typeOfNetwork: 'Testnet',
     walletConnected: true,
     onFaucet: fn()
   }

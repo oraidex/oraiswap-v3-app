@@ -13,7 +13,7 @@ export const Primary: Story = {
   args: {
     exchangeRate: { val: 123, symbol: 'ABC', decimal: 12 },
     slippage: 0.5,
-    priceImpact: 1 as any,
+    priceImpact: 1,
     fee: 2n,
     open: true,
     isLoadingRate: false

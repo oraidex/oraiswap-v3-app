@@ -281,7 +281,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   },
 
   buttonSelectDisabled: {
-    background: `${colors.oraidex.pinkLinearGradient} !important`,
+    background: `${colors.oraidex.greenLinearGradient} !important`,
 
     '&:hover': {
       filter: 'brightness(1.15)',
