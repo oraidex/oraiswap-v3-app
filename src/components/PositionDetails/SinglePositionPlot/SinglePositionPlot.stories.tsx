@@ -21,7 +21,13 @@ type Story = StoryObj<typeof meta>
 export const Primary: Story = {
   args: {
     currentPrice: 10000,
-    data: [],
+    data: [
+      {
+        index: 1,
+        x: 1,
+        y: 1
+      }
+    ],
     initialIsDiscreteValue: false,
     leftRange: {
       index: 2,

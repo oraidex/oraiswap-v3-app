@@ -81,7 +81,13 @@ export interface HandleClaimFee {
 export const defaultState: IPositionsStore = {
   lastPage: 1,
   plotTicks: {
-    data: [],
+    data: [
+      {
+        index: 1,
+        x: 1,
+        y: 1
+      }
+    ],
     loading: false
   },
   positionsList: {

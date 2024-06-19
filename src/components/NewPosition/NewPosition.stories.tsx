@@ -4,6 +4,7 @@ import { fn } from '@storybook/test'
 import { MemoryRouter } from 'react-router-dom'
 import NewPosition from './NewPosition'
 import { newPoolKey } from '@wasm'
+import { tokens } from '../../stories/data'
 
 const meta = {
   title: 'PageComponent/NewPosition',
@@ -68,7 +69,7 @@ export const Primary: Story = {
     setMidPrice: fn(),
     ticksLoading: false,
     tickSpacing: 1,
-    tokens: [],
+    tokens,
     xDecimal: 9,
     yDecimal: 12,
     hasTicksError: false,
@@ -117,7 +118,18 @@ export const Primary: Story = {
         initialOpeningPositionMethod='concentration'
         initialIsDiscreteValue={false}
         initialHideUnknownTokensValue={false}
-        data={[]}
+        data={[
+          {
+            x: 1,
+            y: 1,
+            index: 0
+          },
+          {
+            x: 1,
+            y: 1,
+            index: 1
+          }
+        ]}
         currentFeeIndex={0}
         feeTiers={[
           { feeValue: 0.1 },
