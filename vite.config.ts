@@ -27,7 +27,7 @@ export default defineConfig({
   },
   build: {
     rollupOptions: {
-      external: ['fs/promises', 'path']
+      external: ['fs/promises', './']
     }
   },
   optimizeDeps: {

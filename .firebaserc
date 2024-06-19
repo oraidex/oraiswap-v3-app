@@ -1,0 +1,17 @@
+{
+  "projects": {
+    "default": "oraichain-dapp"
+  },
+  "targets": {
+    "oraichain-dapp": {
+      "hosting": {
+        "oraidex-amm-v3-staging": [
+          "oraidex-amm-v3-staging"
+        ],
+        "oraidex-amm-v3-prod": [
+          "oraidex-amm-v3-prod"
+        ]
+      }
+    }
+  }
+}

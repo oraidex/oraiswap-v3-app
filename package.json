@@ -30,6 +30,7 @@
     "animated-number-react": "^0.1.2",
     "axios": "^0.28.0",
     "classnames": "^2.5.1",
+    "firebase-tools": "^13.11.2",
     "notistack": "^3.0.1",
     "rc-scrollbars": "^1.1.6",
     "react": "^18.2.0",
