@@ -1,22 +1,21 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import SelectNetwork from './SelectNetwork'
-import { Network } from '@store/consts/utils'
 
 const meta = {
   title: 'Modals/SelectNetwork',
   component: SelectNetwork,
   args: {
-    activeNetwork: Network.Testnet,
+    activeNetwork: 'Testnet',
     anchorEl: null,
     handleClose: () => {},
     networks: [
       {
-        networkType: Network.Testnet,
+        networkType: 'Testnet',
         rpc: 'https://testnet-mock.com',
         rpcName: 'Testnet'
       },
       {
-        networkType: Network.Mainnet,
+        networkType: 'Mainnet',
         rpc: 'https://mock.com',
         rpcName: 'Mainnet'
       }

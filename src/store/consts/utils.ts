@@ -41,12 +41,6 @@ import {
 import { Token, TokenPriceData } from './static'
 import { PoolWithPoolKey } from '@/sdk/OraiswapV3.types'
 
-export enum Network {
-  Local = 'Local',
-  Testnet = 'Testnet',
-  Mainnet = 'Mainnet'
-}
-
 export const parse = (value: any) => {
   if (isArray(value)) {
     return value.map((element: any) => parse(element))
@@ -381,18 +375,18 @@ export const getCoingeckoTokenPrice = async (id: string): Promise<CoingeckoPrice
 }
 
 export const tokensPrices: Record<Network, Record<string, TokenPriceData>> = {
-  [Network.Testnet]: {
+  ['Testnet']: {},
+  ['Mainnet']: {
     ORAI_TEST: { price: 16.5 },
     USDT_TEST: { price: 1 },
     TOKEN1_TEST: { price: 2 },
     TOKEN2_TEST: { price: 2 }
   },
-  [Network.Mainnet]: {},
-  [Network.Local]: {}
+  ['Local']: {}
 }
 
 export const getMockedTokenPrice = (symbol: string, network: Network): TokenPriceData => {
-  const sufix = network === Network.Testnet ? '_TEST' : '_DEV'
+  const sufix = network === 'Testnet' ? '_TEST' : '_MAIN'
   const prices = tokensPrices[network]
   switch (symbol) {
     case 'ORAI':

@@ -5,7 +5,6 @@ import { blurContent, unblurContent } from '@utils/uiUtils'
 import { Button } from '@mui/material'
 import SelectNetwork from '@components/Modals/SelectNetwork/SelectNetwork'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
-import { Network } from '@store/consts/utils'
 
 export interface IProps {
   name: Network
@@ -45,6 +44,7 @@ export const SelectNetworkButton: React.FC<IProps> = ({
         onClick={handleClick}>
         {name}
       </Button>
+
       <SelectNetwork
         networks={networks}
         open={openNetworks}

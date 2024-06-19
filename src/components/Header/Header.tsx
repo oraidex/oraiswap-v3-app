@@ -16,7 +16,6 @@ import SelectNetworkButton from './HeaderButton/SelectNetworkButton'
 import SelectRPCButton from './HeaderButton/SelectRPCButton'
 import useButtonStyles from './HeaderButton/style'
 import useStyles from './style'
-import { Network } from '@store/consts/utils'
 
 export interface IHeader {
   address: string
@@ -65,7 +64,7 @@ export const Header: React.FC<IHeader> = ({
 
   const testnetRPCs = [
     {
-      networkType: Network.Testnet,
+      networkType: 'Testnet' as Network,
       rpc: OraichainNetworks.TEST,
       rpcName: 'Aleph zero'
     }
@@ -118,7 +117,7 @@ export const Header: React.FC<IHeader> = ({
         </Grid>
 
         <Grid container item className={classes.buttons} wrap='nowrap' gap={1.5}>
-          {typeOfNetwork === Network.Testnet ? (
+          {typeOfNetwork === 'Testnet' ? (
             <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
               <Button
                 className={buttonStyles.classes.headerButton}
@@ -129,12 +128,12 @@ export const Header: React.FC<IHeader> = ({
               </Button>
             </Box>
           ) : null}
-          {typeOfNetwork === Network.Testnet ? (
+          {typeOfNetwork === 'Testnet' ? (
             <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
               <SelectRPCButton rpc={rpc} networks={testnetRPCs} onSelect={onNetworkSelect} />
             </Box>
           ) : null}
-          <SelectNetworkButton name={typeOfNetwork} networks={[]} onSelect={onNetworkSelect} />
+          {/* <SelectNetworkButton name={typeOfNetwork} networks={[]} onSelect={onNetworkSelect} /> */}
           <ChangeWalletButton
             name={
               walletConnected
@@ -180,9 +179,9 @@ export const Header: React.FC<IHeader> = ({
               setRoutesModalOpen(false)
               unblurContent()
             }}
-            onFaucet={typeOfNetwork === Network.Testnet && isXsDown ? onFaucet : undefined}
+            onFaucet={typeOfNetwork === 'Testnet' && isXsDown ? onFaucet : undefined}
             onRPC={
-              typeOfNetwork === Network.Testnet && isXsDown
+              typeOfNetwork === 'Testnet' && isXsDown
                 ? () => {
                     setRoutesModalOpen(false)
                     setTestnetRpcsOpen(true)
@@ -190,7 +189,7 @@ export const Header: React.FC<IHeader> = ({
                 : undefined
             }
           />
-          {typeOfNetwork === Network.Testnet ? (
+          {typeOfNetwork === 'Testnet' ? (
             <SelectTestnetRPC
               networks={testnetRPCs}
               open={testnetRpcsOpen}

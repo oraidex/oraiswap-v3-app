@@ -1,4 +1,3 @@
-import { Network } from '@store/consts/utils'
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { OraichainNetworks, TESTNET_DEX_ADDRESS } from '@store/consts/static'
 import { PayloadType } from '@store/consts/types'
@@ -21,10 +20,10 @@ export interface IOraichainConnectionStore {
 export const defaultState: IOraichainConnectionStore = {
   status: Status.Uninitialized,
   message: '',
-  networkType: Network.Testnet,
+  networkType: 'Mainnet',
   blockNumber: 0,
-  rpcAddress: OraichainNetworks.TEST,
-  dexAddress: TESTNET_DEX_ADDRESS
+  rpcAddress: OraichainNetworks.MAIN,
+  dexAddress: import.meta.env.VITE_CONTRACT_ADDRESS
 }
 export const connectionSliceName = 'connection'
 const connectionSlice = createSlice({

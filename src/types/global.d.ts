@@ -4,4 +4,6 @@ declare global {
   interface Window {
     keplr: Keplr
   }
+
+  type Network = 'Local' | 'Testnet' | 'Mainnet'
 }

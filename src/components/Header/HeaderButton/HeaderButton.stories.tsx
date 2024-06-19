@@ -5,7 +5,6 @@ import ChangeWalletButton from './ChangeWalletButton'
 import SelectNetworkButton from './SelectNetworkButton'
 import SelectRPCButton from './SelectRPCButton'
 
-import { Network } from '@store/consts/utils'
 import { action } from '@storybook/addon-actions'
 
 const meta = {
@@ -58,8 +57,8 @@ export const SelectNetwork: Story = {
   render: () => (
     <div style={{ padding: '100px' }}>
       <SelectNetworkButton
-        name={Network.Testnet}
-        networks={[{ networkType: Network.Testnet, rpc: OraichainNetworks.TEST }]}
+        name={'Mainnet'}
+        networks={[{ networkType: 'Mainnet', rpc: OraichainNetworks.MAIN }]}
         onSelect={(networkType, rpc) => action('chosen: ' + networkType + ' ' + rpc)()}
       />
     </div>
@@ -73,7 +72,7 @@ export const SelectRPC: Story = {
         rpc={OraichainNetworks.TEST}
         networks={[
           {
-            networkType: Network.Testnet,
+            networkType: 'Testnet',
             rpc: OraichainNetworks.TEST,
             rpcName: 'Testnet'
           }

@@ -121,7 +121,7 @@ export function* handleBalance(): Generator {
 //     const psp22 = yield* call(
 //       [psp22Singleton, psp22Singleton.loadInstance],
 //       connection,
-//       Network.Testnet
+//       'Testnet'
 //     )
 
 //     const txs = []
