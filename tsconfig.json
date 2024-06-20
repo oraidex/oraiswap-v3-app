@@ -3,11 +3,7 @@
     "target": "ES2020",
     "baseUrl": "./",
     "useDefineForClassFields": true,
-    "lib": [
-      "ES2020",
-      "DOM",
-      "DOM.Iterable"
-    ],
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "noEmitOnError": true,
     "skipLibCheck": true,
@@ -21,41 +17,21 @@
     /* Linting */
     "strict": false,
     "noUnusedLocals": false,
-    "noUnusedParameters": true,
+    "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
     "paths": {
-      "@components/*": [
-        "src/components/*"
-      ],
-      "@containers/*": [
-        "src/containers/*"
-      ],
-      "@pages/*": [
-        "src/pages/*"
-      ],
-      "@static/*": [
-        "src/static/*"
-      ],
-      "@store/*": [
-        "src/store/*"
-      ],
-      "@wasm": [
-        "src/wasm"
-      ],
-      "@web3/*": [
-        "src/web3/*"
-      ],
-      "@utils/*": [
-        "src/utils/*"
-      ],
-      "@/*": [
-        "src/*"
-      ]
+      "@components/*": ["src/components/*"],
+      "@containers/*": ["src/containers/*"],
+      "@pages/*": ["src/pages/*"],
+      "@static/*": ["src/static/*"],
+      "@store/*": ["src/store/*"],
+      "@wasm": ["src/wasm"],
+      "@web3/*": ["src/web3/*"],
+      "@utils/*": ["src/utils/*"],
+      "@/*": ["src/*"]
     }
   },
-  "include": [
-    "src"
-  ],
+  "include": ["src"],
   "references": [
     {
       "path": "./tsconfig.node.json"
