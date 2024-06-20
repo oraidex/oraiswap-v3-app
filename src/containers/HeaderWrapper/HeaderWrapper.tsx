@@ -21,7 +21,17 @@ export const HeaderWrapper: React.FC = () => {
 
   const { walletAddress, signingClient, connectWallet, disconnect } = useSigningClient();
 
-  window.parent.addEventListener('connectWallet', event => console.log({ event }));
+  // window.parent?.addEventListener &&
+  //   window.parent?.addEventListener('connectWallet', event => console.log({ event }));
+
+  // window.addEventListener('message', function (event) {
+  //   console.log('event', event);
+  //   if (event.origin !== 'http://localhost:3000') return;
+
+  //   console.log('first', event.data);
+  // });
+
+  console.log('window.parent.Keplr', window.parent);
 
   useEffect(() => {
     (async () => {
