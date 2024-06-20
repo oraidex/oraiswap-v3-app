@@ -21,7 +21,7 @@ export const HeaderWrapper: React.FC = () => {
 
   const { walletAddress, signingClient, connectWallet, disconnect } = useSigningClient();
 
-  window.parent.document.addEventListener('connectWallet', event => console.log({ event }));
+  window.parent.addEventListener('connectWallet', event => console.log({ event }));
 
   useEffect(() => {
     (async () => {
