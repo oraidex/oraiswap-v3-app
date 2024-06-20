@@ -1,27 +1,28 @@
-import { EmptyPlaceholder } from '@components/EmptyPlaceholder/EmptyPlaceholder'
-import { INoConnected, NoConnected } from '@components/NoConnected/NoConnected'
-import { PaginationList } from '@components/PaginationList/PaginationList'
-import { Button, Grid, InputAdornment, InputBase, Typography } from '@mui/material'
-import loader from '@static/gif/loader.gif'
-import SearchIcon from '@static/svg/lupaDark.svg'
-import refreshIcon from '@static/svg/refresh.svg'
-import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { IPositionItem, PositionItem } from './PositionItem/PositionItem'
-import { useStyles } from './style'
+import { EmptyPlaceholder } from '@components/EmptyPlaceholder/EmptyPlaceholder';
+import { INoConnected, NoConnected } from '@components/NoConnected/NoConnected';
+import { PaginationList } from '@components/PaginationList/PaginationList';
+import { Button, Grid, InputAdornment, InputBase, Typography } from '@mui/material';
+import loader from '@static/gif/loader.gif';
+import SearchIcon from '@static/svg/lupaDark.svg';
+import refreshIcon from '@static/svg/refresh.svg';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { IPositionItem, PositionItem } from './PositionItem/PositionItem';
+import { useStyles } from './style';
+import { PositionsFilter } from './PositionFilter/PositionFilter';
 
 interface IProps {
-  initialPage: number
-  setLastPage: (page: number) => void
-  data: IPositionItem[]
-  onAddPositionClick: () => void
-  loading?: boolean
-  showNoConnected?: boolean
-  noConnectedBlockerProps: INoConnected
-  itemsPerPage: number
-  searchValue: string
-  searchSetValue: (value: string) => void
-  handleRefresh: () => void
+  initialPage: number;
+  setLastPage: (page: number) => void;
+  data: IPositionItem[];
+  onAddPositionClick: () => void;
+  loading?: boolean;
+  showNoConnected?: boolean;
+  noConnectedBlockerProps: INoConnected;
+  itemsPerPage: number;
+  searchValue: string;
+  searchSetValue: (value: string) => void;
+  handleRefresh: () => void;
 }
 
 export const PositionsList: React.FC<IProps> = ({
@@ -37,48 +38,49 @@ export const PositionsList: React.FC<IProps> = ({
   searchSetValue,
   handleRefresh
 }) => {
-  const { classes } = useStyles()
-  const navigate = useNavigate()
-  const [defaultPage] = useState(initialPage)
-  const [page, setPage] = useState(initialPage)
+  const { classes } = useStyles();
+  const navigate = useNavigate();
+  const [defaultPage] = useState(initialPage);
+  const [page, setPage] = useState(initialPage);
 
   const handleChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    searchSetValue(e.target.value.toLowerCase())
-  }
+    searchSetValue(e.target.value.toLowerCase());
+  };
 
   const handleChangePagination = (page: number): void => {
-    setLastPage(page)
-    setPage(page)
-  }
+    setLastPage(page);
+    setPage(page);
+  };
 
   const paginator = (currentPage: number) => {
-    const page = currentPage || 1
-    const perPage = itemsPerPage || 10
-    const offset = (page - 1) * perPage
-    const paginatedItems = data.slice(offset).slice(0, itemsPerPage)
-    const totalPages = Math.ceil(data.length / perPage)
+    const page = currentPage || 1;
+    const perPage = itemsPerPage || 10;
+    const offset = (page - 1) * perPage;
+    const paginatedItems = data.slice(offset).slice(0, itemsPerPage);
+    const totalPages = Math.ceil(data.length / perPage);
 
     return {
       page: page,
       totalPages: totalPages,
       data: paginatedItems
-    }
-  }
+    };
+  };
 
   useEffect(() => {
-    setPage(1)
-  }, [searchValue])
+    setPage(1);
+  }, [searchValue]);
 
   useEffect(() => {
-    setPage(initialPage)
-  }, [])
+    setPage(initialPage);
+  }, []);
 
   useEffect(() => {
-    handleChangePagination(initialPage)
-  }, [initialPage])
+    handleChangePagination(initialPage);
+  }, [initialPage]);
 
   return (
     <Grid container direction='column' className={classes.root}>
+      <PositionsFilter />
       <Grid
         className={classes.header}
         container
@@ -125,7 +127,7 @@ export const PositionsList: React.FC<IProps> = ({
           paginator(page).data.map((element, index) => (
             <Grid
               onClick={() => {
-                navigate(`/position/${element.address}/${element.id}`)
+                navigate(`/position/${element.address}/${element.id}`);
               }}
               key={element.address + element.id}
               className={classes.itemLink}>
@@ -154,5 +156,5 @@ export const PositionsList: React.FC<IProps> = ({
         />
       ) : null}
     </Grid>
-  )
-}
+  );
+};
