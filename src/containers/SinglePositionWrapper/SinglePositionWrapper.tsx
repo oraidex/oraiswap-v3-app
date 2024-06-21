@@ -344,9 +344,9 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
     }
   }, [walletStatus]);
 
-  useEffect(() => {
-    dispatch(actions.getPositionsList());
-  }, [walletAddress]);
+  // useEffect(() => {
+  //   dispatch(actions.getPositionsList());
+  // }, [walletAddress]);
 
   useEffect(() => {
     onRefresh();

@@ -1,21 +1,21 @@
-import React from 'react'
+import React from 'react';
 
-import useStyles from './style'
+import useStyles from './style';
 
-import classNames from 'classnames'
-import { Button, Typography } from '@mui/material'
-import { blurContent, unblurContent } from '@utils/uiUtils'
-import ConnectWallet from '@components/Modals/ConnectWallet'
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import classNames from 'classnames';
+import { Button, Typography } from '@mui/material';
+import { blurContent, unblurContent } from '@utils/uiUtils';
+import ConnectWallet from '@components/Modals/ConnectWallet';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 export interface IProps {
-  name: string
-  onConnect: () => void
-  connected: boolean
-  startIcon?: JSX.Element
-  onDisconnect: () => void
-  hideArrow?: boolean
-  className?: string
+  name: string;
+  onConnect: () => void;
+  connected: boolean;
+  startIcon?: JSX.Element;
+  onDisconnect: () => void;
+  hideArrow?: boolean;
+  className?: string;
 }
 export const ChangeWalletButton: React.FC<IProps> = ({
   name,
@@ -26,30 +26,30 @@ export const ChangeWalletButton: React.FC<IProps> = ({
   onDisconnect,
   className
 }) => {
-  const { classes } = useStyles()
-  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
-  const [open, setOpen] = React.useState<boolean>(false)
+  const { classes } = useStyles();
+  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
+  const [open, setOpen] = React.useState<boolean>(false);
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     if (!connected) {
-      onConnect()
-      return
+      onConnect();
+      return;
     }
 
-    setAnchorEl(event.currentTarget)
-    blurContent()
-    setOpen(true)
-  }
+    setAnchorEl(event.currentTarget);
+    blurContent();
+    setOpen(true);
+  };
 
   const handleClose = () => {
-    unblurContent()
-    setOpen(false)
-  }
+    unblurContent();
+    setOpen(false);
+  };
 
   const handleDisconnect = () => {
-    onDisconnect()
-    unblurContent()
-    setOpen(false)
-  }
+    onDisconnect();
+    unblurContent();
+    setOpen(false);
+  };
 
   return (
     <>
@@ -59,6 +59,7 @@ export const ChangeWalletButton: React.FC<IProps> = ({
           className,
           connected ? classes.headerButtonConnected : classes.headerButtonConnect
         )}
+        disabled={true}
         variant='contained'
         classes={{
           disabled: classes.disabled,
@@ -80,6 +81,6 @@ export const ChangeWalletButton: React.FC<IProps> = ({
         callDisconect={handleDisconnect}
       />
     </>
-  )
-}
-export default ChangeWalletButton
+  );
+};
+export default ChangeWalletButton;

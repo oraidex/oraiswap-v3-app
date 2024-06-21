@@ -651,7 +651,7 @@ export const Swap: React.FC<ISwap> = ({
         />
         {walletStatus !== Status.Initialized && getStateMessage() !== 'Loading' ? (
           <ChangeWalletButton
-            name='Connect wallet'
+            name='Please Connect Wallet'
             onConnect={onConnectWallet}
             connected={false}
             onDisconnect={onDisconnectWallet}

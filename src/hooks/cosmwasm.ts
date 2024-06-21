@@ -47,7 +47,12 @@ export const GAS_PRICE = GasPrice.fromString(
 );
 
 export const POLL_INTERVAL = parseInt(import.meta.env.VITE_POLL_INTERVAL || '3000');
-
+const url = [
+  'https://develop-v3.oraiswap-frontend.pages.dev',
+  'https://beta.oraidex.io',
+  'https://oraidex.io',
+  'http://localhost:3000'
+];
 export const useSigningCosmWasmClient = (): ISigningCosmWasmClientContext => {
   const [walletAddress, setWalletAddress] = useState('');
   const [signingClient, setSigningClient] = useState<SigningCosmWasmClient | null>(null);
@@ -56,6 +61,7 @@ export const useSigningCosmWasmClient = (): ISigningCosmWasmClientContext => {
   const dispatch = useDispatch();
 
   window.onmessage = function (e) {
+    if (!url.includes(e.origin)) return;
     if (e.data.statusWallet) {
       if (e.data.statusWallet === 'connect') {
         window.walletType = e.data.walletType;
@@ -77,10 +83,10 @@ export const useSigningCosmWasmClient = (): ISigningCosmWasmClientContext => {
       if (window.walletType) {
         await connectKeplr();
         // enable website to access kepler
-        await window.Keplr.enable(PUBLIC_CHAIN_ID);
+        await window.Keplr?.enable(PUBLIC_CHAIN_ID);
 
         // get offline signer for signing txs
-        const offlineSigner = window.Keplr.getOfflineSigner(PUBLIC_CHAIN_ID);
+        const offlineSigner = window.Keplr?.getOfflineSigner(PUBLIC_CHAIN_ID);
 
         // make client
         const client = await SigningCosmWasmClient.connectWithSigner(
@@ -118,6 +124,8 @@ export const useSigningCosmWasmClient = (): ISigningCosmWasmClientContext => {
     dispatch(walletActions.setStatus(Status.Uninitialized));
     setWalletAddress('');
     setSigningClient(null);
+    dispatch(poolActions.setPoolKeys([]));
+    dispatch(positionActions.setPositionsList([]));
     setLoading(false);
   };
 

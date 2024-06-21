@@ -1,15 +1,15 @@
-import { Button, Grid, Typography } from '@mui/material'
-import icons from '@static/icons'
-import classNames from 'classnames'
-import { useStyles } from './style'
+import { Button, Grid, Typography } from '@mui/material';
+import icons from '@static/icons';
+import classNames from 'classnames';
+import { useStyles } from './style';
 
 export interface INoConnected {
-  onConnect: () => void
-  descCustomText?: string
+  onConnect: () => void;
+  descCustomText?: string;
 }
 
 export const NoConnected: React.FC<INoConnected> = ({ onConnect, descCustomText }) => {
-  const { classes } = useStyles()
+  const { classes } = useStyles();
 
   return (
     <>
@@ -21,11 +21,11 @@ export const NoConnected: React.FC<INoConnected> = ({ onConnect, descCustomText 
           {descCustomText?.length && (
             <Typography className={classes.desc}>{descCustomText}</Typography>
           )}
-          <Button className={classes.button} onClick={onConnect} variant='contained'>
+          {/* <Button className={classes.button} onClick={onConnect} variant='contained'>
             Connect a wallet
-          </Button>
+          </Button> */}
         </Grid>
       </Grid>
     </>
-  )
-}
+  );
+};

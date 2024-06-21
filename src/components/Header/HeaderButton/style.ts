@@ -1,6 +1,6 @@
-import { Theme } from '@mui/material'
-import { colors, typography } from '@static/theme'
-import { makeStyles } from 'tss-react/mui'
+import { Theme } from '@mui/material';
+import { colors, typography } from '@static/theme';
+import { makeStyles } from 'tss-react/mui';
 
 const useStyles = makeStyles()((theme: Theme) => {
   return {
@@ -63,11 +63,12 @@ const useStyles = makeStyles()((theme: Theme) => {
       textTransform: 'none',
       overflow: 'hidden',
       textOverflow: 'ellipsis',
+      color: colors.oraidex.neutralText,
       ...typography.body1,
       whiteSpace: 'nowrap'
     },
     disabled: {
-      opacity: 0.5
+      opacity: 1
     },
     paper: {
       background: 'transparent',
@@ -85,7 +86,7 @@ const useStyles = makeStyles()((theme: Theme) => {
       marginLeft: 0,
       marginBottom: 3
     }
-  }
-})
+  };
+});
 
-export default useStyles
+export default useStyles;

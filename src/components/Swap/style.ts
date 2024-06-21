@@ -163,7 +163,6 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     height: '48px !important',
     borderRadius: '16px !important',
     width: '100%',
-
     [theme.breakpoints.down('xs')]: {
       width: '100% !important'
     }

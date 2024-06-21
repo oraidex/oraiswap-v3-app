@@ -29,7 +29,6 @@ export const HeaderWrapper: React.FC = () => {
     (async () => {
       if (!window.walletType) return;
       if (walletAddress == '') connectWallet();
-
       if (signingClient && walletAddress) {
         SingletonOraiswapV3.load(signingClient, walletAddress);
         dispatch(walletActions.setStatus(Status.Init));

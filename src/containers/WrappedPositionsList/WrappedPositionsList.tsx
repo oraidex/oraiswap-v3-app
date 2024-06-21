@@ -1,10 +1,6 @@
 import { PositionsList } from '@components/PositionsList/PositionsList';
 import { POSITIONS_PER_PAGE } from '@store/consts/static';
-import {
-  PERCENTAGE_SCALE,
-  calcYPerXPriceByTickIndex,
-  printBigint
-} from '@store/consts/utils';
+import { PERCENTAGE_SCALE, calcYPerXPriceByTickIndex, printBigint } from '@store/consts/utils';
 import { actions } from '@store/reducers/positions';
 import { Status } from '@store/reducers/wallet';
 import {
@@ -20,7 +16,7 @@ import { useNavigate } from 'react-router-dom';
 
 export const WrappedPositionsList: React.FC = () => {
   const walletAddress = useSelector(address);
-  const list = useSelector(positionsWithPoolsData)
+  const list = useSelector(positionsWithPoolsData);
   // const [list, setList] = useState([]);
   const isLoading = useSelector(isLoadingPositionsList);
   const lastPage = useSelector(lastPageSelector);
