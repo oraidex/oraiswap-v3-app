@@ -42,6 +42,9 @@
       "@wasm": [
         "src/wasm"
       ],
+      "@sdk": [
+        "src/sdk"
+      ],
       "@web3/*": [
         "src/web3/*"
       ],
