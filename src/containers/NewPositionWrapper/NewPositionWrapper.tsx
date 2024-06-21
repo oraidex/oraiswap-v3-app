@@ -52,7 +52,6 @@ import { VariantType } from 'notistack'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { actions as walletActions } from '@store/reducers/wallet'
-import { useParams } from 'react-router-dom'
 
 export const ALL_FEE_TIERS_DATA: FeeTier[] = [
   { fee: 500000000, tick_spacing: 100 },
@@ -72,7 +71,6 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   initialFee
 }) => {
   const dispatch = useDispatch()
-  const { item1, item2, item3 } = useParams()
   const tokens = useSelector(swapTokens)
   const walletStatus = useSelector(status)
   const allPools = useSelector(poolsArraySortedByFees)
@@ -80,8 +78,6 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   const poolsData = useSelector(pools)
   const loadingTicksAndTickMaps = useSelector(isLoadingTicksAndTickMaps)
   const walletAddress = useSelector(address)
-  // const isBalanceLoading = useSelector(balanceLoading)
-  // const loadingPoolKeys = useSelector(isLoadingPoolKeys)
 
   const { success, inProgress } = useSelector(initPosition)
   const { data: ticksData, loading: ticksLoading, hasError: hasTicksError } = useSelector(plotTicks)
@@ -110,20 +106,6 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       dispatch(poolsActions.getTicksAndTickMaps({ tokenFrom, tokenTo, allPools }))
     }
   }, [tokenAIndex, tokenBIndex, allPools])
-
-  useEffect(() => {
-    if (item1 && item2 && item3) {
-      const tokenA = tokens.findIndex(token => token.symbol === item1)
-      const tokenB = tokens.findIndex(token => token.symbol === item2)
-      const fee = ALL_FEE_TIERS_DATA.findIndex(tier => tier.fee === Number(item3) * 1e10)
-      console.log("hereeeee", { tokenA, tokenB, fee, tokens })
-      if (tokenA !== -1 && tokenB !== -1 && fee !== -1) {
-        setTokenAIndex(tokenA)
-        setTokenBIndex(tokenB)
-        setFeeIndex(fee)
-      }
-    }
-  }, []);
 
   useEffect(() => {
     dispatch(poolsActions.getPoolKeys())
@@ -521,9 +503,9 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     return BigInt(0)
   }
 
-  useEffect(() => {
-    onRefresh()
-  }, [tokenAIndex, tokenBIndex, feeIndex])
+  // useEffect(() => {
+  //   onRefresh()
+  // }, [tokenAIndex, tokenBIndex, feeIndex])
 
   const onRefresh = () => {
     console.log('onRefresh ', { tokenAIndex, tokenBIndex, feeIndex })

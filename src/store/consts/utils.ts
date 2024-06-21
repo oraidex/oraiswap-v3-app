@@ -40,6 +40,7 @@ import {
 } from '@wasm';
 import { Token, TokenPriceData } from './static';
 import { PoolWithPoolKey } from '@/sdk/OraiswapV3.types';
+import { Coin } from '@cosmjs/proto-signing';
 
 export const parse = (value: any) => {
   if (isArray(value)) {
@@ -597,7 +598,7 @@ export const poolKeyToString = (poolKey: PoolKey): string => {
 export const getTokenBalances = async (tokens: string[]) => {
   const tokenBalances = await Promise.all(
     tokens.map(async token => {
-      if (token !== 'orai') {
+      if (token !== 'orai' && !token.includes('ibc')) {
         if (!SingletonOraiswapV3.dex) {
           return { address: token, balance: 0n };
         }
@@ -607,6 +608,9 @@ export const getTokenBalances = async (tokens: string[]) => {
         });
         return { address: token, balance: BigInt(balance) };
       } else {
+        if (!SingletonOraiswapV3.dex) {
+          return { address: token, balance: 0n };
+        }
         const balance = await SingletonOraiswapV3.queryBalance(
           SingletonOraiswapV3.dex.sender,
           token
@@ -944,12 +948,17 @@ export const deserializeTickmap = (serializedTickmap: string): Tickmap => {
 export const calculateAmountInWithSlippage = (
   amountOut: bigint,
   sqrtPriceLimit: bigint,
-  xToY: boolean
+  xToY: boolean,
+  fee: bigint
 ): bigint => {
   const price = +printBigint(sqrtPriceToPrice(sqrtPriceLimit), PRICE_SCALE);
   const amountIn = xToY ? Number(amountOut) * price : Number(amountOut) / price;
 
-  return BigInt(Math.ceil(amountIn));
+  const amountInWithFee =
+    Number(amountIn) *
+    (Number(PERCENTAGE_DENOMINATOR) / (Number(PERCENTAGE_DENOMINATOR) - Number(fee)));
+
+  return BigInt(Math.ceil(amountInWithFee));
 };
 
 export const sqrtPriceToPrice = (sqrtPrice: SqrtPrice | bigint): bigint => {
@@ -1212,7 +1221,15 @@ export const positionList = async (ownerId: string): Promise<Position[]> => {
   }));
 };
 
+export const isNativeToken = (token: string): boolean => {
+  return token === 'orai' || token.includes('ibc');
+};
+
 export const approveToken = async (token: string, amount: bigint): Promise<string> => {
+  if (isNativeToken(token)) {
+    return '';
+  }
+
   const result = await SingletonOraiswapV3.approveToken(token, amount);
   return result.transactionHash;
 };
@@ -1230,6 +1247,25 @@ export const swapWithSlippageTx = async (
     slippage,
     !xToY
   );
+
+  if (isNativeToken(poolKey.token_x) || isNativeToken(poolKey.token_y)) {
+    const denom = xToY ? poolKey.token_x : poolKey.token_y;
+
+    const res = await SingletonOraiswapV3.dex.swap(
+      {
+        poolKey,
+        xToY,
+        amount: amount.toString(),
+        byAmountIn,
+        sqrtPriceLimit: sqrtPriceAfterSlippage.toString()
+      },
+      'auto',
+      '',
+      [{ denom, amount: amount.toString() }]
+    );
+
+    return res.transactionHash;
+  }
 
   const res = await SingletonOraiswapV3.dex.swap({
     poolKey,
@@ -1256,4 +1292,55 @@ export const getBalance = async (address: string): Promise<bigint> => {
   // TODO: open for ibc later
   const balance = await SingletonOraiswapV3.queryBalance(address, 'orai');
   return BigInt(balance);
+};
+
+export const createPositionWithNativeTx = async (
+  poolKey: PoolKey,
+  lowerTick: number,
+  upperTick: number,
+  liquidityDelta: bigint,
+  spotSqrtPrice: bigint,
+  slippageTolerance: bigint,
+  initialAmountX: bigint,
+  initialAmountY: bigint
+): Promise<string> => {
+  const slippageLimitLower = calculateSqrtPriceAfterSlippage(
+    spotSqrtPrice,
+    Number(slippageTolerance),
+    false
+  );
+  const slippageLimitUpper = calculateSqrtPriceAfterSlippage(
+    spotSqrtPrice,
+    Number(slippageTolerance),
+    true
+  );
+
+  const token_x = poolKey.token_x;
+  const token_y = poolKey.token_y;
+
+  const fund: Coin[] = [];
+
+  if (isNativeToken(token_x)) {
+    fund.push({ denom: token_x, amount: initialAmountX.toString() });
+  }
+
+  if (isNativeToken(token_y)) {
+    fund.push({ denom: token_y, amount: initialAmountY.toString() });
+  }
+
+  const res = await SingletonOraiswapV3.dex.createPosition(
+    {
+      poolKey,
+      lowerTick,
+      upperTick,
+      liquidityDelta: liquidityDelta.toString(),
+      slippageLimitLower: slippageLimitLower.toString(),
+      slippageLimitUpper: slippageLimitUpper.toString()
+    },
+    'auto',
+    '',
+    fund
+  );
+
+  return res.transactionHash;
 };

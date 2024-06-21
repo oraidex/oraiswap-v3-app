@@ -1,5 +1,5 @@
-import { PayloadAction } from '@reduxjs/toolkit'
-import { U128MAX } from '@store/consts/static'
+import { PayloadAction } from '@reduxjs/toolkit';
+import { U128MAX } from '@store/consts/static';
 import {
   MAX_SQRT_PRICE,
   MIN_SQRT_PRICE,
@@ -11,19 +11,20 @@ import {
   createLoaderKey,
   deserializeTickmap,
   findPairs,
+  isNativeToken,
   poolKeyToString,
   printBigint,
   swapWithSlippageTx
-} from '@store/consts/utils'
-import { FetchTicksAndTickMaps, actions as poolActions } from '@store/reducers/pools'
-import { actions as snackbarsActions } from '@store/reducers/snackbars'
-import { Simulate, Swap, actions } from '@store/reducers/swap'
-import { poolTicks, pools, tickMaps, tokens } from '@store/selectors/pools'
-import { closeSnackbar } from 'notistack'
-import { all, call, put, select, spawn, takeEvery } from 'typed-redux-saga'
-import { fetchBalances } from './wallet'
-import { CalculateSwapResult, SwapError, simulateSwap } from '@wasm'
-import { fetchTicksAndTickMaps } from './pools'
+} from '@store/consts/utils';
+import { FetchTicksAndTickMaps, actions as poolActions } from '@store/reducers/pools';
+import { actions as snackbarsActions } from '@store/reducers/snackbars';
+import { Simulate, Swap, actions } from '@store/reducers/swap';
+import { poolTicks, pools, tickMaps, tokens } from '@store/selectors/pools';
+import { closeSnackbar } from 'notistack';
+import { all, call, put, select, spawn, takeEvery } from 'typed-redux-saga';
+import { fetchBalances } from './wallet';
+import { CalculateSwapResult, SwapError, simulateSwap } from '@wasm';
+import { fetchTicksAndTickMaps } from './pools';
 
 export function* handleSwap(action: PayloadAction<Omit<Swap, 'txid'>>): Generator {
   const {
@@ -35,21 +36,21 @@ export function* handleSwap(action: PayloadAction<Omit<Swap, 'txid'>>): Generato
     byAmountIn,
     estimatedPriceAfterSwap,
     tokenTo
-  } = action.payload
+  } = action.payload;
 
   if (!poolKey) {
-    return
+    return;
   }
 
-  // if (poolKey.tokenX === TESTNET_WAZERO_ADDRESS || poolKey.tokenY === TESTNET_WAZERO_ADDRESS) {
-  //   return yield* call(handleSwapWithAZERO, action)
-  // }
+  if (isNativeToken(poolKey.token_x) || isNativeToken(poolKey.token_y)) {
+    return yield* call(handleSwapWithNative, action);
+  }
 
-  const loaderSwappingTokens = createLoaderKey()
-  const loaderSigningTx = createLoaderKey()
+  const loaderSwappingTokens = createLoaderKey();
+  const loaderSigningTx = createLoaderKey();
 
   try {
-    const allTokens = yield* select(tokens)
+    const allTokens = yield* select(tokens);
 
     yield put(
       snackbarsActions.add({
@@ -58,7 +59,7 @@ export function* handleSwap(action: PayloadAction<Omit<Swap, 'txid'>>): Generato
         persist: true,
         key: loaderSwappingTokens
       })
-    )
+    );
 
     // const api = yield* getConnection()
     // const network = yield* select(networkType)
@@ -66,29 +67,34 @@ export function* handleSwap(action: PayloadAction<Omit<Swap, 'txid'>>): Generato
     // const adapter = yield* call(getAlephZeroWallet)
     // const invAddress = yield* select(oraidexAddress)
 
-    const tokenX = allTokens[poolKey.token_x]
-    const tokenY = allTokens[poolKey.token_y]
-    const xToY = tokenFrom.toString() === poolKey.token_x
+    const tokenX = allTokens[poolKey.token_x];
+    const tokenY = allTokens[poolKey.token_y];
+    const xToY = tokenFrom.toString() === poolKey.token_x;
 
-    const txs = []
+    const txs = [];
 
     const sqrtPriceLimit = calculateSqrtPriceAfterSlippage(
       BigInt(estimatedPriceAfterSwap),
       slippage,
       !xToY
-    )
+    );
 
-    let calculatedAmountIn = amountIn
+    let calculatedAmountIn = amountIn;
     if (!byAmountIn) {
-      calculatedAmountIn = calculateAmountInWithSlippage(amountIn, sqrtPriceLimit, !xToY)
+      calculatedAmountIn = calculateAmountInWithSlippage(
+        amountIn,
+        sqrtPriceLimit,
+        !xToY,
+        BigInt(poolKey.fee_tier.fee)
+      );
     }
 
     if (xToY) {
-      const approveTx = yield* call(approveToken, tokenX.address, calculatedAmountIn)
-      txs.push(approveTx)
+      const approveTx = yield* call(approveToken, tokenX.address, calculatedAmountIn);
+      txs.push(approveTx);
     } else {
-      const approveTx = yield* call(approveToken, tokenY.address, calculatedAmountIn)
-      txs.push(approveTx)
+      const approveTx = yield* call(approveToken, tokenY.address, calculatedAmountIn);
+      txs.push(approveTx);
     }
 
     const swapTx = yield* call(
@@ -99,8 +105,8 @@ export function* handleSwap(action: PayloadAction<Omit<Swap, 'txid'>>): Generato
       byAmountIn,
       sqrtPriceLimit,
       slippage
-    )
-    txs.push(swapTx)
+    );
+    txs.push(swapTx);
 
     // const batchedTx = api.tx.utility.batchAll(txs)
 
@@ -111,7 +117,7 @@ export function* handleSwap(action: PayloadAction<Omit<Swap, 'txid'>>): Generato
         persist: true,
         key: loaderSigningTx
       })
-    )
+    );
 
     // let signedBatchedTx: any
     // try {
@@ -122,13 +128,13 @@ export function* handleSwap(action: PayloadAction<Omit<Swap, 'txid'>>): Generato
     //   throw new Error(ErrorMessage.TRANSACTION_SIGNING_ERROR)
     // }
 
-    closeSnackbar(loaderSigningTx)
-    yield put(snackbarsActions.remove(loaderSigningTx))
+    closeSnackbar(loaderSigningTx);
+    yield put(snackbarsActions.remove(loaderSigningTx));
 
     // const txResult = yield* call(sendTx, signedBatchedTx)
 
-    closeSnackbar(loaderSwappingTokens)
-    yield put(snackbarsActions.remove(loaderSwappingTokens))
+    closeSnackbar(loaderSwappingTokens);
+    yield put(snackbarsActions.remove(loaderSwappingTokens));
 
     yield put(
       snackbarsActions.add({
@@ -137,28 +143,28 @@ export function* handleSwap(action: PayloadAction<Omit<Swap, 'txid'>>): Generato
         persist: false,
         txid: swapTx
       })
-    )
+    );
 
-    yield* call(fetchBalances, [poolKey.token_x, poolKey.token_y])
+    yield* call(fetchBalances, [poolKey.token_x, poolKey.token_y]);
 
-    yield put(actions.setSwapSuccess(true))
+    yield put(actions.setSwapSuccess(true));
 
     yield put(
       poolActions.getAllPoolsForPairData({
         first: tokenFrom,
         second: tokenTo
       })
-    )
+    );
   } catch (e: any) {
-    console.log(e.message)
-    console.log(e)
+    console.log(e.message);
+    console.log(e);
 
-    yield put(actions.setSwapSuccess(false))
+    yield put(actions.setSwapSuccess(false));
 
-    closeSnackbar(loaderSwappingTokens)
-    yield put(snackbarsActions.remove(loaderSwappingTokens))
-    closeSnackbar(loaderSigningTx)
-    yield put(snackbarsActions.remove(loaderSigningTx))
+    closeSnackbar(loaderSwappingTokens);
+    yield put(snackbarsActions.remove(loaderSwappingTokens));
+    closeSnackbar(loaderSigningTx);
+    yield put(snackbarsActions.remove(loaderSigningTx));
 
     if (e.message) {
       yield put(
@@ -167,7 +173,7 @@ export function* handleSwap(action: PayloadAction<Omit<Swap, 'txid'>>): Generato
           variant: 'error',
           persist: false
         })
-      )
+      );
     } else {
       yield put(
         snackbarsActions.add({
@@ -175,7 +181,7 @@ export function* handleSwap(action: PayloadAction<Omit<Swap, 'txid'>>): Generato
           variant: 'error',
           persist: false
         })
-      )
+      );
     }
 
     yield put(
@@ -183,226 +189,149 @@ export function* handleSwap(action: PayloadAction<Omit<Swap, 'txid'>>): Generato
         first: tokenFrom,
         second: tokenTo
       })
-    )
+    );
   }
 }
 
-// export function* handleSwapWithAZERO(action: PayloadAction<Omit<Swap, 'txid'>>): Generator {
-//   const { poolKey, tokenFrom, slippage, amountIn, byAmountIn, estimatedPriceAfterSwap, tokenTo } =
-//     action.payload
+export function* handleSwapWithNative(action: PayloadAction<Omit<Swap, 'txid'>>): Generator {
+  const {
+    poolKey,
+    tokenFrom,
+    slippage,
+    amountIn,
+    amountOut,
+    byAmountIn,
+    estimatedPriceAfterSwap,
+    tokenTo
+  } = action.payload;
 
-//   if (!poolKey) {
-//     return
-//   }
+  if (!poolKey) {
+    return;
+  }
 
-//   const loaderSwappingTokens = createLoaderKey()
-//   const loaderSigningTx = createLoaderKey()
+  const loaderSwappingTokens = createLoaderKey();
+  const loaderSigningTx = createLoaderKey();
 
-//   try {
-//     const allTokens = yield* select(tokens)
+  try {
+    const allTokens = yield* select(tokens);
 
-//     yield put(
-//       snackbarsActions.add({
-//         message: 'Swapping tokens...',
-//         variant: 'pending',
-//         persist: true,
-//         key: loaderSwappingTokens
-//       })
-//     )
+    yield put(
+      snackbarsActions.add({
+        message: 'Swapping tokens...',
+        variant: 'pending',
+        persist: true,
+        key: loaderSwappingTokens
+      })
+    );
 
-//     const api = yield* getConnection()
-//     const network = yield* select(networkType)
-//     const walletAddress = yield* select(address)
-//     const adapter = yield* call(getAlephZeroWallet)
-//     const swapSimulateResult = yield* select(simulateResult)
-//     const invAddress = yield* select(oraidexAddress)
+    const tokenX = allTokens[poolKey.token_x];
+    const tokenY = allTokens[poolKey.token_y];
+    const xToY = tokenFrom.toString() === poolKey.token_x;
 
-//     const tokenX = allTokens[poolKey.tokenX]
-//     const tokenY = allTokens[poolKey.tokenY]
-//     const xToY = tokenFrom.toString() === poolKey.tokenX
+    const txs = [];
 
-//     const txs = []
+    const sqrtPriceLimit = calculateSqrtPriceAfterSlippage(
+      estimatedPriceAfterSwap,
+      slippage,
+      !xToY
+    );
+    const calculatedAmountIn = slippage
+      ? calculateAmountInWithSlippage(amountOut, sqrtPriceLimit, xToY, BigInt(poolKey.fee_tier.fee))
+      : amountIn;
 
-//     const wazero = yield* call(
-//       [wrappedAZEROSingleton, wrappedAZEROSingleton.loadInstance],
-//       api,
-//       network
-//     )
-//     const psp22 = yield* call([psp22Singleton, psp22Singleton.loadInstance], api, network)
-//     const oraidex = yield* call(
-//       [oraidexSingleton, oraidexSingleton.loadInstance],
-//       api,
-//       network,
-//       invAddress
-//     )
+    if (xToY) {
+      const approveTx = yield* call(approveToken, tokenX.address, calculatedAmountIn);
+      txs.push(approveTx);
+    } else {
+      const approveTx = yield* call(approveToken, tokenY.address, calculatedAmountIn);
+      txs.push(approveTx);
+    }
 
-//     const sqrtPriceLimit = calculateSqrtPriceAfterSlippage(estimatedPriceAfterSwap, slippage, !xToY)
-//     let calculatedAmountIn = amountIn
-//     if (!byAmountIn) {
-//       calculatedAmountIn = calculateAmountInWithSlippage(amountIn, sqrtPriceLimit, !xToY)
-//     }
+    const swapTx = yield* call(
+      swapWithSlippageTx,
+      poolKey,
+      xToY,
+      amountIn,
+      byAmountIn,
+      sqrtPriceLimit,
+      slippage
+    );
+    txs.push(swapTx);
 
-//     if (
-//       (xToY && poolKey.tokenX === TESTNET_WAZERO_ADDRESS) ||
-//       (!xToY && poolKey.tokenY === TESTNET_WAZERO_ADDRESS)
-//     ) {
-//       const azeroBalance = yield* select(balance)
-//       const azeroAmountInWithSlippage =
-//         azeroBalance > calculatedAmountIn ? calculatedAmountIn : azeroBalance
-//       const depositTx = wazero.depositTx(
-//         byAmountIn ? amountIn : azeroAmountInWithSlippage,
-//         WAZERO_DEPOSIT_OPTIONS
-//       )
-//       txs.push(depositTx)
-//     }
+    yield put(
+      snackbarsActions.add({
+        message: 'Signing transaction...',
+        variant: 'pending',
+        persist: true,
+        key: loaderSigningTx
+      })
+    );
 
-//     if (xToY) {
-//       const approveTx = psp22.approveTx(
-//         invAddress,
-//         calculatedAmountIn,
-//         tokenX.address.toString(),
-//         PSP22_APPROVE_OPTIONS
-//       )
-//       txs.push(approveTx)
-//     } else {
-//       const approveTx = psp22.approveTx(
-//         invAddress,
-//         calculatedAmountIn,
-//         tokenY.address.toString(),
-//         PSP22_APPROVE_OPTIONS
-//       )
-//       txs.push(approveTx)
-//     }
+    closeSnackbar(loaderSigningTx);
+    yield put(snackbarsActions.remove(loaderSigningTx));
 
-//     const swapTx = oraidex.swapTx(
-//       poolKey,
-//       xToY,
-//       amountIn,
-//       byAmountIn,
-//       sqrtPriceLimit,
-//       INVARIANT_SWAP_OPTIONS
-//     )
-//     txs.push(swapTx)
+    closeSnackbar(loaderSwappingTokens);
+    yield put(snackbarsActions.remove(loaderSwappingTokens));
 
-//     if (
-//       (!xToY && poolKey.tokenX === TESTNET_WAZERO_ADDRESS) ||
-//       (xToY && poolKey.tokenY === TESTNET_WAZERO_ADDRESS)
-//     ) {
-//       const withdrawTx = wazero.withdrawTx(swapSimulateResult.amountOut, WAZERO_WITHDRAW_OPTIONS)
-//       txs.push(withdrawTx)
-//     }
+    yield put(
+      snackbarsActions.add({
+        message: 'Tokens swapped successfully.',
+        variant: 'success',
+        persist: false,
+        txid: swapTx
+      })
+    );
 
-//     const approveTx = psp22.approveTx(
-//       invAddress,
-//       U128MAX,
-//       TESTNET_WAZERO_ADDRESS,
-//       PSP22_APPROVE_OPTIONS
-//     )
-//     txs.push(approveTx)
+    yield* call(fetchBalances, [poolKey.token_x, poolKey.token_y]);
 
-//     const unwrapTx = oraidex.withdrawAllWAZEROTx(
-//       TESTNET_WAZERO_ADDRESS,
-//       INVARIANT_WITHDRAW_ALL_WAZERO
-//     )
-//     txs.push(unwrapTx)
+    yield put(actions.setSwapSuccess(true));
 
-//     const batchedTx = api.tx.utility.batchAll(txs)
+    yield put(
+      poolActions.getAllPoolsForPairData({
+        first: tokenFrom,
+        second: tokenTo
+      })
+    );
+  } catch (e: any) {
+    console.log(e);
 
-//     yield put(
-//       snackbarsActions.add({
-//         message: 'Signing transaction...',
-//         variant: 'pending',
-//         persist: true,
-//         key: loaderSigningTx
-//       })
-//     )
+    yield put(actions.setSwapSuccess(false));
 
-//     let signedBatchedTx: any
-//     try {
-//       signedBatchedTx = yield* call([batchedTx, batchedTx.signAsync], walletAddress, {
-//         signer: adapter.signer as Signer
-//       })
-//     } catch (e) {
-//       throw new Error(ErrorMessage.TRANSACTION_SIGNING_ERROR)
-//     }
+    closeSnackbar(loaderSwappingTokens);
+    yield put(snackbarsActions.remove(loaderSwappingTokens));
+    closeSnackbar(loaderSigningTx);
+    yield put(snackbarsActions.remove(loaderSigningTx));
 
-//     closeSnackbar(loaderSigningTx)
-//     yield put(snackbarsActions.remove(loaderSigningTx))
+    if (e.message) {
+      yield put(
+        snackbarsActions.add({
+          message: e.message,
+          variant: 'error',
+          persist: false
+        })
+      );
+    } else {
+      yield put(
+        snackbarsActions.add({
+          message: 'Tokens swapping failed. Please try again.',
+          variant: 'error',
+          persist: false
+        })
+      );
+    }
 
-//     const txResult = yield* call(sendTx, signedBatchedTx)
-
-//     closeSnackbar(loaderSwappingTokens)
-//     yield put(snackbarsActions.remove(loaderSwappingTokens))
-
-//     yield put(
-//       snackbarsActions.add({
-//         message: 'Tokens swapped successfully.',
-//         variant: 'success',
-//         persist: false,
-//         txid: txResult.hash
-//       })
-//     )
-
-//     yield* call(fetchBalances, [
-//       poolKey.tokenX === TESTNET_WAZERO_ADDRESS ? poolKey.tokenY : poolKey.tokenX
-//     ])
-
-//     yield put(actions.setSwapSuccess(true))
-
-//     yield put(
-//       poolActions.getAllPoolsForPairData({
-//         first: tokenFrom,
-//         second: tokenTo
-//       })
-//     )
-//   } catch (e: any) {
-//     console.log(e)
-
-//     yield put(actions.setSwapSuccess(false))
-
-//     closeSnackbar(loaderSwappingTokens)
-//     yield put(snackbarsActions.remove(loaderSwappingTokens))
-//     closeSnackbar(loaderSigningTx)
-//     yield put(snackbarsActions.remove(loaderSigningTx))
-
-//     if (isErrorMessage(e.message)) {
-//       yield put(
-//         snackbarsActions.add({
-//           message: e.message,
-//           variant: 'error',
-//           persist: false
-//         })
-//       )
-//     } else {
-//       yield put(
-//         snackbarsActions.add({
-//           message: 'Tokens swapping failed. Please try again.',
-//           variant: 'error',
-//           persist: false
-//         })
-//       )
-//     }
-
-//     yield put(
-//       poolActions.getAllPoolsForPairData({
-//         first: tokenFrom,
-//         second: tokenTo
-//       })
-//     )
-//   }
-// }
-
-// export enum SwapError {
-//   InsufficientLiquidity,
-//   AmountIsZero,
-//   NoRouteFound,
-//   MaxTicksCrossed,
-//   StateOutdated
-// }
+    yield put(
+      poolActions.getAllPoolsForPairData({
+        first: tokenFrom,
+        second: tokenTo
+      })
+    );
+  }
+}
 
 export function* handleGetSimulateResult(action: PayloadAction<Simulate>) {
   try {
-    const { fromToken, toToken, amount, byAmountIn } = action.payload
+    const { fromToken, toToken, amount, byAmountIn } = action.payload;
 
     /**
      * tokenFrom: string
@@ -410,8 +339,8 @@ export function* handleGetSimulateResult(action: PayloadAction<Simulate>) {
   allPools: PoolWithPoolKey[]
      */
 
-    const allPools = yield* select(pools)
-    const poolKeyArray = Object.values(allPools)
+    const allPools = yield* select(pools);
+    const poolKeyArray = Object.values(allPools);
     const actionFetch: PayloadAction<FetchTicksAndTickMaps> = {
       payload: {
         tokenFrom: fromToken,
@@ -419,12 +348,12 @@ export function* handleGetSimulateResult(action: PayloadAction<Simulate>) {
         allPools: poolKeyArray
       },
       type: 'pools/fetchTicksAndTickMaps'
-    }
-    yield* call(fetchTicksAndTickMaps, actionFetch)
-    const allTickmaps = yield* select(tickMaps)
-    const allTicks = yield* select(poolTicks)
+    };
+    yield* call(fetchTicksAndTickMaps, actionFetch);
+    const allTickmaps = yield* select(tickMaps);
+    const allTicks = yield* select(poolTicks);
 
-    console.log({ allPools, allTickmaps, allTicks, fromToken, toToken, amount, byAmountIn })
+    console.log({ allPools, allTickmaps, allTicks, fromToken, toToken, amount, byAmountIn });
 
     if (amount === 0n) {
       yield put(
@@ -435,15 +364,15 @@ export function* handleGetSimulateResult(action: PayloadAction<Simulate>) {
           targetSqrtPrice: 0n,
           errors: [SwapError.AmountIsZero]
         })
-      )
-      return
+      );
+      return;
     }
 
     const filteredPools = findPairs(
       fromToken.toString(),
       toToken.toString(),
       Object.values(allPools)
-    )
+    );
     if (!filteredPools) {
       yield put(
         actions.setSimulateResult({
@@ -453,22 +382,22 @@ export function* handleGetSimulateResult(action: PayloadAction<Simulate>) {
           targetSqrtPrice: 0n,
           errors: [SwapError.NoRouteFound]
         })
-      )
-      return
+      );
+      return;
     }
 
-    let poolKey = null
-    let amountOut = byAmountIn ? 0n : U128MAX
-    let priceImpact = 0
-    let targetSqrtPrice = 0n
-    const errors = []
+    let poolKey = null;
+    let amountOut = byAmountIn ? 0n : U128MAX;
+    let priceImpact = 0;
+    let targetSqrtPrice = 0n;
+    const errors = [];
 
-    console.log({ filteredPools })
+    console.log({ filteredPools });
 
     for (const pool of filteredPools) {
-      const xToY = fromToken.toString() === pool.pool_key.token_x
+      const xToY = fromToken.toString() === pool.pool_key.token_x;
 
-      const poolInfo = allPools[poolKeyToString(pool.pool_key)].pool
+      const poolInfo = allPools[poolKeyToString(pool.pool_key)].pool;
       const convertedPool = {
         current_tick_index: poolInfo.current_tick_index,
         fee_growth_global_x: BigInt(poolInfo.fee_growth_global_x),
@@ -480,8 +409,8 @@ export function* handleGetSimulateResult(action: PayloadAction<Simulate>) {
         last_timestamp: Number(poolInfo.last_timestamp.toFixed(0)),
         sqrt_price: BigInt(poolInfo.sqrt_price),
         start_timestamp: Number(poolInfo.start_timestamp.toFixed(0))
-      }
-      console.log({ convertedPool })
+      };
+      console.log({ convertedPool });
       try {
         const result: CalculateSwapResult = simulateSwap(
           deserializeTickmap(allTickmaps[poolKeyToString(pool.pool_key)]),
@@ -492,41 +421,41 @@ export function* handleGetSimulateResult(action: PayloadAction<Simulate>) {
           amount,
           byAmountIn,
           xToY ? MIN_SQRT_PRICE : MAX_SQRT_PRICE
-        )
+        );
 
         if (result.global_insufficient_liquidity) {
-          errors.push(SwapError.InsufficientLiquidity)
-          continue
+          errors.push(SwapError.InsufficientLiquidity);
+          continue;
         }
 
         if (result.max_ticks_crossed) {
-          errors.push(SwapError.MaxTicksCrossed)
-          continue
+          errors.push(SwapError.MaxTicksCrossed);
+          continue;
         }
 
         if (result.state_outdated) {
-          errors.push(SwapError.StateOutdated)
-          continue
+          errors.push(SwapError.StateOutdated);
+          continue;
         }
 
         if (result.amount_out === 0n) {
-          errors.push(SwapError.AmountIsZero)
-          continue
+          errors.push(SwapError.AmountIsZero);
+          continue;
         }
 
         if (
           byAmountIn ? result.amount_out > amountOut : result.amount_in + result.fee < amountOut
         ) {
-          amountOut = byAmountIn ? result.amount_out : result.amount_in + result.fee
-          poolKey = pool.pool_key
+          amountOut = byAmountIn ? result.amount_out : result.amount_in + result.fee;
+          poolKey = pool.pool_key;
           priceImpact = +printBigint(
             calculatePriceImpact(BigInt(pool.pool.sqrt_price), result.target_sqrt_price),
             PERCENTAGE_SCALE
-          )
-          targetSqrtPrice = result.target_sqrt_price
+          );
+          targetSqrtPrice = result.target_sqrt_price;
         }
       } catch (e) {
-        console.log(e)
+        console.log(e);
       }
     }
 
@@ -538,20 +467,20 @@ export function* handleGetSimulateResult(action: PayloadAction<Simulate>) {
         targetSqrtPrice,
         errors
       })
-    )
+    );
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
 }
 
 export function* swapHandler(): Generator {
-  yield* takeEvery(actions.swap, handleSwap)
+  yield* takeEvery(actions.swap, handleSwap);
 }
 
 export function* getSimulateResultHandler(): Generator {
-  yield* takeEvery(actions.getSimulateResult, handleGetSimulateResult)
+  yield* takeEvery(actions.getSimulateResult, handleGetSimulateResult);
 }
 
 export function* swapSaga(): Generator {
-  yield all([swapHandler, getSimulateResultHandler].map(spawn))
+  yield all([swapHandler, getSimulateResultHandler].map(spawn));
 }
