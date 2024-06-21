@@ -1,24 +1,29 @@
-import React from 'react'
-import { ILiquidityToken } from './consts'
-import SwapPosition from '@static/svg/swap-position.svg'
-import loader from '@static/gif/loading2.gif'
-import useStyles from './style'
-import { FormatNumberThreshold, PrefixConfig, formatNumbers, showPrefix } from '@store/consts/utils'
-import { Button, Grid, Typography } from '@mui/material'
+import React from 'react';
+import { ILiquidityToken } from './consts';
+import SwapPosition from '@static/svg/swap-position.svg';
+import loader from '@static/gif/loading2.gif';
+import useStyles from './style';
+import {
+  FormatNumberThreshold,
+  PrefixConfig,
+  formatNumbers,
+  showPrefix
+} from '@store/consts/utils';
+import { Button, Grid, Typography } from '@mui/material';
 
 export interface BoxInfoToken extends Omit<ILiquidityToken, 'claimValue' | 'liqValue'> {
-  value: number
-  price?: number
+  value: number;
+  price?: number;
 }
 
 export const BoxInfo: React.FC<{
-  title: string
-  onClickButton?: () => void
-  tokenA: BoxInfoToken
-  tokenB: BoxInfoToken
-  showBalance?: boolean
-  swapHandler?: () => void
-  showLoader?: boolean
+  title: string;
+  onClickButton?: () => void;
+  tokenA: BoxInfoToken;
+  tokenB: BoxInfoToken;
+  showBalance?: boolean;
+  swapHandler?: () => void;
+  showLoader?: boolean;
 }> = ({
   title,
   onClickButton,
@@ -28,7 +33,7 @@ export const BoxInfo: React.FC<{
   swapHandler,
   showLoader = false
 }) => {
-  const { classes } = useStyles()
+  const { classes } = useStyles();
 
   const thresholdsWithTokenDecimal = (decimals: number): FormatNumberThreshold[] => [
     {
@@ -57,7 +62,7 @@ export const BoxInfo: React.FC<{
       decimals: 2,
       divider: 1000000000
     }
-  ]
+  ];
 
   const usdThresholds: FormatNumberThreshold[] = [
     {
@@ -83,24 +88,24 @@ export const BoxInfo: React.FC<{
       decimals: 2,
       divider: 1000000000
     }
-  ]
+  ];
 
   const prefixConfig: PrefixConfig = {
     B: 1000000000,
     M: 1000000
-  }
+  };
 
   const tokenXPrintValue =
-    Math.abs(Number(tokenA.value)) < 10 ** Number(-tokenA.decimal) ? 0 : Number(tokenA.value)
+    Math.abs(Number(tokenA.value)) < 10 ** Number(-tokenA.decimal) ? 0 : Number(tokenA.value);
 
   const tokenYPrintValue =
-    Math.abs(Number(tokenB.value)) < 10 ** Number(-tokenB.decimal) ? 0 : Number(tokenB.value)
+    Math.abs(Number(tokenB.value)) < 10 ** Number(-tokenB.decimal) ? 0 : Number(tokenB.value);
 
   return (
     <Grid className={classes.boxInfo}>
       <Grid container justifyContent='space-between'>
         <Typography className={classes.title}> {title}</Typography>
-        {onClickButton ? (
+        {/* {onClickButton ? (
           <Button
             className={classes.violetButton}
             variant='contained'
@@ -111,7 +116,7 @@ export const BoxInfo: React.FC<{
             }>
             Claim fee
           </Button>
-        ) : null}
+        ) : null} */}
       </Grid>
 
       <Grid className={classes.tokenGrid} container direction='column'>
@@ -136,7 +141,10 @@ export const BoxInfo: React.FC<{
           {showBalance ? (
             <Grid className={classes.tokenAreaLowerPart}>
               <Typography className={classes.tokenBalance}>
-                Balance: {tokenA.balance} {tokenA.name}
+                Balance:{' '}
+                <span className={classes.bal}>
+                  {tokenA.balance} {tokenA.name}
+                </span>
               </Typography>
               {typeof tokenA.usdValue !== 'undefined' && tokenA.price ? (
                 <Typography className={classes.tokenUSDValue}>
@@ -168,7 +176,10 @@ export const BoxInfo: React.FC<{
           {showBalance ? (
             <Grid className={classes.tokenAreaLowerPart}>
               <Typography className={classes.tokenBalance}>
-                Balance: {tokenB.balance} {tokenB.name}
+                Balance:{' '}
+                <span className={classes.bal}>
+                  {tokenB.balance} {tokenB.name}
+                </span>
               </Typography>
               {typeof tokenB.usdValue !== 'undefined' && tokenB.price ? (
                 <Typography className={classes.tokenUSDValue}>
@@ -181,5 +192,5 @@ export const BoxInfo: React.FC<{
         </Grid>
       </Grid>
     </Grid>
-  )
-}
+  );
+};

@@ -1,9 +1,10 @@
-import { Theme } from '@mui/material'
-import { colors, typography } from '@static/theme'
-import { makeStyles } from 'tss-react/mui'
+import { Theme } from '@mui/material';
+import { colors, typography } from '@static/theme';
+import { makeStyles } from 'tss-react/mui';
 
 export const useStyles = makeStyles()((theme: Theme) => ({
   container: {
+    marginTop: 32,
     height: '100%',
     position: 'relative',
     '& g > text': {
@@ -17,28 +18,30 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     }
   },
   zoomIcon: {
-    width: 18,
-    height: 'auto',
-    fill: '#111931',
-
-    [theme.breakpoints.down('sm')]: {
-      width: 22
-    }
+    // width: 18,
+    // height: 'auto',
+    // fill: '#111931',
+    // [theme.breakpoints.down('sm')]: {
+    //   width: 22
+    // }
   },
   zoomButton: {
     minWidth: 28,
     width: 28,
     height: 28,
-    borderRadius: 10,
-    backgroundColor: 'rgba(46,224,154,0.8)',
-    padding: 0,
+    borderRadius: 8,
+    backgroundColor: 'transparent',
+    border: '1px solid',
+    borderColor: colors.oraidex.border,
+    padding: '8px 0',
     '&:not(:last-child)': {
-      marginBottom: 8
+      marginBottom: 4
     },
 
     '&:hover': {
-      backgroundColor: colors.oraidex.green,
-      boxShadow: `0 0 10px ${colors.oraidex.green}`
+      backgroundColor: 'transparent',
+      opacity: 0.7
+      // boxShadow: `0 0 10px ${colors.oraidex.neutralText}`
     },
 
     [theme.breakpoints.down('sm')]: {
@@ -100,6 +103,6 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     width: 100,
     margin: 'auto'
   }
-}))
+}));
 
-export default useStyles
+export default useStyles;

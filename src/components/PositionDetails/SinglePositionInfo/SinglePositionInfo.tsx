@@ -1,26 +1,29 @@
-import ClosePositionWarning from '@components/Modals/ClosePositionWarning/ClosePositionWarning'
-import { Button, Grid, Typography } from '@mui/material'
-import icons from '@static/icons'
-import { TokenPriceData } from '@store/consts/static'
-import { blurContent, unblurContent } from '@utils/uiUtils'
-import classNames from 'classnames'
-import React, { useState } from 'react'
-import { BoxInfo } from './BoxInfo'
-import { ILiquidityToken } from './consts'
-import useStyles from './style'
+import ClosePositionWarning from '@components/Modals/ClosePositionWarning/ClosePositionWarning';
+import { Button, Grid, Typography } from '@mui/material';
+import { TokenPriceData } from '@store/consts/static';
+import { blurContent, unblurContent } from '@utils/uiUtils';
+import classNames from 'classnames';
+import React, { useState } from 'react';
+import { BoxInfo } from './BoxInfo';
+import { ILiquidityToken } from './consts';
+import useStyles from './style';
+import MarketIdLabel from '@components/NewPosition/MarketIdLabel/MarketIdLabel';
+import { VariantType } from 'notistack';
 
 interface IProp {
-  fee: number
-  onClickClaimFee: () => void
-  closePosition: (claimFarmRewards?: boolean) => void
-  tokenX: ILiquidityToken
-  tokenY: ILiquidityToken
-  tokenXPriceData?: TokenPriceData
-  tokenYPriceData?: TokenPriceData
-  xToY: boolean
-  swapHandler: () => void
-  showFeesLoader?: boolean
-  userHasStakes?: boolean
+  fee: number;
+  onClickClaimFee: () => void;
+  closePosition: (claimFarmRewards?: boolean) => void;
+  tokenX: ILiquidityToken;
+  tokenY: ILiquidityToken;
+  tokenXPriceData?: TokenPriceData;
+  tokenYPriceData?: TokenPriceData;
+  xToY: boolean;
+  swapHandler: () => void;
+  showFeesLoader?: boolean;
+  userHasStakes?: boolean;
+  poolAddress: string;
+  copyPoolAddressHandler: (message: string, variant: VariantType) => void;
 }
 
 const SinglePositionInfo: React.FC<IProp> = ({
@@ -34,28 +37,42 @@ const SinglePositionInfo: React.FC<IProp> = ({
   xToY,
   swapHandler,
   showFeesLoader = false,
-  userHasStakes = false
+  userHasStakes = false,
+  poolAddress,
+  copyPoolAddressHandler
 }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const { classes } = useStyles()
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { classes } = useStyles();
+
+  const tokenA = xToY
+    ? { ...tokenX, value: tokenX.claimValue }
+    : { ...tokenY, value: tokenY.claimValue };
+
+  const tokenB = xToY
+    ? { ...tokenY, value: tokenY.claimValue }
+    : { ...tokenX, value: tokenX.claimValue };
+
+  const disableClaimFee =
+    Math.abs(Number(tokenA.value)) < 10 ** Number(-tokenA.decimal) &&
+    Math.abs(Number(tokenB.value)) < 10 ** Number(-tokenB.decimal);
 
   return (
     <Grid className={classes.root}>
       <ClosePositionWarning
         open={isModalOpen}
         onCancel={() => {
-          setIsModalOpen(false)
-          unblurContent()
+          setIsModalOpen(false);
+          unblurContent();
         }}
         onClose={() => {
-          closePosition()
-          setIsModalOpen(false)
-          unblurContent()
+          closePosition();
+          setIsModalOpen(false);
+          unblurContent();
         }}
         onClaim={() => {
-          closePosition(true)
-          setIsModalOpen(false)
-          unblurContent()
+          closePosition(true);
+          setIsModalOpen(false);
+          unblurContent();
         }}
       />
       <Grid className={classes.header}>
@@ -65,42 +82,46 @@ const SinglePositionInfo: React.FC<IProp> = ({
             src={xToY ? tokenX.icon : tokenY.icon}
             alt={xToY ? tokenX.name : tokenY.name}
           />
-          <img className={classes.arrowIcon} src={icons.ArrowIcon} alt={'Arrow'} />
           <img
-            className={classes.icon}
+            className={classes.icon2}
             src={xToY ? tokenY.icon : tokenX.icon}
             alt={xToY ? tokenY.name : tokenX.name}
           />
           <Grid className={classes.namesGrid}>
             <Typography className={classes.name}>{xToY ? tokenX.name : tokenY.name}</Typography>
             <Typography id='pause' className={classes.name}>
-              -
+              /
             </Typography>
             <Typography className={classes.name}>{xToY ? tokenY.name : tokenX.name}</Typography>
           </Grid>
           <Grid className={classes.rangeGrid}>
             <Typography className={classNames(classes.text, classes.feeText)}>
-              {fee.toString()}% fee
+              Fee: {fee.toString()}%
             </Typography>
           </Grid>
         </Grid>
 
-        <Grid className={classes.headerButtons}>
+        {/* <Grid className={classes.headerButtons}>
           <Button
             className={classes.closeButton}
             variant='contained'
             onClick={() => {
               if (!userHasStakes) {
-                closePosition()
+                closePosition();
               } else {
-                setIsModalOpen(true)
-                blurContent()
+                setIsModalOpen(true);
+                blurContent();
               }
             }}>
             Close position
           </Button>
-        </Grid>
+        </Grid> */}
       </Grid>
+      <MarketIdLabel
+        marketId={poolAddress.toString()}
+        displayLength={9}
+        copyPoolAddressHandler={copyPoolAddressHandler}
+      />
       <Grid className={classes.bottomGrid}>
         <BoxInfo
           title={'Liquidity'}
@@ -129,8 +150,31 @@ const SinglePositionInfo: React.FC<IProp> = ({
           showLoader={showFeesLoader}
         />
       </Grid>
-    </Grid>
-  )
-}
 
-export default SinglePositionInfo
+      <Grid className={classes.headerButtons}>
+        <Button
+          className={classes.closeButton}
+          variant='contained'
+          onClick={() => {
+            if (!userHasStakes) {
+              closePosition();
+            } else {
+              setIsModalOpen(true);
+              blurContent();
+            }
+          }}>
+          Close Position
+        </Button>
+        <Button
+          className={classes.violetButton}
+          variant='contained'
+          onClick={onClickClaimFee}
+          disabled={disableClaimFee}>
+          Claim Fee
+        </Button>
+      </Grid>
+    </Grid>
+  );
+};
+
+export default SinglePositionInfo;

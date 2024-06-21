@@ -1,32 +1,32 @@
-import PlotTypeSwitch from '@components/PlotTypeSwitch/PlotTypeSwitch'
-import LiquidationRangeInfo from '@components/PositionDetails/LiquidationRangeInfo/LiquidationRangeInfo'
-import { Card, Grid, Tooltip, Typography } from '@mui/material'
-import activeLiquidity from '@static/svg/activeLiquidity.svg'
-import { PlotTickData, TickPlotPositionData } from '@store/reducers/positions'
-import React, { useEffect, useState } from 'react'
-import { ILiquidityToken } from '../SinglePositionInfo/consts'
-import useStyles from './style'
-import { calcPrice, calcTicksAmountInRange, spacingMultiplicityGte } from '@store/consts/utils'
-import PriceRangePlot from '@components/PriceRangePlot/PriceRangePlot'
-import { getMinTick } from '@wasm'
+import PlotTypeSwitch from '@components/PlotTypeSwitch/PlotTypeSwitch';
+import LiquidationRangeInfo from '@components/PositionDetails/LiquidationRangeInfo/LiquidationRangeInfo';
+import { Card, Grid, Tooltip, Typography } from '@mui/material';
+import activeLiquidity from '@static/svg/activeLiquidity.svg';
+import { PlotTickData, TickPlotPositionData } from '@store/reducers/positions';
+import React, { useEffect, useState } from 'react';
+import { ILiquidityToken } from '../SinglePositionInfo/consts';
+import useStyles from './style';
+import { calcPrice, calcTicksAmountInRange, spacingMultiplicityGte } from '@store/consts/utils';
+import PriceRangePlot from '@components/PriceRangePlot/PriceRangePlot';
+import { getMinTick } from '@wasm';
 
 export interface ISinglePositionPlot {
-  data: PlotTickData[]
-  leftRange: TickPlotPositionData
-  rightRange: TickPlotPositionData
-  midPrice: TickPlotPositionData
-  currentPrice: number
-  tokenY: Pick<ILiquidityToken, 'name' | 'decimal'>
-  tokenX: Pick<ILiquidityToken, 'name' | 'decimal'>
-  ticksLoading: boolean
-  tickSpacing: number
-  min: number
-  max: number
-  xToY: boolean
-  initialIsDiscreteValue: boolean
-  onDiscreteChange: (val: boolean) => void
-  hasTicksError?: boolean
-  reloadHandler: () => void
+  data: PlotTickData[];
+  leftRange: TickPlotPositionData;
+  rightRange: TickPlotPositionData;
+  midPrice: TickPlotPositionData;
+  currentPrice: number;
+  tokenY: Pick<ILiquidityToken, 'name' | 'decimal'>;
+  tokenX: Pick<ILiquidityToken, 'name' | 'decimal'>;
+  ticksLoading: boolean;
+  tickSpacing: number;
+  min: number;
+  max: number;
+  xToY: boolean;
+  initialIsDiscreteValue: boolean;
+  onDiscreteChange: (val: boolean) => void;
+  hasTicksError?: boolean;
+  reloadHandler: () => void;
 }
 
 const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
@@ -47,12 +47,12 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
   hasTicksError,
   reloadHandler
 }) => {
-  const { classes } = useStyles()
+  const { classes } = useStyles();
 
-  const [plotMin, setPlotMin] = useState(0)
-  const [plotMax, setPlotMax] = useState(1)
+  const [plotMin, setPlotMin] = useState(0);
+  const [plotMax, setPlotMax] = useState(1);
 
-  const [isPlotDiscrete, setIsPlotDiscrete] = useState(initialIsDiscreteValue)
+  const [isPlotDiscrete, setIsPlotDiscrete] = useState(initialIsDiscreteValue);
 
   useEffect(() => {
     const initSideDist = Math.abs(
@@ -66,24 +66,24 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
           tokenX.decimal,
           tokenY.decimal
         )
-    )
+    );
 
-    setPlotMin(leftRange.x - initSideDist)
-    setPlotMax(rightRange.x + initSideDist)
-  }, [ticksLoading, leftRange, rightRange])
+    setPlotMin(leftRange.x - initSideDist);
+    setPlotMax(rightRange.x + initSideDist);
+  }, [ticksLoading, leftRange, rightRange]);
 
   const zoomMinus = () => {
-    const diff = plotMax - plotMin
-    const newMin = plotMin - diff / 4
-    const newMax = plotMax + diff / 4
-    setPlotMin(newMin)
-    setPlotMax(newMax)
-  }
+    const diff = plotMax - plotMin;
+    const newMin = plotMin - diff / 4;
+    const newMax = plotMax + diff / 4;
+    setPlotMin(newMin);
+    setPlotMax(newMax);
+  };
 
   const zoomPlus = () => {
-    const diff = plotMax - plotMin
-    const newMin = plotMin + diff / 6
-    const newMax = plotMax - diff / 6
+    const diff = plotMax - plotMin;
+    const newMin = plotMin + diff / 6;
+    const newMax = plotMax - diff / 6;
 
     if (
       calcTicksAmountInRange(
@@ -95,25 +95,21 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
         Number(tokenY.decimal)
       ) >= 4
     ) {
-      setPlotMin(newMin)
-      setPlotMax(newMax)
+      setPlotMin(newMin);
+      setPlotMax(newMax);
     }
-  }
+  };
 
   return (
     <Grid item className={classes.root}>
-      <Grid className={classes.headerContainer} container justifyContent='space-between'>
-        <Typography className={classes.header}>Price range</Typography>
-        <PlotTypeSwitch
-          onSwitch={val => {
-            setIsPlotDiscrete(val)
-            onDiscreteChange(val)
-          }}
-          initialValue={isPlotDiscrete ? 1 : 0}
-        />
-      </Grid>
-      <Grid className={classes.infoRow} container justifyContent='flex-end'>
-        <Grid>
+      <Grid
+        className={classes.headerContainer}
+        container
+        alignItems='center'
+        justifyContent='space-between'>
+        <div>
+          <Typography className={classes.header}>Price range</Typography>
+
           <Tooltip
             title={
               <>
@@ -149,8 +145,14 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
               Active liquidity <span className={classes.activeLiquidityIcon}>i</span>
             </Typography>
           </Tooltip>
-          <Typography className={classes.currentPrice}>Current price</Typography>
-        </Grid>
+        </div>
+        <PlotTypeSwitch
+          onSwitch={val => {
+            setIsPlotDiscrete(val);
+            onDiscreteChange(val);
+          }}
+          initialValue={isPlotDiscrete ? 1 : 0}
+        />
       </Grid>
       <Grid className={classes.plotWrapper}>
         <PriceRangePlot
@@ -175,33 +177,34 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
           reloadHandler={reloadHandler}
         />
       </Grid>
+      <Grid className={classes.currentPriceContainer}>
+        <div className={classes.currentPriceLabel}>
+          <Typography component='p'>Current Price</Typography>
+        </div>
+        <div className={classes.currentPriceAmonut}>
+          <Typography component='p'>
+            <Typography component='span'>{currentPrice.toFixed(6)}</Typography>
+            <br />
+            {xToY ? tokenY.name : tokenX.name} / {xToY ? tokenX.name : tokenY.name}
+          </Typography>
+        </div>
+      </Grid>
       <Grid className={classes.minMaxInfo}>
         <LiquidationRangeInfo
-          label='min'
+          label='Min Price'
           amount={min}
           tokenX={xToY ? tokenX.name : tokenY.name}
           tokenY={xToY ? tokenY.name : tokenX.name}
         />
         <LiquidationRangeInfo
-          label='max'
+          label='Max Price'
           amount={max}
           tokenX={xToY ? tokenX.name : tokenY.name}
           tokenY={xToY ? tokenY.name : tokenX.name}
         />
       </Grid>
-      <Grid className={classes.currentPriceContainer}>
-        <Card className={classes.currentPriceLabel}>
-          <Typography component='p'>current price</Typography>
-        </Card>
-        <Card className={classes.currentPriceAmonut}>
-          <Typography component='p'>
-            <Typography component='span'>{currentPrice.toString()}</Typography>
-            {xToY ? tokenY.name : tokenX.name} per {xToY ? tokenX.name : tokenY.name}
-          </Typography>
-        </Card>
-      </Grid>
     </Grid>
-  )
-}
+  );
+};
 
-export default SinglePositionPlot
+export default SinglePositionPlot;
