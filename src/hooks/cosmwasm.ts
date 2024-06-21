@@ -53,12 +53,18 @@ export const useSigningCosmWasmClient = (): ISigningCosmWasmClientContext => {
   const dispatch = useDispatch();
 
   window.onmessage = function (e) {
-    if (e.data.walletType) {
-      window.walletType = e.data.walletType;
-      window.Keplr =
-        (e.data.walletType === 'keplr' ? window?.keplr : window?.owallet) ?? window?.keplr;
-      window.oraiAddr = e.data.address;
-      connectWallet();
+    if (e.data.statusWallet) {
+      if (e.data.statusWallet === 'connect') {
+        window.walletType = e.data.walletType;
+        window.Keplr =
+          (e.data.walletType === 'keplr' ? window?.keplr : window?.owallet) ?? window?.keplr;
+        connectWallet();
+      }
+      if (e.data.statusWallet === 'disconnect') {
+        window.walletType = e.data.walletType;
+        window.Keplr = undefined;
+        disconnect();
+      }
     }
   };
 

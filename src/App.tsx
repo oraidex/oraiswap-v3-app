@@ -9,7 +9,6 @@ import Notifier from '@containers/Notifier';
 import { SigningCosmWasmProvider } from './contexts/cosmwasm';
 
 window.walletType = 'keplr';
-window.Keplr = window?.keplr;
 
 function App() {
   return (
