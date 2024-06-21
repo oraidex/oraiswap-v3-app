@@ -31,7 +31,8 @@ export default defineConfig({
   build: {
     rollupOptions: {
       external: ['fs/promises', './']
-    }
+    },
+    chunkSizeWarningLimit: 6000
   },
   optimizeDeps: {
     esbuildOptions: {
