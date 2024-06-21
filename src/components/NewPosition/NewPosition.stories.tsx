@@ -1,10 +1,10 @@
-import { poolKeyToString } from '@store/consts/utils'
-import type { Meta, StoryObj } from '@storybook/react'
-import { fn } from '@storybook/test'
-import { MemoryRouter } from 'react-router-dom'
-import NewPosition from './NewPosition'
-import { newPoolKey } from '@wasm'
-import { tokens } from '../../stories/data'
+import { poolKeyToString } from '@store/consts/utils';
+import type { Meta, StoryObj } from '@storybook/react';
+import { fn } from '@storybook/test';
+import { MemoryRouter } from 'react-router-dom';
+import NewPosition from './NewPosition';
+import { newPoolKey } from '@wasm';
+import { tokens } from '../../stories/data';
 
 const meta = {
   title: 'PageComponent/NewPosition',
@@ -16,10 +16,10 @@ const meta = {
       </MemoryRouter>
     )
   ]
-} satisfies Meta<typeof NewPosition>
+} satisfies Meta<typeof NewPosition>;
 
-export default meta
-type Story = StoryObj<typeof meta>
+export default meta;
+type Story = StoryObj<typeof meta>;
 
 export const Primary: Story = {
   args: {
@@ -61,6 +61,7 @@ export const Primary: Story = {
     onChangePositionTokens: fn(),
     onDiscreteChange: fn(),
     onHideUnknownTokensChange: fn(),
+    onRefresh: fn(),
     onPositionOpeningMethodChange: fn(),
     onSlippageChange: fn(),
     poolIndex: 0,
@@ -146,7 +147,10 @@ export const Primary: Story = {
           onConnect: fn(),
           descCustomText: 'Cannot add any liquidity.'
         }}
+        onRefresh={function (): void {
+          throw new Error('Function not implemented.');
+        }}
       />
-    )
+    );
   }
-}
+};
