@@ -487,6 +487,9 @@ export type TokenDataOnChain = {
 }
 
 export const getTokenDataByAddresses = async (tokens: string[]): Promise<Record<string, Token>> => {
+  // mapp all tokens string to lower case
+  console.log('tokens here', tokens)
+
   const tokenInfos: TokenDataOnChain[] = await SingletonOraiswapV3.getTokensInfo(tokens)
 
   const newTokens: Record<string, Token> = {}
@@ -553,12 +556,10 @@ export const createPositionTx = async (
 }
 
 export const getPool = async (poolKey: PoolKey): Promise<PoolWithPoolKey> => {
+  console.log('getPool here', poolKey)
+  const pool = await SingletonOraiswapV3.getPool(poolKey);
   return {
-    pool: await SingletonOraiswapV3.dex.pool({
-      token0: poolKey.token_x,
-      token1: poolKey.token_y,
-      feeTier: poolKey.fee_tier
-    }),
+    pool,
     pool_key: poolKey
   }
 }
@@ -590,13 +591,16 @@ export const getTokenBalances = async (tokens: string[]) => {
   const tokenBalances = await Promise.all(
     tokens.map(async token => {
       if (token !== 'orai') {
+        if (!SingletonOraiswapV3.dex) {
+          return { address: token, balance: 0n }
+        }
         SingletonOraiswapV3.loadCw20(SingletonOraiswapV3.dex.sender, token)
         const { balance } = await SingletonOraiswapV3.tokens[token].balance({
           address: SingletonOraiswapV3.dex.sender
         })
         return { address: token, balance: BigInt(balance) }
       } else {
-        const balance = await SingletonOraiswapV3.queryBalance(token)
+        const balance = await SingletonOraiswapV3.queryBalance(SingletonOraiswapV3.dex.sender, token)
         return { address: token, balance: BigInt(balance) }
       }
     })
@@ -1240,6 +1244,6 @@ export const removePosition = async (positionIndex: bigint): Promise<string> => 
 
 export const getBalance = async (address: string): Promise<bigint> => {
   // TODO: open for ibc later
-  const balance = await SingletonOraiswapV3.dex.client.getBalance('orai' ,address)
-  return BigInt(balance.amount)
+  const balance = await SingletonOraiswapV3.queryBalance(address, 'orai')
+  return BigInt(balance)
 }

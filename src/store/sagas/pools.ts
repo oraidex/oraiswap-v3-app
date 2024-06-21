@@ -1,6 +1,6 @@
-import { PoolKey } from '@/sdk/OraiswapV3.types'
-import { newPoolKey, toSqrtPrice } from '@wasm'
-import { PayloadAction } from '@reduxjs/toolkit'
+import { PoolKey } from '@/sdk/OraiswapV3.types';
+import { newPoolKey, toSqrtPrice } from '@wasm';
+import { PayloadAction } from '@reduxjs/toolkit';
 import {
   createLoaderKey,
   createPoolTx,
@@ -14,52 +14,52 @@ import {
   getPoolsByPoolKeys,
   getTokenBalances,
   getTokenDataByAddresses
-} from '@store/consts/utils'
+} from '@store/consts/utils';
 import {
   FetchTicksAndTickMaps,
   ListPoolsRequest,
   ListType,
   PairTokens,
   actions
-} from '@store/reducers/pools'
-import { actions as snackbarsActions } from '@store/reducers/snackbars'
-import { tokens } from '@store/selectors/pools'
-import { closeSnackbar } from 'notistack'
-import { all, call, put, select, spawn, takeEvery, takeLatest } from 'typed-redux-saga'
+} from '@store/reducers/pools';
+import { actions as snackbarsActions } from '@store/reducers/snackbars';
+import { tokens } from '@store/selectors/pools';
+import { closeSnackbar } from 'notistack';
+import { all, call, put, select, spawn, takeEvery, takeLatest } from 'typed-redux-saga';
 
 export function* fetchPoolsDataForList(action: PayloadAction<ListPoolsRequest>) {
-  console.log('fetchPoolsDataForList', action.payload)
-  const pools = yield* call(getPoolsByPoolKeys, action.payload.poolKeys)
+  console.log('fetchPoolsDataForList', action.payload);
+  const pools = yield* call(getPoolsByPoolKeys, action.payload.poolKeys);
 
-  console.log('pools', pools)
+  console.log('pools', pools);
 
-  const allTokens = yield* select(tokens)
+  const allTokens = yield* select(tokens);
   const unknownTokens = new Set(
     action.payload.poolKeys.flatMap(({ token_x, token_y }) =>
       [token_x, token_y].filter(token => !allTokens[token])
     )
-  )
+  );
   const knownTokens = new Set(
     action.payload.poolKeys.flatMap(({ token_x, token_y }) =>
       [token_x, token_y].filter(token => allTokens[token])
     )
-  )
+  );
 
-  const unknownTokensData = yield* call(getTokenDataByAddresses, [...unknownTokens])
+  const unknownTokensData = yield* call(getTokenDataByAddresses, [...unknownTokens]);
 
-  const knownTokenBalances = yield* call(getTokenBalances, [...knownTokens])
+  const knownTokenBalances = yield* call(getTokenBalances, [...knownTokens]);
 
-  yield* put(actions.addTokens(unknownTokensData))
-  yield* put(actions.updateTokenBalances(knownTokenBalances))
+  yield* put(actions.addTokens(unknownTokensData));
+  yield* put(actions.updateTokenBalances(knownTokenBalances));
 
-  console.log(yield* select(tokens))
+  console.log(yield* select(tokens));
 
-  yield* put(actions.addPoolsForList({ data: pools, listType: action.payload.listType }))
+  yield* put(actions.addPoolsForList({ data: pools, listType: action.payload.listType }));
 }
 
 export function* handleInitPool(action: PayloadAction<PoolKey>): Generator {
-  const loaderKey = createLoaderKey()
-  const loaderSigningTx = createLoaderKey()
+  const loaderKey = createLoaderKey();
+  const loaderSigningTx = createLoaderKey();
   try {
     yield put(
       snackbarsActions.add({
@@ -68,15 +68,15 @@ export function* handleInitPool(action: PayloadAction<PoolKey>): Generator {
         persist: true,
         key: loaderKey
       })
-    )
+    );
 
-    const { token_x, token_y, fee_tier } = action.payload
+    const { token_x, token_y, fee_tier } = action.payload;
 
-    const poolKey = newPoolKey(token_x, token_y, fee_tier)
+    const poolKey = newPoolKey(token_x, token_y, fee_tier);
 
-    const initSqrtPrice = toSqrtPrice(1, 0)
+    const initSqrtPrice = toSqrtPrice(1, 0);
 
-    const tx = yield* call(createPoolTx, poolKey, initSqrtPrice.toString())
+    const tx = yield* call(createPoolTx, poolKey, initSqrtPrice.toString());
 
     yield put(
       snackbarsActions.add({
@@ -85,83 +85,82 @@ export function* handleInitPool(action: PayloadAction<PoolKey>): Generator {
         persist: false,
         txid: tx
       })
-    )
+    );
 
-    closeSnackbar(loaderKey)
-    yield put(snackbarsActions.remove(loaderKey))
+    closeSnackbar(loaderKey);
+    yield put(snackbarsActions.remove(loaderKey));
   } catch (error) {
-    console.log(error)
-    closeSnackbar(loaderKey)
-    yield put(snackbarsActions.remove(loaderKey))
-    closeSnackbar(loaderSigningTx)
-    yield put(snackbarsActions.remove(loaderSigningTx))
+    console.log(error);
+    closeSnackbar(loaderKey);
+    yield put(snackbarsActions.remove(loaderKey));
+    closeSnackbar(loaderSigningTx);
+    yield put(snackbarsActions.remove(loaderSigningTx));
   }
 }
 
 export function* fetchPoolData(action: PayloadAction<PoolKey>): Generator {
-  const { fee_tier, token_x, token_y } = action.payload
+  const { fee_tier, token_x, token_y } = action.payload;
 
-  console.log('fetching pool data', fee_tier, token_x, token_y)
+  console.log('fetching pool data', fee_tier, token_x, token_y);
 
   try {
-    const pool = yield* call(getPool, { fee_tier, token_x, token_y })
+    const pool = yield* call(getPool, { fee_tier, token_x, token_y });
 
     if (pool) {
-      yield* put(actions.addPool(pool))
+      yield* put(actions.addPool(pool));
     } else {
-      yield* put(actions.addPool())
+      yield* put(actions.addPool());
     }
   } catch (error) {
-    console.log(error)
-    yield* put(actions.addPool())
+    console.log(error);
+    yield* put(actions.addPool());
   }
 }
 
 export function* fetchAllPoolKeys(): Generator {
   try {
-    console.log('fetching pool keys')
+    console.log('fetching pool keys');
     //TODO: in the future handle more than 100 pools
-    const pools = yield* call(getPoolKeys)
+    const pools = yield* call(getPoolKeys);
+    yield* put(actions.setPoolKeys(pools));
     const actionPayload = {
       payload: {
         poolKeys: pools,
         listType: ListType.POSITIONS
       }
-    }
-    yield call(fetchPoolsDataForList, actionPayload as PayloadAction<ListPoolsRequest>)
-
-    yield* put(actions.setPoolKeys(pools))
+    };
+    yield call(fetchPoolsDataForList, actionPayload as PayloadAction<ListPoolsRequest>);
   } catch (error) {
-    yield* put(actions.setPoolKeys([]))
-    console.log(error)
+    yield* put(actions.setPoolKeys([]));
+    console.log(error);
   }
 }
 
 export function* fetchAllPoolsForPairData(action: PayloadAction<PairTokens>) {
-  const poolKeys = yield* call(getPoolKeys)
+  const poolKeys = yield* call(getPoolKeys);
   const filteredPoolKeys = findPairsByPoolKeys(
     action.payload.first.toString(),
     action.payload.second.toString(),
     poolKeys
-  )
-  const pools = yield* call(getPools, filteredPoolKeys)
+  );
+  const pools = yield* call(getPools, filteredPoolKeys);
 
-  yield* put(actions.addPools(pools))
+  yield* put(actions.addPools(pools));
 }
 
 export function* fetchTicksAndTickMaps(action: PayloadAction<FetchTicksAndTickMaps>) {
-  const { tokenFrom, tokenTo, allPools } = action.payload
+  const { tokenFrom, tokenTo, allPools } = action.payload;
 
-  console.log('fetchTicksAndTickMaps', tokenFrom, tokenTo)
+  console.log('fetchTicksAndTickMaps', tokenFrom, tokenTo);
 
   try {
-    const pools = findPairs(tokenFrom.toString(), tokenTo.toString(), allPools)
+    const pools = findPairs(tokenFrom.toString(), tokenTo.toString(), allPools);
 
-    console.log('pools to fetch tick and tickmap', pools)
+    console.log('pools to fetch tick and tickmap', pools);
 
-    const tickmapCalls = pools.map(pool => call(getFullTickmap, pool.pool_key))
+    const tickmapCalls = pools.map(pool => call(getFullTickmap, pool.pool_key));
 
-    const allTickMaps = yield* all(tickmapCalls)
+    const allTickMaps = yield* all(tickmapCalls);
 
     for (const [index, pool] of pools.entries()) {
       yield* put(
@@ -169,46 +168,46 @@ export function* fetchTicksAndTickMaps(action: PayloadAction<FetchTicksAndTickMa
           poolKey: pool.pool_key,
           tickMapStructure: allTickMaps[index]
         })
-      )
+      );
     }
 
     const allTicksCalls = pools.map((pool, index) =>
       call(getAllLiquidityTicks, pool.pool_key, allTickMaps[index])
-    )
-    const allTicks = yield* all(allTicksCalls)
+    );
+    const allTicks = yield* all(allTicksCalls);
 
     for (const [index, pool] of pools.entries()) {
-      yield* put(actions.setTicks({ poolKey: pool.pool_key, tickStructure: allTicks[index] }))
+      yield* put(actions.setTicks({ poolKey: pool.pool_key, tickStructure: allTicks[index] }));
     }
 
-    yield* put(actions.stopIsLoadingTicksAndTickMaps())
+    yield* put(actions.stopIsLoadingTicksAndTickMaps());
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
 }
 
 export function* getPoolsDataForListHandler(): Generator {
-  yield* takeEvery(actions.getPoolsDataForList, fetchPoolsDataForList)
+  yield* takeEvery(actions.getPoolsDataForList, fetchPoolsDataForList);
 }
 
 export function* initPoolHandler(): Generator {
-  yield* takeLatest(actions.initPool, handleInitPool)
+  yield* takeLatest(actions.initPool, handleInitPool);
 }
 
 export function* getPoolDataHandler(): Generator {
-  yield* takeLatest(actions.getPoolData, fetchPoolData)
+  yield* takeLatest(actions.getPoolData, fetchPoolData);
 }
 
 export function* getPoolKeysHandler(): Generator {
-  yield* takeLatest(actions.getPoolKeys, fetchAllPoolKeys)
+  yield* takeLatest(actions.getPoolKeys, fetchAllPoolKeys);
 }
 
 export function* getAllPoolsForPairDataHandler(): Generator {
-  yield* takeLatest(actions.getAllPoolsForPairData, fetchAllPoolsForPairData)
+  yield* takeLatest(actions.getAllPoolsForPairData, fetchAllPoolsForPairData);
 }
 
 export function* getTicksAndTickMapsHandler(): Generator {
-  yield* takeEvery(actions.getTicksAndTickMaps, fetchTicksAndTickMaps)
+  yield* takeEvery(actions.getTicksAndTickMaps, fetchTicksAndTickMaps);
 }
 
 export function* poolsSaga(): Generator {
@@ -221,5 +220,5 @@ export function* poolsSaga(): Generator {
       getAllPoolsForPairDataHandler,
       getTicksAndTickMapsHandler
     ].map(spawn)
-  )
+  );
 }

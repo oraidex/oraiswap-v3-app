@@ -63,8 +63,12 @@ export default class SingletonOraiswapV3 {
     this._nativeTokens[tokenDenom] = tokenDenom;
   }
 
-  public static async queryBalance(tokenDenom: string = 'orai') {
-    const { amount } = await this._dex.client.getBalance(this._dex.sender, tokenDenom);
+  public static async queryBalance(address: string, tokenDenom: string = 'orai') {
+    if (!address) {
+      return '0';
+    }
+    const client = await CosmWasmClient.connect(import.meta.env.VITE_CHAIN_RPC_ENDPOINT);
+    const { amount } = await client.getBalance(address, tokenDenom);
     return amount;
   }
 
@@ -86,6 +90,16 @@ export default class SingletonOraiswapV3 {
   public static async getTokensInfo(tokens: string[]): Promise<TokenDataOnChain[]> {
     return await Promise.all(
       tokens.map(async token => {
+        if (token.includes('ibc')) {
+          return {
+            address: token,
+            balance: BigInt(0), // query later
+            symbol: 'IBC',
+            decimals: 6,
+            name: 'IBC'
+          };
+        }
+
         const queryClient = new OraiswapTokenQueryClient(this.dex.client, token);
         const balance = await queryClient.balance({ address: this.dex.sender });
         const tokenInfo = await queryClient.tokenInfo();
@@ -209,5 +223,15 @@ export default class SingletonOraiswapV3 {
       amount: amount.toString(),
       spender: this.dex.contractAddress
     });
-  };
+  }
+
+  public static getPool = async (poolKey: PoolKey) => {
+    const client = await CosmWasmClient.connect(import.meta.env.VITE_CHAIN_RPC_ENDPOINT);
+    const queryClient = new OraiswapV3QueryClient(client, defaultState.dexAddress);
+    return await queryClient.pool({
+      feeTier: poolKey.fee_tier,
+      token0: poolKey.token_x,
+      token1: poolKey.token_y
+    });
+  }
 }
