@@ -1,73 +1,50 @@
-import { Theme } from '@mui/material'
-import { colors, typography } from '@static/theme'
-import { makeStyles } from 'tss-react/mui'
+import { Theme } from '@mui/material';
+import { colors, typography } from '@static/theme';
+import { makeStyles } from 'tss-react/mui';
 
 export const useStyles = makeStyles()((theme: Theme) => ({
   infoTypeLabel: {
-    textTransform: 'uppercase',
-    color: colors.oraidex.lightGrey,
-    ...typography.body2,
-    lineHeight: '35px',
-    [theme.breakpoints.down('md')]: {
-      ...typography.caption4,
-      lineHeight: '35px'
-    },
-    [theme.breakpoints.down('sm')]: {
-      ...typography.body2,
-      lineHeight: '35px'
-    }
+    // textTransform: 'uppercase',
+    color: colors.oraidex.neutralText,
+    ...typography.body4
+  },
+
+  infoSwap: {
+    textAlign: 'right'
   },
   infoTypeSwap: {
     display: 'flex',
-    backgroundColor: colors.oraidex.dark,
-    borderRadius: 13,
+    backgroundColor: colors.oraidex.newDark,
+    borderRadius: 12,
+    padding: 12,
+
     lineHeight: '20px',
-    alignItems: 'center'
+    alignItems: 'center',
+    justifyContent: 'space-between'
   },
   infoType: {
-    backgroundColor: colors.oraidex.light,
-    borderRadius: 13,
-    textAlign: 'center',
-    marginRight: 6,
-    width: 61,
-    padding: 2,
-    [theme.breakpoints.down('md')]: {
-      marginRight: 0
-    }
-  },
-  infoSwap: {
-    display: 'flex',
-    justifyContent: 'center',
-    fontSize: 16,
-    width: '100%'
+    borderRadius: 12,
+    textAlign: 'left',
+    marginRight: 6
   },
   infoAmount: {
+    textAlign: 'right',
     color: colors.oraidex.text,
-    paddingRight: 8,
-    ...typography.body1,
-    lineHeight: '35px',
+    ...typography.heading5
 
-    [theme.breakpoints.only('md')]: {
-      ...typography.body2,
-      lineHeight: '35px'
-    }
+    // [theme.breakpoints.only('md')]: {
+    //   ...typography.body2,
+    //   lineHeight: '35px'
+    // }
   },
   infoSwapToken: {
+    textAlign: 'right',
     color: colors.oraidex.lightGrey,
-    ...typography.body1,
+    ...typography.body4,
     overflow: 'hidden',
     textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap',
-    lineHeight: '35px',
-    [theme.breakpoints.down('md')]: {
-      ...typography.caption3,
-      lineHeight: '35px'
-    },
-    [theme.breakpoints.down('sm')]: {
-      ...typography.caption1,
-      lineHeight: '35px'
-    }
+    whiteSpace: 'nowrap'
   }
-}))
+}));
 
-export default useStyles
+export default useStyles;

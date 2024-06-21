@@ -21,6 +21,15 @@ export const useStyles = makeStyles()((theme: Theme) => ({
       width: 22
     }
   },
+  icon2: {
+    width: 35,
+    borderRadius: '100%',
+    marginLeft: '-5px',
+
+    [theme.breakpoints.down('xs')]: {
+      width: 22
+    }
+  },
   arrowIcon: {
     width: 22,
     marginRight: 8,
@@ -35,12 +44,12 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   text: {
     ...typography.body1,
     color: colors.oraidex.text,
-    backgroundColor: colors.oraidex.component,
+    background: '#494949',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 12,
-    height: 36,
+    borderRadius: 8,
+    padding: '4px 8px',
     width: '100%'
   },
   rangeGrid: {
@@ -60,18 +69,22 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    [theme.breakpoints.down('xs')]: {
-      justifyContent: 'space-between',
-      marginTop: 16
+    justifyContent: 'space-between',
+    gap: 16,
+
+    button: {
+      flex: 1
     }
+    // [theme.breakpoints.down('xs')]: {
+    //   justifyContent: 'space-between',
+    //   marginTop: 16
+    // }
   },
   feeText: {
+    ...typography.body4,
     marginLeft: 12,
-    minWidth: 90,
 
-    [theme.breakpoints.down('xs')]: {
-      minWidth: 84
-    }
+    [theme.breakpoints.down('xs')]: {}
   },
   closedText: {
     width: 100,
@@ -92,7 +105,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     }
   },
   name: {
-    ...typography.heading3,
+    ...typography.heading5,
     color: colors.oraidex.text,
     lineHeight: '28px',
 
@@ -101,9 +114,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     }
   },
   bottomGrid: {
-    background: colors.oraidex.component,
-    marginTop: 20,
-    padding: 24,
+    marginTop: 24,
     borderRadius: 24,
     flexGrow: 1,
     display: 'flex',
@@ -111,17 +122,17 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     justifyContent: 'space-between'
   },
   iconSmall: {
-    width: 20,
-    height: 20,
+    width: 24,
+    height: 24,
     marginRight: 8,
     borderRadius: '100%'
   },
   boxInfo: {
     borderRadius: 16,
     position: 'relative',
-    '&:not(:last-child)': {
-      marginBottom: 26
-    }
+    // '&:not(:last-child)': {
+    marginBottom: 24
+    // }
   },
   title: {
     ...typography.heading4,
@@ -134,11 +145,10 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   },
   violetButton: {
     background: colors.oraidex.greenLinearGradientOpacity,
-    borderRadius: 11,
+    borderRadius: 99,
+    padding: '8px 16px',
     textTransform: 'none',
     color: colors.oraidex.dark,
-    width: 116,
-    height: 32,
     ...typography.body1,
     '&:hover': {
       background: colors.oraidex.greenLinearGradient,
@@ -166,8 +176,8 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     }
   },
   tokenArea: {
-    backgroundColor: colors.oraidex.dark,
-    borderRadius: 16,
+    backgroundColor: colors.oraidex.newDark,
+    borderRadius: 8,
     flexDirection: 'row',
     width: '100%',
     justifyContent: 'space-between',
@@ -189,7 +199,9 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   },
   token: {
     backgroundColor: colors.oraidex.light,
-    borderRadius: 12,
+    border: `1px solid`,
+    borderColor: colors.oraidex.border,
+    borderRadius: 99,
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
@@ -201,34 +213,41 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     fontWeight: 400
   },
   tokenValue: {
-    color: colors.oraidex.lightGrey,
+    color: colors.oraidex.text,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    ...typography.heading2
+    ...typography.heading5,
+    fontWeight: 600
   },
   tokenBalance: {
-    color: '#A9B6BF',
+    color: colors.oraidex.neutralText,
     ...typography.caption2
   },
+  bal: {
+    color: colors.oraidex.neutralTextLight
+  },
   tokenUSDValue: {
-    color: '#A9B6BF',
+    color: colors.oraidex.neutralText,
     ...typography.caption2
   },
   closeButton: {
-    color: colors.oraidex.dark,
-    background: colors.oraidex.greenLinearGradientOpacity,
-    height: 36,
-    width: 116,
+    color: colors.oraidex.text,
+    background: colors.oraidex.light,
+    border: '1px solid',
+    borderColor: colors.oraidex.border,
+    padding: '8px 16px',
+    // height: 36,
+    // width: 116,
     textTransform: 'none',
     transition: '300ms',
-    paddingInline: 0,
-    borderRadius: 12,
+    borderRadius: 99,
     ...typography.body1,
 
     '&:hover': {
-      background: colors.oraidex.greenLinearGradient,
-      boxShadow: '0px 0px 16px rgba(46, 224, 154, 0.35)'
+      background: colors.oraidex.light,
+      // boxShadow: '0px 0px 16px #fff'
+      opacity: 0.7
     },
     [theme.breakpoints.down('md')]: {
       marginRight: 10
