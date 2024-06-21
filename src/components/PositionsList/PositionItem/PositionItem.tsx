@@ -1,15 +1,16 @@
 import { Grid, Hidden, Tooltip, Typography, useMediaQuery } from '@mui/material';
-import SwapList from '@static/svg/swap-list.svg';
 import { theme } from '@static/theme';
+import { TokenPriceData } from '@store/consts/static';
 import { initialXtoY, tickerToAddress } from '@store/consts/uiUtiils';
 import {
   FormatNumberThreshold,
   PrefixConfig,
   formatNumbers,
+  getCoingeckoTokenPriceV2,
   showPrefix
 } from '@store/consts/utils';
 import classNames from 'classnames';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useStyles } from './style';
 
 export interface IPositionItem {
@@ -27,6 +28,7 @@ export interface IPositionItem {
   address: string;
   id: number;
   isActive?: boolean;
+  tokenXId?: string;
 }
 
 const shorterThresholds: FormatNumberThreshold[] = [
@@ -91,7 +93,8 @@ export const PositionItem: React.FC<IPositionItem> = ({
   max,
   valueX,
   valueY,
-  isActive = false
+  isActive = false,
+  tokenXId
 }) => {
   const { classes } = useStyles();
 
@@ -101,6 +104,17 @@ export const PositionItem: React.FC<IPositionItem> = ({
   const [xToY, setXToY] = useState<boolean>(
     initialXtoY(tickerToAddress(tokenXName), tickerToAddress(tokenYName))
   );
+
+  const [tokenXPriceData, setTokenXPriceData] = useState<TokenPriceData | undefined>(undefined);
+  useEffect(() => {
+    if (tokenXId) {
+      getCoingeckoTokenPriceV2(tokenXId)
+        .then(data => setTokenXPriceData(data))
+        .catch(() => setTokenXPriceData({ price: 0 }));
+    } else {
+      setTokenXPriceData(undefined);
+    }
+  }, [tokenXId]);
 
   const feeFragment = useMemo(
     () => (
@@ -132,28 +146,6 @@ export const PositionItem: React.FC<IPositionItem> = ({
 
   const valueFragment = useMemo(
     () => (
-      // <Grid
-      //   container
-      //   item
-      //   className={classes.value}
-      //   justifyContent='space-between'
-      //   alignItems='center'
-      //   wrap='nowrap'>
-      //   <Typography className={classNames(classes.infoText, classes.label)}>Value</Typography>
-      //   <Grid className={classes.infoCenter} container item justifyContent='center'>
-      //     <Typography className={classes.greenText}>
-      //       {formatNumbers(isXs || isDesktop ? shorterThresholds : undefined)(
-      //         (xToY ? valueX : valueY).toString()
-      //       )}
-      //       {showPrefix(
-      //         xToY ? valueX : valueY,
-      //         isXs || isDesktop ? shorterPrefixConfig : undefined
-      //       )}{' '}
-      //       {xToY ? tokenXName : tokenYName}
-      //     </Typography>
-      //   </Grid>
-      // </Grid>
-
       <Grid
         container
         item
@@ -165,19 +157,19 @@ export const PositionItem: React.FC<IPositionItem> = ({
         <Typography className={classNames(classes.greyText, classes.label)}>Value</Typography>
         <Grid className={classes.infoCenter} container item>
           <Typography className={classes.infoText}>
+            $
             {formatNumbers(isXs || isDesktop ? shorterThresholds : undefined)(
-              (xToY ? valueX : valueY).toString()
+              (xToY ? valueX * (tokenXPriceData?.price ?? 0) : valueY).toString()
             )}
             {showPrefix(
               xToY ? valueX : valueY,
               isXs || isDesktop ? shorterPrefixConfig : undefined
             )}{' '}
-            {xToY ? tokenXName : tokenYName}
           </Typography>
         </Grid>
       </Grid>
     ),
-    [valueX, valueY, tokenXName, classes, isXs, isDesktop, tokenYName, xToY]
+    [valueX, valueY, tokenXName, classes, isXs, isDesktop, tokenYName, xToY, tokenXPriceData]
   );
 
   return (
@@ -213,7 +205,7 @@ export const PositionItem: React.FC<IPositionItem> = ({
       <Grid container item className={classes.mdInfo} direction='row'>
         <Hidden mdUp>{feeFragment}</Hidden>
         <Hidden mdUp>{valueFragment}</Hidden>
-        <Grid
+        {/* <Grid
           container
           item
           className={classes.minMax}
@@ -227,7 +219,7 @@ export const PositionItem: React.FC<IPositionItem> = ({
           <Grid className={classes.infoCenter} container item>
             <Typography className={classes.infoText}>$16.21</Typography>
           </Grid>
-        </Grid>
+        </Grid> */}
         <Grid
           container
           item

@@ -1,4 +1,3 @@
-import { useSigningClient } from '../../../src/contexts/cosmwasm';
 import { PositionsList } from '@components/PositionsList/PositionsList';
 import { FAUCET_LIST_TOKEN, POSITIONS_PER_PAGE } from '@store/consts/static';
 import {
@@ -21,6 +20,7 @@ import { openWalletSelectorModal } from '@utils/web3/selector';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { useSigningClient } from '../../../src/contexts/cosmwasm';
 
 export const WrappedPositionsList: React.FC = () => {
   const walletAddress = useSelector(address);
@@ -159,7 +159,8 @@ export const WrappedPositionsList: React.FC = () => {
         valueY,
         address: walletAddress,
         id: index,
-        isActive: currentPrice >= min && currentPrice <= max
+        isActive: currentPrice >= min && currentPrice <= max,
+        tokenXId: position.tokenX.coingeckoId
       };
     })
     .filter(item => {
