@@ -24,15 +24,7 @@ export const BoxInfo: React.FC<{
   showBalance?: boolean;
   swapHandler?: () => void;
   showLoader?: boolean;
-}> = ({
-  title,
-  onClickButton,
-  tokenB,
-  tokenA,
-  showBalance = false,
-  swapHandler,
-  showLoader = false
-}) => {
+}> = ({ title, tokenB, tokenA, showBalance = false, swapHandler, showLoader = false }) => {
   const { classes } = useStyles();
 
   const thresholdsWithTokenDecimal = (decimals: number): FormatNumberThreshold[] => [

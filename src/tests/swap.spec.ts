@@ -3,7 +3,7 @@ import { OraiswapTokenClient, OraiswapTokenTypes } from '@oraichain/oraidex-cont
 import * as oraidexArtifacts from '@oraichain/oraidex-contracts-build';
 import fs from 'fs';
 import path from 'path';
-import { OraiswapV3Client, OraiswapV3Types } from '@sdk';
+import { OraiswapV3Client, OraiswapV3Types } from '../sdk';
 import {
   newFeeTier,
   newPoolKey,

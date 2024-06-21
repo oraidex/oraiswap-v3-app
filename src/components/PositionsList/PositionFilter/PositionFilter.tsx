@@ -14,7 +14,7 @@ type FilterProps = {
   searchValue: string;
 };
 
-export const PositionsFilter: React.FC<FilterProps> = ({ searchValue, setSearchValue }) => {
+export const PositionsFilter: React.FC<FilterProps> = ({ setSearchValue }) => {
   const { classes } = useStyles();
 
   return (

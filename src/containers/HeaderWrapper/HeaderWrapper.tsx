@@ -28,11 +28,10 @@ export const HeaderWrapper: React.FC = () => {
 
   useEffect(() => {
     (async () => {
+      alert(window.walletType);
+      alert(!!window.keplr);
       if (!window.walletType || !window.keplr) return;
-
-      if (walletAddress == '') {
-        connectWallet();
-      }
+      if (walletAddress == '') connectWallet();
 
       if (signingClient && walletAddress) {
         SingletonOraiswapV3.load(signingClient, walletAddress);
@@ -49,13 +48,15 @@ export const HeaderWrapper: React.FC = () => {
         dispatch(walletActions.addTokenBalances(balances));
         dispatch(walletActions.setIsBalanceLoading(false));
       }
-
-      window.addEventListener('keplr_keystorechange', connectWallet);
-      return () => {
-        window.removeEventListener('keplr_keystorechange', connectWallet);
-      };
     })();
   }, [walletAddress]);
+
+  useEffect(() => {
+    window.addEventListener('keplr_keystorechange', connectWallet);
+    return () => {
+      window.removeEventListener('keplr_keystorechange', connectWallet);
+    };
+  }, []);
 
   return <Header landing={location.pathname.substring(1)} />;
 };

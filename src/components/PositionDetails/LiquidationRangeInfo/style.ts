@@ -2,7 +2,7 @@ import { Theme } from '@mui/material';
 import { colors, typography } from '@static/theme';
 import { makeStyles } from 'tss-react/mui';
 
-export const useStyles = makeStyles()((theme: Theme) => ({
+export const useStyles = makeStyles()((_theme: Theme) => ({
   infoTypeLabel: {
     // textTransform: 'uppercase',
     color: colors.oraidex.neutralText,

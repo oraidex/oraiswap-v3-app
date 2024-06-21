@@ -38,8 +38,8 @@ export const PositionsList: React.FC<IProps> = ({
   noConnectedBlockerProps,
   itemsPerPage,
   searchValue,
-  searchSetValue,
-  handleRefresh
+  searchSetValue
+  // handleRefresh
 }) => {
   const { classes } = useStyles();
   const navigate = useNavigate();
