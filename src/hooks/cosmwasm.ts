@@ -54,6 +54,7 @@ export const useSigningCosmWasmClient = (): ISigningCosmWasmClientContext => {
 
   window.onmessage = function (e) {
     if (e.data.statusWallet) {
+      alert(e.data.statusWallet);
       if (e.data.statusWallet === 'connect') {
         window.walletType = e.data.walletType;
         window.Keplr =
