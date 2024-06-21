@@ -36,7 +36,7 @@ import { closeSnackbar } from 'notistack';
 import { all, call, fork, join, put, select, spawn, takeEvery, takeLatest } from 'typed-redux-saga';
 import { fetchTicksAndTickMaps } from './pools';
 import { fetchBalances } from './wallet';
-import { PoolKey, newPoolKey, toSqrtPrice } from '@wasm';
+import { PoolKey, newPoolKey } from '@wasm';
 import { ORAI } from '@store/consts/static';
 import { actions as walletActions } from '@store/reducers/wallet';
 
@@ -54,6 +54,8 @@ function* handleInitPosition(action: PayloadAction<InitPositionData>): Generator
   } = action.payload;
 
   const { token_x, token_y, fee_tier } = poolKeyData;
+
+  const walletAddress = yield* select(address);
 
   if (
     // TODO: open to ibc tokens later
@@ -88,17 +90,16 @@ function* handleInitPosition(action: PayloadAction<InitPositionData>): Generator
       true
     );
 
-    const XTokenTx = yield* call(approveToken, token_x, xAmountWithSlippage);
+    const XTokenTx = yield* call(approveToken, token_x, xAmountWithSlippage, walletAddress);
     txs.push(XTokenTx);
 
-    const YTokenTx = yield* call(approveToken, token_y, yAmountWithSlippage);
+    const YTokenTx = yield* call(approveToken, token_y, yAmountWithSlippage, walletAddress);
     txs.push(YTokenTx);
 
     const poolKey = newPoolKey(token_x, token_y, fee_tier);
 
     if (initPool) {
-      const initSqrtPrice = toSqrtPrice(1, 0);
-      const createTx = yield* call(createPoolTx, poolKey, initSqrtPrice.toString());
+      const createTx = yield* call(createPoolTx, poolKey, spotSqrtPrice.toString());
       txs.push(createTx);
     }
 
@@ -176,7 +177,8 @@ function* handleInitPosition(action: PayloadAction<InitPositionData>): Generator
 
 export function* handleGetPositionsList() {
   try {
-    const positions = yield* call(positionList, SingletonOraiswapV3.dex.sender);
+    const walletAddress = yield* select(address);
+    const positions = yield* call(positionList, walletAddress);
 
     const pools: PoolKey[] = [];
     const poolSet: Set<string> = new Set();
@@ -218,6 +220,8 @@ export function* handleGetCurrentPositionTicks(action: PayloadAction<GetPosition
 }
 
 function* handleInitPositionWithNative(action: PayloadAction<InitPositionData>): Generator {
+  const walletAddress = yield* select(address);
+
   // TODO: implement work with native token
   const loaderCreatePosition = createLoaderKey()
   const loaderSigningTx = createLoaderKey()
@@ -254,15 +258,14 @@ function* handleInitPositionWithNative(action: PayloadAction<InitPositionData>):
       true
     )
 
-    yield* call(approveToken, token_x, xAmountWithSlippage)
+    yield* call(approveToken, token_x, xAmountWithSlippage, walletAddress)
 
-    yield* call(approveToken, token_y, yAmountWithSlippage)
+    yield* call(approveToken, token_y, yAmountWithSlippage, walletAddress)
 
     const poolKey = newPoolKey(token_x, token_y, fee_tier);
 
     if (initPool) {
-      const initSqrtPrice = toSqrtPrice(1, 0);
-      yield* call(createPoolTx, poolKey, initSqrtPrice.toString());
+      yield* call(createPoolTx, poolKey, spotSqrtPrice.toString());
     }
 
     // TODO:here

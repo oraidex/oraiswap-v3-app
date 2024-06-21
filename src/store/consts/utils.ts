@@ -500,8 +500,8 @@ export type TokenDataOnChain = {
   balance: bigint;
 };
 
-export const getTokenDataByAddresses = async (tokens: string[]): Promise<Record<string, Token>> => {
-  const tokenInfos: TokenDataOnChain[] = await SingletonOraiswapV3.getTokensInfo(tokens);
+export const getTokenDataByAddresses = async (tokens: string[], address: string): Promise<Record<string, Token>> => {
+  const tokenInfos: TokenDataOnChain[] = await SingletonOraiswapV3.getTokensInfo(tokens, address);
 
   const newTokens: Record<string, Token> = {};
   tokenInfos.forEach(token => {
@@ -595,24 +595,24 @@ export const poolKeyToString = (poolKey: PoolKey): string => {
   );
 };
 
-export const getTokenBalances = async (tokens: string[]) => {
+export const getTokenBalances = async (tokens: string[], address: string) => {
   const tokenBalances = await Promise.all(
     tokens.map(async token => {
       if (token !== 'orai' && !token.includes('ibc')) {
-        if (!SingletonOraiswapV3.dex) {
+        if (!address) {
           return { address: token, balance: 0n };
         }
-        SingletonOraiswapV3.loadCw20(SingletonOraiswapV3.dex.sender, token);
+        SingletonOraiswapV3.loadCw20(address, token);
         const { balance } = await SingletonOraiswapV3.tokens[token].balance({
-          address: SingletonOraiswapV3.dex.sender
+          address: address
         });
         return { address: token, balance: BigInt(balance) };
       } else {
-        if (!SingletonOraiswapV3.dex) {
+        if (!address) {
           return { address: token, balance: 0n };
         }
         const balance = await SingletonOraiswapV3.queryBalance(
-          SingletonOraiswapV3.dex.sender,
+          address,
           token
         );
         return { address: token, balance: BigInt(balance) };
@@ -1225,12 +1225,12 @@ export const isNativeToken = (token: string): boolean => {
   return token === 'orai' || token.includes('ibc');
 };
 
-export const approveToken = async (token: string, amount: bigint): Promise<string> => {
+export const approveToken = async (token: string, amount: bigint, address: string): Promise<string> => {
   if (isNativeToken(token)) {
     return '';
   }
 
-  const result = await SingletonOraiswapV3.approveToken(token, amount);
+  const result = await SingletonOraiswapV3.approveToken(token, amount, address);
   return result.transactionHash;
 };
 

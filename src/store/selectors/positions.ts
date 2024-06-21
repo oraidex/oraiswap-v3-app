@@ -39,6 +39,7 @@ export const positionsWithPoolsData = createSelector(
   positionsList,
   swapTokens,
   (allPools, { list }, tokens) => {
+    console.log({ allPools, list, tokens })
     const poolsByKey: Record<string, PoolWithPoolKeyAndIndex> = {}
     allPools.forEach((pool, index) => {
       poolsByKey[poolKeyToString(pool.pool_key)] = {

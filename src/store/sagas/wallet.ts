@@ -224,8 +224,9 @@ export function* handleBalance(): Generator {
 // }
 
 export function* fetchSelectedTokensBalances(action: PayloadAction<string[]>): Generator {
+  const walletAddress = yield* select(address)
   const tokens = action.payload
-  const balances = yield* call(getTokenBalances, tokens)
+  const balances = yield* call(getTokenBalances, tokens, walletAddress)
 
   const convertedBalances: ITokenBalance[] = balances.map(balance => ({
     address: balance[0],
@@ -236,8 +237,9 @@ export function* fetchSelectedTokensBalances(action: PayloadAction<string[]>): G
 }
 
 export function* fetchTokensBalances(): Generator {
+  const walletAddress = yield* select(address)
   const tokens = Object.values(FaucetTokenList)
-  const balances = yield* call(getTokenBalances, tokens)
+  const balances = yield* call(getTokenBalances, tokens, walletAddress)
 
   const convertedBalances: ITokenBalance[] = balances.map(balance => ({
     address: balance[0],

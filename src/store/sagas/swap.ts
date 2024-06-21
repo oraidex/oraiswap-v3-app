@@ -25,8 +25,11 @@ import { all, call, put, select, spawn, takeEvery } from 'typed-redux-saga';
 import { fetchBalances } from './wallet';
 import { CalculateSwapResult, SwapError, simulateSwap } from '@wasm';
 import { fetchTicksAndTickMaps } from './pools';
+import { address } from '@store/selectors/wallet';
 
 export function* handleSwap(action: PayloadAction<Omit<Swap, 'txid'>>): Generator {
+  const walletAddress = yield* select(address);
+
   const {
     poolKey,
     tokenFrom,
@@ -90,10 +93,10 @@ export function* handleSwap(action: PayloadAction<Omit<Swap, 'txid'>>): Generato
     }
 
     if (xToY) {
-      const approveTx = yield* call(approveToken, tokenX.address, calculatedAmountIn);
+      const approveTx = yield* call(approveToken, tokenX.address, calculatedAmountIn, walletAddress);
       txs.push(approveTx);
     } else {
-      const approveTx = yield* call(approveToken, tokenY.address, calculatedAmountIn);
+      const approveTx = yield* call(approveToken, tokenY.address, calculatedAmountIn, walletAddress);
       txs.push(approveTx);
     }
 
@@ -194,6 +197,8 @@ export function* handleSwap(action: PayloadAction<Omit<Swap, 'txid'>>): Generato
 }
 
 export function* handleSwapWithNative(action: PayloadAction<Omit<Swap, 'txid'>>): Generator {
+  const walletAddress = yield* select(address);
+
   const {
     poolKey,
     tokenFrom,
@@ -240,10 +245,10 @@ export function* handleSwapWithNative(action: PayloadAction<Omit<Swap, 'txid'>>)
       : amountIn;
 
     if (xToY) {
-      const approveTx = yield* call(approveToken, tokenX.address, calculatedAmountIn);
+      const approveTx = yield* call(approveToken, tokenX.address, calculatedAmountIn, walletAddress);
       txs.push(approveTx);
     } else {
-      const approveTx = yield* call(approveToken, tokenY.address, calculatedAmountIn);
+      const approveTx = yield* call(approveToken, tokenY.address, calculatedAmountIn, walletAddress);
       txs.push(approveTx);
     }
 

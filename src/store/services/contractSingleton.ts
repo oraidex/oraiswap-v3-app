@@ -87,11 +87,11 @@ export default class SingletonOraiswapV3 {
     return tickmaps;
   }
 
-  public static async getTokensInfo(tokens: string[]): Promise<TokenDataOnChain[]> {
+  public static async getTokensInfo(tokens: string[], address: string): Promise<TokenDataOnChain[]> {
     return await Promise.all(
       tokens.map(async token => {
         if (token.includes('ibc') || token == 'orai') {
-          const balance = this._dex ? BigInt(await this.queryBalance(this._dex.sender, token)) : BigInt(0);
+          const balance = this._dex ? BigInt(await this.queryBalance(address, token)) : BigInt(0);
           return {
             address: token,
             balance: balance, 
@@ -102,7 +102,7 @@ export default class SingletonOraiswapV3 {
         }
 
         const queryClient = new OraiswapTokenQueryClient(this.dex.client, token);
-        const balance = await queryClient.balance({ address: this.dex.sender });
+        const balance = await queryClient.balance({ address: address });
         const tokenInfo = await queryClient.tokenInfo();
         const symbol = tokenInfo.symbol;
         const decimals = tokenInfo.decimals;
@@ -125,12 +125,12 @@ export default class SingletonOraiswapV3 {
     return await queryClient.pools({});
   }
 
-  public static async getAllPosition(limit?: number, offset?: PoolKey): Promise<any> {
+  public static async getAllPosition(address: string, limit?: number, offset?: PoolKey): Promise<any> {
     const position = await this.dex.client.queryContractSmart(defaultState.dexAddress, {
       positions: {
         limit,
         offset,
-        owner_id: this.dex.sender
+        owner_id: address
       }
     });
     return position;
@@ -217,8 +217,8 @@ export default class SingletonOraiswapV3 {
     return tickResults.flat(1);
   }
 
-  public static approveToken = async (token: string, amount: bigint) => {
-    const tokenClient = new OraiswapTokenClient(this.dex.client, this.dex.sender, token);
+  public static approveToken = async (token: string, amount: bigint, address: string) => {
+    const tokenClient = new OraiswapTokenClient(this.dex.client, address, token);
 
     return await tokenClient.increaseAllowance({
       amount: amount.toString(),
