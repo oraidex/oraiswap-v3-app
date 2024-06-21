@@ -211,9 +211,7 @@ export const PoolInit: React.FC<IPoolInit> = ({
               justifyContent='center'
               alignItems='center'
               wrap='nowrap'>
-              <Typography className={classes.noCurrencyText}>
-                {tokenASymbol} starting price
-              </Typography>
+              <Typography>{tokenASymbol} starting price</Typography>
             </Grid>
             <Grid container direction='column' alignItems='end'>
               <Input
