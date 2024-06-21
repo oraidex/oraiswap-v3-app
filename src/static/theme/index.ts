@@ -1,5 +1,5 @@
 // theme.ts
-import { createTheme } from '@mui/material/styles'
+import { createTheme } from '@mui/material/styles';
 
 export const colors = {
   black: {
@@ -64,6 +64,9 @@ export const colors = {
     '807ADC': '#807ADC'
   },
   oraidex: {
+    neutralText: '#979995',
+    neutralTextLight: '#EFEFEF',
+    border: '#595B57',
     warning: '#EFD063',
     pink: '#EF84F5',
     violet: '#9C3EBD',
@@ -87,7 +90,7 @@ export const colors = {
     yellow: '#EFD063',
     blue: '#43BBFF'
   }
-}
+};
 
 export const typography = {
   heading1: {
@@ -110,6 +113,11 @@ export const typography = {
     lineHeight: '24px',
     fontWeight: 700
   },
+  heading5: {
+    fontSize: 18,
+    lineHeight: 1.5,
+    fontWeight: 500
+  },
   body1: {
     fontSize: 16,
     lineHeight: '20px',
@@ -123,6 +131,11 @@ export const typography = {
   body3: {
     fontSize: 20,
     lineHeight: '24px',
+    fontWeight: 400
+  },
+  body4: {
+    fontSize: 13,
+    lineHeight: 1.5,
     fontWeight: 400
   },
   caption1: {
@@ -155,7 +168,7 @@ export const typography = {
     lineHeight: '13px',
     fontWeight: 400
   }
-}
+};
 
 // Create a theme instance.
 export const theme = createTheme({
@@ -177,8 +190,7 @@ export const theme = createTheme({
     }
   },
   typography: {
-    fontFamily: 'Mukta',
-    fontWeightRegular: 600,
+    fontWeightRegular: 500,
     h1: typography.heading1,
     h2: typography.heading2,
     h3: typography.heading3,
@@ -208,4 +220,4 @@ export const theme = createTheme({
   //     },
   //   },
   // },
-})
+});

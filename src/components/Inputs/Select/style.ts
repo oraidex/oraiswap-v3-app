@@ -1,6 +1,6 @@
-import { Theme } from '@mui/material'
-import { colors, typography } from '@static/theme'
-import { makeStyles } from 'tss-react/mui'
+import { Theme } from '@mui/material';
+import { colors, typography } from '@static/theme';
+import { makeStyles } from 'tss-react/mui';
 
 export const useStyles = makeStyles()((theme: Theme) => {
   return {
@@ -12,7 +12,7 @@ export const useStyles = makeStyles()((theme: Theme) => {
       borderRadius: 12,
       height: 36,
       minWidth: 'auto',
-      fontFamily: 'Mukta',
+      fontFamily: 'IBM Plex Sans',
       backgroundColor: colors.oraidex.light,
       ...typography.body3,
       padding: 15,
@@ -42,7 +42,7 @@ export const useStyles = makeStyles()((theme: Theme) => {
     endIcon: {
       marginLeft: 9
     }
-  }
-})
+  };
+});
 
-export default useStyles
+export default useStyles;

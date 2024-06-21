@@ -1,37 +1,45 @@
-import { colors, typography } from '@static/theme'
-import { makeStyles } from 'tss-react/mui'
+import { colors, typography } from '@static/theme';
+import { makeStyles } from 'tss-react/mui';
 
 const useStyles = makeStyles()(() => {
   return {
     button: {
       minWidth: 67,
       backgroundColor: 'transparent',
-      color: colors.oraidex.text,
+      color: '#979995',
       height: 32,
-      borderRadius: 10,
       ...typography.body1,
       textTransform: 'capitalize',
       boxShadow: 'none',
-      margin: '4px',
+      borderRadius: 99,
+      fontWeight: 500,
+      fontSize: 16,
       '&:hover': {
-        background: 'transparent',
-        color: colors.oraidex.lightGrey,
-        ...typography.body1
+        // background: '#fff',
+        backgroundColor: '#232521',
+        color: '#979995',
+        ...typography.body1,
+        fontWeight: 500,
+        fontSize: 16
       }
     },
     active: {
-      background: colors.oraidex.light,
-      color: colors.white.main,
+      // background: colors.oraidex.light,
+      background: '#fff',
+      // color: colors.white.main,
+      color: '#292F23',
       ...typography.body1,
+      fontWeight: 500,
+      fontSize: 16,
       '&:hover': {
-        background: colors.oraidex.light,
-        color: colors.white.main
+        background: '#fff',
+        color: '#292F23'
       }
     },
     disabled: {
       opacity: 1
     }
-  }
-})
+  };
+});
 
-export default useStyles
+export default useStyles;

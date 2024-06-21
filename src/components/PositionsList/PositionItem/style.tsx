@@ -1,16 +1,17 @@
-import { Theme } from '@mui/material'
-import { colors, typography } from '@static/theme'
-import { makeStyles } from 'tss-react/mui'
+import { Theme } from '@mui/material';
+import { colors, typography } from '@static/theme';
+import { makeStyles } from 'tss-react/mui';
 
 export const useStyles = makeStyles()((theme: Theme) => ({
   root: {
     background: colors.oraidex.component,
-    borderRadius: 24,
-    padding: 20,
+    borderRadius: 16,
+    padding: 32,
     flexWrap: 'nowrap',
+    border: '1px solid #232521',
 
     '&:not(:last-child)': {
-      marginBottom: 20
+      marginBottom: 16
     },
 
     '&:hover': {
@@ -31,28 +32,16 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     }
   },
   tokenIcon: {
-    width: 40,
+    width: 32,
     borderRadius: '100%',
 
     [theme.breakpoints.down('xs')]: {
       width: 28
-    }
-  },
-  arrows: {
-    width: 36,
-    marginLeft: 4,
-    marginRight: 4,
-
-    [theme.breakpoints.down('md')]: {
-      width: 30
     },
 
-    [theme.breakpoints.down('xs')]: {
-      width: 24
-    },
-
-    '&:hover': {
-      filter: 'brightness(2)'
+    '&:last-child': {
+      position: 'relative',
+      right: '10px'
     }
   },
   names: {
@@ -62,7 +51,8 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     color: colors.oraidex.text,
     lineHeight: '40px',
     whiteSpace: 'nowrap',
-    width: 180,
+    fontSize: '18px',
+
     [theme.breakpoints.down('lg')]: {
       ...typography.heading2
     },
@@ -77,7 +67,22 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   },
   infoText: {
     ...typography.body1,
-    color: colors.oraidex.lightGrey,
+    fontWeight: 500,
+    fontSize: 16,
+    color: '#EFEFEF',
+    whiteSpace: 'nowrap',
+    textOverflow: 'ellipsis',
+    overflow: 'hidden',
+    [theme.breakpoints.down('xs')]: {
+      ...typography.caption1
+    }
+  },
+  suffixText: {
+    ...typography.body1,
+    fontWeight: 500,
+    fontSize: 16,
+    marginLeft: 4,
+    color: '#979995',
     whiteSpace: 'nowrap',
     textOverflow: 'ellipsis',
     overflow: 'hidden',
@@ -86,11 +91,26 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     }
   },
   activeInfoText: {
-    color: colors.oraidex.black
+    // color: colors.oraidex.black
+    color: '#EFEFEF',
+    fontWeight: 400,
+    fontSize: 14
   },
   greenText: {
     ...typography.body1,
     color: colors.oraidex.green,
+    whiteSpace: 'nowrap',
+    textOverflow: 'ellipsis',
+    overflow: 'hidden',
+    [theme.breakpoints.down('xs')]: {
+      ...typography.caption1
+    }
+  },
+  greyText: {
+    ...typography.body1,
+    color: '#979995',
+    fontSize: 14,
+    fontWeight: 400,
     whiteSpace: 'nowrap',
     textOverflow: 'ellipsis',
     overflow: 'hidden',
@@ -110,27 +130,27 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     }
   },
   fee: {
-    background: colors.oraidex.light,
-    borderRadius: 11,
-    height: 36,
-    width: 90,
-    marginRight: 8,
-
+    background: '#494949',
+    borderRadius: '8px',
+    display: 'flex',
+    alignItems: 'center',
+    padding: '4px 12px',
+    width: 'fit-content',
     [theme.breakpoints.down('sm')]: {
       marginRight: 0
     }
   },
   activeFee: {
-    background: colors.oraidex.green
+    background: '#494949'
   },
   infoCenter: {
     flex: '1 1 0%'
   },
   minMax: {
-    background: colors.oraidex.light,
     borderRadius: 11,
-    height: 36,
-    width: 320,
+    gap: 4,
+    height: 40,
+    width: 'fit-content',
     paddingInline: 10,
     marginRight: 8,
 
@@ -189,4 +209,4 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     fontSize: 13,
     color: colors.white.main
   }
-}))
+}));

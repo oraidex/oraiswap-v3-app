@@ -1,11 +1,10 @@
-import { Theme } from '@mui/material'
-import { colors, typography } from '@static/theme'
-import { makeStyles } from 'tss-react/mui'
+import { Theme } from '@mui/material';
+import { colors, typography } from '@static/theme';
+import { makeStyles } from 'tss-react/mui';
 
 export const useStyles = makeStyles()((theme: Theme) => ({
   root: {
     width: '100%',
-    backgroundColor: colors.oraidex.component,
     padding: 24,
     paddingTop: 18,
     borderRadius: 24
@@ -15,12 +14,13 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     color: '#FFFFFF'
   },
   header: {
-    paddingBottom: 30
+    paddingBottom: 10
   },
   plotWrapper: {
     paddingBottom: 29
   },
   minMaxInfo: {
+    marginTop: 12,
     display: 'grid',
     gridTemplateColumns: '1fr 1fr',
     gridGap: '15px',
@@ -32,47 +32,41 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     }
   },
   currentPriceContainer: {
-    backgroundColor: '#111931',
-    borderRadius: 11
+    backgroundColor: colors.oraidex.black,
+    borderRadius: 12,
+    padding: 12,
+
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    flexWrap: 'wrap'
   },
   currentPriceLabel: {
-    backgroundColor: colors.oraidex.light,
-    color: colors.oraidex.lightGrey,
-    textAlign: 'center',
-    borderRadius: '11px!important',
+    flex: 1,
+    color: colors.oraidex.neutralText,
+    textAlign: 'left',
+
     '& p': {
-      ...typography.body2,
-      textTransform: 'uppercase',
-      lineHeight: '35px',
-      [theme.breakpoints.only('md')]: {
-        ...typography.caption2,
-        lineHeight: '35px'
-      }
+      ...typography.body4
     }
   },
   currentPriceAmonut: {
-    backgroundColor: colors.oraidex.dark,
-    textAlign: 'center',
+    textAlign: 'right',
     borderRadius: '11px!important',
     '& span': {
       color: colors.oraidex.text,
-      ...typography.body1,
-      lineHeight: '35px',
-      paddingRight: 5
+      ...typography.heading5
     },
     '& p': {
-      color: '#A9B6BF',
-      ...typography.body1,
-      [theme.breakpoints.only('md')]: {
-        ...typography.caption1,
-        lineHeight: '35px'
-      }
+      color: colors.oraidex.neutralText,
+      ...typography.body4,
+      fontSize: 12
     }
   },
   plot: {
     width: '100%',
     height: 255,
-    backgroundColor: colors.oraidex.component,
+    // backgroundColor: colors.oraidex.component,
     borderRadius: 10,
 
     [theme.breakpoints.down('xs')]: {
@@ -83,8 +77,9 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     marginBottom: 16
   },
   activeLiquidity: {
-    color: colors.oraidex.text,
-    ...typography.caption2,
+    color: colors.oraidex.neutralText,
+    ...typography.body4,
+    fontSize: 12,
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
@@ -94,8 +89,9 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     marginLeft: 5,
     height: 14,
     width: 14,
-    border: '1px solid #FFFFFF',
-    color: colors.oraidex.text,
+    border: '1px solid',
+    borderColor: colors.oraidex.neutralText,
+    color: colors.oraidex.neutralText,
     borderRadius: '50%',
     fontSize: 8,
     lineHeight: '10px',
@@ -141,6 +137,6 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     ...typography.caption2,
     textAlign: 'right'
   }
-}))
+}));
 
-export default useStyles
+export default useStyles;

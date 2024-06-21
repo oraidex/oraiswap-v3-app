@@ -1,6 +1,6 @@
-import { Theme } from '@mui/material'
-import { colors } from '@static/theme'
-import { makeStyles } from 'tss-react/mui'
+import { Theme } from '@mui/material';
+import { colors } from '@static/theme';
+import { makeStyles } from 'tss-react/mui';
 
 const useStyles = makeStyles()((theme: Theme) => {
   return {
@@ -32,10 +32,10 @@ const useStyles = makeStyles()((theme: Theme) => {
       marginRight: 8
     },
     routers: {
-      backgroundColor: colors.oraidex.black,
-      borderRadius: '10px',
+      borderRadius: '99px',
       transition: 'left 300ms',
-      width: 'fit-content'
+      width: 'fit-content',
+      backgroundColor: '#232521'
     },
     connectedWalletIcon: {
       minWidth: 21,
@@ -97,7 +97,7 @@ const useStyles = makeStyles()((theme: Theme) => {
     leftSide: {
       flex: '1 1 0%'
     }
-  }
-})
+  };
+});
 
-export default useStyles
+export default useStyles;

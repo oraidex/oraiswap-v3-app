@@ -58,22 +58,7 @@ export const HeaderWrapper: React.FC = () => {
     };
   }, []);
 
-  return (
-    <Header
-      address={walletAddress}
-      onNetworkSelect={() => {}}
-      onConnectWallet={connectWallet}
-      landing={location.pathname.substring(1)}
-      walletConnected={walletAddress.length !== 0}
-      defaultTestnetRPC=''
-      onDisconnectWallet={() => {
-        disconnect();
-      }}
-      onFaucet={() => dispatch(walletActions.airdrop())}
-      typeOfNetwork={currentNetwork}
-      rpc={PUBLIC_RPC_ENDPOINT}
-    />
-  );
+  return <Header landing={location.pathname.substring(1)} />;
 };
 
 export default HeaderWrapper;

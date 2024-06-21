@@ -1,6 +1,6 @@
-import { PlotTickData } from '@store/reducers/positions'
-import SingletonOraiswapV3 from '@store/services/contractSingleton'
-import axios from 'axios'
+import { PlotTickData } from '@store/reducers/positions';
+import SingletonOraiswapV3 from '@store/services/contractSingleton';
+import axios from 'axios';
 
 import {
   Tickmap,
@@ -37,55 +37,55 @@ import {
   Position,
   LiquidityTick,
   TokenAmounts
-} from '@wasm'
-import { Token, TokenPriceData } from './static'
-import { PoolWithPoolKey } from '@/sdk/OraiswapV3.types'
+} from '@wasm';
+import { Token, TokenPriceData } from './static';
+import { PoolWithPoolKey } from '@/sdk/OraiswapV3.types';
 
 export const parse = (value: any) => {
   if (isArray(value)) {
-    return value.map((element: any) => parse(element))
+    return value.map((element: any) => parse(element));
   }
 
   if (isObject(value)) {
-    const newValue: { [key: string]: any } = {}
+    const newValue: { [key: string]: any } = {};
 
     Object.entries(value as { [key: string]: any }).forEach(([key, value]) => {
-      newValue[key] = parse(value)
-    })
+      newValue[key] = parse(value);
+    });
 
-    return newValue
+    return newValue;
   }
 
   if (isBoolean(value) || isNumber(value)) {
-    return value
+    return value;
   }
 
   try {
-    return BigInt(value)
+    return BigInt(value);
   } catch (e) {
-    return value
+    return value;
   }
-}
+};
 
 const isBoolean = (value: any): boolean => {
-  return typeof value === 'boolean'
-}
+  return typeof value === 'boolean';
+};
 
 const isNumber = (value: any): boolean => {
-  return typeof value === 'number'
-}
+  return typeof value === 'number';
+};
 
 const isArray = (value: any): boolean => {
-  return Array.isArray(value)
-}
+  return Array.isArray(value);
+};
 
 const isObject = (value: any): boolean => {
-  return typeof value === 'object' && value !== null
-}
+  return typeof value === 'object' && value !== null;
+};
 
 export const calculateFeeTierWithLinearRatio = (tickCount: number): FeeTier => {
-  return newFeeTier(tickCount * Number(toPercentage(1, 4)), tickCount)
-}
+  return newFeeTier(tickCount * Number(toPercentage(1, 4)), tickCount);
+};
 
 // export const FEE_TIERS: FeeTier[] = [
 //   calculateFeeTierWithLinearRatio(1),
@@ -96,55 +96,55 @@ export const calculateFeeTierWithLinearRatio = (tickCount: number): FeeTier => {
 //   calculateFeeTierWithLinearRatio(100)
 // ]
 
-export const MAX_SQRT_PRICE = getGlobalMaxSqrtPrice()
-export const MIN_SQRT_PRICE = getGlobalMinSqrtPrice()
-export const MAX_TICKMAP_QUERY_SIZE = getMaxTickmapQuerySize()
-export const LIQUIDITY_TICKS_LIMIT = getLiquidityTicksLimit()
-export const PERCENTAGE_SCALE = Number(getPercentageScale())
-export const PERCENTAGE_DENOMINATOR = getPercentageDenominator()
-export const CHUNK_SIZE = getChunkSize()
-export const PRICE_SCALE = Number(getPriceScale())
-export const MAX_REF_TIME = 259058343000
-export const DEFAULT_REF_TIME = 1250000000000
-export const DEFAULT_PROOF_SIZE = 1250000000000
-export const CONCENTRATION_FACTOR = 1.00001526069123
+export const MAX_SQRT_PRICE = getGlobalMaxSqrtPrice();
+export const MIN_SQRT_PRICE = getGlobalMinSqrtPrice();
+export const MAX_TICKMAP_QUERY_SIZE = getMaxTickmapQuerySize();
+export const LIQUIDITY_TICKS_LIMIT = getLiquidityTicksLimit();
+export const PERCENTAGE_SCALE = Number(getPercentageScale());
+export const PERCENTAGE_DENOMINATOR = getPercentageDenominator();
+export const CHUNK_SIZE = getChunkSize();
+export const PRICE_SCALE = Number(getPriceScale());
+export const MAX_REF_TIME = 259058343000;
+export const DEFAULT_REF_TIME = 1250000000000;
+export const DEFAULT_PROOF_SIZE = 1250000000000;
+export const CONCENTRATION_FACTOR = 1.00001526069123;
 
-export const createLoaderKey = () => (new Date().getMilliseconds() + Math.random()).toString()
+export const createLoaderKey = () => (new Date().getMilliseconds() + Math.random()).toString();
 
 export interface PrefixConfig {
-  B?: number
-  M?: number
-  K?: number
+  B?: number;
+  M?: number;
+  K?: number;
 }
 
 const defaultPrefixConfig: PrefixConfig = {
   B: 1000000000,
   M: 1000000,
   K: 10000
-}
+};
 
 export const showPrefix = (nr: number, config: PrefixConfig = defaultPrefixConfig): string => {
-  const abs = Math.abs(nr)
+  const abs = Math.abs(nr);
 
   if (typeof config.B !== 'undefined' && abs >= config.B) {
-    return 'B'
+    return 'B';
   }
 
   if (typeof config.M !== 'undefined' && abs >= config.M) {
-    return 'M'
+    return 'M';
   }
 
   if (typeof config.K !== 'undefined' && abs >= config.K) {
-    return 'K'
+    return 'K';
   }
 
-  return ''
-}
+  return '';
+};
 
 export interface FormatNumberThreshold {
-  value: number
-  decimals: number
-  divider?: number
+  value: number;
+  decimals: number;
+  divider?: number;
 }
 
 export const defaultThresholds: FormatNumberThreshold[] = [
@@ -175,28 +175,28 @@ export const defaultThresholds: FormatNumberThreshold[] = [
     decimals: 2,
     divider: 1000000000
   }
-]
+];
 
 export const formatNumbers =
   (thresholds: FormatNumberThreshold[] = defaultThresholds) =>
   (value: string) => {
-    const num = Number(value)
-    const abs = Math.abs(num)
-    const threshold = thresholds.sort((a, b) => a.value - b.value).find(thr => abs < thr.value)
+    const num = Number(value);
+    const abs = Math.abs(num);
+    const threshold = thresholds.sort((a, b) => a.value - b.value).find(thr => abs < thr.value);
 
     const formatted = threshold
       ? (abs / (threshold.divider ?? 1)).toFixed(threshold.decimals)
-      : value
+      : value;
 
-    return num < 0 && threshold ? '-' + formatted : formatted
-  }
+    return num < 0 && threshold ? '-' + formatted : formatted;
+  };
 
 export const trimZeros = (numStr: string): string => {
   return numStr
     .replace(/(\.\d*?)0+$/, '$1')
     .replace(/^0+(\d)|(\d)0+$/gm, '$1$2')
-    .replace(/\.$/, '')
-}
+    .replace(/\.$/, '');
+};
 
 export const calculateFee = (
   pool: Pool,
@@ -217,78 +217,78 @@ export const calculateFee = (
     BigInt(position.fee_growth_inside_x),
     BigInt(position.fee_growth_inside_y),
     BigInt(position.liquidity)
-  )
-}
+  );
+};
 
 export const calcYPerXPriceByTickIndex = (
   tickIndex: number,
   xDecimal: number,
   yDecimal: number
 ): number => {
-  const sqrt = +printBigint(calculateSqrtPrice(tickIndex), PRICE_SCALE)
+  const sqrt = +printBigint(calculateSqrtPrice(tickIndex), PRICE_SCALE);
 
-  const proportion = sqrt * sqrt
+  const proportion = sqrt * sqrt;
 
-  return proportion / 10 ** (yDecimal - xDecimal)
-}
+  return proportion / 10 ** (yDecimal - xDecimal);
+};
 export const calcYPerXPriceBySqrtPrice = (
   sqrtPrice: bigint,
   xDecimal: number,
   yDecimal: number
 ): number => {
-  const sqrt = +printBigint(sqrtPrice, PRICE_SCALE)
+  const sqrt = +printBigint(sqrtPrice, PRICE_SCALE);
 
-  const proportion = sqrt * sqrt
+  const proportion = sqrt * sqrt;
 
-  return proportion / 10 ** (yDecimal - xDecimal)
-}
+  return proportion / 10 ** (yDecimal - xDecimal);
+};
 
 export const trimLeadingZeros = (amount: string): string => {
-  const amountParts = amount.split('.')
+  const amountParts = amount.split('.');
 
   if (!amountParts.length) {
-    return '0'
+    return '0';
   }
 
   if (amountParts.length === 1) {
-    return amountParts[0]
+    return amountParts[0];
   }
 
-  const reversedDec = Array.from(amountParts[1]).reverse()
-  const firstNonZero = reversedDec.findIndex(char => char !== '0')
+  const reversedDec = Array.from(amountParts[1]).reverse();
+  const firstNonZero = reversedDec.findIndex(char => char !== '0');
 
   if (firstNonZero === -1) {
-    return amountParts[0]
+    return amountParts[0];
   }
 
-  const trimmed = reversedDec.slice(firstNonZero, reversedDec.length).reverse().join('')
+  const trimmed = reversedDec.slice(firstNonZero, reversedDec.length).reverse().join('');
 
-  return `${amountParts[0]}.${trimmed}`
-}
+  return `${amountParts[0]}.${trimmed}`;
+};
 
 export const getScaleFromString = (value: string): number => {
-  const parts = value.split('.')
+  const parts = value.split('.');
 
   if ((parts?.length ?? 0) < 2) {
-    return 0
+    return 0;
   }
 
-  return parts[1]?.length ?? 0
-}
+  return parts[1]?.length ?? 0;
+};
 
 export const toMaxNumericPlaces = (num: number, places: number): string => {
-  const log = Math.floor(Math.log10(num))
+  const log = Math.floor(Math.log10(num));
 
   if (log >= places) {
-    return num.toFixed(0)
+    return num.toFixed(0);
   }
 
   if (log >= 0) {
-    return num.toFixed(places - log - 1)
+    return num.toFixed(places - log - 1);
   }
 
-  return num.toFixed(places + Math.abs(log) - 1)
-}
+  return num.toFixed(places + Math.abs(log) - 1);
+};
 
 export const calcPrice = (
   amountTickIndex: number,
@@ -296,10 +296,10 @@ export const calcPrice = (
   xDecimal: number,
   yDecimal: number
 ): number => {
-  const price = calcYPerXPriceByTickIndex(amountTickIndex, xDecimal, yDecimal)
+  const price = calcYPerXPriceByTickIndex(amountTickIndex, xDecimal, yDecimal);
 
-  return isXtoY ? price : 1 / price
-}
+  return isXtoY ? price : 1 / price;
+};
 
 export const createPlaceholderLiquidityPlot = (
   isXtoY: boolean,
@@ -308,33 +308,33 @@ export const createPlaceholderLiquidityPlot = (
   tokenXDecimal: number,
   tokenYDecimal: number
 ) => {
-  const ticksData: PlotTickData[] = []
+  const ticksData: PlotTickData[] = [];
 
-  const min = getMinTick(tickSpacing)
-  const max = getMaxTick(tickSpacing)
+  const min = getMinTick(tickSpacing);
+  const max = getMaxTick(tickSpacing);
 
-  const minPrice = calcPrice(min, isXtoY, tokenXDecimal, tokenYDecimal)
+  const minPrice = calcPrice(min, isXtoY, tokenXDecimal, tokenYDecimal);
 
   ticksData.push({
     x: minPrice,
     y: yValueToFill,
     index: min
-  })
+  });
 
-  const maxPrice = calcPrice(max, isXtoY, tokenXDecimal, tokenYDecimal)
+  const maxPrice = calcPrice(max, isXtoY, tokenXDecimal, tokenYDecimal);
 
   ticksData.push({
     x: maxPrice,
     y: yValueToFill,
     index: max
-  })
+  });
 
-  return isXtoY ? ticksData : ticksData.reverse()
-}
+  return isXtoY ? ticksData : ticksData.reverse();
+};
 
 export const calculateTokenAmounts = (pool: Pool, position: Position): AmountDeltaResult => {
-  return _calculateTokenAmounts(pool, position, false)
-}
+  return _calculateTokenAmounts(pool, position, false);
+};
 
 export const _calculateTokenAmounts = (
   pool: Pool,
@@ -348,17 +348,17 @@ export const _calculateTokenAmounts = (
     sign,
     position.upper_tick_index,
     position.lower_tick_index
-  )
-}
+  );
+};
 
 export interface CoingeckoPriceData {
-  price: number
-  priceChange: number
+  price: number;
+  priceChange?: number;
 }
 export interface CoingeckoApiPriceData {
-  id: string
-  current_price: number
-  price_change_percentage_24h: number
+  id: string;
+  current_price: number;
+  price_change_percentage_24h: number;
 }
 
 export const getCoingeckoTokenPrice = async (id: string): Promise<CoingeckoPriceData> => {
@@ -370,9 +370,22 @@ export const getCoingeckoTokenPrice = async (id: string): Promise<CoingeckoPrice
       return {
         price: res.data[0]?.current_price ?? 0,
         priceChange: res.data[0]?.price_change_percentage_24h ?? 0
-      }
-    })
-}
+      };
+    });
+};
+
+export const getCoingeckoTokenPriceV2 = async (id: string): Promise<CoingeckoPriceData> => {
+  return await axios
+    .get<
+      CoingeckoApiPriceData[]
+    >(`https://price.market.orai.io/simple/price?vs_currencies=usd&ids=${id}`)
+    .then(res => {
+      console.log({ res });
+      return {
+        price: res.data[id]?.usd ?? 0
+      };
+    });
+};
 
 export const tokensPrices: Record<Network, Record<string, TokenPriceData>> = {
   ['Testnet']: {},
@@ -383,37 +396,37 @@ export const tokensPrices: Record<Network, Record<string, TokenPriceData>> = {
     TOKEN2_TEST: { price: 2 }
   },
   ['Local']: {}
-}
+};
 
 export const getMockedTokenPrice = (symbol: string, network: Network): TokenPriceData => {
-  const sufix = network === 'Testnet' ? '_TEST' : '_MAIN'
-  const prices = tokensPrices[network]
+  const sufix = network === 'Testnet' ? '_TEST' : '_MAIN';
+  const prices = tokensPrices[network];
   switch (symbol) {
     case 'ORAI':
-      return prices[symbol + sufix]
+      return prices[symbol + sufix];
     case 'USDT':
-      return prices['W' + symbol + sufix]
+      return prices['W' + symbol + sufix];
     case 'USDC':
-      return prices[symbol + sufix]
+      return prices[symbol + sufix];
     case 'BTC':
-      return prices[symbol + sufix]
+      return prices[symbol + sufix];
     case 'OCH':
-      return prices[symbol + sufix]
+      return prices[symbol + sufix];
     default:
-      return { price: 0 }
+      return { price: 0 };
   }
-}
+};
 
 export const printBigint = (amount: TokenAmount, decimals: number): string => {
-  const amountString = amount.toString()
-  const isNegative = amountString.length > 0 && amountString[0] === '-'
+  const amountString = amount.toString();
+  const isNegative = amountString.length > 0 && amountString[0] === '-';
 
-  const balanceString = isNegative ? amountString.slice(1) : amountString
+  const balanceString = isNegative ? amountString.slice(1) : amountString;
 
   if (balanceString.length <= decimals) {
     return (
       (isNegative ? '-' : '') + '0.' + '0'.repeat(decimals - balanceString.length) + balanceString
-    )
+    );
   } else {
     return (
       (isNegative ? '-' : '') +
@@ -422,24 +435,24 @@ export const printBigint = (amount: TokenAmount, decimals: number): string => {
           '.' +
           balanceString.substring(balanceString.length - decimals)
       )
-    )
+    );
   }
-}
+};
 
 export const newPrintBigInt = (amount: bigint, decimals: bigint): string => {
-  const parsedDecimals = Number(decimals)
-  const amountString = amount.toString()
-  const isNegative = amountString.length > 0 && amountString[0] === '-'
+  const parsedDecimals = Number(decimals);
+  const amountString = amount.toString();
+  const isNegative = amountString.length > 0 && amountString[0] === '-';
 
-  const balanceString = isNegative ? amountString.slice(1) : amountString
+  const balanceString = isNegative ? amountString.slice(1) : amountString;
 
   if (balanceString.length <= parsedDecimals) {
-    const diff = parsedDecimals - balanceString.length
+    const diff = parsedDecimals - balanceString.length;
 
     return (
       (isNegative ? '-' : '') +
       trimZeros('0.' + (diff > 3 ? '0' + printSubNumber(diff) : '0'.repeat(diff)) + balanceString)
-    )
+    );
   } else {
     return (
       (isNegative ? '-' : '') +
@@ -448,51 +461,48 @@ export const newPrintBigInt = (amount: bigint, decimals: bigint): string => {
           '.' +
           balanceString.substring(balanceString.length - parsedDecimals)
       )
-    )
+    );
   }
-}
+};
 
-const subNumbers = ['₀', '₁', '₂', '₃', '₄', '₅', '₆', '₇', '₈', '₉']
+const subNumbers = ['₀', '₁', '₂', '₃', '₄', '₅', '₆', '₇', '₈', '₉'];
 
 export const printSubNumber = (amount: number): string => {
-  return String(Array.from(amount.toString()).map(char => subNumbers[+char]))
-}
+  return String(Array.from(amount.toString()).map(char => subNumbers[+char]));
+};
 
 export const parseFeeToPathFee = (fee: bigint): string => {
-  const parsedFee = (fee / BigInt(Math.pow(10, 8))).toString().padStart(3, '0')
-  return parsedFee.slice(0, parsedFee.length - 2) + '_' + parsedFee.slice(parsedFee.length - 2)
-}
+  const parsedFee = (fee / BigInt(Math.pow(10, 8))).toString().padStart(3, '0');
+  return parsedFee.slice(0, parsedFee.length - 2) + '_' + parsedFee.slice(parsedFee.length - 2);
+};
 
 export const getPoolsByPoolKeys = async (poolKeys: PoolKey[]): Promise<PoolWithPoolKey[]> => {
   const promises = poolKeys.map(({ token_x, token_y, fee_tier }) =>
     SingletonOraiswapV3.dex.pool({ token0: token_x, token1: token_y, feeTier: fee_tier })
-  )
-  const pools = await Promise.all(promises)
+  );
+  const pools = await Promise.all(promises);
 
   return pools.map((pool, index) => {
     const poolWithPoolKey: PoolWithPoolKey = {
       pool,
       pool_key: poolKeys[index]
-    }
-    return poolWithPoolKey
-  })
-}
+    };
+    return poolWithPoolKey;
+  });
+};
 
 export type TokenDataOnChain = {
-  symbol: string
-  address: string
-  name: string
-  decimals: number
-  balance: bigint
-}
+  symbol: string;
+  address: string;
+  name: string;
+  decimals: number;
+  balance: bigint;
+};
 
 export const getTokenDataByAddresses = async (tokens: string[]): Promise<Record<string, Token>> => {
-  // mapp all tokens string to lower case
-  console.log('tokens here', tokens)
+  const tokenInfos: TokenDataOnChain[] = await SingletonOraiswapV3.getTokensInfo(tokens);
 
-  const tokenInfos: TokenDataOnChain[] = await SingletonOraiswapV3.getTokensInfo(tokens)
-
-  const newTokens: Record<string, Token> = {}
+  const newTokens: Record<string, Token> = {};
   tokenInfos.forEach(token => {
     newTokens[token.address] = {
       symbol: token.symbol ? (token.symbol as string) : 'UNKNOWN',
@@ -502,16 +512,13 @@ export const getTokenDataByAddresses = async (tokens: string[]): Promise<Record<
       balance: token.balance,
       logoURI: '/unknownToken.svg',
       isUnknown: true
-    }
-  })
-  return newTokens
-}
+    };
+  });
+  return newTokens;
+};
 
-export const createPoolTx = async (
-  poolKey: PoolKey,
-  initSqrtPrice: string
-): Promise<string> => {
-  const initTick = getTickAtSqrtPrice(BigInt(initSqrtPrice), poolKey.fee_tier.tick_spacing)
+export const createPoolTx = async (poolKey: PoolKey, initSqrtPrice: string): Promise<string> => {
+  const initTick = getTickAtSqrtPrice(BigInt(initSqrtPrice), poolKey.fee_tier.tick_spacing);
 
   return (
     await SingletonOraiswapV3.dex.createPool({
@@ -521,8 +528,8 @@ export const createPoolTx = async (
       token0: poolKey.token_x,
       token1: poolKey.token_y
     })
-  ).transactionHash
-}
+  ).transactionHash;
+};
 
 export const createPositionTx = async (
   poolKey: PoolKey,
@@ -536,12 +543,12 @@ export const createPositionTx = async (
     spotSqrtPrice,
     Number(slippageTolerance),
     false
-  )
+  );
   const slippageLimitUpper = calculateSqrtPriceAfterSlippage(
     spotSqrtPrice,
     Number(slippageTolerance),
     true
-  )
+  );
 
   const res = await SingletonOraiswapV3.dex.createPosition({
     poolKey,
@@ -550,30 +557,30 @@ export const createPositionTx = async (
     liquidityDelta: liquidityDelta.toString(),
     slippageLimitLower: slippageLimitLower.toString(),
     slippageLimitUpper: slippageLimitUpper.toString()
-  })
+  });
 
-  return res.transactionHash
-}
+  return res.transactionHash;
+};
 
 export const getPool = async (poolKey: PoolKey): Promise<PoolWithPoolKey> => {
-  console.log('getPool here', poolKey)
+  console.log('getPool here', poolKey);
   const pool = await SingletonOraiswapV3.getPool(poolKey);
   return {
     pool,
     pool_key: poolKey
-  }
-}
+  };
+};
 
 export const getPoolKeys = async (): Promise<PoolKey[]> => {
   try {
-    const pools = await SingletonOraiswapV3.getPools()
-    const poolKeys: PoolKey[] = pools.map(pool => pool.pool_key)
-    console.log('poolKeys', poolKeys)
-    return poolKeys
+    const pools = await SingletonOraiswapV3.getPools();
+    const poolKeys: PoolKey[] = pools.map(pool => pool.pool_key);
+    console.log('poolKeys', poolKeys);
+    return poolKeys;
   } catch {
-    return []
+    return [];
   }
-}
+};
 
 export const poolKeyToString = (poolKey: PoolKey): string => {
   return (
@@ -584,30 +591,33 @@ export const poolKeyToString = (poolKey: PoolKey): string => {
     poolKey.fee_tier.fee +
     '-' +
     poolKey.fee_tier.tick_spacing
-  )
-}
+  );
+};
 
 export const getTokenBalances = async (tokens: string[]) => {
   const tokenBalances = await Promise.all(
     tokens.map(async token => {
       if (token !== 'orai') {
         if (!SingletonOraiswapV3.dex) {
-          return { address: token, balance: 0n }
+          return { address: token, balance: 0n };
         }
-        SingletonOraiswapV3.loadCw20(SingletonOraiswapV3.dex.sender, token)
+        SingletonOraiswapV3.loadCw20(SingletonOraiswapV3.dex.sender, token);
         const { balance } = await SingletonOraiswapV3.tokens[token].balance({
           address: SingletonOraiswapV3.dex.sender
-        })
-        return { address: token, balance: BigInt(balance) }
+        });
+        return { address: token, balance: BigInt(balance) };
       } else {
-        const balance = await SingletonOraiswapV3.queryBalance(SingletonOraiswapV3.dex.sender, token)
-        return { address: token, balance: BigInt(balance) }
+        const balance = await SingletonOraiswapV3.queryBalance(
+          SingletonOraiswapV3.dex.sender,
+          token
+        );
+        return { address: token, balance: BigInt(balance) };
       }
     })
-  )
+  );
 
-  return tokenBalances
-}
+  return tokenBalances;
+};
 
 export const getPrimaryUnitsPrice = (
   price: number,
@@ -615,55 +625,55 @@ export const getPrimaryUnitsPrice = (
   xDecimal: number,
   yDecimal: number
 ) => {
-  const xToYPrice = isXtoY ? price : 1 / price
+  const xToYPrice = isXtoY ? price : 1 / price;
 
-  return xToYPrice * 10 ** (yDecimal - xDecimal)
-}
+  return xToYPrice * 10 ** (yDecimal - xDecimal);
+};
 
-export const logBase = (x: number, b: number): number => Math.log(x) / Math.log(b)
+export const logBase = (x: number, b: number): number => Math.log(x) / Math.log(b);
 
 export const adjustToSpacing = (baseTick: number, spacing: number, isGreater: boolean): number => {
-  const remainder = baseTick % spacing
+  const remainder = baseTick % spacing;
 
   if (Math.abs(remainder) === 0) {
-    return baseTick
+    return baseTick;
   }
 
-  let adjustment: number
+  let adjustment: number;
   if (isGreater) {
     if (baseTick >= 0) {
-      adjustment = spacing - remainder
+      adjustment = spacing - remainder;
     } else {
-      adjustment = Math.abs(remainder)
+      adjustment = Math.abs(remainder);
     }
   } else {
     if (baseTick >= 0) {
-      adjustment = -remainder
+      adjustment = -remainder;
     } else {
-      adjustment = -(spacing - Math.abs(remainder))
+      adjustment = -(spacing - Math.abs(remainder));
     }
   }
 
-  return baseTick + adjustment
-}
+  return baseTick + adjustment;
+};
 
 export const spacingMultiplicityLte = (arg: number, spacing: number): number => {
-  return adjustToSpacing(arg, spacing, false)
-}
+  return adjustToSpacing(arg, spacing, false);
+};
 
 export const spacingMultiplicityGte = (arg: number, spacing: number): number => {
-  return adjustToSpacing(arg, spacing, true)
-}
+  return adjustToSpacing(arg, spacing, true);
+};
 
 export const nearestSpacingMultiplicity = (centerTick: number, spacing: number) => {
-  const greaterTick = spacingMultiplicityGte(centerTick, spacing)
-  const lowerTick = spacingMultiplicityLte(centerTick, spacing)
+  const greaterTick = spacingMultiplicityGte(centerTick, spacing);
+  const lowerTick = spacingMultiplicityLte(centerTick, spacing);
 
   const nearestTick =
-    Math.abs(greaterTick - centerTick) < Math.abs(lowerTick - centerTick) ? greaterTick : lowerTick
+    Math.abs(greaterTick - centerTick) < Math.abs(lowerTick - centerTick) ? greaterTick : lowerTick;
 
-  return Math.max(Math.min(nearestTick, Number(getMaxTick(spacing))), Number(getMinTick(spacing)))
-}
+  return Math.max(Math.min(nearestTick, Number(getMaxTick(spacing))), Number(getMinTick(spacing)));
+};
 
 export const getTickAtSqrtPriceFromBalance = (
   price: number,
@@ -672,23 +682,23 @@ export const getTickAtSqrtPriceFromBalance = (
   xDecimal: number,
   yDecimal: number
 ) => {
-  const minTick = getMinTick(spacing)
-  const maxTick = getMaxTick(spacing)
+  const minTick = getMinTick(spacing);
+  const maxTick = getMaxTick(spacing);
 
   const basePrice = Math.max(
     price,
     Number(calcPrice(isXtoY ? minTick : maxTick, isXtoY, xDecimal, yDecimal))
-  )
+  );
   const primaryUnitsPrice = getPrimaryUnitsPrice(
     basePrice,
     isXtoY,
     Number(xDecimal),
     Number(yDecimal)
-  )
-  const tick = Math.round(logBase(primaryUnitsPrice, 1.0001))
+  );
+  const tick = Math.round(logBase(primaryUnitsPrice, 1.0001));
 
-  return Math.max(Math.min(tick, Number(getMaxTick(spacing))), Number(getMinTick(spacing)))
-}
+  return Math.max(Math.min(tick, Number(getMaxTick(spacing))), Number(getMinTick(spacing)));
+};
 
 export const nearestTickIndex = (
   price: number,
@@ -697,58 +707,58 @@ export const nearestTickIndex = (
   xDecimal: number,
   yDecimal: number
 ) => {
-  const tick = getTickAtSqrtPriceFromBalance(price, spacing, isXtoY, xDecimal, yDecimal)
+  const tick = getTickAtSqrtPriceFromBalance(price, spacing, isXtoY, xDecimal, yDecimal);
 
-  return nearestSpacingMultiplicity(tick, spacing)
-}
+  return nearestSpacingMultiplicity(tick, spacing);
+};
 
 export const getConcentrationArray = (
   tickSpacing: number,
   minimumRange: number,
   currentTick: number
 ): number[] => {
-  const concentrations: number[] = []
-  let counter = 0
-  let concentration = 0
-  let lastConcentration = calculateConcentration(tickSpacing, minimumRange, counter) + 1
-  let concentrationDelta = 1
+  const concentrations: number[] = [];
+  let counter = 0;
+  let concentration = 0;
+  let lastConcentration = calculateConcentration(tickSpacing, minimumRange, counter) + 1;
+  let concentrationDelta = 1;
 
   while (concentrationDelta >= 1) {
-    concentration = calculateConcentration(tickSpacing, minimumRange, counter)
-    concentrations.push(concentration)
-    concentrationDelta = lastConcentration - concentration
-    lastConcentration = concentration
-    counter++
+    concentration = calculateConcentration(tickSpacing, minimumRange, counter);
+    concentrations.push(concentration);
+    concentrationDelta = lastConcentration - concentration;
+    lastConcentration = concentration;
+    counter++;
   }
-  concentration = Math.ceil(concentrations[concentrations.length - 1])
+  concentration = Math.ceil(concentrations[concentrations.length - 1]);
 
   while (concentration > 1) {
-    concentrations.push(concentration)
-    concentration--
+    concentrations.push(concentration);
+    concentration--;
   }
-  const maxTick = alignTickToSpacing(getMaxTick(1), tickSpacing)
+  const maxTick = alignTickToSpacing(getMaxTick(1), tickSpacing);
   if ((minimumRange / 2) * tickSpacing > maxTick - Math.abs(currentTick)) {
-    throw new Error(String(SwapError.TickLimitReached))
+    throw new Error(String(SwapError.TickLimitReached));
   }
   const limitIndex =
-    (maxTick - Math.abs(currentTick) - (minimumRange / 2) * tickSpacing) / tickSpacing
+    (maxTick - Math.abs(currentTick) - (minimumRange / 2) * tickSpacing) / tickSpacing;
 
-  return concentrations.slice(0, limitIndex)
-}
+  return concentrations.slice(0, limitIndex);
+};
 
 export const convertBalanceToBigint = (amount: string, decimals: bigint | number): bigint => {
-  const balanceString = amount.split('.')
+  const balanceString = amount.split('.');
   if (balanceString.length !== 2) {
-    return BigInt(balanceString[0] + '0'.repeat(Number(decimals)))
+    return BigInt(balanceString[0] + '0'.repeat(Number(decimals)));
   }
 
   if (balanceString[1].length <= decimals) {
     return BigInt(
       balanceString[0] + balanceString[1] + '0'.repeat(Number(decimals) - balanceString[1].length)
-    )
+    );
   }
-  return 0n
-}
+  return 0n;
+};
 
 export enum PositionTokenBlock {
   None,
@@ -762,72 +772,72 @@ export const determinePositionTokenBlock = (
   upperTick: number,
   isXtoY: boolean
 ) => {
-  const lowerPrice = calculateSqrtPrice(lowerTick)
-  const upperPrice = calculateSqrtPrice(upperTick)
+  const lowerPrice = calculateSqrtPrice(lowerTick);
+  const upperPrice = calculateSqrtPrice(upperTick);
 
-  const isBelowLowerPrice = lowerPrice >= currentSqrtPrice
-  const isAboveUpperPrice = upperPrice <= currentSqrtPrice
+  const isBelowLowerPrice = lowerPrice >= currentSqrtPrice;
+  const isAboveUpperPrice = upperPrice <= currentSqrtPrice;
 
   if (isBelowLowerPrice) {
-    return isXtoY ? PositionTokenBlock.B : PositionTokenBlock.A
+    return isXtoY ? PositionTokenBlock.B : PositionTokenBlock.A;
   }
   if (isAboveUpperPrice) {
-    return isXtoY ? PositionTokenBlock.A : PositionTokenBlock.B
+    return isXtoY ? PositionTokenBlock.A : PositionTokenBlock.B;
   }
 
-  return PositionTokenBlock.None
-}
+  return PositionTokenBlock.None;
+};
 
 export const findPairs = (tokenFrom: string, tokenTo: string, pairs: PoolWithPoolKey[]) => {
   return pairs.filter(
     pool =>
       (tokenFrom === pool.pool_key.token_x && tokenTo === pool.pool_key.token_y) ||
       (tokenFrom === pool.pool_key.token_y && tokenTo === pool.pool_key.token_x)
-  )
-}
+  );
+};
 
 export const findPairsByPoolKeys = (tokenFrom: string, tokenTo: string, poolKeys: PoolKey[]) => {
   return poolKeys.filter(
     poolKey =>
       (tokenFrom === poolKey.token_x && tokenTo === poolKey.token_y) ||
       (tokenFrom === poolKey.token_y && tokenTo === poolKey.token_x)
-  )
-}
+  );
+};
 
 export type SimulateResult = {
-  poolKey: PoolKey | null
-  amountOut: bigint
-  priceImpact: number
-  targetSqrtPrice: bigint
-  errors: SwapError[]
-}
+  poolKey: PoolKey | null;
+  amountOut: bigint;
+  priceImpact: number;
+  targetSqrtPrice: bigint;
+  errors: SwapError[];
+};
 
 export const getPools = async (poolKeys: PoolKey[]): Promise<PoolWithPoolKey[]> => {
-  const pools = await SingletonOraiswapV3.dex.pools({})
+  const pools = await SingletonOraiswapV3.dex.pools({});
 
   return pools.map((pool, index) => {
-    return { ...pool, poolKey: poolKeys[index] }
-  })
-}
+    return { ...pool, poolKey: poolKeys[index] };
+  });
+};
 
 export const getFullTickmap = async (poolKey: PoolKey): Promise<Tickmap> => {
-  console.log('getFullTickmap', poolKey)
-  const tickmap = await SingletonOraiswapV3.getFullTickmap(poolKey)
-  console.log('tickmap', tickmap)
-  return tickmap
-}
+  console.log('getFullTickmap', poolKey);
+  const tickmap = await SingletonOraiswapV3.getFullTickmap(poolKey);
+  console.log('tickmap', tickmap);
+  return tickmap;
+};
 
 export const getAllLiquidityTicks = async (
   poolKey: PoolKey,
   tickmap: Tickmap
 ): Promise<LiquidityTick[]> => {
-  const ticks: number[] = []
+  const ticks: number[] = [];
 
   for (const [chunkIndex, chunk] of tickmap.bitmap.entries()) {
     for (let i = 0; i < 64; i++) {
       if ((chunk & (1n << BigInt(i))) != 0n) {
-        const tickIndex = positionToTick(Number(chunkIndex), i, poolKey.fee_tier.tick_spacing)
-        ticks.push(Number(tickIndex.toString()))
+        const tickIndex = positionToTick(Number(chunkIndex), i, poolKey.fee_tier.tick_spacing);
+        ticks.push(Number(tickIndex.toString()));
       }
     }
   }
@@ -835,36 +845,36 @@ export const getAllLiquidityTicks = async (
   const liquidityTicks = await SingletonOraiswapV3.dex.liquidityTicks({
     poolKey,
     tickIndexes: ticks
-  })
-  console.log({ liquidityTicks })
+  });
+  console.log({ liquidityTicks });
   const convertedLiquidityTicks: LiquidityTick[] = liquidityTicks.map((tickData: any) => {
     return {
       index: tickData.index,
       liquidity_change: BigInt(tickData.liquidity_change),
       sign: tickData.sign
-    }
-  })
+    };
+  });
 
-  return convertedLiquidityTicks
-}
+  return convertedLiquidityTicks;
+};
 
 export const getTickAtSqrtPriceDelta = (
   tickSpacing: number,
   minimumRange: number,
   concentration: number
 ) => {
-  const base = Math.pow(1.0001, -(tickSpacing / 4))
+  const base = Math.pow(1.0001, -(tickSpacing / 4));
   const logArg =
     (1 - 1 / (concentration * CONCENTRATION_FACTOR)) /
-    Math.pow(1.0001, (-tickSpacing * minimumRange) / 4)
+    Math.pow(1.0001, (-tickSpacing * minimumRange) / 4);
 
-  return Math.ceil(Math.log(logArg) / Math.log(base) / 2)
-}
+  return Math.ceil(Math.log(logArg) / Math.log(base) / 2);
+};
 
 export const calculateConcentration = (tickSpacing: number, minimumRange: number, n: number) => {
-  const concentration = 1 / (1 - Math.pow(1.0001, (-tickSpacing * (minimumRange + 2 * n)) / 4))
-  return concentration / CONCENTRATION_FACTOR
-}
+  const concentration = 1 / (1 - Math.pow(1.0001, (-tickSpacing * (minimumRange + 2 * n)) / 4));
+  return concentration / CONCENTRATION_FACTOR;
+};
 
 export const calculateConcentrationRange = (
   tickSpacing: number,
@@ -873,15 +883,15 @@ export const calculateConcentrationRange = (
   currentTick: number,
   isXToY: boolean
 ) => {
-  const tickDelta = getTickAtSqrtPriceDelta(tickSpacing, minimumRange, concentration)
-  const lowerTick = currentTick - (minimumRange / 2 + tickDelta) * tickSpacing
-  const upperTick = currentTick + (minimumRange / 2 + tickDelta) * tickSpacing
+  const tickDelta = getTickAtSqrtPriceDelta(tickSpacing, minimumRange, concentration);
+  const lowerTick = currentTick - (minimumRange / 2 + tickDelta) * tickSpacing;
+  const upperTick = currentTick + (minimumRange / 2 + tickDelta) * tickSpacing;
 
   return {
     leftRange: isXToY ? lowerTick : upperTick,
     rightRange: isXToY ? upperTick : lowerTick
-  }
-}
+  };
+};
 
 export const calcTicksAmountInRange = (
   min: number,
@@ -891,18 +901,18 @@ export const calcTicksAmountInRange = (
   xDecimal: number,
   yDecimal: number
 ): number => {
-  const primaryUnitsMin = getPrimaryUnitsPrice(min, isXtoY, xDecimal, yDecimal)
-  const primaryUnitsMax = getPrimaryUnitsPrice(max, isXtoY, xDecimal, yDecimal)
-  const minIndex = logBase(primaryUnitsMin, 1.0001)
-  const maxIndex = logBase(primaryUnitsMax, 1.0001)
+  const primaryUnitsMin = getPrimaryUnitsPrice(min, isXtoY, xDecimal, yDecimal);
+  const primaryUnitsMax = getPrimaryUnitsPrice(max, isXtoY, xDecimal, yDecimal);
+  const minIndex = logBase(primaryUnitsMin, 1.0001);
+  const maxIndex = logBase(primaryUnitsMax, 1.0001);
 
-  return Math.ceil(Math.abs(maxIndex - minIndex) / tickSpacing)
-}
+  return Math.ceil(Math.abs(maxIndex - minIndex) / tickSpacing);
+};
 
 export const getAllTicks = async (poolKey: PoolKey, ticks: bigint[]): Promise<Tick[]> => {
   const tickDatas = await Promise.all(
     ticks.map(async tick => {
-      const tickData = await SingletonOraiswapV3.dex.tick({ key: poolKey, index: Number(tick) })
+      const tickData = await SingletonOraiswapV3.dex.tick({ key: poolKey, index: Number(tick) });
       const convertedTick: Tick = {
         fee_growth_outside_x: BigInt(tickData.fee_growth_outside_x),
         fee_growth_outside_y: BigInt(tickData.fee_growth_outside_y),
@@ -912,47 +922,47 @@ export const getAllTicks = async (poolKey: PoolKey, ticks: bigint[]): Promise<Ti
         liquidity_gross: BigInt(tickData.liquidity_gross),
         seconds_outside: tickData.seconds_outside,
         sqrt_price: BigInt(tickData.sqrt_price)
-      }
-      return convertedTick
+      };
+      return convertedTick;
     })
-  )
+  );
 
-  return tickDatas
-}
+  return tickDatas;
+};
 
 export const deserializeTickmap = (serializedTickmap: string): Tickmap => {
-  const deserializedMap: Map<string, string> = new Map(JSON.parse(serializedTickmap))
+  const deserializedMap: Map<string, string> = new Map(JSON.parse(serializedTickmap));
 
-  const parsedMap = new Map()
+  const parsedMap = new Map();
   for (const [key, value] of deserializedMap) {
-    parsedMap.set(BigInt(key), BigInt(value))
+    parsedMap.set(BigInt(key), BigInt(value));
   }
 
-  return { bitmap: parsedMap }
-}
+  return { bitmap: parsedMap };
+};
 
 export const calculateAmountInWithSlippage = (
   amountOut: bigint,
   sqrtPriceLimit: bigint,
   xToY: boolean
 ): bigint => {
-  const price = +printBigint(sqrtPriceToPrice(sqrtPriceLimit), PRICE_SCALE)
-  const amountIn = xToY ? Number(amountOut) * price : Number(amountOut) / price
+  const price = +printBigint(sqrtPriceToPrice(sqrtPriceLimit), PRICE_SCALE);
+  const amountIn = xToY ? Number(amountOut) * price : Number(amountOut) / price;
 
-  return BigInt(Math.ceil(amountIn))
-}
+  return BigInt(Math.ceil(amountIn));
+};
 
 export const sqrtPriceToPrice = (sqrtPrice: SqrtPrice | bigint): bigint => {
-  return (BigInt(sqrtPrice) * BigInt(sqrtPrice)) / getSqrtPriceDenominator()
-}
+  return (BigInt(sqrtPrice) * BigInt(sqrtPrice)) / getSqrtPriceDenominator();
+};
 
 export interface LiquidityBreakpoint {
-  liquidity: Liquidity
-  index: bigint
+  liquidity: Liquidity;
+  index: bigint;
 }
 
 export const getTick = async (ind: bigint, poolKey: PoolKey): Promise<Tick> => {
-  const tickData = await SingletonOraiswapV3.dex.tick({ key: poolKey, index: Number(ind) })
+  const tickData = await SingletonOraiswapV3.dex.tick({ key: poolKey, index: Number(ind) });
   const convertedTick: Tick = {
     fee_growth_outside_x: BigInt(tickData.fee_growth_outside_x),
     fee_growth_outside_y: BigInt(tickData.fee_growth_outside_y),
@@ -962,23 +972,23 @@ export const getTick = async (ind: bigint, poolKey: PoolKey): Promise<Tick> => {
     liquidity_gross: BigInt(tickData.liquidity_gross),
     seconds_outside: tickData.seconds_outside,
     sqrt_price: BigInt(tickData.sqrt_price)
-  }
-  return convertedTick
-}
+  };
+  return convertedTick;
+};
 
 export const calculateLiquidityBreakpoints = (
   ticks: (Tick | LiquidityTick)[]
 ): LiquidityBreakpoint[] => {
-  let currentLiquidity = 0n
+  let currentLiquidity = 0n;
 
   return ticks.map(tick => {
-    currentLiquidity = currentLiquidity + BigInt(tick.liquidity_change) * (tick.sign ? 1n : -1n)
+    currentLiquidity = currentLiquidity + BigInt(tick.liquidity_change) * (tick.sign ? 1n : -1n);
     return {
       liquidity: currentLiquidity,
       index: BigInt(tick.index)
-    }
-  })
-}
+    };
+  });
+};
 
 export const createLiquidityPlot = (
   rawTicks: LiquidityTick[],
@@ -987,108 +997,108 @@ export const createLiquidityPlot = (
   tokenXDecimal: number,
   tokenYDecimal: number
 ): PlotTickData[] => {
-  const sortedTicks = rawTicks.sort((a, b) => Number(a.index - b.index))
-  const parsedTicks = rawTicks.length ? calculateLiquidityBreakpoints(sortedTicks) : []
+  const sortedTicks = rawTicks.sort((a, b) => Number(a.index - b.index));
+  const parsedTicks = rawTicks.length ? calculateLiquidityBreakpoints(sortedTicks) : [];
 
   const ticks = rawTicks.map((raw, index) => ({
     ...raw,
     liqudity: parsedTicks[index].liquidity
-  }))
+  }));
 
-  const ticksData: PlotTickData[] = []
+  const ticksData: PlotTickData[] = [];
 
-  const min = getMinTick(tickSpacing)
-  const max = getMaxTick(tickSpacing)
+  const min = getMinTick(tickSpacing);
+  const max = getMaxTick(tickSpacing);
 
   if (!ticks.length || ticks[0].index > min) {
-    const minPrice = calcPrice(min, isXtoY, tokenXDecimal, tokenYDecimal)
+    const minPrice = calcPrice(min, isXtoY, tokenXDecimal, tokenYDecimal);
 
     ticksData.push({
       x: minPrice,
       y: 0,
       index: min
-    })
+    });
   }
 
   ticks.forEach((tick, i) => {
-    const tickIndex = tick.index
+    const tickIndex = tick.index;
     if (i === 0 && tickIndex - tickSpacing > min) {
-      const price = calcPrice(tickIndex - tickSpacing, isXtoY, tokenXDecimal, tokenYDecimal)
+      const price = calcPrice(tickIndex - tickSpacing, isXtoY, tokenXDecimal, tokenYDecimal);
       ticksData.push({
         x: price,
         y: 0,
         index: tickIndex - tickSpacing
-      })
+      });
     } else if (i > 0 && tickIndex - tickSpacing > ticks[i - 1].index) {
-      const price = calcPrice(tickIndex - tickSpacing, isXtoY, tokenXDecimal, tokenYDecimal)
+      const price = calcPrice(tickIndex - tickSpacing, isXtoY, tokenXDecimal, tokenYDecimal);
       ticksData.push({
         x: price,
         y: +printBigint(ticks[i - 1].liqudity, 12), // TODO use constant
         index: tickIndex - tickSpacing
-      })
+      });
     }
 
-    const price = calcPrice(tickIndex, isXtoY, tokenXDecimal, tokenYDecimal)
+    const price = calcPrice(tickIndex, isXtoY, tokenXDecimal, tokenYDecimal);
     ticksData.push({
       x: price,
       y: +printBigint(ticks[i].liqudity, 12), // TODO use constant
       index: tickIndex
-    })
-  })
-  const lastTick = ticks[ticks.length - 1].index
+    });
+  });
+  const lastTick = ticks[ticks.length - 1].index;
   if (!ticks.length) {
-    const maxPrice = calcPrice(max, isXtoY, tokenXDecimal, tokenYDecimal)
+    const maxPrice = calcPrice(max, isXtoY, tokenXDecimal, tokenYDecimal);
 
     ticksData.push({
       x: maxPrice,
       y: 0,
       index: max
-    })
+    });
   } else if (lastTick < max) {
     if (max - lastTick > tickSpacing) {
-      const price = calcPrice(lastTick + tickSpacing, isXtoY, tokenXDecimal, tokenYDecimal)
+      const price = calcPrice(lastTick + tickSpacing, isXtoY, tokenXDecimal, tokenYDecimal);
       ticksData.push({
         x: price,
         y: 0,
         index: lastTick + tickSpacing
-      })
+      });
     }
 
-    const maxPrice = calcPrice(max, isXtoY, tokenXDecimal, tokenYDecimal)
+    const maxPrice = calcPrice(max, isXtoY, tokenXDecimal, tokenYDecimal);
 
     ticksData.push({
       x: maxPrice,
       y: 0,
       index: max
-    })
+    });
   }
 
-  return isXtoY ? ticksData : ticksData.reverse()
-}
+  return isXtoY ? ticksData : ticksData.reverse();
+};
 
 const sqrt = (value: bigint): bigint => {
   if (value < 0n) {
-    throw 'square root of negative numbers is not supported'
+    throw 'square root of negative numbers is not supported';
   }
 
   if (value < 2n) {
-    return value
+    return value;
   }
 
-  return newtonIteration(value, 1n)
-}
+  return newtonIteration(value, 1n);
+};
 
 const newtonIteration = (n: bigint, x0: bigint): bigint => {
-  const x1 = (n / x0 + x0) >> 1n
+  const x1 = (n / x0 + x0) >> 1n;
   if (x0 === x1 || x0 === x1 - 1n) {
-    return x0
+    return x0;
   }
-  return newtonIteration(n, x1)
-}
+  return newtonIteration(n, x1);
+};
 
 export const priceToSqrtPrice = (price: bigint): bigint => {
-  return sqrt(price * getSqrtPriceDenominator())
-}
+  return sqrt(price * getSqrtPriceDenominator());
+};
 
 export const calculateSqrtPriceAfterSlippage = (
   sqrtPrice: SqrtPrice,
@@ -1096,16 +1106,16 @@ export const calculateSqrtPriceAfterSlippage = (
   up: boolean
 ): bigint => {
   if (slippage === 0) {
-    return BigInt(sqrtPrice)
+    return BigInt(sqrtPrice);
   }
 
-  const multiplier = getPercentageDenominator() + BigInt(up ? slippage : -slippage)
-  const price = sqrtPriceToPrice(sqrtPrice)
-  const priceWithSlippage = BigInt(price) * multiplier * getPercentageDenominator()
-  const sqrtPriceWithSlippage = priceToSqrtPrice(priceWithSlippage) / getPercentageDenominator()
+  const multiplier = getPercentageDenominator() + BigInt(up ? slippage : -slippage);
+  const price = sqrtPriceToPrice(sqrtPrice);
+  const priceWithSlippage = BigInt(price) * multiplier * getPercentageDenominator();
+  const sqrtPriceWithSlippage = priceToSqrtPrice(priceWithSlippage) / getPercentageDenominator();
 
-  return sqrtPriceWithSlippage
-}
+  return sqrtPriceWithSlippage;
+};
 
 export const calculateTokenAmountsWithSlippage = (
   tickSpacing: number,
@@ -1116,10 +1126,10 @@ export const calculateTokenAmountsWithSlippage = (
   slippage: Percentage,
   roundingUp: boolean
 ): [bigint, bigint] => {
-  const lowerBound = calculateSqrtPriceAfterSlippage(currentSqrtPrice, slippage, false)
-  const upperBound = calculateSqrtPriceAfterSlippage(currentSqrtPrice, slippage, true)
+  const lowerBound = calculateSqrtPriceAfterSlippage(currentSqrtPrice, slippage, false);
+  const upperBound = calculateSqrtPriceAfterSlippage(currentSqrtPrice, slippage, true);
 
-  const currentTickIndex = getTickAtSqrtPrice(currentSqrtPrice, tickSpacing)
+  const currentTickIndex = getTickAtSqrtPrice(currentSqrtPrice, tickSpacing);
 
   const { x: lowerX, y: lowerY } = calculateAmountDelta(
     currentTickIndex,
@@ -1128,7 +1138,7 @@ export const calculateTokenAmountsWithSlippage = (
     roundingUp,
     upperTickIndex,
     lowerTickIndex
-  )
+  );
 
   const { x: upperX, y: upperY } = calculateAmountDelta(
     currentTickIndex,
@@ -1137,26 +1147,26 @@ export const calculateTokenAmountsWithSlippage = (
     roundingUp,
     upperTickIndex,
     lowerTickIndex
-  )
+  );
 
-  const x = lowerX > upperX ? lowerX : upperX
-  const y = lowerY > upperY ? lowerY : upperY
-  return [x, y]
-}
+  const x = lowerX > upperX ? lowerX : upperX;
+  const y = lowerY > upperY ? lowerY : upperY;
+  return [x, y];
+};
 
 export const calculatePriceImpact = (
   startingSqrtPrice: bigint,
   endingSqrtPrice: bigint
 ): bigint => {
-  const startingPrice = startingSqrtPrice * startingSqrtPrice
-  const endingPrice = endingSqrtPrice * endingSqrtPrice
-  const diff = startingPrice - endingPrice
+  const startingPrice = startingSqrtPrice * startingSqrtPrice;
+  const endingPrice = endingSqrtPrice * endingSqrtPrice;
+  const diff = startingPrice - endingPrice;
 
-  const nominator = diff > 0n ? diff : -diff
-  const denominator = startingPrice > endingPrice ? startingPrice : endingPrice
+  const nominator = diff > 0n ? diff : -diff;
+  const denominator = startingPrice > endingPrice ? startingPrice : endingPrice;
 
-  return (nominator * getPercentageDenominator()) / denominator
-}
+  return (nominator * getPercentageDenominator()) / denominator;
+};
 
 /**
  * export interface Position {
@@ -1172,7 +1182,7 @@ export const calculatePriceImpact = (
 }
  */
 export const getPosition = async (index: bigint, ownerId: string): Promise<Position> => {
-  const position = await SingletonOraiswapV3.dex.position({ index: Number(index), ownerId })
+  const position = await SingletonOraiswapV3.dex.position({ index: Number(index), ownerId });
   const convertedPosition: Position = {
     pool_key: position.pool_key,
     liquidity: BigInt(position.liquidity),
@@ -1183,12 +1193,12 @@ export const getPosition = async (index: bigint, ownerId: string): Promise<Posit
     last_block_number: position.last_block_number,
     tokens_owed_x: BigInt(position.tokens_owed_x),
     tokens_owed_y: BigInt(position.tokens_owed_y)
-  }
-  return convertedPosition
-}
+  };
+  return convertedPosition;
+};
 
 export const positionList = async (ownerId: string): Promise<Position[]> => {
-  const positions = await SingletonOraiswapV3.dex.positions({ ownerId })
+  const positions = await SingletonOraiswapV3.dex.positions({ ownerId });
   return positions.map(position => ({
     pool_key: position.pool_key,
     liquidity: BigInt(position.liquidity),
@@ -1199,13 +1209,13 @@ export const positionList = async (ownerId: string): Promise<Position[]> => {
     last_block_number: position.last_block_number,
     tokens_owed_x: BigInt(position.tokens_owed_x),
     tokens_owed_y: BigInt(position.tokens_owed_y)
-  }))
-}
+  }));
+};
 
 export const approveToken = async (token: string, amount: bigint): Promise<string> => {
-  const result = await SingletonOraiswapV3.approveToken(token, amount)
-  return result.transactionHash
-}
+  const result = await SingletonOraiswapV3.approveToken(token, amount);
+  return result.transactionHash;
+};
 
 export const swapWithSlippageTx = async (
   poolKey: PoolKey,
@@ -1219,7 +1229,7 @@ export const swapWithSlippageTx = async (
     estimatedSqrtPrice,
     slippage,
     !xToY
-  )
+  );
 
   const res = await SingletonOraiswapV3.dex.swap({
     poolKey,
@@ -1227,23 +1237,23 @@ export const swapWithSlippageTx = async (
     amount: amount.toString(),
     byAmountIn,
     sqrtPriceLimit: sqrtPriceAfterSlippage.toString()
-  })
+  });
 
-  return res.transactionHash
-}
+  return res.transactionHash;
+};
 
 export const claimFee = async (positionIndex: bigint): Promise<string> => {
-  const res = await SingletonOraiswapV3.dex.claimFee({ index: Number(positionIndex) })
-  return res.transactionHash
-}
+  const res = await SingletonOraiswapV3.dex.claimFee({ index: Number(positionIndex) });
+  return res.transactionHash;
+};
 
 export const removePosition = async (positionIndex: bigint): Promise<string> => {
-  const res = await SingletonOraiswapV3.dex.removePosition({ index: Number(positionIndex) })
-  return res.transactionHash
-}
+  const res = await SingletonOraiswapV3.dex.removePosition({ index: Number(positionIndex) });
+  return res.transactionHash;
+};
 
 export const getBalance = async (address: string): Promise<bigint> => {
   // TODO: open for ibc later
-  const balance = await SingletonOraiswapV3.queryBalance(address, 'orai')
-  return BigInt(balance)
-}
+  const balance = await SingletonOraiswapV3.queryBalance(address, 'orai');
+  return BigInt(balance);
+};
