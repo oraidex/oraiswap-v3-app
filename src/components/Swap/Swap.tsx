@@ -92,7 +92,7 @@ export interface ISwap {
 
 export const Swap: React.FC<ISwap> = ({
   isFetchingNewPool,
-  onRefresh,
+  // onRefresh,
   walletStatus,
   tokens,
   pools,

@@ -8,7 +8,7 @@ export interface INoConnected {
   descCustomText?: string;
 }
 
-export const NoConnected: React.FC<INoConnected> = ({ onConnect, descCustomText }) => {
+export const NoConnected: React.FC<INoConnected> = ({ descCustomText }) => {
   const { classes } = useStyles();
 
   return (
