@@ -90,13 +90,14 @@ export default class SingletonOraiswapV3 {
   public static async getTokensInfo(tokens: string[]): Promise<TokenDataOnChain[]> {
     return await Promise.all(
       tokens.map(async token => {
-        if (token.includes('ibc')) {
+        if (token.includes('ibc') || token == 'orai') {
+          const balance = this._dex ? BigInt(await this.queryBalance(this._dex.sender, token)) : BigInt(0);
           return {
             address: token,
-            balance: BigInt(0), // query later
-            symbol: 'IBC',
+            balance: balance, 
+            symbol: token == 'orai' ? 'ORAI' : 'IBC',
             decimals: 6,
-            name: 'IBC'
+            name: token == 'orai' ? 'ORAI' : 'IBC Token'
           };
         }
 
