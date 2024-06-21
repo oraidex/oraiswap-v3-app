@@ -1,15 +1,15 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 
-import useStyles, { useSingleTabStyles, useTabsStyles } from './style'
-import classNames from 'classnames'
-import { Grid, Tab, Tabs } from '@mui/material'
+import useStyles, { useSingleTabStyles, useTabsStyles } from './style';
+import classNames from 'classnames';
+import { Grid, Tab, Tabs } from '@mui/material';
 
 export interface IFeeSwitch {
-  onSelect: (value: number) => void
-  showOnlyPercents?: boolean
-  feeTiers: number[]
-  bestTierIndex?: number
-  currentValue: number
+  onSelect: (value: number) => void;
+  showOnlyPercents?: boolean;
+  feeTiers: number[];
+  bestTierIndex?: number;
+  currentValue: number;
 }
 
 export const FeeSwitch: React.FC<IFeeSwitch> = ({
@@ -19,29 +19,28 @@ export const FeeSwitch: React.FC<IFeeSwitch> = ({
   bestTierIndex,
   currentValue
 }) => {
-  const { classes } = useStyles()
+  const { classes } = useStyles();
 
-  const [blocked, setBlocked] = useState(false)
+  const [blocked, setBlocked] = useState(false);
 
-  const { classes: tabsClasses } = useTabsStyles()
-  const { classes: singleTabClasses } = useSingleTabStyles()
+  const { classes: tabsClasses } = useTabsStyles();
+  const { classes: singleTabClasses } = useSingleTabStyles();
 
   const handleChange = (_: React.ChangeEvent<{}>, newValue: number) => {
     if (!blocked) {
-      onSelect(newValue)
-      setBlocked(true)
+      onSelect(newValue);
+      setBlocked(true);
       setTimeout(() => {
-        setBlocked(false)
-      }, 200)
+        setBlocked(false);
+      }, 200);
     }
-  }
+  };
 
   return (
     <Grid className={classes.wrapper}>
       <Tabs
         value={currentValue}
         onChange={handleChange}
-        variant='scrollable'
         scrollButtons
         TabIndicatorProps={{ children: <span /> }}
         classes={tabsClasses}>
@@ -61,7 +60,7 @@ export const FeeSwitch: React.FC<IFeeSwitch> = ({
         ))}
       </Tabs>
     </Grid>
-  )
-}
+  );
+};
 
-export default FeeSwitch
+export default FeeSwitch;

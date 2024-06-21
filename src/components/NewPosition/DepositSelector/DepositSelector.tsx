@@ -1,60 +1,60 @@
-import AnimatedButton, { ProgressState } from '@components/AnimatedButton/AnimatedButton'
-import DepositAmountInput from '@components/Inputs/DepositAmountInput/DepositAmountInput'
-import Select from '@components/Inputs/Select/Select'
-import { Grid, Typography } from '@mui/material'
-import SwapList from '@static/svg/swap-list.svg'
-import { PositionOpeningMethod } from '@store/consts/static'
-import { parsePathFeeToFeeString, tickerToAddress } from '@store/consts/uiUtiils'
-import { convertBalanceToBigint, getScaleFromString, printBigint } from '@store/consts/utils'
-import classNames from 'classnames'
-import React, { useCallback, useEffect, useState } from 'react'
-import FeeSwitch from '../FeeSwitch/FeeSwitch'
-import { useStyles } from './style'
-import { ALL_FEE_TIERS_DATA } from '@containers/NewPositionWrapper/NewPositionWrapper'
+import AnimatedButton, { ProgressState } from '@components/AnimatedButton/AnimatedButton';
+import DepositAmountInput from '@components/Inputs/DepositAmountInput/DepositAmountInput';
+import Select from '@components/Inputs/Select/Select';
+import { Grid, Typography } from '@mui/material';
+import SwapList from '@static/svg/ic_swap.svg';
+import { PositionOpeningMethod } from '@store/consts/static';
+import { parsePathFeeToFeeString, tickerToAddress } from '@store/consts/uiUtiils';
+import { convertBalanceToBigint, getScaleFromString, printBigint } from '@store/consts/utils';
+import classNames from 'classnames';
+import React, { useCallback, useEffect, useState } from 'react';
+import FeeSwitch from '../FeeSwitch/FeeSwitch';
+import { useStyles } from './style';
+import { ALL_FEE_TIERS_DATA } from '@containers/NewPositionWrapper/NewPositionWrapper';
 export interface InputState {
-  value: string
-  setValue: (value: string) => void
-  blocked: boolean
-  blockerInfo?: string
-  decimalsLimit: number
+  value: string;
+  setValue: (value: string) => void;
+  blocked: boolean;
+  blockerInfo?: string;
+  decimalsLimit: number;
 }
 
 export interface IDepositSelector {
-  initialTokenFrom: string
-  initialTokenTo: string
-  initialFee: string
+  initialTokenFrom: string;
+  initialTokenTo: string;
+  initialFee: string;
   // tokens: SwapToken[]
-  tokens: any[]
+  tokens: any[];
   setPositionTokens: (
     tokenAIndex: number | null,
     tokenBindex: number | null,
     feeTierIndex: number
-  ) => void
-  onAddLiquidity: () => void
-  tokenAInputState: InputState
-  tokenBInputState: InputState
-  feeTiers: number[]
-  className?: string
-  progress: ProgressState
-  priceA?: number
-  priceB?: number
-  onReverseTokens: () => void
-  poolIndex: number | null
-  bestTierIndex?: number
-  canCreateNewPool: boolean
-  canCreateNewPosition: boolean
-  handleAddToken: (address: string) => void
+  ) => void;
+  onAddLiquidity: () => void;
+  tokenAInputState: InputState;
+  tokenBInputState: InputState;
+  feeTiers: number[];
+  className?: string;
+  progress: ProgressState;
+  priceA?: number;
+  priceB?: number;
+  onReverseTokens: () => void;
+  poolIndex: number | null;
+  bestTierIndex?: number;
+  canCreateNewPool: boolean;
+  canCreateNewPosition: boolean;
+  handleAddToken: (address: string) => void;
   // commonTokens: PublicKey[]
-  commonTokens: any[]
-  initialHideUnknownTokensValue: boolean
-  onHideUnknownTokensChange: (val: boolean) => void
-  priceALoading?: boolean
-  priceBLoading?: boolean
-  feeTierIndex: number
-  concentrationArray: number[]
-  concentrationIndex: number
-  minimumSliderIndex: number
-  positionOpeningMethod: PositionOpeningMethod
+  commonTokens: any[];
+  initialHideUnknownTokensValue: boolean;
+  onHideUnknownTokensChange: (val: boolean) => void;
+  priceALoading?: boolean;
+  priceBLoading?: boolean;
+  feeTierIndex: number;
+  concentrationArray: number[];
+  concentrationIndex: number;
+  minimumSliderIndex: number;
+  positionOpeningMethod: PositionOpeningMethod;
 }
 
 export const DepositSelector: React.FC<IDepositSelector> = ({
@@ -88,67 +88,67 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   minimumSliderIndex,
   positionOpeningMethod
 }) => {
-  const { classes } = useStyles()
+  const { classes } = useStyles();
 
-  const [tokenAIndex, setTokenAIndex] = useState<number | null>(null)
-  const [tokenBIndex, setTokenBIndex] = useState<number | null>(null)
+  const [tokenAIndex, setTokenAIndex] = useState<number | null>(null);
+  const [tokenBIndex, setTokenBIndex] = useState<number | null>(null);
 
-  const [isLoaded, setIsLoaded] = useState<boolean>(false)
+  const [isLoaded, setIsLoaded] = useState<boolean>(false);
 
   useEffect(() => {
     if (isLoaded || tokens.length === 0 || ALL_FEE_TIERS_DATA.length === 0) {
-      return
+      return;
     }
 
-    let tokenAIndexFromPath = null
-    let tokenBIndexFromPath = null
-    let feeTierIndexFromPath = 0
+    let tokenAIndexFromPath = null;
+    let tokenBIndexFromPath = null;
+    let feeTierIndexFromPath = 0;
 
     tokens.forEach((token, index) => {
       if (token.assetAddress.toString() === tickerToAddress(initialTokenFrom)) {
-        tokenAIndexFromPath = index
+        tokenAIndexFromPath = index;
       }
 
       if (token.assetAddress.toString() === tickerToAddress(initialTokenTo)) {
-        tokenBIndexFromPath = index
+        tokenBIndexFromPath = index;
       }
-    })
+    });
 
-    const parsedFee = parsePathFeeToFeeString(initialFee)
+    const parsedFee = parsePathFeeToFeeString(initialFee);
 
     ALL_FEE_TIERS_DATA.forEach((feeTierData, index) => {
       if (feeTierData.fee.toString() === parsedFee) {
-        feeTierIndexFromPath = index
+        feeTierIndexFromPath = index;
       }
-    })
+    });
 
-    setTokenAIndex(tokenAIndexFromPath)
-    setTokenBIndex(tokenBIndexFromPath)
-    setPositionTokens(tokenAIndexFromPath, tokenBIndexFromPath, feeTierIndexFromPath)
+    setTokenAIndex(tokenAIndexFromPath);
+    setTokenBIndex(tokenBIndexFromPath);
+    setPositionTokens(tokenAIndexFromPath, tokenBIndexFromPath, feeTierIndexFromPath);
 
-    setIsLoaded(true)
-  }, [tokens])
+    setIsLoaded(true);
+  }, [tokens]);
 
   const getButtonMessage = useCallback(() => {
     if (tokenAIndex === null || tokenBIndex === null) {
-      return 'Select tokens'
+      return 'Select tokens';
     }
 
     if (tokenAIndex === tokenBIndex) {
-      return 'Select different tokens'
+      return 'Select different tokens';
     }
 
     if (positionOpeningMethod === 'concentration' && concentrationIndex < minimumSliderIndex) {
       return concentrationArray[minimumSliderIndex]
         ? `Set concentration to at least ${concentrationArray[minimumSliderIndex].toFixed(0)}x`
-        : 'Set higher fee tier'
+        : 'Set higher fee tier';
     }
 
     if (
       (poolIndex === null && !canCreateNewPool) ||
       (poolIndex !== null && !canCreateNewPosition)
     ) {
-      return 'Insufficient AZERO'
+      return 'Insufficient AZERO';
     }
 
     if (
@@ -156,7 +156,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
       convertBalanceToBigint(tokenAInputState.value, tokens[tokenAIndex].decimals) >
         tokens[tokenAIndex].balance
     ) {
-      return "You don't have enough token A"
+      return "You don't have enough token A";
     }
 
     if (
@@ -164,7 +164,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
       convertBalanceToBigint(tokenBInputState.value, tokens[tokenBIndex].decimals) >
         tokens[tokenBIndex].balance
     ) {
-      return "You don't have enough token B"
+      return "You don't have enough token B";
     }
 
     if (
@@ -173,10 +173,10 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
       !tokenBInputState.blocked &&
       +tokenBInputState.value === 0
     ) {
-      return 'Liquidity must be greater than 0'
+      return 'Liquidity must be greater than 0';
     }
 
-    return 'Add Liquidity'
+    return 'Add Liquidity';
   }, [
     tokenAIndex,
     tokenBIndex,
@@ -187,43 +187,48 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
     concentrationIndex,
     feeTierIndex,
     minimumSliderIndex
-  ])
+  ]);
 
   useEffect(() => {
     if (tokenAIndex !== null) {
       if (getScaleFromString(tokenAInputState.value) > Number(tokens[tokenAIndex].decimals)) {
-        const parts = tokenAInputState.value.split('.')
+        const parts = tokenAInputState.value.split('.');
 
         tokenAInputState.setValue(
           parts[0] + '.' + parts[1].slice(0, Number(tokens[tokenAIndex].decimals))
-        )
+        );
       }
     }
 
     if (tokenBIndex !== null) {
       if (getScaleFromString(tokenBInputState.value) > Number(tokens[tokenBIndex].decimals)) {
-        const parts = tokenBInputState.value.split('.')
+        const parts = tokenBInputState.value.split('.');
 
         tokenAInputState.setValue(
           parts[0] + '.' + parts[1].slice(0, Number(tokens[tokenBIndex].decimals))
-        )
+        );
       }
     }
-  }, [poolIndex])
+  }, [poolIndex]);
 
   return (
     <Grid container direction='column' className={classNames(classes.wrapper, className)}>
       <Typography className={classes.sectionTitle}>Tokens</Typography>
 
       <Grid container className={classes.sectionWrapper} style={{ marginBottom: 40 }}>
-        <Grid container className={classes.selects} direction='row' justifyContent='space-between'>
+        <Grid
+          container
+          className={classes.selects}
+          direction='row'
+          justifyContent='space-between'
+          alignItems='center'>
           <Grid className={classes.selectWrapper}>
             <Select
               tokens={tokens}
               current={tokenAIndex !== null ? tokens[tokenAIndex] : null}
               onSelect={index => {
-                setTokenAIndex(index)
-                setPositionTokens(index, tokenBIndex, feeTierIndex)
+                setTokenAIndex(index);
+                setPositionTokens(index, tokenBIndex, feeTierIndex);
               }}
               centered
               className={classes.customSelect}
@@ -238,17 +243,19 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
           <img
             className={classes.arrows}
             src={SwapList}
+            width={24}
+            height={24}
             alt='Arrow'
             onClick={() => {
               if (!tokenBInputState.blocked) {
-                tokenAInputState.setValue(tokenBInputState.value)
+                tokenAInputState.setValue(tokenBInputState.value);
               } else {
-                tokenBInputState.setValue(tokenAInputState.value)
+                tokenBInputState.setValue(tokenAInputState.value);
               }
-              const pom = tokenAIndex
-              setTokenAIndex(tokenBIndex)
-              setTokenBIndex(pom)
-              onReverseTokens()
+              const pom = tokenAIndex;
+              setTokenAIndex(tokenBIndex);
+              setTokenBIndex(pom);
+              onReverseTokens();
             }}
           />
 
@@ -257,8 +264,8 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
               tokens={tokens}
               current={tokenBIndex !== null ? tokens[tokenBIndex] : null}
               onSelect={index => {
-                setTokenBIndex(index)
-                setPositionTokens(tokenAIndex, index, feeTierIndex)
+                setTokenBIndex(index);
+                setPositionTokens(tokenAIndex, index, feeTierIndex);
               }}
               centered
               className={classes.customSelect}
@@ -273,7 +280,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
 
         <FeeSwitch
           onSelect={fee => {
-            setPositionTokens(tokenAIndex, tokenBIndex, fee)
+            setPositionTokens(tokenAIndex, tokenBIndex, fee);
           }}
           feeTiers={feeTiers}
           showOnlyPercents
@@ -291,37 +298,11 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
           placeholder='0.0'
           onMaxClick={() => {
             if (tokenAIndex === null) {
-              return
+              return;
             }
-
-            // if (tokens[tokenAIndex].assetAddress === WRAPPED_ETH_ADDRESS) {
-            //   if (tokenBIndex !== null && poolIndex === null) {
-            //     tokenAInputState.setValue(
-            //       printBigint(
-            //         tokens[tokenAIndex].balance.gt(WETH_POOL_INIT_LAMPORTS)
-            //           ? tokens[tokenAIndex].balance.sub(WETH_POOL_INIT_LAMPORTS)
-            //           : new BN(0),
-            //         tokens[tokenAIndex].decimals
-            //       )
-            //     )
-
-            //     return
-            //   }
-
-            //   tokenAInputState.setValue(
-            //     printBigint(
-            //       tokens[tokenAIndex].balance.gt(WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT)
-            //         ? tokens[tokenAIndex].balance.sub(WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT)
-            //         : new BN(0),
-            //       tokens[tokenAIndex].decimals
-            //     )
-            //   )
-
-            //   return
-            // }
             tokenAInputState.setValue(
               printBigint(tokens[tokenAIndex].balance, tokens[tokenAIndex].decimals)
-            )
+            );
           }}
           balanceValue={
             tokenAIndex !== null
@@ -337,7 +318,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
               tokenBIndex !== null &&
               tokenAInputState.value.length === 0
             ) {
-              tokenAInputState.setValue('0.0')
+              tokenAInputState.setValue('0.0');
             }
           }}
           {...tokenAInputState}
@@ -351,7 +332,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
           placeholder='0.0'
           onMaxClick={() => {
             if (tokenBIndex === null) {
-              return
+              return;
             }
 
             // if (tokens[tokenBIndex].assetAddress.equals(new PublicKey(WRAPPED_ETH_ADDRESS))) {
@@ -381,7 +362,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
             // }
             tokenBInputState.setValue(
               printBigint(tokens[tokenBIndex].balance, tokens[tokenBIndex].decimals)
-            )
+            );
           }}
           balanceValue={
             tokenBIndex !== null
@@ -394,7 +375,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
               tokenBIndex !== null &&
               tokenBInputState.value.length === 0
             ) {
-              tokenBInputState.setValue('0.0')
+              tokenBInputState.setValue('0.0');
             }
           }}
           {...tokenBInputState}
@@ -409,7 +390,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
         )}
         onClick={() => {
           if (progress === 'none') {
-            onAddLiquidity()
+            onAddLiquidity();
           }
         }}
         disabled={getButtonMessage() !== 'Add Liquidity'}
@@ -417,7 +398,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
         progress={progress}
       />
     </Grid>
-  )
-}
+  );
+};
 
-export default DepositSelector
+export default DepositSelector;

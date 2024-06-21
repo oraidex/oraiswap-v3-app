@@ -1,10 +1,18 @@
-import { colors, typography } from '@static/theme'
-import { makeStyles } from 'tss-react/mui'
+import { colors, typography } from '@static/theme';
+import { makeStyles } from 'tss-react/mui';
 
 const useStyles = makeStyles()(theme => {
   return {
     wrapper: {
-      width: 952
+      width: 952,
+      borderRadius: '12px',
+      border: '1px solid #232521',
+      backgroundColor: '#1B1D19',
+      padding: '24px'
+    },
+    head: {
+      borderBottom: '1px solid #232521',
+      marginBottom: 30
     },
     back: {
       height: 24,
@@ -92,7 +100,7 @@ const useStyles = makeStyles()(theme => {
     switch: {
       transition: 'opacity 500ms'
     }
-  }
-})
+  };
+});
 
-export default useStyles
+export default useStyles;

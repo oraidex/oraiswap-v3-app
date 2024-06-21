@@ -1,6 +1,6 @@
-import { Theme } from '@mui/material'
-import { colors, typography } from '@static/theme'
-import { makeStyles } from 'tss-react/mui'
+import { Theme } from '@mui/material';
+import { colors, typography } from '@static/theme';
+import { makeStyles } from 'tss-react/mui';
 
 export const useStyles = makeStyles()((theme: Theme) => ({
   root: {
@@ -149,4 +149,4 @@ export const useStyles = makeStyles()((theme: Theme) => ({
       filter: 'brightness(1.5)'
     }
   }
-}))
+}));

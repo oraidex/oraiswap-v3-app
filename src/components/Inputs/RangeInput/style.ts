@@ -1,6 +1,6 @@
-import { Theme } from '@mui/material'
-import { colors, typography } from '@static/theme'
-import { makeStyles } from 'tss-react/mui'
+import { Theme } from '@mui/material';
+import { colors, typography } from '@static/theme';
+import { makeStyles } from 'tss-react/mui';
 
 export const useStyles = makeStyles()((theme: Theme) => ({
   data: {
@@ -53,14 +53,12 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     }
   },
   button: {
-    minWidth: 36,
-    width: 36,
-    height: 36,
-    borderRadius: 10,
-    backgroundColor: 'rgba(46,224,154,0.8)',
-    padding: 0,
+    padding: '5px',
+    width: '10px',
     zIndex: 1,
-
+    borderRadius: '4px',
+    border: '1px solid #232521',
+    background: '#1B1C1A',
     '&:hover': {
       backgroundColor: colors.oraidex.green,
       boxShadow: `0 0 10px ${colors.oraidex.green}`
@@ -103,20 +101,20 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     }
   },
   diffWrapper: {
+    marginTop: 16,
     borderRadius: 11,
-    height: 36,
-    backgroundColor: colors.oraidex.black
+    height: 36
   },
   diffLabelWrapper: {
     borderRadius: 11,
     height: 36,
-    backgroundColor: colors.oraidex.light,
     display: 'flex',
     alignItems: 'center',
     paddingInline: 10
   },
   diffLabel: {
     ...typography.caption2,
+    fontSize: 13,
     color: colors.oraidex.text,
     width: 'fit-content',
     textOverflow: 'ellipsis',
@@ -125,11 +123,10 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   },
   diff: {
     ...typography.body1,
-    padding: 3,
+    fontSize: 13,
     borderRadius: 5,
-    marginInline: 'auto',
     flex: '0 0 auto'
   }
-}))
+}));
 
-export default useStyles
+export default useStyles;

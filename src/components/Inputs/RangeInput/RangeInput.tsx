@@ -1,25 +1,25 @@
-import React, { useRef } from 'react'
-import AddIcon from '@mui/icons-material/Add'
-import RemoveIcon from '@mui/icons-material/Remove'
-import useStyles from './style'
-import { colors } from '@static/theme'
-import { Button, Grid, Input, Typography } from '@mui/material'
-import { FormatNumberThreshold, formatNumbers, showPrefix } from '@store/consts/utils'
+import React, { useRef } from 'react';
+import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
+import useStyles from './style';
+import { colors } from '@static/theme';
+import { Button, Grid, Input, Typography } from '@mui/material';
+import { FormatNumberThreshold, formatNumbers, showPrefix } from '@store/consts/utils';
 
 export interface IRangeInput {
-  label: string
-  tokenFromSymbol: string
-  tokenToSymbol: string
-  currentValue: string
-  decreaseValue: () => void
-  increaseValue: () => void
-  setValue: (value: string) => void
-  onBlur: () => void
-  style?: React.CSSProperties
-  className?: string
-  disabled?: boolean
-  percentDiff: number
-  diffLabel: string
+  label: string;
+  tokenFromSymbol: string;
+  tokenToSymbol: string;
+  currentValue: string;
+  decreaseValue: () => void;
+  increaseValue: () => void;
+  setValue: (value: string) => void;
+  onBlur: () => void;
+  style?: React.CSSProperties;
+  className?: string;
+  disabled?: boolean;
+  percentDiff: number;
+  diffLabel: string;
 }
 
 export const RangeInput: React.FC<IRangeInput> = ({
@@ -37,42 +37,42 @@ export const RangeInput: React.FC<IRangeInput> = ({
   percentDiff,
   diffLabel
 }) => {
-  const { classes } = useStyles()
+  const { classes } = useStyles();
 
-  const inputRef = useRef<HTMLInputElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const allowOnlyDigitsAndTrimUnnecessaryZeros: React.ChangeEventHandler<HTMLInputElement> = e => {
-    const regex = /^\d*\.?\d*$/
+    const regex = /^\d*\.?\d*$/;
     if (e.target.value === '' || regex.test(e.target.value)) {
-      const startValue = e.target.value
-      const caretPosition = e.target.selectionStart
+      const startValue = e.target.value;
+      const caretPosition = e.target.selectionStart;
 
-      let parsed = e.target.value
-      const zerosRegex = /^0+\d+\.?\d*$/
+      let parsed = e.target.value;
+      const zerosRegex = /^0+\d+\.?\d*$/;
       if (zerosRegex.test(parsed)) {
-        parsed = parsed.replace(/^0+/, '')
+        parsed = parsed.replace(/^0+/, '');
       }
 
-      const dotRegex = /^\.\d*$/
+      const dotRegex = /^\.\d*$/;
       if (dotRegex.test(parsed)) {
-        parsed = `0${parsed}`
+        parsed = `0${parsed}`;
       }
 
-      const diff = startValue.length - parsed.length
+      const diff = startValue.length - parsed.length;
 
-      setValue(parsed)
+      setValue(parsed);
       if (caretPosition !== null && parsed !== startValue) {
         setTimeout(() => {
           if (inputRef.current) {
-            inputRef.current.selectionStart = Math.max(caretPosition - diff, 0)
-            inputRef.current.selectionEnd = Math.max(caretPosition - diff, 0)
+            inputRef.current.selectionStart = Math.max(caretPosition - diff, 0);
+            inputRef.current.selectionEnd = Math.max(caretPosition - diff, 0);
           }
-        }, 0)
+        }, 0);
       }
     } else if (!regex.test(e.target.value)) {
-      setValue('')
+      setValue('');
     }
-  }
+  };
 
   const percentageThresholds: FormatNumberThreshold[] = [
     {
@@ -102,7 +102,7 @@ export const RangeInput: React.FC<IRangeInput> = ({
       decimals: 2,
       divider: 1000000000
     }
-  ]
+  ];
 
   return (
     <Grid className={className} style={style} container direction='column' alignItems='center'>
@@ -114,7 +114,7 @@ export const RangeInput: React.FC<IRangeInput> = ({
         alignItems='center'>
         <Typography className={classes.label}>{label}</Typography>
         <Typography className={classes.tokens}>
-          {tokenToSymbol} per {tokenFromSymbol}
+          {tokenToSymbol} / {tokenFromSymbol}
         </Typography>
       </Grid>
       <Grid
@@ -123,11 +123,6 @@ export const RangeInput: React.FC<IRangeInput> = ({
         direction='row'
         alignItems='center'
         wrap='nowrap'>
-        {disabled ? null : (
-          <Button className={classes.button} onClick={decreaseValue} disableRipple>
-            <RemoveIcon className={classes.buttonIcon} />
-          </Button>
-        )}
         <Input
           className={classes.value}
           value={currentValue}
@@ -137,11 +132,18 @@ export const RangeInput: React.FC<IRangeInput> = ({
           disableUnderline={true}
           disabled={disabled}
         />
-        {disabled ? null : (
-          <Button className={classes.button} onClick={increaseValue} disableRipple>
-            <AddIcon className={classes.buttonIcon} />
-          </Button>
-        )}
+        <Grid direction='column' width='fit-content' container>
+          {disabled ? null : (
+            <Button className={classes.button} onClick={decreaseValue} disableRipple>
+              <RemoveIcon className={classes.buttonIcon} />
+            </Button>
+          )}
+          {disabled ? null : (
+            <Button className={classes.button} onClick={increaseValue} disableRipple>
+              <AddIcon className={classes.buttonIcon} />
+            </Button>
+          )}
+        </Grid>
       </Grid>
       <Grid
         className={classes.diffWrapper}
@@ -165,7 +167,7 @@ export const RangeInput: React.FC<IRangeInput> = ({
         </Typography>
       </Grid>
     </Grid>
-  )
-}
+  );
+};
 
-export default RangeInput
+export default RangeInput;

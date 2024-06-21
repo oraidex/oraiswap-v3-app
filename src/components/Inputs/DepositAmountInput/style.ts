@@ -1,6 +1,6 @@
-import { Theme } from '@mui/material'
-import { colors, typography } from '@static/theme'
-import { makeStyles } from 'tss-react/mui'
+import { Theme } from '@mui/material';
+import { colors, typography } from '@static/theme';
+import { makeStyles } from 'tss-react/mui';
 
 export const useStyles = makeStyles()((theme: Theme) => {
   return {
@@ -16,7 +16,7 @@ export const useStyles = makeStyles()((theme: Theme) => {
       width: '100%',
       backgroundColor: colors.oraidex.componentBcg,
       borderRadius: 20,
-      padding: '6px 12px',
+      padding: '8px 12px 12px 12px',
       ...typography.heading2
     },
     inputContainer: {
@@ -44,11 +44,10 @@ export const useStyles = makeStyles()((theme: Theme) => {
       }
     },
     currency: {
-      height: 36,
       minWidth: 85,
       width: 'fit-content',
       flexShrink: 0,
-      borderRadius: 11,
+      borderRadius: 99,
       backgroundColor: colors.oraidex.light,
       padding: '6px 12px 6px 12px',
       cursor: 'default',
@@ -84,8 +83,8 @@ export const useStyles = makeStyles()((theme: Theme) => {
       backgroundColor: `${colors.oraidex.Error}40`
     },
     currencyIcon: {
-      minWidth: 20,
-      height: 20,
+      minWidth: 24,
+      height: 24,
       marginRight: 8,
       borderRadius: '100%'
     },
@@ -201,7 +200,7 @@ export const useStyles = makeStyles()((theme: Theme) => {
       fontSize: 13,
       color: colors.white.main
     }
-  }
-})
+  };
+});
 
-export default useStyles
+export default useStyles;

@@ -1,31 +1,31 @@
-import React, { useRef, CSSProperties } from 'react'
-import loadingAnimation from '@static/gif/loading.gif'
-import useStyles from './style'
+import React, { useRef, CSSProperties } from 'react';
+import loadingAnimation from '@static/gif/loading.gif';
+import useStyles from './style';
 import {
   FormatNumberThreshold,
   formatNumbers,
   getScaleFromString,
   showPrefix
-} from '@store/consts/utils'
-import { Button, Grid, Input, Tooltip, Typography } from '@mui/material'
+} from '@store/consts/utils';
+import { Button, Grid, Input, Tooltip, Typography } from '@mui/material';
 
 interface IProps {
-  setValue: (value: string) => void
-  currency: string | null
-  currencyIconSrc?: string
-  value?: string
-  placeholder?: string
-  onMaxClick: () => void
-  style?: CSSProperties
-  blocked?: boolean
-  blockerInfo?: string
-  decimalsLimit: number
-  onBlur?: () => void
-  percentageChange?: number
-  tokenPrice?: number
-  balanceValue?: string
-  disabled?: boolean
-  priceLoading?: boolean
+  setValue: (value: string) => void;
+  currency: string | null;
+  currencyIconSrc?: string;
+  value?: string;
+  placeholder?: string;
+  onMaxClick: () => void;
+  style?: CSSProperties;
+  blocked?: boolean;
+  blockerInfo?: string;
+  decimalsLimit: number;
+  onBlur?: () => void;
+  percentageChange?: number;
+  tokenPrice?: number;
+  balanceValue?: string;
+  disabled?: boolean;
+  priceLoading?: boolean;
 }
 
 export const DepositAmountInput: React.FC<IProps> = ({
@@ -45,9 +45,9 @@ export const DepositAmountInput: React.FC<IProps> = ({
   disabled = false,
   priceLoading = false
 }) => {
-  const { classes } = useStyles()
+  const { classes } = useStyles();
 
-  const inputRef = useRef<HTMLInputElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const thresholds: FormatNumberThreshold[] = [
     {
@@ -81,7 +81,7 @@ export const DepositAmountInput: React.FC<IProps> = ({
       decimals: 2,
       divider: 1000000000
     }
-  ]
+  ];
 
   const usdThresholds: FormatNumberThreshold[] = [
     {
@@ -107,48 +107,48 @@ export const DepositAmountInput: React.FC<IProps> = ({
       decimals: 2,
       divider: 1000000000
     }
-  ]
+  ];
 
   const allowOnlyDigitsAndTrimUnnecessaryZeros: React.ChangeEventHandler<HTMLInputElement> = e => {
-    const regex = /^\d*\.?\d*$/
+    const regex = /^\d*\.?\d*$/;
     if (e.target.value === '' || regex.test(e.target.value)) {
-      const startValue = e.target.value
-      const caretPosition = e.target.selectionStart
+      const startValue = e.target.value;
+      const caretPosition = e.target.selectionStart;
 
-      let parsed = e.target.value
-      const zerosRegex = /^0+\d+\.?\d*$/
+      let parsed = e.target.value;
+      const zerosRegex = /^0+\d+\.?\d*$/;
       if (zerosRegex.test(parsed)) {
-        parsed = parsed.replace(/^0+/, '')
+        parsed = parsed.replace(/^0+/, '');
       }
 
-      const dotRegex = /^\.\d*$/
+      const dotRegex = /^\.\d*$/;
       if (dotRegex.test(parsed)) {
-        parsed = `0${parsed}`
+        parsed = `0${parsed}`;
       }
 
       if (getScaleFromString(parsed) > decimalsLimit) {
-        const parts = parsed.split('.')
+        const parts = parsed.split('.');
 
-        parsed = parts[0] + '.' + parts[1].slice(0, decimalsLimit)
+        parsed = parts[0] + '.' + parts[1].slice(0, decimalsLimit);
       }
 
-      const diff = startValue.length - parsed.length
+      const diff = startValue.length - parsed.length;
 
-      setValue(parsed)
+      setValue(parsed);
       if (caretPosition !== null && parsed !== startValue) {
         setTimeout(() => {
           if (inputRef.current) {
-            inputRef.current.selectionStart = Math.max(caretPosition - diff, 0)
-            inputRef.current.selectionEnd = Math.max(caretPosition - diff, 0)
+            inputRef.current.selectionStart = Math.max(caretPosition - diff, 0);
+            inputRef.current.selectionEnd = Math.max(caretPosition - diff, 0);
           }
-        }, 0)
+        }, 0);
       }
     } else if (!regex.test(e.target.value)) {
-      setValue('')
+      setValue('');
     }
-  }
+  };
 
-  const usdBalance = tokenPrice && balanceValue ? tokenPrice * +balanceValue : 0
+  const usdBalance = tokenPrice && balanceValue ? tokenPrice * +balanceValue : 0;
 
   return (
     <Grid container className={classes.wrapper} style={style}>
@@ -262,7 +262,7 @@ export const DepositAmountInput: React.FC<IProps> = ({
         </>
       )}
     </Grid>
-  )
-}
+  );
+};
 
-export default DepositAmountInput
+export default DepositAmountInput;

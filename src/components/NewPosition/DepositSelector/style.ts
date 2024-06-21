@@ -1,5 +1,5 @@
-import { colors, typography } from '@static/theme'
-import { makeStyles } from 'tss-react/mui'
+import { colors, typography } from '@static/theme';
+import { makeStyles } from 'tss-react/mui';
 
 export const useStyles = makeStyles()(() => {
   return {
@@ -65,12 +65,17 @@ export const useStyles = makeStyles()(() => {
       }
     },
     arrows: {
-      width: 32,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: 3,
+      borderRadius: '50%',
       cursor: 'pointer',
-
+      border: '0.686px solid #595B57',
+      background: 'var#494949',
       '&:hover': {
         filter: 'brightness(2)'
       }
     }
-  }
-})
+  };
+});

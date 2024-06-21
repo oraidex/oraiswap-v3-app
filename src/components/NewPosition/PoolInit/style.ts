@@ -1,5 +1,5 @@
-import { colors, typography } from '@static/theme'
-import { makeStyles } from 'tss-react/mui'
+import { colors, typography } from '@static/theme';
+import { makeStyles } from 'tss-react/mui';
 
 const useStyles = makeStyles()(theme => {
   return {
@@ -10,8 +10,8 @@ const useStyles = makeStyles()(theme => {
       flex: '1 1 0%'
     },
     header: {
-      ...typography.heading4,
-      marginBottom: 24,
+      ...typography.body1,
+      marginBottom: 16,
       color: colors.white.main,
       height: 24
     },
@@ -23,10 +23,11 @@ const useStyles = makeStyles()(theme => {
       gap: 4
     },
     topInnerWrapper: {
-      minHeight: 283
+      minHeight: 253,
+      marginBottom: 10
     },
     subheader: {
-      ...typography.heading4,
+      ...typography.body1,
       marginBottom: 14,
       color: colors.white.main
     },
@@ -35,17 +36,18 @@ const useStyles = makeStyles()(theme => {
       flexDirection: 'row',
       gap: 16
     },
-    input: {
-      flex: '1 1 0%',
-      gap: 12,
+    // input: {
+    //   flex: '1 1 0%',
+    //   gap: 12,
 
-      [theme.breakpoints.down('sm')]: {
-        '&:first-of-type': {
-          marginRight: 0,
-          marginBottom: 8
-        }
-      }
-    },
+    //   [theme.breakpoints.down('sm')]: {
+    //     '&:first-of-type': {
+    //       marginRight: 0,
+    //       marginBottom: 8
+    //     }
+    //   }
+    // },
+
     button: {
       width: '100%',
       flex: '1 1 0%',
@@ -71,16 +73,17 @@ const useStyles = makeStyles()(theme => {
       alignItems: 'center'
     },
     infoWrapper: {
-      borderRadius: 19,
-      padding: 16,
-      background:
-        'radial-gradient(286.05% 1397.73% at 101.8% 159.3%, rgba(46, 224, 154, 0.3) 0%, rgba(0, 0, 0, 0) 100%), radial-gradient(235.47% 781.83% at 5.41% 0%, rgba(239, 132, 245, 0.3) 0%, rgba(0, 0, 0, 0) 100%), linear-gradient(0deg, #3A466B, #3A466B)',
+      borderRadius: 8,
+      padding: '12px 16px',
+      border: '1px solid #E6CF00',
+      background: '#383200',
       marginBottom: 16
     },
     info: {
-      color: colors.white.main,
-      ...typography.body2,
-      lineHeight: '22px'
+      color: '#E6CF00',
+      fontSize: 12,
+      fontWeight: 400,
+      lineHeight: '18px'
     },
     midPrice: {
       marginBottom: 8
@@ -99,8 +102,46 @@ const useStyles = makeStyles()(theme => {
     priceValue: {
       ...typography.body1,
       color: colors.white.main
-    }
-  }
-})
+    },
 
-export default useStyles
+    inputContainer: {
+      marginBottom: 6,
+      padding: '12px 16px 12px 12px',
+      borderRadius: '8px',
+      background: '#232521',
+      [theme.breakpoints.down('xs')]: {
+        marginBottom: 0
+      }
+    },
+    input: {
+      color: colors.oraidex.text,
+      ...typography.heading2,
+      width: '100%',
+      textAlign: 'right',
+      transition: 'all .4s',
+      '& ::placeholder': {
+        textAlign: 'right'
+      }
+    },
+    innerInput: {
+      textAlign: 'right',
+      color: colors.white.main,
+      '& ::placeholder': {
+        textAlign: 'right'
+      }
+    },
+    currency: {
+      minWidth: 85,
+      width: 'fit-content',
+      flexShrink: 0,
+      cursor: 'default',
+      color: '#979995',
+      [theme.breakpoints.down('sm')]: {
+        height: 36,
+        minWidth: 85
+      }
+    }
+  };
+});
+
+export default useStyles;
