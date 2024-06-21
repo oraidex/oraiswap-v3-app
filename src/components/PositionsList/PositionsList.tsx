@@ -92,7 +92,8 @@ export const PositionsList: React.FC<IProps> = ({
         justifyContent={'flex-end'}
         gap={'10px'}
         marginBottom={'24px'}
-        sx={{ display: { xs: 'none', lg: 'flex' } }}>
+        // sx={{ display: { xs: 'none', lg: 'flex' } }}
+      >
         <PositionsFilter searchValue={searchValue} setSearchValue={searchSetValue} />
 
         <CustomButton type='primary' onClick={showNoConnected ? () => {} : onAddPositionClick}>
