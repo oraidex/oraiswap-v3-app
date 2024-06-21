@@ -15,10 +15,10 @@ export const addressToTicker = (address: string): string => {
 }
 
 export const addressTickerMap: { [key: string]: string } = {
-  USDT: 'orai1z3zd5fk60ev5tf8slmr5tjuhp2qmhkvhcf84ajk27un5h0tgz4fql075rt',
-  USDC: 'orai154a9fxn9wcyfsxnjkgm4ql4spyvhfu7j5twpzwwx2077ts0uwtps66y70s',
-  BTC: 'orai1vllp59yyjuhealdu0srm6kwvynx9c2hv72sfxr8f8ufhc2zvc5fqghjgny',
-  OCH: 'orai1lnn4t206eq464z3amy7fwkjl0rxm9euap9gcf7de9j27l00uwvuqfa0sdt',
+  USDT: 'orai13r0p78qtakcxu7yckfs7vr2mswe5qghv6t6t57ff4drqeqw44v5q9zrhq0',
+  USDC: 'orai176zyt4mmwtncuuc63ahsfu5v8xymcuxxa8w258yrtrad7l4wqktsajtdg0',
+  BTC: 'orai1tgcfr9hffjcjdpgc2354k4ut2s0fufmpva2aapsdswccp3ka442spg9efy',
+  OCH: 'orai184daw0zxx4vjkjhcgc2e9q787x67qlgfk0ehg6ea6wrl6grlrztsjuydnc',
   // DEFI3: 'orai1rsx2fr97wnunevl7n09tzlvrau5u5875jq36mjx04e53mdyxnrwq9n90kh',
   // DEFI4: 'orai1gfru0p5n0w4hl0sc7gj8dsaud7zerv8wdu9e4jdh77ghydhahv2q0ecxj7',
   // DEFI5: 'orai1etr7495tul34lvrjk4zxzlnpltf5383sp497prm97pwjmwzhs73sc2umfp',
