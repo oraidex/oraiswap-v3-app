@@ -9,15 +9,13 @@ export const useStyles = makeStyles()((theme: Theme) => {
       width: 'auto',
       textTransform: 'none',
       boxShadow: 'none',
-      borderRadius: 12,
-      height: 36,
+      borderRadius: 99,
       minWidth: 'auto',
-      fontFamily: 'IBM Plex Sans',
       backgroundColor: colors.oraidex.light,
-      ...typography.body3,
-      padding: 15,
+      ...typography.heading5,
+      padding: '8px 12px 8px 12px',
 
-      filter: 'brightness(0.8)',
+      filter: 'brightness(1)',
 
       '&:hover': {
         filter: 'brightness(1)',
@@ -30,13 +28,12 @@ export const useStyles = makeStyles()((theme: Theme) => {
     },
     tokenName: {
       position: 'relative',
-      top: 1,
-      color: colors.white.main
+      color: colors.oraidex.text
     },
     icon: {
-      marginRight: 5,
-      minWidth: 20,
-      height: 20,
+      marginRight: 8,
+      minWidth: 24,
+      height: 24,
       borderRadius: '100%'
     },
     endIcon: {

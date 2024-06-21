@@ -1,6 +1,6 @@
-import { Theme } from '@mui/material'
-import { colors, typography } from '@static/theme'
-import { makeStyles } from 'tss-react/mui'
+import { Theme } from '@mui/material';
+import { colors, typography } from '@static/theme';
+import { makeStyles } from 'tss-react/mui';
 
 export const useStyles = makeStyles()((theme: Theme) => ({
   '@keyframes slide-down': {
@@ -51,6 +51,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   swapWrapper: {
     display: 'flex',
     flexDirection: 'column',
+
     [theme.breakpoints.down('xs')]: {
       padding: '0 16px'
     }
@@ -61,11 +62,15 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     justifyContent: 'space-between',
     width: 500,
     position: 'relative',
-    paddingBottom: 9,
+    paddingBottom: 24,
     '& h1': {
       ...typography.heading4,
       color: colors.white.main
     }
+  },
+  headerLeft: {
+    flex: 1,
+    visibility: 'hidden'
   },
   refreshIcon: {
     width: 26,
@@ -85,11 +90,19 @@ export const useStyles = makeStyles()((theme: Theme) => ({
       filter: 'brightness(1.5)'
     }
   },
+  divider: {
+    width: '100%',
+    borderBottom: '1px solid',
+    borderColor: colors.oraidex.newDark
+  },
   HiddenTransactionButton: {
+    paddingInline: 0,
+    width: '100%',
     background: 'none !important',
     border: 'none',
     minWidth: 'auto',
     color: colors.oraidex.lightHover,
+
     '&:hover': {
       filter: 'brightness(1.15)',
       cursor: 'pointer'
@@ -97,6 +110,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   },
 
   transactionDetailDisabled: {
+    width: '100%',
     background: 'none !important',
     border: 'none',
     minWidth: 'auto',
@@ -105,7 +119,9 @@ export const useStyles = makeStyles()((theme: Theme) => ({
 
   swapControls: {
     display: 'flex',
-    gap: 8
+    gap: 8,
+    flex: 1,
+    justifyContent: 'flex-end'
   },
 
   refreshIconBtn: {
@@ -133,12 +149,14 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     position: 'absolute'
   },
   root: {
-    background: colors.oraidex.component,
-    borderRadius: 24,
+    background: '#1B1D19',
+    borderRadius: 12,
     paddingInline: 24,
     paddingBottom: 22,
     paddingTop: 16,
-    width: 500
+    width: 500,
+    border: '1px solid #232521',
+    boxShadow: '0px 4px 24px 0px rgba(0, 0, 0, 0.05)'
   },
 
   connectWalletButton: {
@@ -195,15 +213,15 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     }
   },
   swapImgRoot: {
-    background: colors.oraidex.newDark,
-    width: '40px',
-    height: '40px',
+    width: 50,
+    height: 50,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 100,
     '&:hover': {
-      backgroundColor: colors.oraidex.light
+      // backgroundColor: colors.oraidex.light
+      opacity: 0.7
     }
   },
 
@@ -217,6 +235,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   },
 
   transactionDetails: {
+    width: '100%',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -227,23 +246,25 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     filter: 'brightness(0.9)'
   },
   transactionDetailsWrapper: {
+    width: '100%',
     display: 'flex',
     flexDirection: 'row',
-    backgroundColor: colors.oraidex.light,
-    margin: '16px 0 ',
-    paddingInline: 15,
+    margin: '16px 0 8px 0',
     borderRadius: '10px',
     alignItems: 'center',
-    height: 32
+
+    justifyContent: 'space-between'
   },
 
   transactionDetailsHeader: {
-    ...typography.caption2,
+    ...typography.heading5,
     whiteSpace: 'nowrap',
     pointerEvents: 'none',
+    color: colors.oraidex.text,
+    fontSize: 17,
 
     [theme.breakpoints.down('xs')]: {
-      ...typography.tiny2
+      ...typography.caption2
     }
   },
 
@@ -253,9 +274,10 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   },
 
   exchangeRoot: {
+    marginTop: 24,
     position: 'relative',
     background: colors.oraidex.newDark,
-    borderRadius: 20
+    borderRadius: 8
   },
   transactionTop: {
     marginTop: 10
@@ -307,6 +329,6 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     filter: 'brightness(0.8)',
     pointerEvents: 'none'
   }
-}))
+}));
 
-export default useStyles
+export default useStyles;

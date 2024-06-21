@@ -7,7 +7,7 @@ export const FallbackEmptyData = () => {
   return (
     <div className={classes.noData}>
       <img src={NoDataSvg} alt='nodata' />
-      <span>No data</span>
+      <span style={{ color: '#f7f7f7' }}>No data</span>
     </div>
   );
 };

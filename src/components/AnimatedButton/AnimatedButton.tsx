@@ -1,10 +1,10 @@
-import { Button } from '@mui/material'
-import errorGif from '@static/gif/errorAnimation.gif'
-import loadingAnimation from '@static/gif/loading.gif'
-import successGif from '@static/gif/successAnimation.gif'
-import classNames from 'classnames'
-import React from 'react'
-import useStyles from './style'
+import { Button } from '@mui/material';
+import errorGif from '@static/gif/errorAnimation.gif';
+import loadingAnimation from '@static/gif/loading.gif';
+import successGif from '@static/gif/successAnimation.gif';
+import classNames from 'classnames';
+import React from 'react';
+import useStyles from './style';
 
 export type ProgressState =
   | 'progress'
@@ -12,14 +12,14 @@ export type ProgressState =
   | 'approvedWithFail'
   | 'success'
   | 'failed'
-  | 'none'
+  | 'none';
 
 interface Props {
-  content: string
-  disabled?: boolean
-  progress: ProgressState
-  onClick: () => void
-  className?: string
+  content: string;
+  disabled?: boolean;
+  progress: ProgressState;
+  onClick: () => void;
+  className?: string;
 }
 
 const AnimatedButton: React.FC<Props> = ({
@@ -29,11 +29,11 @@ const AnimatedButton: React.FC<Props> = ({
   onClick,
   className
 }) => {
-  const { classes } = useStyles()
+  const { classes } = useStyles();
 
   const getMessage = () => {
     if (progress === 'none') {
-      return <p className={classes.buttonContent}>{content}</p>
+      return <p className={classes.buttonContent}>{content}</p>;
     }
 
     if (
@@ -41,28 +41,28 @@ const AnimatedButton: React.FC<Props> = ({
       progress === 'approvedWithSuccess' ||
       progress === 'approvedWithFail'
     ) {
-      return <p className={classes.buttonContent}>In progress..</p>
+      return <p className={classes.buttonContent}>In progress..</p>;
     }
 
     if (progress === 'success') {
-      return <img className={classes.gifContent} src={successGif} />
+      return <img className={classes.gifContent} src={successGif} />;
     }
 
-    return <img className={classes.gifContent} src={errorGif} />
-  }
+    return <img className={classes.gifContent} src={errorGif} />;
+  };
 
   const getClasses = () => {
     if (progress === 'progress') {
-      return `${classes.button} ${classes.backgroundRelease}`
+      return `${classes.button} ${classes.backgroundRelease}`;
     }
     if (progress === 'approvedWithSuccess') {
-      return `${classes.button} ${classes.backgroundApprovedWithSuccess}`
+      return `${classes.button} ${classes.backgroundApprovedWithSuccess}`;
     }
     if (progress === 'approvedWithFail') {
-      return `${classes.button} ${classes.backgroundApprovedWithFail}`
+      return `${classes.button} ${classes.backgroundApprovedWithFail}`;
     }
-    return ''
-  }
+    return '';
+  };
 
   return (
     <Button
@@ -89,7 +89,7 @@ const AnimatedButton: React.FC<Props> = ({
         getMessage()
       )}
     </Button>
-  )
-}
+  );
+};
 
-export default AnimatedButton
+export default AnimatedButton;

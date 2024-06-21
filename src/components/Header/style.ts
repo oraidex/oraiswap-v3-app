@@ -32,6 +32,7 @@ const useStyles = makeStyles()((theme: Theme) => {
       marginRight: 8
     },
     routers: {
+      padding: 4,
       borderRadius: '99px',
       transition: 'left 300ms',
       width: 'fit-content',
