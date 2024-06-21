@@ -58,7 +58,7 @@ export const HeaderWrapper: React.FC = () => {
   return (
     <>
       <Header landing={location.pathname.substring(1)} />
-      <span>{walletAddress}</span>
+      {/* <span>{walletAddress}</span> */}
     </>
   );
 };
