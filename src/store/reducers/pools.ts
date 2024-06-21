@@ -21,6 +21,7 @@ export interface IPoolsStore {
   nearestPoolTicksForPair: { [key in string]: Tick[] }
   isLoadingLatestPoolsForTransaction: boolean
   isLoadingTicksAndTickMaps: boolean
+  isLoadingPoolKeys: boolean
   tickMaps: { [key in string]: string }
 }
 
@@ -79,6 +80,7 @@ export const defaultState: IPoolsStore = {
   nearestPoolTicksForPair: {},
   isLoadingLatestPoolsForTransaction: false,
   isLoadingTicksAndTickMaps: false,
+  isLoadingPoolKeys: false,
   tickMaps: {}
 }
 
@@ -131,6 +133,7 @@ const poolsSlice = createSlice({
     },
     setPoolKeys(state, action: PayloadAction<PoolKey[]>) {
       console.log('setPoolKeys')
+      state.isLoadingPoolKeys = false
       action.payload.map(poolKey => {
         const keyStringified = poolKeyToString(poolKey)
         state.poolKeys[keyStringified] = poolKey
@@ -138,6 +141,7 @@ const poolsSlice = createSlice({
       return state
     },
     getPoolKeys(state) {
+      state.isLoadingPoolKeys = true
       console.log('getPoolKeys')
       return state
     },
@@ -163,10 +167,6 @@ const poolsSlice = createSlice({
       state.isLoadingLatestPoolsForTransaction = true
       return state
     },
-    // setPools(state, action: PayloadAction<{ [key in string]: PoolWithAddress }>) {
-    //   state.pools = action.payload
-    //   return state
-    // },
     setTickMaps(state, action: PayloadAction<updateTickMaps>) {
       console.log('setTickMaps')
       state.tickMaps[poolKeyToString(action.payload.poolKey)] = JSON.stringify(
@@ -218,46 +218,18 @@ const poolsSlice = createSlice({
       state.pools = R.merge(state.pools, newData)
       return state
     },
-    // updateTicks(state, action: PayloadAction<UpdateTicks>) {
-    //   state.poolTicks[action.payload.address][
-    //     state.poolTicks[action.payload.address].findIndex(e => e.index === action.payload.index)
-    //   ] = action.payload.tick
-    // },
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     getAllPoolsForPairData(state, _action: PayloadAction<PairTokens>) {
       console.log('getAllPoolsForPairData')
       state.isLoadingLatestPoolsForTransaction = true
       return state
     },
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    getPoolsDataForList(_state, _action: PayloadAction<ListPoolsRequest>) {
-      console.log('getPoolsDataForList')
-      return _state
-    },
-    // deleteTick(state, action: PayloadAction<DeleteTick>) {
-    //   state.poolTicks[action.payload.address].splice(action.payload.index, 1)
-    // },
-    // updateTickmap(state, action: PayloadAction<UpdateTickmap>) {
-    //   state.tickMaps[action.payload.address].bitmap = action.payload.bitmap
-    // },
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    getPoolsDataForList(_state, _action: PayloadAction<ListPoolsRequest>) {},
     getTicksAndTickMaps(state, _action: PayloadAction<FetchTicksAndTickMaps>) {
       console.log('getTicksAndTickMaps')
       state.isLoadingTicksAndTickMaps = true
       return state
     }
-    // addTicksToArray(state, action: PayloadAction<UpdateTick>) {
-    //   const { index, tickStructure } = action.payload
-    //   if (!state.poolTicks[index]) {
-    //     state.poolTicks[index] = []
-    //   }
-    //   state.poolTicks[index] = [...state.poolTicks[index], ...tickStructure]
-    // },
-    // setNearestTicksForPair(state, action: PayloadAction<UpdateTick>) {
-    //   state.nearestPoolTicksForPair[action.payload.index] = action.payload.tickStructure
-    //   return state
-    // },
-    // getNearestTicksForPair(_state, _action: PayloadAction<FetchTicksAndTickMaps>) {}
   }
 })
 

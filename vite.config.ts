@@ -1,8 +1,8 @@
-import react from '@vitejs/plugin-react-swc'
-import { defineConfig } from 'vite'
-import topLevelAwait from 'vite-plugin-top-level-await'
-import wasm from 'vite-plugin-wasm'
-import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill'
+import react from '@vitejs/plugin-react-swc';
+import { defineConfig } from 'vite';
+import topLevelAwait from 'vite-plugin-top-level-await';
+import wasm from 'vite-plugin-wasm';
+import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -15,7 +15,7 @@ export default defineConfig({
       '@static': '/src/static',
       '@store': '/src/store',
       '@wasm': '/src/wasm',
-      '@skd': '/src/sdk',
+      '@sdk': '/src/sdk',
       '@web3': '/src/web3',
       '@utils': '/src/utils',
       '@/': '/src'
@@ -47,4 +47,4 @@ export default defineConfig({
       ]
     }
   }
-})
+});

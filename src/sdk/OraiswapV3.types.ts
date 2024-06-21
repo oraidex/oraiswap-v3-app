@@ -57,8 +57,8 @@ export type ExecuteMsg = {
     fee_tier: FeeTier;
     init_sqrt_price: SqrtPrice;
     init_tick: number;
-    token_0: Addr;
-    token_1: Addr;
+    token_0: string;
+    token_1: string;
   };
 } | {
   add_fee_tier: {
@@ -106,8 +106,8 @@ export type QueryMsg = {
 } | {
   pool: {
     fee_tier: FeeTier;
-    token_0: Addr;
-    token_1: Addr;
+    token_0: string;
+    token_1: string;
   };
 } | {
   pools: {
@@ -155,8 +155,8 @@ export type QueryMsg = {
   };
 } | {
   pools_for_pair: {
-    token0: Addr;
-    token1: Addr;
+    token_0: string;
+    token_1: string;
   };
 } | {
   quote: {

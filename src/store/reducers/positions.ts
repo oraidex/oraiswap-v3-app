@@ -50,6 +50,7 @@ export interface InitPositionData {
 export interface GetCurrentTicksData {
   poolKey: PoolKey
   isXtoY: boolean
+  fetchTicksAndTickmap?: boolean
   disableLoading?: boolean
 }
 
@@ -82,11 +83,11 @@ export const defaultState: IPositionsStore = {
   lastPage: 1,
   plotTicks: {
     data: [
-      {
-        index: 1,
-        x: 1,
-        y: 1
-      }
+      // {
+      //   index: 1,
+      //   x: 1,
+      //   y: 1
+      // }
     ],
     loading: false
   },
@@ -142,6 +143,7 @@ const positionsSlice = createSlice({
     },
     getCurrentPlotTicks(state, action: PayloadAction<GetCurrentTicksData>) {
       console.log('getCurrentPlotTicks')
+      state.plotTicks.hasError = false
       state.plotTicks.loading = !action.payload.disableLoading
       return state
     },

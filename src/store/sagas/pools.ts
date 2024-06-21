@@ -74,29 +74,9 @@ export function* handleInitPool(action: PayloadAction<PoolKey>): Generator {
 
     const poolKey = newPoolKey(token_x, token_y, fee_tier)
 
-    const initTick = 0
-
     const initSqrtPrice = toSqrtPrice(1, 0)
 
-    const tx = yield* call(createPoolTx, poolKey, initSqrtPrice.toString(), initTick)
-
-    // yield put(
-    //   snackbarsActions.add({
-    //     message: 'Signing transaction...',
-    //     variant: 'pending',
-    //     persist: true,
-    //     key: loaderSigningTx
-    //   })
-    // )
-
-    // const signedTx = yield* call([tx, tx.signAsync], walletAddress, {
-    //   signer: adapter.signer as Signer
-    // })
-
-    // closeSnackbar(loaderSigningTx)
-    // yield put(snackbarsActions.remove(loaderSigningTx))
-
-    // const txResult = yield* call(sendTx, signedTx)
+    const tx = yield* call(createPoolTx, poolKey, initSqrtPrice.toString())
 
     yield put(
       snackbarsActions.add({

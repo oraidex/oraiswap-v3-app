@@ -28,7 +28,6 @@
       "@wasm": ["src/wasm"],
       "@web3/*": ["src/web3/*"],
       "@utils/*": ["src/utils/*"],
-      "@assets/*": ["src/assets/*"],
       "@/*": ["src/*"]
     }
   },

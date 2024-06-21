@@ -5,7 +5,7 @@ import { Button, Grid, Typography } from '@mui/material'
 
 import backIcon from '@static/svg/back-arrow.svg'
 import settingIcon from '@static/svg/settings.svg'
-import { BestTier, PositionOpeningMethod, TokenPriceData } from '@store/consts/static'
+import { BestTier, PositionOpeningMethod, REFRESHER_INTERVAL, TokenPriceData } from '@store/consts/static'
 import {
   PERCENTAGE_DENOMINATOR,
   // PERCENTAGE_DENOMINATOR,
@@ -98,6 +98,8 @@ export interface INewPosition {
   onSlippageChange: (slippage: string) => void
   initialSlippage: string
   poolKey: string
+  onRefresh: () => void
+  // isBalanceLoading: boolean
 }
 
 export const NewPosition: React.FC<INewPosition> = ({
@@ -146,7 +148,9 @@ export const NewPosition: React.FC<INewPosition> = ({
   onSlippageChange,
   initialSlippage,
   poolKey,
-  currentPriceSqrt
+  currentPriceSqrt,
+  onRefresh,
+  // isBalanceLoading
 }) => {
   const { classes } = useStyles()
   const navigate = useNavigate()
@@ -171,6 +175,7 @@ export const NewPosition: React.FC<INewPosition> = ({
   const [concentrationIndex, setConcentrationIndex] = useState(0)
 
   const [minimumSliderIndex, setMinimumSliderIndex] = useState<number>(0)
+  const [refresherTime, setRefresherTime] = React.useState<number>(REFRESHER_INTERVAL)
 
   const concentrationArray = useMemo(
     () =>
@@ -372,6 +377,19 @@ export const NewPosition: React.FC<INewPosition> = ({
 
     return minimumSliderIndex
   }
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (refresherTime > 0 && poolKey !== '') {
+        setRefresherTime(refresherTime - 1)
+      } else {
+        onRefresh()
+        setRefresherTime(REFRESHER_INTERVAL)
+      }
+    }, 1000)
+
+    return () => clearTimeout(timeout)
+  }, [refresherTime, poolKey])
 
   useEffect(() => {
     if (positionOpeningMethod === 'concentration') {
@@ -598,6 +616,7 @@ export const NewPosition: React.FC<INewPosition> = ({
           concentrationIndex={concentrationIndex}
           minimumSliderIndex={minimumSliderIndex}
           positionOpeningMethod={positionOpeningMethod}
+          // isBalanceLoading={isBalanceLoading}
         />
 
         {isCurrentPoolExisting ||
