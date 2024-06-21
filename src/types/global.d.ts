@@ -1,9 +1,13 @@
-import type { Keplr } from '@keplr-wallet/types'
+import type { Keplr } from '@keplr-wallet/types';
 
 declare global {
   interface Window {
-    keplr: Keplr
+    keplr: Keplr;
+    owallet?: Keplr;
+    Keplr?: any;
+    walletType?: string;
+    oraiAddr?: string;
   }
 
-  type Network = 'Local' | 'Testnet' | 'Mainnet'
+  type Network = 'Local' | 'Testnet' | 'Mainnet';
 }
