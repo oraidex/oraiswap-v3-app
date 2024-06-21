@@ -46,7 +46,8 @@ export const Header: React.FC<IHeader> = ({ landing }) => {
           item
           className={classes.routers}
           wrap='nowrap'
-          sx={{ display: { xs: 'none', lg: 'block' } }}>
+          // sx={{ display: { xs: 'none', lg: 'block' } }}
+        >
           {routes.map(path => (
             <Link key={`path-${path.link}`} to={`/${path.link}`} className={classes.link}>
               <NavbarButton
