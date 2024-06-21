@@ -140,8 +140,8 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   },
   titleValue: {
     ...typography.heading3,
-    color: colors.oraidex.text
-    // fontFamily: 'Mukta'
+    color: colors.oraidex.text,
+    fontFamily: 'IBM Plex Sans'
   },
   violetButton: {
     background: colors.oraidex.greenLinearGradientOpacity,

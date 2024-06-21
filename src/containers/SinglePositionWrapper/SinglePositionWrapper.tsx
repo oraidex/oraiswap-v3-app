@@ -15,7 +15,7 @@ import {
   printBigint
 } from '@store/consts/utils';
 import { actions as poolsActions } from '@store/reducers/pools';
-import { TickPlotPositionData, actions } from '@store/reducers/positions';
+import { actions } from '@store/reducers/positions';
 import { actions as snackbarsActions } from '@store/reducers/snackbars';
 import { Status } from '@store/reducers/wallet';
 import { networkType } from '@store/selectors/connection';

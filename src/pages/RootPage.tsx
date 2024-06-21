@@ -1,5 +1,4 @@
 import EventsHandlers from '@containers/EventHandlers/index';
-import FooterWrapper from '@containers/FooterWrapper';
 import HeaderWrapper from '@containers/HeaderWrapper/HeaderWrapper';
 import { Status, actions as oraichainConnectionActions } from '@store/reducers/connection';
 import { actions } from '@store/reducers/positions';
@@ -44,7 +43,6 @@ const RootPage: React.FC = () => {
       <div id={toBlur}>
         <HeaderWrapper />
         <Outlet />
-        {/* <FooterWrapper /> */}
       </div>
     </>
   );

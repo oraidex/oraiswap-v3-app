@@ -190,8 +190,7 @@ export const theme = createTheme({
     }
   },
   typography: {
-    fontFamily: 'Mukta',
-    fontWeightRegular: 600,
+    fontWeightRegular: 500,
     h1: typography.heading1,
     h2: typography.heading2,
     h3: typography.heading3,

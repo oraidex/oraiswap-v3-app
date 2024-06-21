@@ -1,61 +1,60 @@
-import { useSigningClient } from '../../../src/contexts/cosmwasm'
-import { PositionsList } from '@components/PositionsList/PositionsList'
-import { FAUCET_LIST_TOKEN, POSITIONS_PER_PAGE } from '@store/consts/static'
+import { PositionsList } from '@components/PositionsList/PositionsList';
+import { FAUCET_LIST_TOKEN, POSITIONS_PER_PAGE } from '@store/consts/static';
 import {
   PERCENTAGE_SCALE,
   calcYPerXPriceByTickIndex,
   poolKeyToString,
   printBigint
-} from '@store/consts/utils'
-import { actions } from '@store/reducers/positions'
-import { Status } from '@store/reducers/wallet'
+} from '@store/consts/utils';
+import { actions } from '@store/reducers/positions';
+import { Status } from '@store/reducers/wallet';
 import {
   PoolWithPoolKeyAndIndex,
   PositionWithPoolData,
   isLoadingPositionsList,
   lastPageSelector
-} from '@store/selectors/positions'
-import { address, status } from '@store/selectors/wallet'
-import SingletonOraiswapV3 from '@store/services/contractSingleton'
-import { openWalletSelectorModal } from '@utils/web3/selector'
-import React, { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
+} from '@store/selectors/positions';
+import { address, status } from '@store/selectors/wallet';
+import SingletonOraiswapV3 from '@store/services/contractSingleton';
+import { openWalletSelectorModal } from '@utils/web3/selector';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { useSigningClient } from '../../../src/contexts/cosmwasm';
 
 export const WrappedPositionsList: React.FC = () => {
-  const walletAddress = useSelector(address)
-  // const list = useSelector(positionsWithPoolsData)
-  const [list, setList] = useState([])
-  const isLoading = useSelector(isLoadingPositionsList)
-  const lastPage = useSelector(lastPageSelector)
-  const walletStatus = useSelector(status)
-  const navigate = useNavigate()
-  const dispatch = useDispatch()
-  const { signingClient } = useSigningClient()
+  const walletAddress = useSelector(address);
+  const [list, setList] = useState([]);
+  const isLoading = useSelector(isLoadingPositionsList);
+  const lastPage = useSelector(lastPageSelector);
+  const walletStatus = useSelector(status);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { signingClient } = useSigningClient();
 
   useEffect(() => {
     (async () => {
       if (signingClient && walletAddress && !list.length) {
-        SingletonOraiswapV3.load(signingClient, walletAddress)
-        const pools = await SingletonOraiswapV3.getAllPosition()
-        const poolsByKey: Record<string, PoolWithPoolKeyAndIndex> = {}
+        SingletonOraiswapV3.load(signingClient, walletAddress);
+        const pools = await SingletonOraiswapV3.getAllPosition();
+        const poolsByKey: Record<string, PoolWithPoolKeyAndIndex> = {};
         pools.forEach((pool: any, index: number) => {
           poolsByKey[poolKeyToString(pool.pool_key)] = {
             ...pool,
             poolIndex: index
-          }
-        })
+          };
+        });
 
         const data = pools.map((position: any, index: number) => {
           const tokenX = FAUCET_LIST_TOKEN.find(
             token => token.address === position.pool_key.token_x
-          )
+          );
           const tokenY = FAUCET_LIST_TOKEN.find(
             token => token.address === position.pool_key.token_y
-          )
+          );
 
           if (!tokenX || !tokenY) {
-            throw new Error(`Token not found for position: ${position}`)
+            throw new Error(`Token not found for position: ${position}`);
           }
 
           return {
@@ -64,37 +63,37 @@ export const WrappedPositionsList: React.FC = () => {
             tokenX,
             tokenY,
             positionIndex: index
-          }
-        })
-        dispatch(actions.setPositionsList(data))
-        setList(data)
+          };
+        });
+        dispatch(actions.setPositionsList(data));
+        setList(data);
       }
-    })()
-  }, [walletAddress])
+    })();
+  }, [walletAddress]);
 
-  const [value, setValue] = useState<string>('')
+  const [value, setValue] = useState<string>('');
 
   const handleSearchValue = (value: string) => {
-    setValue(value)
-  }
+    setValue(value.toLowerCase());
+  };
 
   const setLastPage = (page: number) => {
-    dispatch(actions.setLastPage(page))
-  }
+    dispatch(actions.setLastPage(page));
+  };
 
   useEffect(() => {
     if (list.length === 0) {
-      setLastPage(1)
+      setLastPage(1);
     }
 
     if (lastPage > Math.ceil(list.length / POSITIONS_PER_PAGE)) {
-      setLastPage(lastPage - 1)
+      setLastPage(lastPage - 1);
     }
-  }, [list])
+  }, [list]);
 
   const handleRefresh = () => {
-    dispatch(actions.getPositionsList())
-  }
+    dispatch(actions.getPositionsList());
+  };
 
   const data = list
     .map((position: PositionWithPoolData, index) => {
@@ -106,45 +105,45 @@ export const WrappedPositionsList: React.FC = () => {
           position.tokenX.decimals,
           position.tokenY.decimals
         )
-      )
+      );
       const upperPrice = calcYPerXPriceByTickIndex(
         position.upper_tick_index,
         position.tokenX.decimals,
         position.tokenY.decimals
-      )
+      );
 
-      const min = Math.min(lowerPrice, upperPrice)
-      const max = Math.max(lowerPrice, upperPrice)
+      const min = Math.min(lowerPrice, upperPrice);
+      const max = Math.max(lowerPrice, upperPrice);
 
-      let tokenXLiq: any, tokenYLiq: any
+      let tokenXLiq: any, tokenYLiq: any;
 
-      const x = 0n
-      const y = 0n
+      const x = 0n;
+      const y = 0n;
 
       if (position.poolData) {
         // ;[x, y] = calculateTokenAmounts(position.poolData, position)
       }
 
       try {
-        tokenXLiq = +printBigint(x, position.tokenX.decimals)
+        tokenXLiq = +printBigint(x, position.tokenX.decimals);
       } catch (error) {
-        tokenXLiq = 0
+        tokenXLiq = 0;
       }
 
       try {
-        tokenYLiq = +printBigint(y, position.tokenY.decimals)
+        tokenYLiq = +printBigint(y, position.tokenY.decimals);
       } catch (error) {
-        tokenYLiq = 0
+        tokenYLiq = 0;
       }
 
       const currentPrice = calcYPerXPriceByTickIndex(
         position.poolData?.pool?.current_tick_index ?? 0,
         position.tokenX.decimals,
         position.tokenY.decimals
-      )
+      );
 
-      const valueX = tokenXLiq + tokenYLiq / currentPrice
-      const valueY = tokenYLiq + tokenXLiq * currentPrice
+      const valueX = tokenXLiq + tokenYLiq / currentPrice;
+      const valueY = tokenYLiq + tokenXLiq * currentPrice;
 
       return {
         tokenXName: position.tokenX.symbol,
@@ -160,15 +159,16 @@ export const WrappedPositionsList: React.FC = () => {
         valueY,
         address: walletAddress,
         id: index,
-        isActive: currentPrice >= min && currentPrice <= max
-      }
+        isActive: currentPrice >= min && currentPrice <= max,
+        tokenXId: position.tokenX.coingeckoId
+      };
     })
     .filter(item => {
       return (
         item.tokenXName.toLowerCase().includes(value) ||
         item.tokenYName.toLowerCase().includes(value)
-      )
-    })
+      );
+    });
 
   return (
     <PositionsList
@@ -178,7 +178,7 @@ export const WrappedPositionsList: React.FC = () => {
       searchSetValue={handleSearchValue}
       handleRefresh={handleRefresh}
       onAddPositionClick={() => {
-        navigate('/newPosition')
+        navigate('/newPosition');
       }}
       data={data}
       loading={isLoading}
@@ -189,7 +189,7 @@ export const WrappedPositionsList: React.FC = () => {
       }}
       itemsPerPage={POSITIONS_PER_PAGE}
     />
-  )
-}
+  );
+};
 
-export default WrappedPositionsList
+export default WrappedPositionsList;
