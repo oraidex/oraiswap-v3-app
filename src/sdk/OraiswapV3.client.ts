@@ -8,6 +8,8 @@ import { CosmWasmClient, SigningCosmWasmClient, ExecuteResult } from '@cosmjs/co
 import { Coin, StdFee } from '@cosmjs/amino'
 import {
   Percentage,
+  InstantiateMsg,
+  ExecuteMsg,
   Addr,
   Liquidity,
   SqrtPrice,
@@ -15,14 +17,20 @@ import {
   PoolKey,
   FeeTier,
   SwapHop,
+  QueryMsg,
+  MigrateMsg,
   Boolean,
   ArrayOfFeeTier,
   ArrayOfLiquidityTick,
+  LiquidityTick,
   Uint32,
+  FeeGrowth,
   Pool,
   ArrayOfPoolWithPoolKey,
+  PoolWithPoolKey,
   Position,
   ArrayOfPositionTick,
+  PositionTick,
   ArrayOfPosition,
   QuoteResult,
   Tick,
@@ -48,8 +56,8 @@ export interface OraiswapV3ReadOnlyInterface {
     token1
   }: {
     feeTier: FeeTier
-    token0: Addr
-    token1: Addr
+    token0: string
+    token1: string
   }) => Promise<Pool>
   pools: ({
     limit,
@@ -100,8 +108,8 @@ export interface OraiswapV3ReadOnlyInterface {
     token0,
     token1
   }: {
-    token0: Addr
-    token1: Addr
+    token0: string
+    token1: string
   }) => Promise<ArrayOfPoolWithPoolKey>
   quote: ({
     amount,
@@ -193,8 +201,8 @@ export class OraiswapV3QueryClient implements OraiswapV3ReadOnlyInterface {
     token1
   }: {
     feeTier: FeeTier
-    token0: Addr
-    token1: Addr
+    token0: string
+    token1: string
   }): Promise<Pool> => {
     return this.client.queryContractSmart(this.contractAddress, {
       pool: {
@@ -315,13 +323,13 @@ export class OraiswapV3QueryClient implements OraiswapV3ReadOnlyInterface {
     token0,
     token1
   }: {
-    token0: Addr
-    token1: Addr
+    token0: string
+    token1: string
   }): Promise<ArrayOfPoolWithPoolKey> => {
     return this.client.queryContractSmart(this.contractAddress, {
       pools_for_pair: {
-        token0,
-        token1
+        token_0: token0,
+        token_1: token1
       }
     })
   }
@@ -495,8 +503,8 @@ export interface OraiswapV3Interface extends OraiswapV3ReadOnlyInterface {
       feeTier: FeeTier
       initSqrtPrice: SqrtPrice
       initTick: number
-      token0: Addr
-      token1: Addr
+      token0: string
+      token1: string
     },
     _fee?: number | StdFee | 'auto',
     _memo?: string,
@@ -807,8 +815,8 @@ export class OraiswapV3Client extends OraiswapV3QueryClient implements OraiswapV
       feeTier: FeeTier
       initSqrtPrice: SqrtPrice
       initTick: number
-      token0: Addr
-      token1: Addr
+      token0: string
+      token1: string
     },
     _fee: number | StdFee | 'auto' = 'auto',
     _memo?: string,
