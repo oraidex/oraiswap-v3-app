@@ -9,9 +9,10 @@ export const useLabelStyles = makeStyles()(() => {
       fontWeight: 400,
       lineHeight: '20px',
       letterSpacing: '-0.03px',
-      textAlign: 'right',
+      textAlign: 'left',
       color: `${colors.oraidex.textGrey} !important`,
-      paddingRight: 7
+      paddingRight: 7,
+      paddingTop: 8
     },
     clipboardIcon: {
       width: 15,

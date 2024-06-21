@@ -1,13 +1,13 @@
-import React from 'react'
-import useStyles from './style'
-import { Grid, Typography } from '@mui/material'
-import { formatNumbers, showPrefix } from '@store/consts/utils'
+import React from 'react';
+import useStyles from './style';
+import { Grid, Typography } from '@mui/material';
+import { formatNumbers, showPrefix } from '@store/consts/utils';
 
 interface ILiquidationRangeInfo {
-  label: string
-  amount: number
-  tokenX: string
-  tokenY: string
+  label: string;
+  amount: number;
+  tokenX: string;
+  tokenY: string;
 }
 
 const LiquidationRangeInfo: React.FC<ILiquidationRangeInfo> = ({
@@ -16,7 +16,7 @@ const LiquidationRangeInfo: React.FC<ILiquidationRangeInfo> = ({
   tokenX,
   tokenY
 }) => {
-  const { classes } = useStyles()
+  const { classes } = useStyles();
   return (
     <Grid>
       <Grid className={classes.infoTypeSwap}>
@@ -31,12 +31,12 @@ const LiquidationRangeInfo: React.FC<ILiquidationRangeInfo> = ({
             {showPrefix(amount)}
           </Typography>
           <Typography component='p' className={classes.infoSwapToken}>
-            {tokenY} per {tokenX}
+            {tokenY} / {tokenX}
           </Typography>
         </Grid>
       </Grid>
     </Grid>
-  )
-}
+  );
+};
 
-export default LiquidationRangeInfo
+export default LiquidationRangeInfo;
