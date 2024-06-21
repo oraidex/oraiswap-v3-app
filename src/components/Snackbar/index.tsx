@@ -1,34 +1,34 @@
-import React from 'react'
-import { CustomContentProps, SnackbarProvider } from 'notistack'
-import LoadingSnackbar from './LoadingSnackbar'
-import { theme } from '@static/theme'
-import { useMediaQuery } from '@mui/system'
-import { StyledMaterialDesignContent } from './style'
+import React from 'react';
+import { CustomContentProps, SnackbarProvider } from 'notistack';
+import LoadingSnackbar from './LoadingSnackbar';
+import { theme } from '@static/theme';
+import { useMediaQuery } from '@mui/system';
+import { StyledMaterialDesignContent } from './style';
 
-type ExtraVariants = 'pending'
+type ExtraVariants = 'pending';
 
-export type SnackbarVariant = ExtraVariants
+export type SnackbarVariant = ExtraVariants;
 
 interface CustomProps {
-  txid?: string
+  txid?: string;
 }
 
 export interface SnackbarSnackbarProps extends CustomContentProps, CustomProps {}
 
 declare module 'notistack' {
   interface VariantOverrides {
-    pending: true
+    pending: true;
   }
   interface OptionsObject extends CustomProps {}
 }
 
 interface ISnackbarProps {
-  children: JSX.Element
-  maxSnack?: number
+  children: JSX.Element;
+  maxSnack?: number;
 }
 
 const Snackbar: React.FC<ISnackbarProps> = ({ maxSnack, children }) => {
-  const isExSmall = useMediaQuery(theme.breakpoints.down('xs'))
+  const isExSmall = useMediaQuery(theme.breakpoints.down('xs'));
 
   return (
     <SnackbarProvider
@@ -36,8 +36,8 @@ const Snackbar: React.FC<ISnackbarProps> = ({ maxSnack, children }) => {
       maxSnack={isExSmall ? 5 : maxSnack}
       anchorOrigin={
         isExSmall
-          ? { vertical: 'top', horizontal: 'left' }
-          : { vertical: 'bottom', horizontal: 'left' }
+          ? { vertical: 'top', horizontal: 'right' }
+          : { vertical: 'top', horizontal: 'right' }
       }
       Components={{
         success: StyledMaterialDesignContent,
@@ -48,6 +48,6 @@ const Snackbar: React.FC<ISnackbarProps> = ({ maxSnack, children }) => {
       }}>
       {children}
     </SnackbarProvider>
-  )
-}
-export default Snackbar
+  );
+};
+export default Snackbar;
