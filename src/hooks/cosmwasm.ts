@@ -100,7 +100,6 @@ export const useSigningCosmWasmClient = (): ISigningCosmWasmClientContext => {
         dispatch(walletActions.setAddress(address));
 
         dispatch(walletActions.setStatus(Status.Initialized));
-        SingletonOraiswapV3.load(client, walletAddress);
         dispatch(poolActions.getPoolKeys());
         dispatch(positionActions.getPositionsList());
       }

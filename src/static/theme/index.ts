@@ -27,7 +27,8 @@ export const colors = {
   },
   green: {
     main: '#00F9BB',
-    button: '#40BFA0',
+    // button: '#40BFA0',
+    button: '#aee67f',
     hover: 'rgba(0,249,187,0.15)',
     pastel: '#8AF7E4',
     snackbar: '#4BB724',
@@ -183,7 +184,7 @@ export const theme = createTheme({
     },
     text: {
       primary: '#FFFFFF',
-      secondary: '#030313'
+      secondary: '#595B57'
     },
     error: {
       main: '#E15757'

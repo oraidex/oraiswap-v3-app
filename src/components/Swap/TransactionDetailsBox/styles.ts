@@ -1,33 +1,28 @@
-import { colors, typography } from '@static/theme'
-import { makeStyles } from 'tss-react/mui'
+import { colors, typography } from '@static/theme';
+import { makeStyles } from 'tss-react/mui';
 
 export const useStyles = makeStyles<{ open: boolean }>()((_theme, { open }) => ({
   wrapper: {
-    borderRadius: 10,
     padding: 0,
-    background: colors.oraidex.newDark,
     overflow: 'hidden',
     transition: 'max-height 300ms',
     maxHeight: open ? 160 : 0,
     marginBottom: 16
   },
-  innerWrapper: {
-    padding: 16,
-    minHeight: 132
-  },
+  innerWrapper: {},
   row: {
-    '&:not(:last-child)': {
-      marginBottom: 8
-    }
+    marginTop: 8
   },
   label: {
-    ...typography.body1,
-    color: colors.white.main,
+    ...typography.caption2,
+    color: colors.oraidex.neutralText,
+    lineHeight: '21px',
     marginRight: 3
   },
   value: {
-    ...typography.body2,
-    color: colors.white.main
+    ...typography.caption2,
+    lineHeight: '21px',
+    color: colors.oraidex.text
   },
   loadingContainer: {
     width: 20,
@@ -38,4 +33,4 @@ export const useStyles = makeStyles<{ open: boolean }>()((_theme, { open }) => (
     width: 15,
     height: 15
   }
-}))
+}));

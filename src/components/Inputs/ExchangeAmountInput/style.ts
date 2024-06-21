@@ -1,6 +1,6 @@
-import { Theme } from '@mui/material'
-import { colors, typography } from '@static/theme'
-import { makeStyles } from 'tss-react/mui'
+import { Theme } from '@mui/material';
+import { colors, typography } from '@static/theme';
+import { makeStyles } from 'tss-react/mui';
 
 export const useStyles = makeStyles<{ walletDisconnected: boolean }>()(
   (theme: Theme, { walletDisconnected }) => ({
@@ -17,21 +17,22 @@ export const useStyles = makeStyles<{ walletDisconnected: boolean }>()(
       }
     },
     maxButton: {
-      color: colors.oraidex.componentBcg,
-      ...typography.tiny2,
+      color: colors.oraidex.greenLinearGradient,
+      ...typography.body4,
       borderRadius: 4,
       width: 26,
       minWidth: 26,
       height: 14,
-      textTransform: 'none',
       marginLeft: 4,
-      background: ' rgba(46, 224, 154, 0.8)',
-      lineHeight: '14px',
+      fontSize: 12,
+      background: 'none !important',
+      outline: 'none',
+      boxShadow: 'none',
 
       '&:hover': {
-        background: 'none',
-        backgroundColor: colors.oraidex.green,
-        boxShadow: '0px 0px 20px -10px white'
+        background: 'none !important',
+        // boxShadow: '0px 0px 20px -10px white'
+        opacity: 0.7
       },
       [theme.breakpoints.down('sm')]: {
         width: 26,
@@ -70,7 +71,7 @@ export const useStyles = makeStyles<{ walletDisconnected: boolean }>()(
       marginRight: 10
     },
     BalanceTypography: {
-      color: colors.oraidex.lightGrey,
+      color: colors.oraidex.neutralText,
       ...typography.caption2,
       marginRight: 3,
       overflow: 'hidden',
@@ -79,8 +80,11 @@ export const useStyles = makeStyles<{ walletDisconnected: boolean }>()(
       display: 'flex',
       alignItems: 'center'
     },
+    bal: {
+      color: colors.oraidex.text
+    },
     walletBalanace: {
-      color: colors.oraidex.lightGrey
+      color: colors.oraidex.neutralText
     },
     exchangeContainer: {
       padding: `10px 15px ${walletDisconnected ? '10px' : '0'} 15px `,
@@ -153,7 +157,7 @@ export const useStyles = makeStyles<{ walletDisconnected: boolean }>()(
     },
     caption2: {
       ...typography.caption2,
-      color: colors.oraidex.lightHover,
+      color: colors.oraidex.neutralText,
       overflow: 'hidden',
       whiteSpace: 'nowrap',
       textOverflow: 'ellipsis',
@@ -162,8 +166,8 @@ export const useStyles = makeStyles<{ walletDisconnected: boolean }>()(
       }
     },
     bottom: {
-      paddingInline: 15
+      padding: 12
     }
   })
-)
-export default useStyles
+);
+export default useStyles;

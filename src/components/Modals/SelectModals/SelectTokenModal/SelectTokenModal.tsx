@@ -1,10 +1,10 @@
-import React, { useMemo, useState, useRef, useCallback } from 'react'
-import CustomScrollbar from '../CustomScrollbar'
-import searchIcon from '@static/svg/lupa.svg'
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline'
-import { FixedSizeList as List } from 'react-window'
-import useStyles from '../style'
-import { theme } from '@static/theme'
+import React, { useMemo, useState, useRef, useCallback } from 'react';
+import CustomScrollbar from '../CustomScrollbar';
+import searchIcon from '@static/svg/lupa.svg';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import { FixedSizeList as List } from 'react-window';
+import useStyles from '../style';
+import { theme } from '@static/theme';
 
 import {
   Box,
@@ -16,60 +16,60 @@ import {
   Popover,
   Typography,
   useMediaQuery
-} from '@mui/material'
-import { FormatNumberThreshold, formatNumbers, printBigint, showPrefix } from '@store/consts/utils'
-import AddTokenModal from '@components/Modals/AddTokenModal/AddTokenModal'
-import { SwapToken } from '@store/selectors/wallet'
+} from '@mui/material';
+import { FormatNumberThreshold, formatNumbers, printBigint, showPrefix } from '@store/consts/utils';
+import AddTokenModal from '@components/Modals/AddTokenModal/AddTokenModal';
+import { SwapToken } from '@store/selectors/wallet';
 
 export interface ISelectTokenModal {
-  tokens: SwapToken[]
-  commonTokens: string[]
-  open: boolean
-  handleClose: () => void
-  anchorEl: HTMLButtonElement | null
-  centered?: boolean
-  onSelect: (index: number) => void
-  hideBalances?: boolean
-  handleAddToken: (address: string) => void
-  initialHideUnknownTokensValue: boolean
-  onHideUnknownTokensChange: (val: boolean) => void
+  tokens: SwapToken[];
+  commonTokens: string[];
+  open: boolean;
+  handleClose: () => void;
+  anchorEl: HTMLButtonElement | null;
+  centered?: boolean;
+  onSelect: (index: number) => void;
+  hideBalances?: boolean;
+  handleAddToken: (address: string) => void;
+  initialHideUnknownTokensValue: boolean;
+  onHideUnknownTokensChange: (val: boolean) => void;
 }
 
 interface IScroll {
-  onScroll: (e: React.UIEvent<HTMLElement>) => void
+  onScroll: (e: React.UIEvent<HTMLElement>) => void;
   forwardedRef:
     | ((instance: HTMLElement | null) => void)
     | React.MutableRefObject<HTMLElement | null>
-    | null
-  children: React.ReactNode
+    | null;
+  children: React.ReactNode;
 }
 
 const Scroll: React.FC<IScroll> = ({ onScroll, forwardedRef, children }) => {
   const refSetter = useCallback(
     (scrollbarsRef: any) => {
       if (forwardedRef === null || !(forwardedRef instanceof Function)) {
-        return
+        return;
       }
 
       if (scrollbarsRef) {
-        forwardedRef(scrollbarsRef.view)
+        forwardedRef(scrollbarsRef.view);
       } else {
-        forwardedRef(null)
+        forwardedRef(null);
       }
     },
     [forwardedRef]
-  )
+  );
 
   return (
     <CustomScrollbar ref={refSetter} style={{ overflow: 'hidden' }} onScroll={onScroll}>
       {children}
     </CustomScrollbar>
-  )
-}
+  );
+};
 
 const CustomScrollbarsVirtualList = React.forwardRef<HTMLElement, IScroll>((props, ref) => (
   <Scroll {...props} forwardedRef={ref} />
-))
+));
 
 export const SelectTokenModal: React.FC<ISelectTokenModal> = ({
   tokens,
@@ -84,15 +84,15 @@ export const SelectTokenModal: React.FC<ISelectTokenModal> = ({
   initialHideUnknownTokensValue,
   onHideUnknownTokensChange
 }) => {
-  const { classes } = useStyles()
-  const isXs = useMediaQuery(theme.breakpoints.down('xs'))
+  const { classes } = useStyles();
+  const isXs = useMediaQuery(theme.breakpoints.down('xs'));
 
-  const [value, setValue] = useState<string>('')
+  const [value, setValue] = useState<string>('');
 
-  const [isAddOpen, setIsAddOpen] = useState(false)
-  const [hideUnknown, setHideUnknown] = useState(initialHideUnknownTokensValue)
+  const [isAddOpen, setIsAddOpen] = useState(false);
+  const [hideUnknown, setHideUnknown] = useState(initialHideUnknownTokensValue);
 
-  const outerRef = useRef<HTMLElement>(null)
+  const outerRef = useRef<HTMLElement>(null);
 
   const tokensWithIndexes = useMemo(
     () =>
@@ -102,7 +102,7 @@ export const SelectTokenModal: React.FC<ISelectTokenModal> = ({
         strAddress: token.assetAddress.toString()
       })),
     [tokens]
-  )
+  );
 
   const commonTokensList = useMemo(
     () =>
@@ -110,7 +110,7 @@ export const SelectTokenModal: React.FC<ISelectTokenModal> = ({
         ({ assetAddress }) => commonTokens.findIndex(key => key === assetAddress) !== -1
       ),
     [tokensWithIndexes, commonTokens]
-  )
+  );
 
   const filteredTokens = useMemo(() => {
     const list = tokensWithIndexes.filter(token => {
@@ -118,37 +118,37 @@ export const SelectTokenModal: React.FC<ISelectTokenModal> = ({
         token.symbol.toLowerCase().includes(value.toLowerCase()) ||
         token.name.toLowerCase().includes(value.toLowerCase()) ||
         token.strAddress.includes(value)
-      )
-    })
+      );
+    });
     const sorted = list.sort((a, b) => {
-      const aBalance = +printBigint(a.balance, a.decimals)
-      const bBalance = +printBigint(b.balance, b.decimals)
+      const aBalance = +printBigint(a.balance, a.decimals);
+      const bBalance = +printBigint(b.balance, b.decimals);
       if ((aBalance === 0 && bBalance === 0) || (aBalance > 0 && bBalance > 0)) {
         if (value.length) {
           if (
             a.symbol.toLowerCase().startsWith(value.toLowerCase()) &&
             !b.symbol.toLowerCase().startsWith(value.toLowerCase())
           ) {
-            return -1
+            return -1;
           }
           if (
             b.symbol.toLowerCase().startsWith(value.toLowerCase()) &&
             !a.symbol.toLowerCase().startsWith(value.toLowerCase())
           ) {
-            return 1
+            return 1;
           }
         }
-        return a.symbol.toLowerCase().localeCompare(b.symbol.toLowerCase())
+        return a.symbol.toLowerCase().localeCompare(b.symbol.toLowerCase());
       }
-      return aBalance === 0 ? 1 : -1
-    })
-    return list // TODO delete this line
-    return hideUnknown ? sorted.filter(token => !token.isUnknown) : sorted
-  }, [value, tokensWithIndexes, hideUnknown])
+      return aBalance === 0 ? 1 : -1;
+    });
+    return list; // TODO delete this line
+    return hideUnknown ? sorted.filter(token => !token.isUnknown) : sorted;
+  }, [value, tokensWithIndexes, hideUnknown]);
 
   const searchToken = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setValue(e.target.value)
-  }
+    setValue(e.target.value);
+  };
 
   const thresholds = (decimals: number): FormatNumberThreshold[] => [
     {
@@ -182,7 +182,7 @@ export const SelectTokenModal: React.FC<ISelectTokenModal> = ({
       decimals: 2,
       divider: 1000000000
     }
-  ]
+  ];
 
   return (
     <>
@@ -203,7 +203,8 @@ export const SelectTokenModal: React.FC<ISelectTokenModal> = ({
         }}>
         <Grid container className={classes.container}>
           <Grid className={classes.selectTokenHeader}>
-            <Typography component='h1'>Select a token</Typography>
+            <div className={classes.headerLeft}></div>
+            <Typography component='h1'>Select A Token</Typography>
             <Button className={classes.selectTokenClose} onClick={handleClose}></Button>
           </Grid>
           <Grid
@@ -221,7 +222,7 @@ export const SelectTokenModal: React.FC<ISelectTokenModal> = ({
               />
               <CardMedia image={searchIcon} className={classes.inputIcon} />
             </Grid>
-            <AddCircleOutlineIcon className={classes.addIcon} onClick={() => setIsAddOpen(true)} />
+            {/* <AddCircleOutlineIcon className={classes.addIcon} onClick={() => setIsAddOpen(true)} /> */}
           </Grid>
           <Grid container>
             <Grid className={classes.commonTokensList}>
@@ -230,9 +231,9 @@ export const SelectTokenModal: React.FC<ISelectTokenModal> = ({
                   className={classes.commonTokenItem}
                   key={token.symbol}
                   onClick={() => {
-                    onSelect(token.index)
-                    setValue('')
-                    handleClose()
+                    onSelect(token.index);
+                    setValue('');
+                    handleClose();
                   }}>
                   <img className={classes.commonTokenIcon} src={token.logoURI} />
                   <Typography component='p'>{token.symbol}</Typography>
@@ -246,8 +247,8 @@ export const SelectTokenModal: React.FC<ISelectTokenModal> = ({
                 <Checkbox
                   checked={hideUnknown}
                   onChange={e => {
-                    setHideUnknown(e.target.checked)
-                    onHideUnknownTokensChange(e.target.checked)
+                    setHideUnknown(e.target.checked);
+                    onHideUnknownTokensChange(e.target.checked);
                   }}
                   name='hideUnknown'
                 />
@@ -264,8 +265,8 @@ export const SelectTokenModal: React.FC<ISelectTokenModal> = ({
               outerElementType={CustomScrollbarsVirtualList}
               outerRef={outerRef}>
               {({ index, style }: { index: number; style: React.CSSProperties }) => {
-                const token = filteredTokens[index]
-                const tokenBalance = printBigint(token.balance, token.decimals)
+                const token = filteredTokens[index];
+                const tokenBalance = printBigint(token.balance, token.decimals);
 
                 return (
                   <Grid
@@ -273,15 +274,15 @@ export const SelectTokenModal: React.FC<ISelectTokenModal> = ({
                     container
                     style={{
                       ...style,
-                      width: '90%',
-                      height: 40
+                      width: '100%'
+                      // height: 40
                     }}
                     alignItems='center'
                     wrap='nowrap'
                     onClick={() => {
-                      onSelect(token.index)
-                      setValue('')
-                      handleClose()
+                      onSelect(token.index);
+                      setValue('');
+                      handleClose();
                     }}>
                     <img className={classes.tokenIcon} src={token.logoURI} loading='lazy' />{' '}
                     <Grid container className={classes.tokenContainer}>
@@ -298,7 +299,7 @@ export const SelectTokenModal: React.FC<ISelectTokenModal> = ({
                       </Typography>
                     ) : null}
                   </Grid>
-                )
+                );
               }}
             </List>
           </Box>
@@ -308,11 +309,11 @@ export const SelectTokenModal: React.FC<ISelectTokenModal> = ({
         open={isAddOpen}
         handleClose={() => setIsAddOpen(false)}
         addToken={(address: string) => {
-          handleAddToken(address)
-          setIsAddOpen(false)
+          handleAddToken(address);
+          setIsAddOpen(false);
         }}
       />
     </>
-  )
-}
-export default SelectTokenModal
+  );
+};
+export default SelectTokenModal;

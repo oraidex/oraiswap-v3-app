@@ -1,39 +1,39 @@
-import Select from '@components/Inputs/Select/Select'
-import { OutlinedButton } from '@components/OutlinedButton/OutlinedButton'
-import { Grid, Input, Tooltip, Typography } from '@mui/material'
+import Select from '@components/Inputs/Select/Select';
+import { OutlinedButton } from '@components/OutlinedButton/OutlinedButton';
+import { Grid, Input, Tooltip, Typography } from '@mui/material';
 
-import loadingAnimation from '@static/gif/loading.gif'
-import { FormatNumberThreshold, formatNumbers, showPrefix } from '@store/consts/utils'
-import { SwapToken } from '@store/selectors/wallet'
-import classNames from 'classnames'
-import React, { CSSProperties, useRef } from 'react'
-import useStyles from './style'
+import loadingAnimation from '@static/gif/loading.gif';
+import { FormatNumberThreshold, formatNumbers, showPrefix } from '@store/consts/utils';
+import { SwapToken } from '@store/selectors/wallet';
+import classNames from 'classnames';
+import React, { CSSProperties, useRef } from 'react';
+import useStyles from './style';
 
 interface IProps {
-  setValue: (value: string) => void
-  value?: string
-  error?: string | null
-  className?: string
-  decimal: number
-  placeholder?: string
-  style?: CSSProperties
-  onMaxClick: () => void
-  current: SwapToken | null
-  tokens: SwapToken[]
-  onSelect: (index: number) => void
-  disabled: boolean
-  balance?: string
-  hideBalances?: boolean
-  handleAddToken: (address: string) => void
-  commonTokens: string[]
-  limit?: number
-  initialHideUnknownTokensValue: boolean
-  onHideUnknownTokensChange: (val: boolean) => void
-  percentageChange?: number
-  tokenPrice?: number
-  priceLoading?: boolean
-  isBalanceLoading: boolean
-  showMaxButton: boolean
+  setValue: (value: string) => void;
+  value?: string;
+  error?: string | null;
+  className?: string;
+  decimal: number;
+  placeholder?: string;
+  style?: CSSProperties;
+  onMaxClick: () => void;
+  current: SwapToken | null;
+  tokens: SwapToken[];
+  onSelect: (index: number) => void;
+  disabled: boolean;
+  balance?: string;
+  hideBalances?: boolean;
+  handleAddToken: (address: string) => void;
+  commonTokens: string[];
+  limit?: number;
+  initialHideUnknownTokensValue: boolean;
+  onHideUnknownTokensChange: (val: boolean) => void;
+  percentageChange?: number;
+  tokenPrice?: number;
+  priceLoading?: boolean;
+  isBalanceLoading: boolean;
+  showMaxButton: boolean;
 }
 
 export const AmountInput: React.FC<IProps> = ({
@@ -61,8 +61,8 @@ export const AmountInput: React.FC<IProps> = ({
   isBalanceLoading,
   showMaxButton = true
 }) => {
-  const { classes } = useStyles({ walletDisconnected: hideBalances })
-  const inputRef = useRef<HTMLInputElement>(null)
+  const { classes } = useStyles({ walletDisconnected: hideBalances });
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const thresholds: FormatNumberThreshold[] = [
     {
@@ -96,7 +96,7 @@ export const AmountInput: React.FC<IProps> = ({
       decimals: 2,
       divider: 1000000000
     }
-  ]
+  ];
 
   const usdThresholds: FormatNumberThreshold[] = [
     {
@@ -122,50 +122,50 @@ export const AmountInput: React.FC<IProps> = ({
       decimals: 2,
       divider: 1000000000
     }
-  ]
+  ];
 
   const allowOnlyDigitsAndTrimUnnecessaryZeros: React.ChangeEventHandler<HTMLInputElement> = e => {
-    const onlyNumbersRegex = /^\d*\.?\d*$/
-    const trimDecimal = `^\\d*\\.?\\d{0,${decimal}}$`
-    const regex = new RegExp(trimDecimal, 'g')
+    const onlyNumbersRegex = /^\d*\.?\d*$/;
+    const trimDecimal = `^\\d*\\.?\\d{0,${decimal}}$`;
+    const regex = new RegExp(trimDecimal, 'g');
     if (e.target.value === '' || regex.test(e.target.value)) {
       if (typeof limit !== 'undefined' && +e.target.value > limit) {
-        return
+        return;
       }
 
-      const startValue = e.target.value
-      const caretPosition = e.target.selectionStart
+      const startValue = e.target.value;
+      const caretPosition = e.target.selectionStart;
 
-      let parsed = e.target.value
+      let parsed = e.target.value;
 
-      const dotRegex = /^\.\d*$/
+      const dotRegex = /^\.\d*$/;
       if (dotRegex.test(parsed)) {
-        parsed = `0${parsed}`
+        parsed = `0${parsed}`;
       }
 
-      const diff = startValue.length - parsed.length
+      const diff = startValue.length - parsed.length;
 
-      setValue(parsed)
+      setValue(parsed);
       if (caretPosition !== null && parsed !== startValue) {
         setTimeout(() => {
           if (inputRef.current) {
-            inputRef.current.selectionStart = Math.max(caretPosition - diff, 0)
-            inputRef.current.selectionEnd = Math.max(caretPosition - diff, 0)
+            inputRef.current.selectionStart = Math.max(caretPosition - diff, 0);
+            inputRef.current.selectionEnd = Math.max(caretPosition - diff, 0);
           }
-        }, 0)
+        }, 0);
       }
     } else if (!onlyNumbersRegex.test(e.target.value)) {
-      setValue('')
+      setValue('');
     } else if (!regex.test(e.target.value)) {
-      setValue(e.target.value.slice(0, e.target.value.length - 1))
+      setValue(e.target.value.slice(0, e.target.value.length - 1));
     }
-  }
+  };
 
-  const tokenIcon = !current ? '' : current.symbol
+  const tokenIcon = !current ? '' : current.symbol;
 
-  const usdBalance = tokenPrice && balance ? tokenPrice * +balance : 0
+  const usdBalance = tokenPrice && balance ? tokenPrice * +balance : 0;
 
-  const formattedBalance = balance ? ' ' + formatNumbers(thresholds)(balance.toString()) : 0
+  const formattedBalance = balance ? ' ' + formatNumbers(thresholds)(balance.toString()) : 0;
 
   return (
     <>
@@ -209,9 +209,10 @@ export const AmountInput: React.FC<IProps> = ({
               {isBalanceLoading ? (
                 <img src={loadingAnimation} className={classes.loadingBalance} />
               ) : (
-                formattedBalance
+                <span className={classes.bal}>&nbsp;{formattedBalance}</span>
               )}
-              {showPrefix(Number(balance))} {tokenIcon.slice(0, 8)}
+              {showPrefix(Number(balance))}{' '}
+              <span className={classes.bal}>&nbsp;{tokenIcon.slice(0, 8)}</span>
               {tokenIcon.length > 8 ? '...' : ''}
             </Typography>
             {showMaxButton && (
@@ -256,6 +257,6 @@ export const AmountInput: React.FC<IProps> = ({
         </Grid>
       )}
     </>
-  )
-}
-export default AmountInput
+  );
+};
+export default AmountInput;
