@@ -1,8 +1,6 @@
 import { Grid } from '@mui/material';
-import React, { useState } from 'react';
-import classNames from 'classnames';
-import SearchSvg from 'assets/images/search-svg.svg';
-import SearchLightSvg from 'assets/images/search-light-svg.svg';
+import { default as SearchLightSvg, default as SearchSvg } from '@static/svg/search-svg.svg';
+import React from 'react';
 import Input, { InputProps } from './Input';
 import { useStyles } from './style';
 
@@ -11,50 +9,23 @@ export enum KeyFilterPool {
   your_liquidity = 'your_liquidity'
 }
 
-const LIST_FILTER_POOL = [
-  {
-    key: KeyFilterPool.all_pool,
-    text: 'All Pools'
-  },
-  {
-    key: KeyFilterPool.your_liquidity,
-    text: 'Your Liquidity'
-  }
-];
+type FilterProps = {
+  setSearchValue: (val: string) => void;
+  searchValue: string;
+};
 
-// type FilterProps = {
-//   setFilteredPools: React.Dispatch<React.SetStateAction<PoolInfoResponse[]>>;
-//   setIsOpenNewTokenModal: (status: boolean) => void;
-//   pools: PoolInfoResponse[];
-// };
-
-export const PositionsFilter: React.FC<{ FilterProps }> = () => {
+export const PositionsFilter: React.FC<FilterProps> = ({ searchValue, setSearchValue }) => {
   const { classes } = useStyles();
-  const [searchValue, setSearchValue] = useState('');
-  const [typeFilter, setTypeFilter] = useState('');
 
   return (
     <Grid>
       <div className={classes.poolFilter}>
-        <div className={classes.poolFilterList}>
-          {LIST_FILTER_POOL.map(item => (
-            <div
-              key={item.key}
-              className={classNames(
-                item.key === typeFilter ? classes.filterActive : null,
-                classes.filterItem
-              )}
-              onClick={() => setTypeFilter(item.key)}>
-              {item.text}
-            </div>
-          ))}
-        </div>
         <div className={classes.poolFilterRight}>
           <div className={classes.poolSearch}>
             <Search
               style={null}
               theme={'light'}
-              placeholder='Search by address, asset, type'
+              placeholder='Search position'
               onSearch={value => setSearchValue(value)}
             />
           </div>
@@ -69,12 +40,15 @@ const Search: React.FC<InputProps> = ({ theme, style, ...props }) => {
 
   return (
     <Input
-      placeholder='Search by pools or tokens name'
+      placeholder='Search positions'
       style={{
         paddingLeft: 40,
         backgroundImage: `url(${bgUrl})`,
         backgroundRepeat: 'no-repeat',
         backgroundPosition: '10px center',
+        backgroundColor: '#232521',
+        border: 'none',
+        outline: 'none',
         ...style
       }}
       {...props}

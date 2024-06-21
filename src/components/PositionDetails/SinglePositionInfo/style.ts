@@ -1,6 +1,6 @@
-import { Theme } from '@mui/material'
-import { colors, typography } from '@static/theme'
-import { makeStyles } from 'tss-react/mui'
+import { Theme } from '@mui/material';
+import { colors, typography } from '@static/theme';
+import { makeStyles } from 'tss-react/mui';
 
 export const useStyles = makeStyles()((theme: Theme) => ({
   root: {
@@ -130,7 +130,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   titleValue: {
     ...typography.heading3,
     color: colors.oraidex.text,
-    fontFamily: 'Mukta'
+    fontFamily: 'IBM Plex Sans'
   },
   violetButton: {
     background: colors.oraidex.greenLinearGradientOpacity,
@@ -304,6 +304,6 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     width: 50,
     margin: 'auto'
   }
-}))
+}));
 
-export default useStyles
+export default useStyles;

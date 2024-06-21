@@ -31,7 +31,7 @@ export const WrappedPositionsList: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { signingClient } = useSigningClient();
-  console.log({ list });
+  console.log({ list, walletAddress });
   useEffect(() => {
     (async () => {
       if (signingClient && walletAddress && !list.length) {

@@ -1,27 +1,32 @@
-import { Grid, Hidden, Tooltip, Typography, useMediaQuery } from '@mui/material'
-import SwapList from '@static/svg/swap-list.svg'
-import { theme } from '@static/theme'
-import { initialXtoY, tickerToAddress } from '@store/consts/uiUtiils'
-import { FormatNumberThreshold, PrefixConfig, formatNumbers, showPrefix } from '@store/consts/utils'
-import classNames from 'classnames'
-import { useMemo, useState } from 'react'
-import { useStyles } from './style'
+import { Grid, Hidden, Tooltip, Typography, useMediaQuery } from '@mui/material';
+import SwapList from '@static/svg/swap-list.svg';
+import { theme } from '@static/theme';
+import { initialXtoY, tickerToAddress } from '@store/consts/uiUtiils';
+import {
+  FormatNumberThreshold,
+  PrefixConfig,
+  formatNumbers,
+  showPrefix
+} from '@store/consts/utils';
+import classNames from 'classnames';
+import { useMemo, useState } from 'react';
+import { useStyles } from './style';
 
 export interface IPositionItem {
-  tokenXName: string
-  tokenYName: string
-  tokenXIcon: string
-  tokenYIcon: string
-  tokenXLiq: number
-  tokenYLiq: number
-  fee: number
-  min: number
-  max: number
-  valueX: number
-  valueY: number
-  address: string
-  id: number
-  isActive?: boolean
+  tokenXName: string;
+  tokenYName: string;
+  tokenXIcon: string;
+  tokenYIcon: string;
+  tokenXLiq: number;
+  tokenYLiq: number;
+  fee: number;
+  min: number;
+  max: number;
+  valueX: number;
+  valueY: number;
+  address: string;
+  id: number;
+  isActive?: boolean;
 }
 
 const shorterThresholds: FormatNumberThreshold[] = [
@@ -58,7 +63,7 @@ const shorterThresholds: FormatNumberThreshold[] = [
     decimals: 1,
     divider: 1000000000
   }
-]
+];
 
 const minMaxShorterThresholds: FormatNumberThreshold[] = [
   {
@@ -66,13 +71,13 @@ const minMaxShorterThresholds: FormatNumberThreshold[] = [
     decimals: 3
   },
   ...shorterThresholds
-]
+];
 
 const shorterPrefixConfig: PrefixConfig = {
   B: 1000000000,
   M: 1000000,
   K: 1000
-}
+};
 
 export const PositionItem: React.FC<IPositionItem> = ({
   tokenXName,
@@ -88,14 +93,14 @@ export const PositionItem: React.FC<IPositionItem> = ({
   valueY,
   isActive = false
 }) => {
-  const { classes } = useStyles()
+  const { classes } = useStyles();
 
-  const isXs = useMediaQuery(theme.breakpoints.down('xs'))
-  const isDesktop = useMediaQuery(theme.breakpoints.up('lg'))
+  const isXs = useMediaQuery(theme.breakpoints.down('xs'));
+  const isDesktop = useMediaQuery(theme.breakpoints.up('lg'));
 
   const [xToY, setXToY] = useState<boolean>(
     initialXtoY(tickerToAddress(tokenXName), tickerToAddress(tokenYName))
-  )
+  );
 
   const feeFragment = useMemo(
     () => (
@@ -117,26 +122,49 @@ export const PositionItem: React.FC<IPositionItem> = ({
           alignItems='center'>
           <Typography
             className={classNames(classes.infoText, isActive ? classes.activeInfoText : undefined)}>
-            {fee}% fee
+            Fee: {fee}%
           </Typography>
         </Grid>
       </Tooltip>
     ),
     [fee, classes, isActive]
-  )
+  );
 
   const valueFragment = useMemo(
     () => (
+      // <Grid
+      //   container
+      //   item
+      //   className={classes.value}
+      //   justifyContent='space-between'
+      //   alignItems='center'
+      //   wrap='nowrap'>
+      //   <Typography className={classNames(classes.infoText, classes.label)}>Value</Typography>
+      //   <Grid className={classes.infoCenter} container item justifyContent='center'>
+      //     <Typography className={classes.greenText}>
+      //       {formatNumbers(isXs || isDesktop ? shorterThresholds : undefined)(
+      //         (xToY ? valueX : valueY).toString()
+      //       )}
+      //       {showPrefix(
+      //         xToY ? valueX : valueY,
+      //         isXs || isDesktop ? shorterPrefixConfig : undefined
+      //       )}{' '}
+      //       {xToY ? tokenXName : tokenYName}
+      //     </Typography>
+      //   </Grid>
+      // </Grid>
+
       <Grid
         container
         item
-        className={classes.value}
-        justifyContent='space-between'
-        alignItems='center'
+        className={classes.minMax}
+        justifyContent='flex-start'
+        direction={'column'}
+        alignItems='flex-start'
         wrap='nowrap'>
-        <Typography className={classNames(classes.infoText, classes.label)}>Value</Typography>
-        <Grid className={classes.infoCenter} container item justifyContent='center'>
-          <Typography className={classes.greenText}>
+        <Typography className={classNames(classes.greyText, classes.label)}>Value</Typography>
+        <Grid className={classes.infoCenter} container item>
+          <Typography className={classes.infoText}>
             {formatNumbers(isXs || isDesktop ? shorterThresholds : undefined)(
               (xToY ? valueX : valueY).toString()
             )}
@@ -150,7 +178,7 @@ export const PositionItem: React.FC<IPositionItem> = ({
       </Grid>
     ),
     [valueX, valueY, tokenXName, classes, isXs, isDesktop, tokenYName, xToY]
-  )
+  );
 
   return (
     <Grid
@@ -159,22 +187,13 @@ export const PositionItem: React.FC<IPositionItem> = ({
       direction='row'
       alignItems='center'
       justifyContent='space-between'>
-      <Grid container item className={classes.mdTop} direction='row' wrap='nowrap'>
+      <Grid container item className={classes.mdTop} direction='row' wrap='nowrap' gap={2}>
         <Grid container item className={classes.iconsAndNames} alignItems='center' wrap='nowrap'>
           <Grid container item className={classes.icons} alignItems='center' wrap='nowrap'>
             <img
               className={classes.tokenIcon}
               src={xToY ? tokenXIcon : tokenYIcon}
               alt={xToY ? tokenXName : tokenYName}
-            />
-            <img
-              className={classes.arrows}
-              src={SwapList}
-              alt='Arrow'
-              onClick={e => {
-                e.stopPropagation()
-                setXToY(!xToY)
-              }}
             />
             <img
               className={classes.tokenIcon}
@@ -184,56 +203,41 @@ export const PositionItem: React.FC<IPositionItem> = ({
           </Grid>
 
           <Typography className={classes.names}>
-            {xToY ? tokenXName : tokenYName} - {xToY ? tokenYName : tokenXName}
+            {xToY ? tokenXName : tokenYName} / {xToY ? tokenYName : tokenXName}
           </Typography>
         </Grid>
 
-        <Hidden mdUp>{feeFragment}</Hidden>
+        <Hidden smDown>{feeFragment}</Hidden>
       </Grid>
 
       <Grid container item className={classes.mdInfo} direction='row'>
-        <Hidden smDown>{feeFragment}</Hidden>
-
-        <Grid
-          container
-          item
-          className={classes.liquidity}
-          justifyContent='center'
-          alignItems='center'>
-          <Typography className={classes.infoText}>
-            {formatNumbers(isXs || isDesktop ? shorterThresholds : undefined)(
-              (xToY ? tokenXLiq : tokenYLiq).toString()
-            )}
-            {showPrefix(
-              xToY ? tokenXLiq : tokenYLiq,
-              isXs || isDesktop ? shorterPrefixConfig : undefined
-            )}{' '}
-            {xToY ? tokenXName : tokenYName}
-            {' - '}
-            {formatNumbers(isXs || isDesktop ? shorterThresholds : undefined)(
-              (xToY ? tokenYLiq : tokenXLiq).toString()
-            )}
-            {showPrefix(
-              xToY ? tokenYLiq : tokenXLiq,
-              isXs || isDesktop ? shorterPrefixConfig : undefined
-            )}{' '}
-            {xToY ? tokenYName : tokenXName}
-          </Typography>
-        </Grid>
-
+        <Hidden mdUp>{feeFragment}</Hidden>
         <Hidden mdUp>{valueFragment}</Hidden>
-
         <Grid
           container
           item
           className={classes.minMax}
-          justifyContent='space-between'
-          alignItems='center'
+          justifyContent='flex-start'
+          direction={'column'}
+          alignItems='flex-start'
           wrap='nowrap'>
-          <Typography className={classNames(classes.greenText, classes.label)}>
-            MIN - MAX
+          <Typography className={classNames(classes.greyText, classes.label)}>
+            Claimable Rewards
           </Typography>
-          <Grid className={classes.infoCenter} container item justifyContent='center'>
+          <Grid className={classes.infoCenter} container item>
+            <Typography className={classes.infoText}>$16.21</Typography>
+          </Grid>
+        </Grid>
+        <Grid
+          container
+          item
+          className={classes.minMax}
+          justifyContent='flex-start'
+          direction={'column'}
+          alignItems='flex-start'
+          wrap='nowrap'>
+          <Typography className={classNames(classes.greyText, classes.label)}>Min - Max</Typography>
+          <Grid className={classes.infoCenter} container item direction={'row'}>
             <Typography className={classes.infoText}>
               {formatNumbers(isXs || isDesktop ? minMaxShorterThresholds : undefined)(
                 (xToY ? min : 1 / max).toString()
@@ -246,6 +250,8 @@ export const PositionItem: React.FC<IPositionItem> = ({
               {formatNumbers(isXs || isDesktop ? minMaxShorterThresholds : undefined)(
                 (xToY ? max : 1 / min).toString()
               )}
+            </Typography>
+            <Typography className={classes.suffixText}>
               {showPrefix(
                 xToY ? max : 1 / min,
                 isXs || isDesktop ? shorterPrefixConfig : undefined
@@ -258,5 +264,5 @@ export const PositionItem: React.FC<IPositionItem> = ({
         <Hidden smDown>{valueFragment}</Hidden>
       </Grid>
     </Grid>
-  )
-}
+  );
+};

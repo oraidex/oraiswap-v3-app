@@ -1,15 +1,18 @@
+import { Button as CustomButton } from '@components/Button';
 import { EmptyPlaceholder } from '@components/EmptyPlaceholder/EmptyPlaceholder';
 import { INoConnected, NoConnected } from '@components/NoConnected/NoConnected';
 import { PaginationList } from '@components/PaginationList/PaginationList';
-import { Button, Grid, InputAdornment, InputBase, Typography } from '@mui/material';
+import { Button, Grid, InputAdornment, InputBase } from '@mui/material';
 import loader from '@static/gif/loader.gif';
+import IconRefresh from '@static/svg/ion_refresh.svg';
 import SearchIcon from '@static/svg/lupaDark.svg';
-import refreshIcon from '@static/svg/refresh.svg';
+import addIcon from '@static/svg/add.svg';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { PositionsFilter } from './PositionFilter/PositionFilter';
 import { IPositionItem, PositionItem } from './PositionItem/PositionItem';
 import { useStyles } from './style';
-import { PositionsFilter } from './PositionFilter/PositionFilter';
+import { FallbackEmptyData } from '@components/FallbackEmptyData';
 
 interface IProps {
   initialPage: number;
@@ -80,48 +83,27 @@ export const PositionsList: React.FC<IProps> = ({
 
   return (
     <Grid container direction='column' className={classes.root}>
-      <PositionsFilter />
       <Grid
-        className={classes.header}
         container
+        item
+        wrap='nowrap'
         direction='row'
-        justifyContent='space-between'
-        alignItems='center'>
-        <Grid className={classes.searchRoot}>
-          <Grid className={classes.titleBar}>
-            <Typography className={classes.title}>Your Liquidity Positions</Typography>
-            <Typography className={classes.positionsNumber}>{data.length}</Typography>
-          </Grid>
-          <Grid className={classes.searchWrapper}>
-            <InputBase
-              type={'text'}
-              className={classes.searchBar}
-              placeholder='Search position'
-              endAdornment={
-                <InputAdornment position='end'>
-                  <img src={SearchIcon} className={classes.searchIcon} />
-                </InputAdornment>
-              }
-              onChange={handleChangeInput}
-              value={searchValue}
-            />
-            <Grid>
-              <Button
-                disabled={showNoConnected}
-                onClick={showNoConnected ? () => {} : handleRefresh}
-                className={classes.refreshIconBtn}>
-                <img src={refreshIcon} className={classes.refreshIcon} />
-              </Button>
-              <Button
-                className={showNoConnected ? classes.buttonSelectDisabled : classes.button}
-                variant='contained'
-                onClick={showNoConnected ? () => {} : onAddPositionClick}>
-                <span className={classes.buttonText}>+ Add Position</span>
-              </Button>
-            </Grid>
-          </Grid>
-        </Grid>
+        alignItems='center'
+        justifyContent={'flex-end'}
+        gap={'10px'}
+        marginBottom={'24px'}
+        sx={{ display: { xs: 'none', lg: 'flex' } }}>
+        <PositionsFilter searchValue={searchValue} setSearchValue={searchSetValue} />
+
+        <CustomButton type='primary' onClick={showNoConnected ? () => {} : onAddPositionClick}>
+          <img src={addIcon} alt='Add position' /> <span>Add position</span>
+        </CustomButton>
+
+        {/* <Button disabled={showNoConnected} onClick={showNoConnected ? () => {} : handleRefresh}>
+          <img src={IconRefresh} alt='' />
+        </Button> */}
       </Grid>
+
       <Grid container direction='column' className={classes.list} justifyContent='flex-start'>
         {data.length > 0 && !loading ? (
           paginator(page).data.map((element, index) => (
@@ -141,10 +123,11 @@ export const PositionsList: React.FC<IProps> = ({
             <img src={loader} className={classes.loading} />
           </Grid>
         ) : (
-          <EmptyPlaceholder
-            desc='Add your first position by pressing the button and start earning!'
-            className={classes.placeholder}
-          />
+          <FallbackEmptyData />
+          // <EmptyPlaceholder
+          //   desc='Add your first position by pressing the button and start earning!'
+          //   className={classes.placeholder}
+          // />
         )}
       </Grid>
       {paginator(page).totalPages > 1 ? (

@@ -1,103 +1,46 @@
-import RoutesModal from '@components/Modals/RoutesModal'
-import SelectTestnetRPC from '@components/Modals/SelectTestnetRPC/SelectTestnetRPC'
-import NavbarButton from '@components/Navbar/Button'
-import DotIcon from '@mui/icons-material/FiberManualRecordRounded'
-import { Box, Button, CardMedia, Grid, IconButton, useMediaQuery } from '@mui/material'
-
-import icons from '@static/icons'
-import Hamburger from '@static/svg/Hamburger.svg'
-import { theme } from '@static/theme'
-import { OraichainNetworks } from '@store/consts/static'
-import { blurContent, unblurContent } from '@utils/uiUtils'
-import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
-import ChangeWalletButton from './HeaderButton/ChangeWalletButton'
-import SelectNetworkButton from './HeaderButton/SelectNetworkButton'
-import SelectRPCButton from './HeaderButton/SelectRPCButton'
-import useButtonStyles from './HeaderButton/style'
-import useStyles from './style'
-
+import NavbarButton from '@components/Navbar/Button';
+import { Grid } from '@mui/material';
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import useStyles from './style';
 export interface IHeader {
-  address: string
-  onNetworkSelect: (networkType: Network, rpcAddress: string, rpcName?: string) => void
-  onConnectWallet: () => void
-  walletConnected: boolean
-  landing: string
-  typeOfNetwork: Network
-  defaultTestnetRPC: string
-  rpc: string
-  onFaucet?: () => void
-  onDisconnectWallet: () => void
+  landing: string;
 }
 
-export const Header: React.FC<IHeader> = ({
-  address,
-  onNetworkSelect,
-  onConnectWallet,
-  walletConnected,
-  landing,
-  typeOfNetwork,
-  rpc,
-  onFaucet,
-  onDisconnectWallet
-}) => {
-  const { classes } = useStyles()
-  const buttonStyles = useButtonStyles()
-  const isXsDown = useMediaQuery(theme.breakpoints.down('sm'))
+export const Header: React.FC<IHeader> = ({ landing }) => {
+  const { classes } = useStyles();
 
-  const routes = ['swap', 'pool', 'stats']
+  const routes = [
+    {
+      link: 'swap',
+      name: 'Swap'
+    },
+    {
+      link: 'pool',
+      name: 'Your Liquidity Positions'
+    }
+  ];
 
   const otherRoutesToHighlight: Record<string, RegExp[]> = {
     pool: [/^newPosition\/*/, /^position\/*/]
-  }
+  };
 
-  const [activePath, setActive] = useState('swap')
-
-  const [routesModalOpen, setRoutesModalOpen] = useState(false)
-  const [testnetRpcsOpen, setTestnetRpcsOpen] = useState(false)
-  const [routesModalAnchor, setRoutesModalAnchor] = useState<HTMLButtonElement | null>(null)
+  const [activePath, setActive] = useState('swap');
 
   useEffect(() => {
     // if there will be no redirects, get rid of this
-    setActive(landing)
-  }, [landing])
-
-  const testnetRPCs = [
-    {
-      networkType: 'Testnet' as Network,
-      rpc: OraichainNetworks.TEST,
-      rpcName: 'Aleph zero'
-    }
-  ]
+    setActive(landing);
+  }, [landing]);
 
   return (
-    <Grid
-      container
-      sx={{
-        backgroundColor: '#121511',
-        borderBottom: '1px solid #232521'
-      }}>
-      <Grid container className={classes.root} direction='row' alignItems='center' wrap='nowrap'>
-        <Grid
-          container
-          item
-          className={classes.leftSide}
-          justifyContent='flex-start'
-          sx={{ display: { xs: 'none', lg: 'block' } }}>
-          <Grid container>
-            <CardMedia className={classes.logo} image={icons.LogoTitle} />
-          </Grid>
-        </Grid>
-        <Box>
-          <Grid
-            container
-            item
-            className={classes.leftSide}
-            justifyContent='flex-start'
-            sx={{ display: { xs: 'block', lg: 'none' } }}>
-            <img src={icons.LogoShort} />
-          </Grid>
-        </Box>
+    <Grid container>
+      <Grid
+        container
+        className={classes.root}
+        direction='row'
+        alignItems='center'
+        justifyContent='space-between'
+        wrap='nowrap'>
         <Grid
           container
           item
@@ -105,111 +48,23 @@ export const Header: React.FC<IHeader> = ({
           wrap='nowrap'
           sx={{ display: { xs: 'none', lg: 'block' } }}>
           {routes.map(path => (
-            <Link key={`path-${path}`} to={`/${path}`} className={classes.link}>
+            <Link key={`path-${path.link}`} to={`/${path.link}`} className={classes.link}>
               <NavbarButton
-                name={path}
+                name={path.name}
                 onClick={() => {
-                  setActive(path)
+                  setActive(path.link);
                 }}
                 active={
-                  path === activePath ||
-                  (!!otherRoutesToHighlight[path] &&
-                    otherRoutesToHighlight[path].some(pathRegex => pathRegex.test(activePath)))
+                  path.link === activePath ||
+                  (!!otherRoutesToHighlight[path.link] &&
+                    otherRoutesToHighlight[path.link].some(pathRegex => pathRegex.test(activePath)))
                 }
               />
             </Link>
           ))}
         </Grid>
-
-        <Grid container item className={classes.buttons} wrap='nowrap' gap={1.5}>
-          {typeOfNetwork === 'Testnet' ? (
-            <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-              <Button
-                className={buttonStyles.classes.headerButton}
-                variant='contained'
-                sx={{ '& .MuiButton-label': buttonStyles.classes.label }}
-                onClick={onFaucet}>
-                Faucet
-              </Button>
-            </Box>
-          ) : null}
-          {typeOfNetwork === 'Testnet' ? (
-            <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-              <SelectRPCButton rpc={rpc} networks={testnetRPCs} onSelect={onNetworkSelect} />
-            </Box>
-          ) : null}
-          {/* <SelectNetworkButton name={typeOfNetwork} networks={[]} onSelect={onNetworkSelect} /> */}
-          <ChangeWalletButton
-            name={
-              walletConnected
-                ? `${address.toString().slice(0, 4)}...${
-                    !isXsDown
-                      ? address
-                          .toString()
-                          .slice(address.toString().length - 4, address.toString().length)
-                      : ''
-                  }`
-                : 'Connect wallet'
-            }
-            onConnect={onConnectWallet}
-            connected={walletConnected}
-            onDisconnect={onDisconnectWallet}
-            startIcon={
-              walletConnected ? <DotIcon className={classes.connectedWalletIcon} /> : undefined
-            }
-          />
-        </Grid>
-
-        <Grid sx={{ display: { xs: 'block', lg: 'none' } }}>
-          <IconButton
-            className={classes.menuButton}
-            onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
-              setRoutesModalAnchor(event.currentTarget)
-              setRoutesModalOpen(true)
-              blurContent()
-            }}>
-            <CardMedia className={classes.menu} image={Hamburger} />
-          </IconButton>
-          <RoutesModal
-            routes={routes}
-            anchorEl={routesModalAnchor}
-            open={routesModalOpen}
-            current={activePath}
-            onSelect={(selected: string) => {
-              setActive(selected)
-              setRoutesModalOpen(false)
-              unblurContent()
-            }}
-            handleClose={() => {
-              setRoutesModalOpen(false)
-              unblurContent()
-            }}
-            onFaucet={typeOfNetwork === 'Testnet' && isXsDown ? onFaucet : undefined}
-            onRPC={
-              typeOfNetwork === 'Testnet' && isXsDown
-                ? () => {
-                    setRoutesModalOpen(false)
-                    setTestnetRpcsOpen(true)
-                  }
-                : undefined
-            }
-          />
-          {typeOfNetwork === 'Testnet' ? (
-            <SelectTestnetRPC
-              networks={testnetRPCs}
-              open={testnetRpcsOpen}
-              anchorEl={routesModalAnchor}
-              onSelect={onNetworkSelect}
-              handleClose={() => {
-                setTestnetRpcsOpen(false)
-                unblurContent()
-              }}
-              activeRPC={rpc}
-            />
-          ) : null}
-        </Grid>
       </Grid>
     </Grid>
-  )
-}
-export default Header
+  );
+};
+export default Header;

@@ -1,68 +1,50 @@
-import { PUBLIC_RPC_ENDPOINT } from '../../hooks/cosmwasm'
-import { useSigningClient } from '../../contexts/cosmwasm'
-import Header from '@components/Header/Header'
-import { Status, actions as walletActions } from '@store/reducers/wallet'
-import { networkType } from '@store/selectors/connection'
-import React, { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { useLocation } from 'react-router-dom'
-import SingletonOraiswapV3 from '@store/services/contractSingleton'
-import { FaucetTokenList } from '@store/consts/static'
-import { getTokenBalances } from '@store/consts/utils'
+import Header from '@components/Header/Header';
+import { FaucetTokenList } from '@store/consts/static';
+import { getTokenBalances } from '@store/consts/utils';
+import { Status, actions as walletActions } from '@store/reducers/wallet';
+import SingletonOraiswapV3 from '@store/services/contractSingleton';
+import React, { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { useLocation } from 'react-router-dom';
+import { useSigningClient } from '../../contexts/cosmwasm';
 
 export const HeaderWrapper: React.FC = () => {
-  const dispatch = useDispatch()
-  const currentNetwork = useSelector(networkType)
+  const dispatch = useDispatch();
 
-  const location = useLocation()
+  const location = useLocation();
 
-  const { walletAddress, signingClient, connectWallet, disconnect } = useSigningClient()
+  const { walletAddress, signingClient, connectWallet } = useSigningClient();
 
   useEffect(() => {
-    ;(async () => {
+    (async () => {
       if (walletAddress == '') {
-        connectWallet()
+        connectWallet();
       }
 
       if (signingClient && walletAddress) {
-        SingletonOraiswapV3.load(signingClient, walletAddress)
-        dispatch(walletActions.setStatus(Status.Init))
-        dispatch(walletActions.setAddress(walletAddress))
-        dispatch(walletActions.setIsBalanceLoading(true))
+        SingletonOraiswapV3.load(signingClient, walletAddress);
+        dispatch(walletActions.setStatus(Status.Init));
+        dispatch(walletActions.setAddress(walletAddress));
+        dispatch(walletActions.setIsBalanceLoading(true));
 
-        const balance = await SingletonOraiswapV3.queryBalance()
-        dispatch(walletActions.setBalance(BigInt(balance)))
-        dispatch(walletActions.setStatus(Status.Initialized))
-        const tokens = Object.values(FaucetTokenList)
-        const balances = await getTokenBalances(tokens)
+        const balance = await SingletonOraiswapV3.queryBalance();
+        dispatch(walletActions.setBalance(BigInt(balance)));
+        dispatch(walletActions.setStatus(Status.Initialized));
+        const tokens = Object.values(FaucetTokenList);
+        const balances = await getTokenBalances(tokens);
 
-        dispatch(walletActions.addTokenBalances(balances))
-        dispatch(walletActions.setIsBalanceLoading(false))
+        dispatch(walletActions.addTokenBalances(balances));
+        dispatch(walletActions.setIsBalanceLoading(false));
       }
 
-      window.addEventListener('keplr_keystorechange', connectWallet)
+      window.addEventListener('keplr_keystorechange', connectWallet);
       return () => {
-        window.removeEventListener('keplr_keystorechange', connectWallet)
-      }
-    })()
-  }, [walletAddress])
+        window.removeEventListener('keplr_keystorechange', connectWallet);
+      };
+    })();
+  }, [walletAddress]);
 
-  return (
-    <Header
-      address={walletAddress}
-      onNetworkSelect={() => {}}
-      onConnectWallet={connectWallet}
-      landing={location.pathname.substring(1)}
-      walletConnected={walletAddress.length !== 0}
-      defaultTestnetRPC=''
-      onDisconnectWallet={() => {
-        disconnect()
-      }}
-      onFaucet={() => dispatch(walletActions.airdrop())}
-      typeOfNetwork={currentNetwork}
-      rpc={PUBLIC_RPC_ENDPOINT}
-    />
-  )
-}
+  return <Header landing={location.pathname.substring(1)} />;
+};
 
-export default HeaderWrapper
+export default HeaderWrapper;

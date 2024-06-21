@@ -57,20 +57,22 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     justifyContent: 'space-between',
     alignItems: 'center',
     borderRadius: '99px',
-
     [theme.breakpoints.down('md')]: {
       width: '100%'
     }
   },
 
   input: {
-    height: '36px',
+    height: '40px',
     fontSize: '14px',
     fontWeight: '400',
     lineHeight: '150%',
     marginRight: '8px',
     // color: $neutron-text-body-light,
-    color: 'red'
+    borderRadius: '99px',
+    color: '#EFEFEF',
+    minWidth: '280px',
+    maxWidth: 400
   },
 
   filterActive: {

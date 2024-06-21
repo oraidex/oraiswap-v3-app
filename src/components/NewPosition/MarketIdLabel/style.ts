@@ -1,10 +1,10 @@
-import { colors } from '@static/theme'
-import { makeStyles } from 'tss-react/mui'
+import { colors } from '@static/theme';
+import { makeStyles } from 'tss-react/mui';
 
 export const useLabelStyles = makeStyles()(() => {
   return {
     marketId: {
-      fontFamily: 'Mukta',
+      fontFamily: 'IBM Plex Sans',
       fontSize: 16,
       fontWeight: 400,
       lineHeight: '20px',
@@ -18,5 +18,5 @@ export const useLabelStyles = makeStyles()(() => {
       height: 13,
       cursor: 'pointer'
     }
-  }
-})
+  };
+});

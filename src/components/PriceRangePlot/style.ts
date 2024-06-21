@@ -1,6 +1,6 @@
-import { Theme } from '@mui/material'
-import { colors, typography } from '@static/theme'
-import { makeStyles } from 'tss-react/mui'
+import { Theme } from '@mui/material';
+import { colors, typography } from '@static/theme';
+import { makeStyles } from 'tss-react/mui';
 
 export const useStyles = makeStyles()((theme: Theme) => ({
   container: {
@@ -9,7 +9,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     '& g > text': {
       stroke: 'none',
       fill: '#A9B6BF!important',
-      fontFamily: 'Mukta!important',
+      fontFamily: 'IBM Plex Sans!important',
 
       [theme.breakpoints.down('sm')]: {
         fontSize: '8px!important'
@@ -100,6 +100,6 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     width: 100,
     margin: 'auto'
   }
-}))
+}));
 
-export default useStyles
+export default useStyles;
