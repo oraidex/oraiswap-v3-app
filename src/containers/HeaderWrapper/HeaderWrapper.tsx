@@ -30,7 +30,7 @@ export const HeaderWrapper: React.FC = () => {
 
   useEffect(() => {
     (async () => {
-      if (!window.walletType) return;
+      if (!window.walletType || !window.keplr) return;
 
       if (walletAddress == '') {
         connectWallet();
