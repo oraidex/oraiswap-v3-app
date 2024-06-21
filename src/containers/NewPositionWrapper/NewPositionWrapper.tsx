@@ -32,6 +32,7 @@ import { Status } from '@store/reducers/wallet'
 import { networkType } from '@store/selectors/connection'
 import {
   isLoadingLatestPoolsForTransaction,
+  // isLoadingPoolKeys,
   isLoadingTicksAndTickMaps,
   poolKeys,
   pools,
@@ -40,6 +41,7 @@ import {
 import { initPosition, plotTicks } from '@store/selectors/positions'
 import {
   address,
+  // balanceLoading,
   canCreateNewPool,
   canCreateNewPosition,
   status,
@@ -49,6 +51,7 @@ import { openWalletSelectorModal } from '@utils/web3/selector'
 import { VariantType } from 'notistack'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { actions as walletActions } from '@store/reducers/wallet'
 
 export const ALL_FEE_TIERS_DATA: FeeTier[] = [
   { fee: 500000000, tick_spacing: 100 },
@@ -75,6 +78,8 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   const poolsData = useSelector(pools)
   const loadingTicksAndTickMaps = useSelector(isLoadingTicksAndTickMaps)
   const walletAddress = useSelector(address)
+  // const isBalanceLoading = useSelector(balanceLoading)
+  // const loadingPoolKeys = useSelector(isLoadingPoolKeys)
 
   const { success, inProgress } = useSelector(initPosition)
   const { data: ticksData, loading: ticksLoading, hasError: hasTicksError } = useSelector(plotTicks)
@@ -501,6 +506,39 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     return BigInt(0)
   }
 
+  const onRefresh = () => {
+    if (tokenAIndex !== null && tokenBIndex !== null) {
+      dispatch(
+        walletActions.getBalances([
+          tokens[tokenAIndex].assetAddress.toString(),
+          tokens[tokenBIndex].assetAddress.toString()
+        ])
+      )
+
+      dispatch(
+        poolsActions.getPoolData(
+          newPoolKey(
+            tokens[tokenAIndex].assetAddress.toString(),
+            tokens[tokenBIndex].assetAddress.toString(),
+            ALL_FEE_TIERS_DATA[feeIndex]
+          )
+        )
+      )
+
+      if (poolKey !== '' && poolIndex !== null) {
+        dispatch(
+          positionsActions.getCurrentPlotTicks({
+            poolKey: allPoolKeys[poolKey],
+            isXtoY:
+              allPools[poolIndex].pool_key.token_x ===
+              tokens[currentPairReversed === true ? tokenBIndex : tokenAIndex].assetAddress,
+            fetchTicksAndTickmap: true
+          })
+        )
+      }
+    }
+  }
+
   return (
     <NewPosition
       initialTokenFrom={initialTokenFrom}
@@ -673,6 +711,8 @@ export const NewPositionWrapper: React.FC<IProps> = ({
         descCustomText: 'Cannot add any liquidity.'
       }}
       poolKey={poolKey}
+      onRefresh={onRefresh}
+      // isBalanceLoading={isBalanceLoading}
     />
   )
 }

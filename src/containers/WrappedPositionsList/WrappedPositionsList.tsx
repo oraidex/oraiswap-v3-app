@@ -34,7 +34,7 @@ export const WrappedPositionsList: React.FC = () => {
   const { signingClient } = useSigningClient()
 
   useEffect(() => {
-    ;(async () => {
+    (async () => {
       if (signingClient && walletAddress && !list.length) {
         SingletonOraiswapV3.load(signingClient, walletAddress)
         const pools = await SingletonOraiswapV3.getAllPosition()

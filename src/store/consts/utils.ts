@@ -506,9 +506,10 @@ export const getTokenDataByAddresses = async (tokens: string[]): Promise<Record<
 
 export const createPoolTx = async (
   poolKey: PoolKey,
-  initSqrtPrice: string,
-  initTick: number
+  initSqrtPrice: string
 ): Promise<string> => {
+  const initTick = getTickAtSqrtPrice(BigInt(initSqrtPrice), poolKey.fee_tier.tick_spacing)
+
   return (
     await SingletonOraiswapV3.dex.createPool({
       feeTier: poolKey.fee_tier,
@@ -1225,4 +1226,20 @@ export const swapWithSlippageTx = async (
   })
 
   return res.transactionHash
+}
+
+export const claimFee = async (positionIndex: bigint): Promise<string> => {
+  const res = await SingletonOraiswapV3.dex.claimFee({ index: Number(positionIndex) })
+  return res.transactionHash
+}
+
+export const removePosition = async (positionIndex: bigint): Promise<string> => {
+  const res = await SingletonOraiswapV3.dex.removePosition({ index: Number(positionIndex) })
+  return res.transactionHash
+}
+
+export const getBalance = async (address: string): Promise<bigint> => {
+  // TODO: open for ibc later
+  const balance = await SingletonOraiswapV3.dex.client.getBalance('orai' ,address)
+  return BigInt(balance.amount)
 }

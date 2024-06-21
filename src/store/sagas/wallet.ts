@@ -1,14 +1,14 @@
 import { PayloadAction } from '@reduxjs/toolkit'
 import { FaucetTokenList } from '@store/consts/static'
-import { getTokenBalances } from '@store/consts/utils'
+import { getBalance, getTokenBalances } from '@store/consts/utils'
 import { actions as positionsActions } from '@store/reducers/positions'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
 import { ITokenBalance, Status, actions, actions as walletActions } from '@store/reducers/wallet'
-import { status } from '@store/selectors/wallet'
+import { address, status } from '@store/selectors/wallet'
 import SingletonOraiswapV3 from '@store/services/contractSingleton'
 
 import {
-  SagaGenerator,
+  // SagaGenerator,
   all,
   call,
   put,
@@ -18,22 +18,22 @@ import {
   takeLeading
 } from 'typed-redux-saga'
 
-type FrameSystemAccountInfo = {
-  data: {
-    free: string
-    reserved: string
-    miscFrozen: string
-    feeFrozen: string
-  }
-  nonce: number
-  consumers: number
-  providers: number
-  sufficients: number
-}
+// type FrameSystemAccountInfo = {
+//   data: {
+//     free: string
+//     reserved: string
+//     miscFrozen: string
+//     feeFrozen: string
+//   }
+//   nonce: number
+//   consumers: number
+//   providers: number
+//   sufficients: number
+// }
 
-export function* getBalance(_walletAddress: string): SagaGenerator<string> {
-  return ''
-}
+// export function* getBalance(_walletAddress: string): SagaGenerator<string> {
+//   return ''
+// }
 
 export function* handleBalance(): Generator {
   // const wallet = yield* call(getWallet)
@@ -307,11 +307,29 @@ export function* handleDisconnect(): Generator {
 }
 
 export function* fetchBalances(tokens: string[]): Generator {
-  const balance = yield* call(getBalance, SingletonOraiswapV3.dex.sender)
+  const walletAddress = yield* select(address)
+  yield* put(walletActions.setIsBalanceLoading(true))
+
+  const balance = yield* call(getBalance, walletAddress)
   yield* put(walletActions.setBalance(BigInt(balance)))
 
-  const tokenBalances = yield* call(getTokenBalances, tokens)
-  yield* put(walletActions.addTokenBalances(tokenBalances))
+  const tokenBalances = yield* call(getTokenBalances, tokens, walletAddress)
+  yield* put(
+    walletActions.addTokenBalances(
+      tokenBalances.map((info) => {
+        return {
+          address: info.address,
+          balance: info.balance
+        }
+      })
+    )
+  )
+
+  yield* put(walletActions.setIsBalanceLoading(false))
+}
+
+export function* handleGetBalances(action: PayloadAction<string[]>): Generator {
+  yield* call(fetchBalances, action.payload)
 }
 
 export function* connectHandler(): Generator {
@@ -342,6 +360,10 @@ export function* handleFetchSelectedTokensBalances(): Generator {
   yield takeLeading(actions.getSelectedTokens, fetchSelectedTokensBalances)
 }
 
+export function* getBalancesHandler(): Generator {
+  yield takeLeading(actions.getBalances, handleGetBalances)
+}
+
 export function* walletSaga(): Generator {
   yield all(
     [
@@ -350,7 +372,8 @@ export function* walletSaga(): Generator {
       connectHandler,
       disconnectHandler,
       handleFetchTokensBalances,
-      handleFetchSelectedTokensBalances
+      handleFetchSelectedTokensBalances,
+      getBalancesHandler
     ].map(spawn)
   )
 }
