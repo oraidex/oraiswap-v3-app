@@ -30,11 +30,16 @@ export default class SingletonOraiswapV3 {
   private static _tokens: { [key: string]: OraiswapTokenClient } = {};
   private static _nativeTokens: { [key: string]: string } = {};
   private static _dex: OraiswapV3Client;
+  private static _dexQuerier: OraiswapV3QueryClient;
 
   private constructor() {}
 
   public static get dex() {
     return this._dex;
+  }
+
+  public static get dexQuerier() {
+    return this._dexQuerier;
   }
 
   public static get tokens() {
@@ -46,9 +51,12 @@ export default class SingletonOraiswapV3 {
   }
 
   public static async load(signingClient: SigningCosmWasmClient, sender: string) {
+    console.log("load", sender)
     if (!this.dex || defaultState.dexAddress !== this.dex.contractAddress) {
       this._dex = new OraiswapV3Client(signingClient, sender, defaultState.dexAddress);
     }
+    const client = await CosmWasmClient.connect(import.meta.env.VITE_CHAIN_RPC_ENDPOINT);
+    this._dexQuerier = new OraiswapV3QueryClient(client, defaultState.dexAddress);
   }
 
   public static async loadCw20(sender: string, contractAddress: string) {
@@ -78,7 +86,10 @@ export default class SingletonOraiswapV3 {
     upperTick: number,
     xToY: boolean
   ): Promise<ArrayOfTupleOfUint16AndUint64> {
-    const tickmaps = await this.dex.tickMap({
+    const client = await CosmWasmClient.connect(import.meta.env.VITE_CHAIN_RPC_ENDPOINT);
+    const queryClient = new OraiswapV3QueryClient(client, defaultState.dexAddress);
+
+    const tickmaps = await queryClient.tickMap({
       lowerTickIndex: lowerTick,
       upperTickIndex: upperTick,
       xToY,
@@ -123,6 +134,20 @@ export default class SingletonOraiswapV3 {
     const client = await CosmWasmClient.connect(import.meta.env.VITE_CHAIN_RPC_ENDPOINT);
     const queryClient = new OraiswapV3QueryClient(client, defaultState.dexAddress);
     return await queryClient.pools({});
+  }
+
+  public static async getPool(poolKey: PoolKey): Promise<PoolWithPoolKey> {
+    const client = await CosmWasmClient.connect(import.meta.env.VITE_CHAIN_RPC_ENDPOINT);
+    const queryClient = new OraiswapV3QueryClient(client, defaultState.dexAddress);
+    const pool = await queryClient.pool({
+      feeTier: poolKey.fee_tier,
+      token0: poolKey.token_x,
+      token1: poolKey.token_y
+    });
+    return {
+      pool: pool,
+      pool_key: poolKey
+    }
   }
 
   public static async getAllPosition(address: string, limit?: number, offset?: PoolKey): Promise<any> {
@@ -226,13 +251,13 @@ export default class SingletonOraiswapV3 {
     });
   }
 
-  public static getPool = async (poolKey: PoolKey) => {
-    const client = await CosmWasmClient.connect(import.meta.env.VITE_CHAIN_RPC_ENDPOINT);
-    const queryClient = new OraiswapV3QueryClient(client, defaultState.dexAddress);
-    return await queryClient.pool({
-      feeTier: poolKey.fee_tier,
-      token0: poolKey.token_x,
-      token1: poolKey.token_y
-    });
-  }
+  // public static getPool = async (poolKey: PoolKey) => {
+  //   const client = await CosmWasmClient.connect(import.meta.env.VITE_CHAIN_RPC_ENDPOINT);
+  //   const queryClient = new OraiswapV3QueryClient(client, defaultState.dexAddress);
+  //   return await queryClient.pool({
+  //     feeTier: poolKey.fee_tier,
+  //     token0: poolKey.token_x,
+  //     token1: poolKey.token_y
+  //   });
+  // }
 }

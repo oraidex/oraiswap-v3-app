@@ -8,7 +8,6 @@ import SingletonOraiswapV3 from '@store/services/contractSingleton';
 import { FaucetTokenList } from '@store/consts/static';
 import { getTokenBalances } from '@store/consts/utils';
 
-
 export const HeaderWrapper: React.FC = () => {
   const dispatch = useDispatch();
 
@@ -28,9 +27,8 @@ export const HeaderWrapper: React.FC = () => {
 
   useEffect(() => {
     (async () => {
-      alert(window.walletType);
-      alert(!!window.keplr);
       if (!window.walletType || !window.keplr) return;
+      console.log({ walletAddress });
       if (walletAddress == '') connectWallet();
 
       if (signingClient && walletAddress) {
@@ -58,7 +56,12 @@ export const HeaderWrapper: React.FC = () => {
     };
   }, []);
 
-  return <Header landing={location.pathname.substring(1)} />;
+  return (
+    <>
+      <Header landing={location.pathname.substring(1)} />
+      <span>{walletAddress}</span>
+    </>
+  );
 };
 
 export default HeaderWrapper;

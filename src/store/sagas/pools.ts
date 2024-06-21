@@ -60,6 +60,7 @@ export function* fetchPoolsDataForList(action: PayloadAction<ListPoolsRequest>) 
 }
 
 export function* handleInitPool(action: PayloadAction<PoolKey>): Generator {
+  const walletAddress = yield* select(address);
   const loaderKey = createLoaderKey();
   const loaderSigningTx = createLoaderKey();
   try {
@@ -78,7 +79,7 @@ export function* handleInitPool(action: PayloadAction<PoolKey>): Generator {
 
     const initSqrtPrice = toSqrtPrice(1, 0);
 
-    const tx = yield* call(createPoolTx, poolKey, initSqrtPrice.toString());
+    const tx = yield* call(createPoolTx, poolKey, initSqrtPrice.toString(), walletAddress);
 
     yield put(
       snackbarsActions.add({

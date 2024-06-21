@@ -107,7 +107,8 @@ export function* handleSwap(action: PayloadAction<Omit<Swap, 'txid'>>): Generato
       amountIn,
       byAmountIn,
       sqrtPriceLimit,
-      slippage
+      slippage,
+      walletAddress
     );
     txs.push(swapTx);
 
@@ -259,7 +260,8 @@ export function* handleSwapWithNative(action: PayloadAction<Omit<Swap, 'txid'>>)
       amountIn,
       byAmountIn,
       sqrtPriceLimit,
-      slippage
+      slippage,
+      walletAddress
     );
     txs.push(swapTx);
 

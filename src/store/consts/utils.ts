@@ -479,17 +479,11 @@ export const parseFeeToPathFee = (fee: bigint): string => {
 
 export const getPoolsByPoolKeys = async (poolKeys: PoolKey[]): Promise<PoolWithPoolKey[]> => {
   const promises = poolKeys.map(({ token_x, token_y, fee_tier }) =>
-    SingletonOraiswapV3.dex.pool({ token0: token_x, token1: token_y, feeTier: fee_tier })
+    SingletonOraiswapV3.getPool({ token_x, token_y, fee_tier })
   );
   const pools = await Promise.all(promises);
 
-  return pools.map((pool, index) => {
-    const poolWithPoolKey: PoolWithPoolKey = {
-      pool,
-      pool_key: poolKeys[index]
-    };
-    return poolWithPoolKey;
-  });
+  return pools;
 };
 
 export type TokenDataOnChain = {
@@ -500,7 +494,10 @@ export type TokenDataOnChain = {
   balance: bigint;
 };
 
-export const getTokenDataByAddresses = async (tokens: string[], address: string): Promise<Record<string, Token>> => {
+export const getTokenDataByAddresses = async (
+  tokens: string[],
+  address: string
+): Promise<Record<string, Token>> => {
   const tokenInfos: TokenDataOnChain[] = await SingletonOraiswapV3.getTokensInfo(tokens, address);
 
   const newTokens: Record<string, Token> = {};
@@ -518,9 +515,15 @@ export const getTokenDataByAddresses = async (tokens: string[], address: string)
   return newTokens;
 };
 
-export const createPoolTx = async (poolKey: PoolKey, initSqrtPrice: string): Promise<string> => {
+export const createPoolTx = async (
+  poolKey: PoolKey,
+  initSqrtPrice: string,
+  address: string
+): Promise<string> => {
   const initTick = getTickAtSqrtPrice(BigInt(initSqrtPrice), poolKey.fee_tier.tick_spacing);
-
+  if (SingletonOraiswapV3.dex.sender !== address) {
+    SingletonOraiswapV3.load(SingletonOraiswapV3.dex.client, address);
+  }
   return (
     await SingletonOraiswapV3.dex.createPool({
       feeTier: poolKey.fee_tier,
@@ -538,7 +541,8 @@ export const createPositionTx = async (
   upperTick: number,
   liquidityDelta: bigint,
   spotSqrtPrice: bigint,
-  slippageTolerance: bigint
+  slippageTolerance: bigint,
+  address: string
 ): Promise<string> => {
   const slippageLimitLower = calculateSqrtPriceAfterSlippage(
     spotSqrtPrice,
@@ -550,6 +554,10 @@ export const createPositionTx = async (
     Number(slippageTolerance),
     true
   );
+
+  if (SingletonOraiswapV3.dex.sender !== address) {
+    SingletonOraiswapV3.load(SingletonOraiswapV3.dex.client, address);
+  }
 
   const res = await SingletonOraiswapV3.dex.createPosition({
     poolKey,
@@ -566,10 +574,7 @@ export const createPositionTx = async (
 export const getPool = async (poolKey: PoolKey): Promise<PoolWithPoolKey> => {
   console.log('getPool here', poolKey);
   const pool = await SingletonOraiswapV3.getPool(poolKey);
-  return {
-    pool,
-    pool_key: poolKey
-  };
+  return pool;
 };
 
 export const getPoolKeys = async (): Promise<PoolKey[]> => {
@@ -611,10 +616,7 @@ export const getTokenBalances = async (tokens: string[], address: string) => {
         if (!address) {
           return { address: token, balance: 0n };
         }
-        const balance = await SingletonOraiswapV3.queryBalance(
-          address,
-          token
-        );
+        const balance = await SingletonOraiswapV3.queryBalance(address, token);
         return { address: token, balance: BigInt(balance) };
       }
     })
@@ -817,7 +819,7 @@ export type SimulateResult = {
 };
 
 export const getPools = async (poolKeys: PoolKey[]): Promise<PoolWithPoolKey[]> => {
-  const pools = await SingletonOraiswapV3.dex.pools({});
+  const pools = await SingletonOraiswapV3.getPools();
 
   return pools.map((pool, index) => {
     return { ...pool, poolKey: poolKeys[index] };
@@ -846,7 +848,7 @@ export const getAllLiquidityTicks = async (
     }
   }
 
-  const liquidityTicks = await SingletonOraiswapV3.dex.liquidityTicks({
+  const liquidityTicks = await SingletonOraiswapV3.dexQuerier.liquidityTicks({
     poolKey,
     tickIndexes: ticks
   });
@@ -916,7 +918,10 @@ export const calcTicksAmountInRange = (
 export const getAllTicks = async (poolKey: PoolKey, ticks: bigint[]): Promise<Tick[]> => {
   const tickDatas = await Promise.all(
     ticks.map(async tick => {
-      const tickData = await SingletonOraiswapV3.dex.tick({ key: poolKey, index: Number(tick) });
+      const tickData = await SingletonOraiswapV3.dexQuerier.tick({
+        key: poolKey,
+        index: Number(tick)
+      });
       const convertedTick: Tick = {
         fee_growth_outside_x: BigInt(tickData.fee_growth_outside_x),
         fee_growth_outside_y: BigInt(tickData.fee_growth_outside_y),
@@ -971,7 +976,7 @@ export interface LiquidityBreakpoint {
 }
 
 export const getTick = async (ind: bigint, poolKey: PoolKey): Promise<Tick> => {
-  const tickData = await SingletonOraiswapV3.dex.tick({ key: poolKey, index: Number(ind) });
+  const tickData = await SingletonOraiswapV3.dexQuerier.tick({ key: poolKey, index: Number(ind) });
   const convertedTick: Tick = {
     fee_growth_outside_x: BigInt(tickData.fee_growth_outside_x),
     fee_growth_outside_y: BigInt(tickData.fee_growth_outside_y),
@@ -1191,7 +1196,7 @@ export const calculatePriceImpact = (
 }
  */
 export const getPosition = async (index: bigint, ownerId: string): Promise<Position> => {
-  const position = await SingletonOraiswapV3.dex.position({ index: Number(index), ownerId });
+  const position = await SingletonOraiswapV3.dexQuerier.position({ index: Number(index), ownerId });
   const convertedPosition: Position = {
     pool_key: position.pool_key,
     liquidity: BigInt(position.liquidity),
@@ -1207,7 +1212,7 @@ export const getPosition = async (index: bigint, ownerId: string): Promise<Posit
 };
 
 export const positionList = async (ownerId: string): Promise<Position[]> => {
-  const positions = await SingletonOraiswapV3.dex.positions({ ownerId });
+  const positions = await SingletonOraiswapV3.dexQuerier.positions({ ownerId });
   return positions.map(position => ({
     pool_key: position.pool_key,
     liquidity: BigInt(position.liquidity),
@@ -1225,7 +1230,11 @@ export const isNativeToken = (token: string): boolean => {
   return token === 'orai' || token.includes('ibc');
 };
 
-export const approveToken = async (token: string, amount: bigint, address: string): Promise<string> => {
+export const approveToken = async (
+  token: string,
+  amount: bigint,
+  address: string
+): Promise<string> => {
   if (isNativeToken(token)) {
     return '';
   }
@@ -1240,13 +1249,18 @@ export const swapWithSlippageTx = async (
   amount: bigint,
   byAmountIn: boolean,
   estimatedSqrtPrice: bigint,
-  slippage: Percentage
+  slippage: Percentage,
+  address: string
 ): Promise<string> => {
   const sqrtPriceAfterSlippage = calculateSqrtPriceAfterSlippage(
     estimatedSqrtPrice,
     slippage,
     !xToY
   );
+
+  if (SingletonOraiswapV3.dex.sender !== address) {
+    SingletonOraiswapV3.load(SingletonOraiswapV3.dex.client, address);
+  }
 
   if (isNativeToken(poolKey.token_x) || isNativeToken(poolKey.token_y)) {
     const denom = xToY ? poolKey.token_x : poolKey.token_y;
@@ -1267,23 +1281,35 @@ export const swapWithSlippageTx = async (
     return res.transactionHash;
   }
 
-  const res = await SingletonOraiswapV3.dex.swap({
-    poolKey,
-    xToY,
-    amount: amount.toString(),
-    byAmountIn,
-    sqrtPriceLimit: sqrtPriceAfterSlippage.toString()
-  });
+  console.log('asdivuasiduv', SingletonOraiswapV3.dex);
 
-  return res.transactionHash;
+  try {
+    const res = await SingletonOraiswapV3.dex.swap({
+      poolKey,
+      xToY,
+      amount: amount.toString(),
+      byAmountIn,
+      sqrtPriceLimit: sqrtPriceAfterSlippage.toString()
+    });
+
+    return res.transactionHash;
+  } catch (e) {
+    console.log('error', e);
+  }
 };
 
-export const claimFee = async (positionIndex: bigint): Promise<string> => {
+export const claimFee = async (positionIndex: bigint, address: string): Promise<string> => {
+  if (SingletonOraiswapV3.dex.sender !== address) {
+    SingletonOraiswapV3.load(SingletonOraiswapV3.dex.client, address);
+  }
   const res = await SingletonOraiswapV3.dex.claimFee({ index: Number(positionIndex) });
   return res.transactionHash;
 };
 
-export const removePosition = async (positionIndex: bigint): Promise<string> => {
+export const removePosition = async (positionIndex: bigint, address: string): Promise<string> => {
+  if (SingletonOraiswapV3.dex.sender !== address) {
+    SingletonOraiswapV3.load(SingletonOraiswapV3.dex.client, address);
+  }
   const res = await SingletonOraiswapV3.dex.removePosition({ index: Number(positionIndex) });
   return res.transactionHash;
 };
@@ -1302,7 +1328,8 @@ export const createPositionWithNativeTx = async (
   spotSqrtPrice: bigint,
   slippageTolerance: bigint,
   initialAmountX: bigint,
-  initialAmountY: bigint
+  initialAmountY: bigint,
+  address: string
 ): Promise<string> => {
   const slippageLimitLower = calculateSqrtPriceAfterSlippage(
     spotSqrtPrice,
@@ -1326,6 +1353,10 @@ export const createPositionWithNativeTx = async (
 
   if (isNativeToken(token_y)) {
     fund.push({ denom: token_y, amount: initialAmountY.toString() });
+  }
+
+  if (SingletonOraiswapV3.dex.sender !== address) {
+    SingletonOraiswapV3.load(SingletonOraiswapV3.dex.client, address);
   }
 
   const res = await SingletonOraiswapV3.dex.createPosition(

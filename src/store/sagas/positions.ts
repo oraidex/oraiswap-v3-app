@@ -99,7 +99,7 @@ function* handleInitPosition(action: PayloadAction<InitPositionData>): Generator
     const poolKey = newPoolKey(token_x, token_y, fee_tier);
 
     if (initPool) {
-      const createTx = yield* call(createPoolTx, poolKey, spotSqrtPrice.toString());
+      const createTx = yield* call(createPoolTx, poolKey, spotSqrtPrice.toString(), walletAddress);
       txs.push(createTx);
     }
 
@@ -110,7 +110,8 @@ function* handleInitPosition(action: PayloadAction<InitPositionData>): Generator
       upperTick,
       liquidityDelta,
       spotSqrtPrice,
-      slippageTolerance
+      slippageTolerance,
+      walletAddress
     );
     txs.push(tx);
 
@@ -265,7 +266,7 @@ function* handleInitPositionWithNative(action: PayloadAction<InitPositionData>):
     const poolKey = newPoolKey(token_x, token_y, fee_tier);
 
     if (initPool) {
-      yield* call(createPoolTx, poolKey, spotSqrtPrice.toString());
+      yield* call(createPoolTx, poolKey, spotSqrtPrice.toString(), walletAddress);
     }
 
     // TODO:here
@@ -278,7 +279,8 @@ function* handleInitPositionWithNative(action: PayloadAction<InitPositionData>):
       spotSqrtPrice,
       slippageTolerance,
       xAmountWithSlippage,
-      yAmountWithSlippage
+      yAmountWithSlippage,
+      walletAddress
     );
 
     yield put(
@@ -434,6 +436,8 @@ export async function handleClaimFeeSingleton(index?: bigint) {
 export function* handleClaimFee(action: PayloadAction<HandleClaimFee>) {
   const { index, addressTokenX, addressTokenY } = action.payload;
 
+  const walletAddress = yield* select(address);
+
   // TODO: clain fee with native token
   // if (addressTokenX === ORAI.address || addressTokenY === ORAI.address) {
   //   yield* call(handleClaimFeeWithNative, action);
@@ -464,7 +468,7 @@ export function* handleClaimFee(action: PayloadAction<HandleClaimFee>) {
     closeSnackbar(loaderSigningTx);
     yield put(snackbarsActions.remove(loaderSigningTx));
 
-    const txResult = yield* call(claimFee, index);
+    const txResult = yield* call(claimFee, index, walletAddress);
 
     closeSnackbar(loaderKey);
     yield put(snackbarsActions.remove(loaderKey));
@@ -545,6 +549,8 @@ export function* handleGetSinglePosition(action: PayloadAction<bigint>) {
 }
 
 export function* handleClosePosition(action: PayloadAction<ClosePositionData>) {
+  const walletAddress = yield* select(address);
+
   const { addressTokenX, addressTokenY, onSuccess, positionIndex } = action.payload;
 
   // TODO: open to ibc tokens later
@@ -575,7 +581,7 @@ export function* handleClosePosition(action: PayloadAction<ClosePositionData>) {
       })
     );
 
-    const tx = yield* call(removePosition, positionIndex);
+    const tx = yield* call(removePosition, positionIndex, walletAddress);
 
     closeSnackbar(loaderSigningTx);
     yield put(snackbarsActions.remove(loaderSigningTx));
