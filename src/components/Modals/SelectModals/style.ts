@@ -1,6 +1,6 @@
-import { Theme } from '@mui/material'
-import { colors, typography } from '@static/theme'
-import { makeStyles } from 'tss-react/mui'
+import { Theme } from '@mui/material';
+import { colors, typography } from '@static/theme';
+import { makeStyles } from 'tss-react/mui';
 
 const useStyles = makeStyles()((theme: Theme) => {
   return {
@@ -17,7 +17,7 @@ const useStyles = makeStyles()((theme: Theme) => {
       overflow: 'hidden',
       padding: 24,
       backgroundColor: colors.oraidex.component,
-      borderRadius: 20,
+      borderRadius: 12,
       width: 500,
       [theme.breakpoints.down('xs')]: {
         width: '100vw'
@@ -40,6 +40,9 @@ const useStyles = makeStyles()((theme: Theme) => {
     inputControl: {
       width: '100%',
       position: 'relative'
+    },
+    headerLeft: {
+      visibility: 'hidden'
     },
     selectTokenClose: {
       minWidth: 0,
@@ -66,11 +69,11 @@ const useStyles = makeStyles()((theme: Theme) => {
       color: 'white',
       border: `1px solid ${colors.oraidex.newDark}`,
       borderColor: colors.oraidex.newDark,
-      borderRadius: 15,
-      padding: '18px 10px 17px 10px',
+      borderRadius: 99,
+      padding: '8px 16px 8px 40px',
       '&::placeholder': {
-        color: colors.oraidex.light,
-        ...typography.body1
+        color: colors.oraidex.neutralText,
+        ...typography.caption2
       },
       '&:focus': {
         outline: 'none'
@@ -78,10 +81,10 @@ const useStyles = makeStyles()((theme: Theme) => {
     },
     inputIcon: {
       position: 'absolute',
-      width: 24,
-      height: 26,
-      right: '12px',
-      top: '14px'
+      width: 20,
+      height: 20,
+      left: '16px',
+      top: '8px'
     },
     commonTokensHeader: {
       ...typography.body2
@@ -119,7 +122,7 @@ const useStyles = makeStyles()((theme: Theme) => {
     },
     tokenList: {
       background: colors.oraidex.component,
-      borderTop: `1px solid ${colors.oraidex.light}`,
+      // borderTop: `1px solid ${colors.oraidex.light}`,
       width: 451,
       height: 352,
       paddingTop: 20
@@ -143,7 +146,7 @@ const useStyles = makeStyles()((theme: Theme) => {
 
       '&:hover': {
         background: colors.oraidex.light,
-        borderRadius: 24
+        borderRadius: 8
       }
     },
     tokenName: {
@@ -193,7 +196,8 @@ const useStyles = makeStyles()((theme: Theme) => {
       width: 5
     },
     scrollbarTrack: {
-      background: '#111931',
+      // background: colors.oraidex.neutralText,
+      background: 'transparent',
       borderRadius: 10,
       height: '98%',
       margin: 5,
@@ -306,7 +310,7 @@ const useStyles = makeStyles()((theme: Theme) => {
       marginLeft: 10,
       cursor: 'pointer'
     }
-  }
-})
+  };
+});
 
-export default useStyles
+export default useStyles;

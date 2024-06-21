@@ -1,75 +1,82 @@
 import { PositionsList } from '@components/PositionsList/PositionsList';
-import { FAUCET_LIST_TOKEN, POSITIONS_PER_PAGE } from '@store/consts/static';
+import { POSITIONS_PER_PAGE } from '@store/consts/static';
 import {
   PERCENTAGE_SCALE,
   calcYPerXPriceByTickIndex,
-  poolKeyToString,
   printBigint
 } from '@store/consts/utils';
 import { actions } from '@store/reducers/positions';
 import { Status } from '@store/reducers/wallet';
 import {
-  PoolWithPoolKeyAndIndex,
-  PositionWithPoolData,
   isLoadingPositionsList,
-  lastPageSelector
+  lastPageSelector,
+  positionsWithPoolsData
 } from '@store/selectors/positions';
 import { address, status } from '@store/selectors/wallet';
-import SingletonOraiswapV3 from '@store/services/contractSingleton';
 import { openWalletSelectorModal } from '@utils/web3/selector';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { useSigningClient } from '../../../src/contexts/cosmwasm';
 
 export const WrappedPositionsList: React.FC = () => {
   const walletAddress = useSelector(address);
-  const [list, setList] = useState([]);
+  const list = useSelector(positionsWithPoolsData)
+  // const [list, setList] = useState([]);
   const isLoading = useSelector(isLoadingPositionsList);
   const lastPage = useSelector(lastPageSelector);
   const walletStatus = useSelector(status);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { signingClient } = useSigningClient();
+  // const { signingClient } = useSigningClient();
 
-  useEffect(() => {
-    (async () => {
-      if (signingClient && walletAddress && !list.length) {
-        SingletonOraiswapV3.load(signingClient, walletAddress);
-        const pools = await SingletonOraiswapV3.getAllPosition();
-        const poolsByKey: Record<string, PoolWithPoolKeyAndIndex> = {};
-        pools.forEach((pool: any, index: number) => {
-          poolsByKey[poolKeyToString(pool.pool_key)] = {
-            ...pool,
-            poolIndex: index
-          };
-        });
+  // useEffect(() => {
+  //   dispatch(poolActions.getPoolKeys())
+  // }, [walletAddress])
 
-        const data = pools.map((position: any, index: number) => {
-          const tokenX = FAUCET_LIST_TOKEN.find(
-            token => token.address === position.pool_key.token_x
-          );
-          const tokenY = FAUCET_LIST_TOKEN.find(
-            token => token.address === position.pool_key.token_y
-          );
+  // useEffect(() => {
+  //   dispatch(actions.getPositionsList())
+  // }, [poolList])
 
-          if (!tokenX || !tokenY) {
-            throw new Error(`Token not found for position: ${position}`);
-          }
+  // console.log({ listTest })
 
-          return {
-            ...position,
-            poolData: poolsByKey[poolKeyToString(position.pool_key)],
-            tokenX,
-            tokenY,
-            positionIndex: index
-          };
-        });
-        dispatch(actions.setPositionsList(data));
-        setList(data);
-      }
-    })();
-  }, [walletAddress]);
+  // useEffect(() => {
+  //   (async () => {
+  //     if (signingClient && walletAddress && !list.length) {
+  //       SingletonOraiswapV3.load(signingClient, walletAddress);
+  //       const pools = await SingletonOraiswapV3.getAllPosition();
+  //       const poolsByKey: Record<string, PoolWithPoolKeyAndIndex> = {};
+  //       pools.forEach((pool: any, index: number) => {
+  //         poolsByKey[poolKeyToString(pool.pool_key)] = {
+  //           ...pool,
+  //           poolIndex: index
+  //         };
+  //       });
+
+  //       const data = pools.map((position: any, index: number) => {
+  //         const tokenX = FAUCET_LIST_TOKEN.find(
+  //           token => token.address === position.pool_key.token_x
+  //         );
+  //         const tokenY = FAUCET_LIST_TOKEN.find(
+  //           token => token.address === position.pool_key.token_y
+  //         );
+
+  //         if (!tokenX || !tokenY) {
+  //           throw new Error(`Token not found for position: ${position}`);
+  //         }
+
+  //         return {
+  //           ...position,
+  //           poolData: poolsByKey[poolKeyToString(position.pool_key)],
+  //           tokenX,
+  //           tokenY,
+  //           positionIndex: index
+  //         };
+  //       });
+  //       dispatch(actions.setPositionsList(data));
+  //       setList(data);
+  //     }
+  //   })();
+  // }, [walletAddress]);
 
   const [value, setValue] = useState<string>('');
 
@@ -96,7 +103,7 @@ export const WrappedPositionsList: React.FC = () => {
   };
 
   const data = list
-    .map((position: PositionWithPoolData, index) => {
+    .map((position: any, index) => {
       // console.log({ position })
 
       const lowerPrice = Number(

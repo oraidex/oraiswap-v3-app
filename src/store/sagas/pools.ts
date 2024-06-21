@@ -26,8 +26,10 @@ import { actions as snackbarsActions } from '@store/reducers/snackbars';
 import { tokens } from '@store/selectors/pools';
 import { closeSnackbar } from 'notistack';
 import { all, call, put, select, spawn, takeEvery, takeLatest } from 'typed-redux-saga';
+import { address } from '@store/selectors/wallet';
 
 export function* fetchPoolsDataForList(action: PayloadAction<ListPoolsRequest>) {
+  const walletAddress = yield* select(address);
   console.log('fetchPoolsDataForList', action.payload);
   const pools = yield* call(getPoolsByPoolKeys, action.payload.poolKeys);
 
@@ -45,9 +47,9 @@ export function* fetchPoolsDataForList(action: PayloadAction<ListPoolsRequest>) 
     )
   );
 
-  const unknownTokensData = yield* call(getTokenDataByAddresses, [...unknownTokens]);
+  const unknownTokensData = yield* call(getTokenDataByAddresses, [...unknownTokens], walletAddress);
 
-  const knownTokenBalances = yield* call(getTokenBalances, [...knownTokens]);
+  const knownTokenBalances = yield* call(getTokenBalances, [...knownTokens], walletAddress);
 
   yield* put(actions.addTokens(unknownTokensData));
   yield* put(actions.updateTokenBalances(knownTokenBalances));
@@ -58,6 +60,7 @@ export function* fetchPoolsDataForList(action: PayloadAction<ListPoolsRequest>) 
 }
 
 export function* handleInitPool(action: PayloadAction<PoolKey>): Generator {
+  const walletAddress = yield* select(address);
   const loaderKey = createLoaderKey();
   const loaderSigningTx = createLoaderKey();
   try {
@@ -76,7 +79,7 @@ export function* handleInitPool(action: PayloadAction<PoolKey>): Generator {
 
     const initSqrtPrice = toSqrtPrice(1, 0);
 
-    const tx = yield* call(createPoolTx, poolKey, initSqrtPrice.toString());
+    const tx = yield* call(createPoolTx, poolKey, initSqrtPrice.toString(), walletAddress);
 
     yield put(
       snackbarsActions.add({

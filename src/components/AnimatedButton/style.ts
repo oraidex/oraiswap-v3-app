@@ -1,5 +1,5 @@
-import { colors, typography } from '@static/theme'
-import { makeStyles } from 'tss-react/mui'
+import { colors, typography } from '@static/theme';
+import { makeStyles } from 'tss-react/mui';
 
 const useStyles = makeStyles()(() => {
   return {
@@ -63,25 +63,25 @@ const useStyles = makeStyles()(() => {
       position: 'absolute',
       padding: 0,
       zIndex: 1,
-      top: 0,
-      left: '-100%',
-      backgroundColor: colors.oraidex.pink
+      top: 0
+      // left: '-100%'
+      // backgroundColor: colors.oraidex.pink
     },
     backgroundRelease: {
       position: 'absolute',
       width: '100%',
       height: '100%',
-      left: '-50%',
+      // left: '-50%',
       padding: 0,
       zIndex: 1,
       top: '0%',
       animation: '$slide-start .4s ease-in',
-      transition: 'all .2s',
-      backgroundColor: colors.oraidex.pink
+      transition: 'all .2s'
+      // backgroundColor: colors.oraidex.pink
     },
     backgroundApprovedWithSuccess: {
       top: 0,
-      left: '-50%',
+      // left: '-50%',
       width: '100%',
       height: '100%',
       padding: 0,
@@ -91,7 +91,7 @@ const useStyles = makeStyles()(() => {
     },
     backgroundApprovedWithFail: {
       top: 0,
-      left: '-50%',
+      // left: '-50%',
       width: '100%',
       height: '100%',
       padding: 0,
@@ -114,7 +114,7 @@ const useStyles = makeStyles()(() => {
       border: 'none',
       margin: '10px 14px 10px 0'
     }
-  }
-})
+  };
+});
 
-export default useStyles
+export default useStyles;

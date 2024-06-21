@@ -1,10 +1,13 @@
 import { useState } from 'react';
-import { connectKeplr, connectOwallet } from '../services/keplr';
+import { connectKeplr } from '../services/keplr';
 import { Tendermint37Client, Tendermint34Client } from '@cosmjs/tendermint-rpc';
 import { CosmWasmClient, SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate';
 import { GasPrice } from '@cosmjs/stargate';
 import { useDispatch } from 'react-redux';
 import { actions as walletActions, Status } from '@store/reducers/wallet';
+import { actions as poolActions } from '@store/reducers/pools';
+import { actions as positionActions } from '@store/reducers/positions';
+import SingletonOraiswapV3 from '@store/services/contractSingleton';
 
 const getStatus = Tendermint34Client.prototype.status;
 
@@ -53,12 +56,18 @@ export const useSigningCosmWasmClient = (): ISigningCosmWasmClientContext => {
   const dispatch = useDispatch();
 
   window.onmessage = function (e) {
-    if (e.data.walletType) {
-      window.walletType = e.data.walletType;
-      window.Keplr =
-        (e.data.walletType === 'keplr' ? window?.keplr : window?.owallet) ?? window?.keplr;
-      window.oraiAddr = e.data.address;
-      connectWallet();
+    if (e.data.statusWallet) {
+      if (e.data.statusWallet === 'connect') {
+        window.walletType = e.data.walletType;
+        window.Keplr =
+          (e.data.walletType === 'keplr' ? window?.keplr : window?.owallet) ?? window?.keplr;
+        connectWallet();
+      }
+      if (e.data.statusWallet === 'disconnect') {
+        window.walletType = e.data.walletType;
+        window.Keplr = undefined;
+        disconnect();
+      }
     }
   };
 
@@ -87,7 +96,11 @@ export const useSigningCosmWasmClient = (): ISigningCosmWasmClientContext => {
         // get user address
         const [{ address }] = await offlineSigner.getAccounts();
         setWalletAddress(address);
+        dispatch(walletActions.setAddress(address));
+
         dispatch(walletActions.setStatus(Status.Initialized));
+        dispatch(poolActions.getPoolKeys());
+        dispatch(positionActions.getPositionsList());
       }
     } catch (error) {
       // make fallback client

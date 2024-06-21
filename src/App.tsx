@@ -10,7 +10,6 @@ import { SigningCosmWasmProvider } from './contexts/cosmwasm';
 
 window.walletType = 'keplr';
 window.Keplr = window?.keplr;
-
 function App() {
   return (
     <Provider store={store}>

@@ -27,7 +27,8 @@ export const colors = {
   },
   green: {
     main: '#00F9BB',
-    button: '#40BFA0',
+    // button: '#40BFA0',
+    button: '#aee67f',
     hover: 'rgba(0,249,187,0.15)',
     pastel: '#8AF7E4',
     snackbar: '#4BB724',
@@ -64,6 +65,9 @@ export const colors = {
     '807ADC': '#807ADC'
   },
   oraidex: {
+    neutralText: '#979995',
+    neutralTextLight: '#EFEFEF',
+    border: '#595B57',
     warning: '#EFD063',
     pink: '#EF84F5',
     violet: '#9C3EBD',
@@ -110,6 +114,11 @@ export const typography = {
     lineHeight: '24px',
     fontWeight: 700
   },
+  heading5: {
+    fontSize: 18,
+    lineHeight: 1.5,
+    fontWeight: 500
+  },
   body1: {
     fontSize: 16,
     lineHeight: '20px',
@@ -123,6 +132,11 @@ export const typography = {
   body3: {
     fontSize: 20,
     lineHeight: '24px',
+    fontWeight: 400
+  },
+  body4: {
+    fontSize: 13,
+    lineHeight: 1.5,
     fontWeight: 400
   },
   caption1: {
@@ -170,7 +184,7 @@ export const theme = createTheme({
     },
     text: {
       primary: '#FFFFFF',
-      secondary: '#030313'
+      secondary: '#595B57'
     },
     error: {
       main: '#E15757'

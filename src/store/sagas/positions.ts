@@ -9,10 +9,12 @@ import {
   createPlaceholderLiquidityPlot,
   createPoolTx,
   createPositionTx,
+  createPositionWithNativeTx,
   deserializeTickmap,
   getAllLiquidityTicks,
   getPosition,
   getTick,
+  isNativeToken,
   poolKeyToString,
   positionList,
   removePosition
@@ -34,8 +36,9 @@ import { closeSnackbar } from 'notistack';
 import { all, call, fork, join, put, select, spawn, takeEvery, takeLatest } from 'typed-redux-saga';
 import { fetchTicksAndTickMaps } from './pools';
 import { fetchBalances } from './wallet';
-import { PoolKey, newPoolKey, toSqrtPrice } from '@wasm';
+import { PoolKey, newPoolKey } from '@wasm';
 import { ORAI } from '@store/consts/static';
+import { actions as walletActions } from '@store/reducers/wallet';
 
 function* handleInitPosition(action: PayloadAction<InitPositionData>): Generator {
   const {
@@ -52,10 +55,12 @@ function* handleInitPosition(action: PayloadAction<InitPositionData>): Generator
 
   const { token_x, token_y, fee_tier } = poolKeyData;
 
+  const walletAddress = yield* select(address);
+
   if (
     // TODO: open to ibc tokens later
-    (token_x === ORAI.address && tokenXAmount !== 0n) ||
-    (token_y === ORAI.address && tokenYAmount !== 0n)
+    (isNativeToken(token_x) && tokenXAmount !== 0n) ||
+    (isNativeToken(token_y) && tokenYAmount !== 0n)
   ) {
     return yield* call(handleInitPositionWithNative, action);
   }
@@ -85,18 +90,16 @@ function* handleInitPosition(action: PayloadAction<InitPositionData>): Generator
       true
     );
 
-    const XTokenTx = yield* call(approveToken, token_x, xAmountWithSlippage);
+    const XTokenTx = yield* call(approveToken, token_x, xAmountWithSlippage, walletAddress);
     txs.push(XTokenTx);
 
-    const YTokenTx = yield* call(approveToken, token_y, yAmountWithSlippage);
+    const YTokenTx = yield* call(approveToken, token_y, yAmountWithSlippage, walletAddress);
     txs.push(YTokenTx);
 
     const poolKey = newPoolKey(token_x, token_y, fee_tier);
 
     if (initPool) {
-      const initTick = 0;
-      const initSqrtPrice = toSqrtPrice(1, 0);
-      const createTx = yield* call(createPoolTx, poolKey, initSqrtPrice.toString(), initTick);
+      const createTx = yield* call(createPoolTx, poolKey, spotSqrtPrice.toString(), walletAddress);
       txs.push(createTx);
     }
 
@@ -107,7 +110,8 @@ function* handleInitPosition(action: PayloadAction<InitPositionData>): Generator
       upperTick,
       liquidityDelta,
       spotSqrtPrice,
-      slippageTolerance
+      slippageTolerance,
+      walletAddress
     );
     txs.push(tx);
 
@@ -174,7 +178,8 @@ function* handleInitPosition(action: PayloadAction<InitPositionData>): Generator
 
 export function* handleGetPositionsList() {
   try {
-    const positions = yield* call(positionList, SingletonOraiswapV3.dex.sender);
+    const walletAddress = yield* select(address);
+    const positions = yield* call(positionList, walletAddress);
 
     const pools: PoolKey[] = [];
     const poolSet: Set<string> = new Set();
@@ -215,8 +220,130 @@ export function* handleGetCurrentPositionTicks(action: PayloadAction<GetPosition
   );
 }
 
-function* handleInitPositionWithNative(_action: PayloadAction<InitPositionData>): Generator {
+function* handleInitPositionWithNative(action: PayloadAction<InitPositionData>): Generator {
+  const walletAddress = yield* select(address);
+
   // TODO: implement work with native token
+  const loaderCreatePosition = createLoaderKey()
+  const loaderSigningTx = createLoaderKey()
+
+  const {
+    poolKeyData,
+    lowerTick,
+    upperTick,
+    spotSqrtPrice,
+    liquidityDelta,
+    initPool,
+    slippageTolerance
+  } = action.payload
+
+  const { token_x, token_y, fee_tier } = poolKeyData
+
+  try {
+    yield put(
+      snackbarsActions.add({
+        message: 'Creating position...',
+        variant: 'pending',
+        persist: true,
+        key: loaderCreatePosition
+      })
+    )
+
+    const [xAmountWithSlippage, yAmountWithSlippage] = calculateTokenAmountsWithSlippage(
+      fee_tier.tick_spacing,
+      spotSqrtPrice,
+      liquidityDelta,
+      lowerTick,
+      upperTick,
+      Number(slippageTolerance),
+      true
+    )
+
+    yield* call(approveToken, token_x, xAmountWithSlippage, walletAddress)
+
+    yield* call(approveToken, token_y, yAmountWithSlippage, walletAddress)
+
+    const poolKey = newPoolKey(token_x, token_y, fee_tier);
+
+    if (initPool) {
+      yield* call(createPoolTx, poolKey, spotSqrtPrice.toString(), walletAddress);
+    }
+
+    // TODO:here
+    const tx = yield* call(
+      createPositionWithNativeTx,
+      poolKey,
+      lowerTick,
+      upperTick,
+      liquidityDelta,
+      spotSqrtPrice,
+      slippageTolerance,
+      xAmountWithSlippage,
+      yAmountWithSlippage,
+      walletAddress
+    );
+
+    yield put(
+      snackbarsActions.add({
+        message: 'Signing transaction...',
+        variant: 'pending',
+        persist: true,
+        key: loaderSigningTx
+      })
+    )
+
+    closeSnackbar(loaderSigningTx)
+    yield put(snackbarsActions.remove(loaderSigningTx))
+
+    yield* put(actions.setInitPositionSuccess(true))
+
+    closeSnackbar(loaderCreatePosition)
+    yield put(snackbarsActions.remove(loaderCreatePosition))
+
+    yield put(
+      snackbarsActions.add({
+        message: 'Position successfully created',
+        variant: 'success',
+        persist: false,
+        txid: tx
+      })
+    )
+
+    yield put(walletActions.getSelectedTokens([token_x, token_y]))
+
+    yield put(actions.getPositionsList())
+
+    yield* call(fetchBalances, [token_x, token_y])
+
+    yield* put(poolsActions.getPoolKeys())
+  } catch (e: any) {
+    console.log(e)
+
+    yield* put(actions.setInitPositionSuccess(false))
+
+    closeSnackbar(loaderCreatePosition)
+    yield put(snackbarsActions.remove(loaderCreatePosition))
+    closeSnackbar(loaderSigningTx)
+    yield put(snackbarsActions.remove(loaderSigningTx))
+
+    if (e.message) {
+      yield put(
+        snackbarsActions.add({
+          message: e.message,
+          variant: 'error',
+          persist: false
+        })
+      )
+    } else {
+      yield put(
+        snackbarsActions.add({
+          message: 'Failed to send. Please try again.',
+          variant: 'error',
+          persist: false
+        })
+      )
+    }
+  }
 }
 
 export function* handleGetCurrentPlotTicks(
@@ -309,11 +436,13 @@ export async function handleClaimFeeSingleton(index?: bigint) {
 export function* handleClaimFee(action: PayloadAction<HandleClaimFee>) {
   const { index, addressTokenX, addressTokenY } = action.payload;
 
+  const walletAddress = yield* select(address);
+
   // TODO: clain fee with native token
-  if (addressTokenX === ORAI.address || addressTokenY === ORAI.address) {
-    yield* call(handleClaimFeeWithNative, action);
-    return;
-  }
+  // if (addressTokenX === ORAI.address || addressTokenY === ORAI.address) {
+  //   yield* call(handleClaimFeeWithNative, action);
+  //   return;
+  // }
 
   const loaderKey = createLoaderKey();
   const loaderSigningTx = createLoaderKey();
@@ -339,7 +468,7 @@ export function* handleClaimFee(action: PayloadAction<HandleClaimFee>) {
     closeSnackbar(loaderSigningTx);
     yield put(snackbarsActions.remove(loaderSigningTx));
 
-    const txResult = yield* call(claimFee, index);
+    const txResult = yield* call(claimFee, index, walletAddress);
 
     closeSnackbar(loaderKey);
     yield put(snackbarsActions.remove(loaderKey));
@@ -390,9 +519,9 @@ export function* handleClaimFee(action: PayloadAction<HandleClaimFee>) {
   }
 }
 
-export function* handleClaimFeeWithNative(_action: PayloadAction<HandleClaimFee>) {
-  // TODO: implement claim fee with native token
-}
+// export function* handleClaimFeeWithNative(_action: PayloadAction<HandleClaimFee>) {
+//   // TODO: implement claim fee with native token
+// }
 
 export function* handleGetSinglePosition(action: PayloadAction<bigint>) {
   const walletAddress = yield* select(address);
@@ -420,13 +549,15 @@ export function* handleGetSinglePosition(action: PayloadAction<bigint>) {
 }
 
 export function* handleClosePosition(action: PayloadAction<ClosePositionData>) {
+  const walletAddress = yield* select(address);
+
   const { addressTokenX, addressTokenY, onSuccess, positionIndex } = action.payload;
 
   // TODO: open to ibc tokens later
-  if (addressTokenX === ORAI.address || addressTokenY === ORAI.address) {
-    yield* call(handleClosePositionWithNative, action);
-    return;
-  }
+  // if (addressTokenX === ORAI.address || addressTokenY === ORAI.address) {
+  //   yield* call(handleClosePositionWithNative, action);
+  //   return;
+  // }
 
   const loaderKey = createLoaderKey();
   const loaderSigningTx = createLoaderKey();
@@ -450,7 +581,7 @@ export function* handleClosePosition(action: PayloadAction<ClosePositionData>) {
       })
     );
 
-    const tx = yield* call(removePosition, positionIndex);
+    const tx = yield* call(removePosition, positionIndex, walletAddress);
 
     closeSnackbar(loaderSigningTx);
     yield put(snackbarsActions.remove(loaderSigningTx));
@@ -500,9 +631,9 @@ export function* handleClosePosition(action: PayloadAction<ClosePositionData>) {
   }
 }
 
-export function* handleClosePositionWithNative(_action: PayloadAction<ClosePositionData>) {
-  // TODO: implement close position with native token
-}
+// export function* handleClosePositionWithNative(_action: PayloadAction<ClosePositionData>) {
+//   // TODO: implement close position with native token
+// }
 
 export function* initPositionHandler(): Generator {
   yield* takeEvery(actions.initPosition, handleInitPosition);

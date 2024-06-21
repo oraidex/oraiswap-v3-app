@@ -1,5 +1,5 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
-import { OraichainNetworks, TESTNET_DEX_ADDRESS } from '@store/consts/static'
+import { OraichainNetworks } from '@store/consts/static'
 import { PayloadType } from '@store/consts/types'
 
 export enum Status {

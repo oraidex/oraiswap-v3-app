@@ -5,13 +5,14 @@ export const useLabelStyles = makeStyles()(() => {
   return {
     marketId: {
       fontFamily: 'IBM Plex Sans',
-      fontSize: 16,
+      fontSize: 12,
       fontWeight: 400,
       lineHeight: '20px',
       letterSpacing: '-0.03px',
-      textAlign: 'right',
-      color: `${colors.oraidex.textGrey} !important`,
-      paddingRight: 7
+      textAlign: 'left',
+      color: `${colors.oraidex.neutralText} !important`,
+      paddingRight: 7,
+      paddingTop: 8
     },
     clipboardIcon: {
       width: 15,
