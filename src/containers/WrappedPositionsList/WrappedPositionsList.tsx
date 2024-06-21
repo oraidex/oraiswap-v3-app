@@ -31,7 +31,7 @@ export const WrappedPositionsList: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { signingClient } = useSigningClient();
-  console.log({ list, walletAddress });
+
   useEffect(() => {
     (async () => {
       if (signingClient && walletAddress && !list.length) {
@@ -74,7 +74,7 @@ export const WrappedPositionsList: React.FC = () => {
   const [value, setValue] = useState<string>('');
 
   const handleSearchValue = (value: string) => {
-    setValue(value);
+    setValue(value.toLowerCase());
   };
 
   const setLastPage = (page: number) => {
