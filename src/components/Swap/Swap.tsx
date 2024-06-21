@@ -412,9 +412,9 @@ export const Swap: React.FC<ISwap> = ({
     }
   }, [detailsOpen, canShowDetails]);
 
-  const handleRefresh = async () => {
-    onRefresh(tokenFromIndex, tokenToIndex);
-  };
+  // const handleRefresh = async () => {
+  //   onRefresh(tokenFromIndex, tokenToIndex);
+  // };
 
   useEffect(() => {
     void setSimulateAmount();

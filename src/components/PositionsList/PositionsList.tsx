@@ -38,8 +38,8 @@ export const PositionsList: React.FC<IProps> = ({
   noConnectedBlockerProps,
   itemsPerPage,
   searchValue,
-  searchSetValue
-  // handleRefresh
+  searchSetValue,
+  handleRefresh
 }) => {
   const { classes } = useStyles();
   const navigate = useNavigate();
@@ -100,9 +100,9 @@ export const PositionsList: React.FC<IProps> = ({
           <img src={addIcon} alt='Add position' /> <span>Add position</span>
         </CustomButton>
 
-        {/* <Button disabled={showNoConnected} onClick={showNoConnected ? () => {} : handleRefresh}>
+        <Button disabled={showNoConnected} onClick={showNoConnected ? () => {} : handleRefresh}>
           <img src={IconRefresh} alt='' />
-        </Button> */}
+        </Button>
       </Grid>
 
       <Grid container direction='column' className={classes.list} justifyContent='flex-start'>
