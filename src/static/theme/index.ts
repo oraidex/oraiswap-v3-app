@@ -1,5 +1,5 @@
 // theme.ts
-import { createTheme } from '@mui/material/styles'
+import { createTheme } from '@mui/material/styles';
 
 export const colors = {
   black: {
@@ -87,7 +87,7 @@ export const colors = {
     yellow: '#EFD063',
     blue: '#43BBFF'
   }
-}
+};
 
 export const typography = {
   heading1: {
@@ -155,7 +155,7 @@ export const typography = {
     lineHeight: '13px',
     fontWeight: 400
   }
-}
+};
 
 // Create a theme instance.
 export const theme = createTheme({
@@ -177,8 +177,7 @@ export const theme = createTheme({
     }
   },
   typography: {
-    fontFamily: 'Mukta',
-    fontWeightRegular: 600,
+    fontWeightRegular: 500,
     h1: typography.heading1,
     h2: typography.heading2,
     h3: typography.heading3,
@@ -208,4 +207,4 @@ export const theme = createTheme({
   //     },
   //   },
   // },
-})
+});

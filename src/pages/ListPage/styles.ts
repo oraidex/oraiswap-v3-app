@@ -1,11 +1,11 @@
-import { makeStyles } from 'tss-react/mui'
+import { makeStyles } from 'tss-react/mui';
 
 const useStyles = makeStyles()(theme => {
   return {
     container: {
       display: 'flex',
       justifyContent: 'center',
-      backgroundColor: 'transparent',
+      backgroundColor: '#111',
       marginTop: 45,
       paddingInline: 94,
       minHeight: '70vh',
@@ -22,7 +22,7 @@ const useStyles = makeStyles()(theme => {
         paddingInline: 16
       }
     }
-  }
-})
+  };
+});
 
-export default useStyles
+export default useStyles;
