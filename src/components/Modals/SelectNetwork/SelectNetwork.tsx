@@ -22,7 +22,7 @@ export const SelectNetwork: React.FC<ISelectNetworkModal> = ({
   handleClose,
   activeNetwork
 }) => {
-  console.log(networks)
+  // console.log(networks)
   const { classes } = useStyles()
   return (
     <Popover

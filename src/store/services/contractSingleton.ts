@@ -51,7 +51,7 @@ export default class SingletonOraiswapV3 {
   }
 
   public static async load(signingClient: SigningCosmWasmClient, sender: string) {
-    console.log("load", sender)
+    // console.log("load", sender)
     if (!this.dex || defaultState.dexAddress !== this.dex.contractAddress) {
       this._dex = new OraiswapV3Client(signingClient, sender, defaultState.dexAddress);
     }

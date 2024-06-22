@@ -237,13 +237,20 @@ export function* handleSwapWithNative(action: PayloadAction<Omit<Swap, 'txid'>>)
     const txs = [];
 
     const sqrtPriceLimit = calculateSqrtPriceAfterSlippage(
-      estimatedPriceAfterSwap,
+      BigInt(estimatedPriceAfterSwap),
       slippage,
       !xToY
     );
-    const calculatedAmountIn = slippage
-      ? calculateAmountInWithSlippage(amountOut, sqrtPriceLimit, xToY, BigInt(poolKey.fee_tier.fee))
-      : amountIn;
+
+    let calculatedAmountIn = amountIn;
+    if (!byAmountIn) {
+      calculatedAmountIn = calculateAmountInWithSlippage(
+        amountIn,
+        sqrtPriceLimit,
+        !xToY,
+        BigInt(poolKey.fee_tier.fee)
+      );
+    }
 
     if (xToY) {
       const approveTx = yield* call(approveToken, tokenX.address, calculatedAmountIn, walletAddress);
@@ -380,6 +387,7 @@ export function* handleGetSimulateResult(action: PayloadAction<Simulate>) {
       toToken.toString(),
       Object.values(allPools)
     );
+    
     if (!filteredPools) {
       yield put(
         actions.setSimulateResult({
