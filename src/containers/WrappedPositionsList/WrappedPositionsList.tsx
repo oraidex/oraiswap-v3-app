@@ -30,10 +30,14 @@ export const WrappedPositionsList: React.FC = () => {
   // }, [walletAddress])
 
   useEffect(() => {
-    if (walletAddress && ![Status.Uninitialized, Status.Initialized].includes(walletStatus)) {
+    if (
+      window.walletType &&
+      walletAddress &&
+      ![Status.Uninitialized, Status.Initialized].includes(walletStatus)
+    ) {
       dispatch(actions.getPositionsList());
     }
-  }, [walletAddress]);
+  }, [window.walletType, walletAddress]);
 
   // console.log({ listTest })
 
