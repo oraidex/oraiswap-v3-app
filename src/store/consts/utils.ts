@@ -36,7 +36,8 @@ import {
   Tick,
   Position,
   LiquidityTick,
-  TokenAmounts
+  TokenAmounts,
+  SwapHop
 } from '@wasm';
 import { Token, TokenPriceData } from './static';
 import { PoolWithPoolKey } from '@/sdk/OraiswapV3.types';
@@ -560,8 +561,8 @@ export const createPositionTx = async (
 
   const res = await SingletonOraiswapV3.dex.createPosition({
     poolKey,
-    lowerTick: Number(lowerTick),
-    upperTick: Number(upperTick),
+    lowerTick: roundTickToSpacing(lowerTick, poolKey.fee_tier.tick_spacing),
+    upperTick: roundTickToSpacing(upperTick, poolKey.fee_tier.tick_spacing),
     liquidityDelta: liquidityDelta.toString(),
     slippageLimitLower: slippageLimitLower.toString(),
     slippageLimitUpper: slippageLimitUpper.toString()
@@ -571,7 +572,7 @@ export const createPositionTx = async (
 };
 
 export const getPool = async (poolKey: PoolKey): Promise<PoolWithPoolKey> => {
-  console.log('getPool here', poolKey);
+  // console.log('getPool here', poolKey);
   const pool = await SingletonOraiswapV3.getPool(poolKey);
   return pool;
 };
@@ -825,9 +826,9 @@ export const getPools = async (poolKeys: PoolKey[]): Promise<PoolWithPoolKey[]> 
 };
 
 export const getFullTickmap = async (poolKey: PoolKey): Promise<Tickmap> => {
-  console.log('getFullTickmap', poolKey);
+  // console.log('getFullTickmap', poolKey);
   const tickmap = await SingletonOraiswapV3.getFullTickmap(poolKey);
-  console.log('tickmap', tickmap);
+  // console.log('tickmap', tickmap);
   return tickmap;
 };
 
@@ -850,7 +851,7 @@ export const getAllLiquidityTicks = async (
     poolKey,
     tickIndexes: ticks
   });
-  console.log({ liquidityTicks });
+  // console.log({ liquidityTicks });
   const convertedLiquidityTicks: LiquidityTick[] = liquidityTicks.map((tickData: any) => {
     return {
       index: tickData.index,
@@ -1233,6 +1234,7 @@ export const approveToken = async (
   amount: bigint,
   address: string
 ): Promise<string> => {
+  // console.log('approveToken', token, amount, address);
   if (isNativeToken(token)) {
     return '';
   }
@@ -1261,7 +1263,9 @@ export const swapWithSlippageTx = async (
   }
 
   if (isNativeToken(poolKey.token_x) || isNativeToken(poolKey.token_y)) {
-    const denom = xToY ? poolKey.token_x : poolKey.token_y;
+    const swapToken = xToY ? poolKey.token_x : poolKey.token_y;
+
+    const fund: Coin[] = isNativeToken(swapToken) ? [{ denom: swapToken, amount: amount.toString() }] : [];
 
     const res = await SingletonOraiswapV3.dex.swap(
       {
@@ -1273,13 +1277,11 @@ export const swapWithSlippageTx = async (
       },
       'auto',
       '',
-      [{ denom, amount: amount.toString() }]
+      fund
     );
 
     return res.transactionHash;
   }
-
-  console.log('asdivuasiduv', SingletonOraiswapV3.dex);
 
   try {
     const res = await SingletonOraiswapV3.dex.swap({
@@ -1357,11 +1359,12 @@ export const createPositionWithNativeTx = async (
     SingletonOraiswapV3.load(SingletonOraiswapV3.dex.client, address);
   }
 
+  // console.log({ poolKey, lowerTick, upperTick, liquidityDelta, slippageLimitLower, slippageLimitUpper })
   const res = await SingletonOraiswapV3.dex.createPosition(
     {
       poolKey,
-      lowerTick,
-      upperTick,
+      lowerTick: roundTickToSpacing(lowerTick, poolKey.fee_tier.tick_spacing),
+      upperTick: roundTickToSpacing(upperTick, poolKey.fee_tier.tick_spacing),
       liquidityDelta: liquidityDelta.toString(),
       slippageLimitLower: slippageLimitLower.toString(),
       slippageLimitUpper: slippageLimitUpper.toString()
@@ -1373,3 +1376,12 @@ export const createPositionWithNativeTx = async (
 
   return res.transactionHash;
 };
+
+export const roundTickToSpacing = (tickValue: number, tickSpacing: number): number => {
+  const roundedTick = Math.round(tickValue / tickSpacing) * tickSpacing;
+  return roundedTick;
+}
+
+// export const simualteSwapHop = async (allPools: PoolWithPoolKey[], tokenFrom: string, tokenTo: string, amount: bigint): Promise<SwapHop[]> => {
+
+// }

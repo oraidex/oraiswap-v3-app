@@ -276,7 +276,7 @@ export const sleep = (ms: number) => {
 }
 
 export function* handleConnect(): Generator {
-  console.log('connect')
+  // console.log('connect')
   const walletStatus = yield* select(status)
   if (walletStatus === Status.Initialized) {
     yield* put(

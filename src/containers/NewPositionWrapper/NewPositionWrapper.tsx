@@ -232,7 +232,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
         fee_tier: ALL_FEE_TIERS_DATA[feeIndex]
       })
 
-      console.log({ keyStringified, allPoolKeys })
+      // console.log({ keyStringified, allPoolKeys })
       if (allPoolKeys[keyStringified]) {
         setPoolKey(keyStringified)
       } else {
@@ -300,12 +300,12 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       poolIndex === null
       // progress === 'approvedWithSuccess'
     ) {
-      console.log('all fee tier: ', ALL_FEE_TIERS_DATA)
-      console.log('getPoolData use effect', {
-        tokenA: tokens[tokenAIndex].assetAddress.toString(),
-        tokenB: tokens[tokenBIndex].assetAddress.toString(),
-        fee: ALL_FEE_TIERS_DATA[feeIndex]
-      })
+      // console.log('all fee tier: ', ALL_FEE_TIERS_DATA)
+      // console.log('getPoolData use effect', {
+      //   tokenA: tokens[tokenAIndex].assetAddress.toString(),
+      //   tokenB: tokens[tokenBIndex].assetAddress.toString(),
+      //   fee: ALL_FEE_TIERS_DATA[feeIndex]
+      // })
       dispatch(
         poolsActions.getPoolData(
           newPoolKey(
@@ -508,7 +508,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   // }, [tokenAIndex, tokenBIndex, feeIndex])
 
   const onRefresh = () => {
-    console.log('onRefresh ', { tokenAIndex, tokenBIndex, feeIndex })
+    // console.log('onRefresh ', { tokenAIndex, tokenBIndex, feeIndex })
     if (tokenAIndex !== null && tokenBIndex !== null) {
       dispatch(
         walletActions.getBalances([
