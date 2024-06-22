@@ -29,9 +29,9 @@ export const WrappedPositionsList: React.FC = () => {
   //   dispatch(poolActions.getPoolKeys())
   // }, [walletAddress])
 
-  // useEffect(() => {
-  //   dispatch(actions.getPositionsList())
-  // }, [poolList])
+  useEffect(() => {
+    dispatch(actions.getPositionsList());
+  }, [walletAddress]);
 
   // console.log({ listTest })
 
