@@ -33,7 +33,7 @@ export function* fetchPoolsDataForList(action: PayloadAction<ListPoolsRequest>) 
   console.log('fetchPoolsDataForList', action.payload);
   const pools = yield* call(getPoolsByPoolKeys, action.payload.poolKeys);
 
-  console.log('pools', pools);
+  // console.log('pools', pools);
 
   const allTokens = yield* select(tokens);
   const unknownTokens = new Set(
@@ -53,8 +53,6 @@ export function* fetchPoolsDataForList(action: PayloadAction<ListPoolsRequest>) 
 
   yield* put(actions.addTokens(unknownTokensData));
   yield* put(actions.updateTokenBalances(knownTokenBalances));
-
-  console.log(yield* select(tokens));
 
   yield* put(actions.addPoolsForList({ data: pools, listType: action.payload.listType }));
 }
@@ -122,7 +120,6 @@ export function* fetchPoolData(action: PayloadAction<PoolKey>): Generator {
 
 export function* fetchAllPoolKeys(): Generator {
   try {
-    console.log('fetching pool keys');
     //TODO: in the future handle more than 100 pools
     const pools = yield* call(getPoolKeys);
     yield* put(actions.setPoolKeys(pools));

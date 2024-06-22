@@ -106,6 +106,7 @@ export const useSigningCosmWasmClient = (): ISigningCosmWasmClientContext => {
 
         dispatch(walletActions.setStatus(Status.Initialized));
         dispatch(poolActions.getPoolKeys());
+
         dispatch(positionActions.getPositionsList());
       }
     } catch (error) {

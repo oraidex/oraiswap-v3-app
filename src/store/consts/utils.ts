@@ -381,7 +381,6 @@ export const getCoingeckoTokenPriceV2 = async (id: string): Promise<CoingeckoPri
       CoingeckoApiPriceData[]
     >(`https://price.market.orai.io/simple/price?vs_currencies=usd&ids=${id}`)
     .then(res => {
-      console.log({ res });
       return {
         price: res.data[id]?.usd ?? 0
       };
@@ -581,7 +580,6 @@ export const getPoolKeys = async (): Promise<PoolKey[]> => {
   try {
     const pools = await SingletonOraiswapV3.getPools();
     const poolKeys: PoolKey[] = pools.map(pool => pool.pool_key);
-    console.log('poolKeys', poolKeys);
     return poolKeys;
   } catch {
     return [];
@@ -1212,8 +1210,8 @@ export const getPosition = async (index: bigint, ownerId: string): Promise<Posit
 };
 
 export const positionList = async (ownerId: string): Promise<Position[]> => {
-  const positions = await SingletonOraiswapV3.dexQuerier.positions({ ownerId });
-  return positions.map(position => ({
+  const positions = await SingletonOraiswapV3.dexQuerier?.positions({ ownerId });
+  return (positions || []).map(position => ({
     pool_key: position.pool_key,
     liquidity: BigInt(position.liquidity),
     lower_tick_index: position.lower_tick_index,

@@ -1,82 +1,82 @@
-import { Liquidity, PoolKey, Position, SqrtPrice, Tick, TokenAmount } from '@wasm'
-import { PayloadAction, createSlice } from '@reduxjs/toolkit'
-import { PayloadType } from '@store/consts/types'
+import { Liquidity, PoolKey, Position, SqrtPrice, Tick, TokenAmount } from '@wasm';
+import { PayloadAction, createSlice } from '@reduxjs/toolkit';
+import { PayloadType } from '@store/consts/types';
 
 export interface PositionsListStore {
-  list: Position[]
-  loading: boolean
+  list: Position[];
+  loading: boolean;
 }
 export interface PlotTickData {
-  x: number
-  y: number
-  index: number
+  x: number;
+  y: number;
+  index: number;
 }
 
-export type TickPlotPositionData = Omit<PlotTickData, 'y'>
+export type TickPlotPositionData = Omit<PlotTickData, 'y'>;
 export interface PlotTicks {
-  data: PlotTickData[]
-  loading: boolean
-  hasError?: boolean
+  data: PlotTickData[];
+  loading: boolean;
+  hasError?: boolean;
 }
 
 export interface InitPositionStore {
-  inProgress: boolean
-  success: boolean
+  inProgress: boolean;
+  success: boolean;
 }
 export interface CurrentPositionTicksStore {
-  lowerTick?: Tick
-  upperTick?: Tick
-  loading: boolean
+  lowerTick?: Tick;
+  upperTick?: Tick;
+  loading: boolean;
 }
 
 export interface IPositionsStore {
-  lastPage: number
-  plotTicks: PlotTicks
-  positionsList: PositionsListStore
-  currentPositionTicks: CurrentPositionTicksStore
-  initPosition: InitPositionStore
+  lastPage: number;
+  plotTicks: PlotTicks;
+  positionsList: PositionsListStore;
+  currentPositionTicks: CurrentPositionTicksStore;
+  initPosition: InitPositionStore;
 }
 export interface InitPositionData {
-  poolKeyData: PoolKey
-  lowerTick: number
-  upperTick: number
-  liquidityDelta: Liquidity
-  spotSqrtPrice: SqrtPrice
-  slippageTolerance: bigint
-  tokenXAmount: TokenAmount
-  tokenYAmount: TokenAmount
-  initPool?: boolean
+  poolKeyData: PoolKey;
+  lowerTick: number;
+  upperTick: number;
+  liquidityDelta: Liquidity;
+  spotSqrtPrice: SqrtPrice;
+  slippageTolerance: bigint;
+  tokenXAmount: TokenAmount;
+  tokenYAmount: TokenAmount;
+  initPool?: boolean;
 }
 export interface GetCurrentTicksData {
-  poolKey: PoolKey
-  isXtoY: boolean
-  fetchTicksAndTickmap?: boolean
-  disableLoading?: boolean
+  poolKey: PoolKey;
+  isXtoY: boolean;
+  fetchTicksAndTickmap?: boolean;
+  disableLoading?: boolean;
 }
 
 export interface ClosePositionData {
-  positionIndex: bigint
-  claimFarmRewards?: boolean
-  onSuccess: () => void
-  addressTokenX: string
-  addressTokenY: string
+  positionIndex: bigint;
+  claimFarmRewards?: boolean;
+  onSuccess: () => void;
+  addressTokenX: string;
+  addressTokenY: string;
 }
 
 export interface SetPositionData {
-  index: bigint
-  position: Position
+  index: bigint;
+  position: Position;
 }
 
 export interface GetPositionTicks {
-  poolKey: PoolKey
-  lowerTickIndex: bigint
-  upperTickIndex: bigint
+  poolKey: PoolKey;
+  lowerTickIndex: bigint;
+  upperTickIndex: bigint;
 }
 
 export interface HandleClaimFee {
-  index: bigint
-  addressTokenX: string
-  addressTokenY: string
+  index: bigint;
+  addressTokenX: string;
+  addressTokenY: string;
 }
 
 export const defaultState: IPositionsStore = {
@@ -104,95 +104,83 @@ export const defaultState: IPositionsStore = {
     inProgress: false,
     success: false
   }
-}
+};
 
-export const positionsSliceName = 'positions'
+export const positionsSliceName = 'positions';
 const positionsSlice = createSlice({
   name: 'positions',
   initialState: defaultState,
   reducers: {
     setLastPage(state, action: PayloadAction<number>) {
-      console.log('setLastPage')
-      state.lastPage = action.payload
-      return state
+      state.lastPage = action.payload;
+      return state;
     },
     initPosition(state, _action: PayloadAction<InitPositionData>) {
-      console.log('initPosition')
-      state.initPosition.inProgress = true
-      return state
+      state.initPosition.inProgress = true;
+      return state;
     },
     setInitPositionSuccess(state, action: PayloadAction<boolean>) {
-      console.log('setInitPositionSuccess')
-      state.initPosition.inProgress = false
-      state.initPosition.success = action.payload
-      return state
+      state.initPosition.inProgress = false;
+      state.initPosition.success = action.payload;
+      return state;
     },
     setPlotTicks(state, action: PayloadAction<PlotTickData[]>) {
-      console.log('setPlotTicks')
-      state.plotTicks.data = action.payload
-      state.plotTicks.loading = false
-      state.plotTicks.hasError = false
-      return state
+      state.plotTicks.data = action.payload;
+      state.plotTicks.loading = false;
+      state.plotTicks.hasError = false;
+      return state;
     },
     setErrorPlotTicks(state, action: PayloadAction<PlotTickData[]>) {
-      console.log('setErrorPlotTicks')
-      state.plotTicks.data = action.payload
-      state.plotTicks.loading = false
-      state.plotTicks.hasError = true
-      return state
+      state.plotTicks.data = action.payload;
+      state.plotTicks.loading = false;
+      state.plotTicks.hasError = true;
+      return state;
     },
     getCurrentPlotTicks(state, action: PayloadAction<GetCurrentTicksData>) {
-      console.log('getCurrentPlotTicks')
-      state.plotTicks.hasError = false
-      state.plotTicks.loading = !action.payload.disableLoading
-      return state
+      state.plotTicks.hasError = false;
+      state.plotTicks.loading = !action.payload.disableLoading;
+      return state;
     },
     setPositionsList(state, action: PayloadAction<Position[]>) {
-      console.log('setPositionsList')
-      state.positionsList.list = action.payload
-      state.positionsList.loading = false
-      return state
+      state.positionsList.list = action.payload;
+      state.positionsList.loading = false;
+      return state;
     },
     getPositionsList(state) {
-      console.log('getPositionsList')
-      state.positionsList.loading = true
-      return state
+      state.positionsList.loading = true;
+      return state;
     },
     getSinglePosition(state, _action: PayloadAction<bigint>) {
-      console.log('getSinglePosition')
-      return state
+      return state;
     },
     setSinglePosition(state, action: PayloadAction<SetPositionData>) {
-      console.log('setSinglePosition')
-      state.positionsList.list[Number(action.payload.index)] = action.payload.position
-      return state
+      state.positionsList.list[Number(action.payload.index)] = action.payload.position;
+      return state;
     },
     getCurrentPositionTicks(state, _action: PayloadAction<GetPositionTicks>) {
-      console.log('getCurrentPositionTicks')
-      state.currentPositionTicks.loading = true
-      return state
+      state.currentPositionTicks.loading = true;
+      return state;
     },
     setCurrentPositionTicks(state, action: PayloadAction<{ lowerTick?: Tick; upperTick?: Tick }>) {
-      console.log('setCurrentPositionTicks')
       state.currentPositionTicks = {
         ...action.payload,
         loading: false
-      }
-      return state
+      };
+      return state;
     },
     claimFee(state, _action: PayloadAction<HandleClaimFee>) {
-      return state
+      return state;
     },
     closePosition(state, _action: PayloadAction<ClosePositionData>) {
-      return state
+      return state;
     },
     resetState(state) {
-      state = defaultState
-      return state
+      state = defaultState;
+      return state;
     }
   }
-})
+});
 
-export const actions = positionsSlice.actions
-export const reducer = positionsSlice.reducer
-export type PayloadTypes = PayloadType<typeof actions>
+export const actions = positionsSlice.actions;
+export const reducer = positionsSlice.reducer;
+export type PayloadTypes = PayloadType<typeof actions>;

@@ -1,14 +1,15 @@
-import { Token } from '@store/consts/static'
-import { poolKeyToString } from '@store/consts/utils'
-import { createSelector } from 'reselect'
-import { IPositionsStore, positionsSliceName } from '../reducers/positions'
-import { AnyProps, keySelectors } from './helpers'
-import { poolsArraySortedByFees } from './pools'
-import { swapTokens } from './wallet'
-import { PoolWithPoolKey } from '@/sdk/OraiswapV3.types'
-import { Position } from '@wasm'
+import { Token } from '@store/consts/static';
+import { poolKeyToString } from '@store/consts/utils';
+import { createSelector } from 'reselect';
+import { IPositionsStore, positionsSliceName } from '../reducers/positions';
+import { AnyProps, keySelectors } from './helpers';
+import { poolsArraySortedByFees } from './pools';
+import { swapTokens } from './wallet';
+import { PoolWithPoolKey } from '@/sdk/OraiswapV3.types';
+import { Position } from '@wasm';
+import { RootState } from '..';
 
-const store = (s: AnyProps) => s[positionsSliceName] as IPositionsStore
+const store = (s: AnyProps) => s[positionsSliceName] as IPositionsStore;
 
 export const { lastPage, positionsList, plotTicks, currentPositionTicks, initPosition } =
   keySelectors(store, [
@@ -17,21 +18,24 @@ export const { lastPage, positionsList, plotTicks, currentPositionTicks, initPos
     'plotTicks',
     'currentPositionTicks',
     'initPosition'
-  ])
+  ]);
 
-export const lastPageSelector = createSelector(lastPage, s => s)
+// export const lastPageSelector = createSelector(lastPage, s => s);
+export const lastPageSelector = (state: RootState) => {
+  return state.positions.lastPage;
+};
 
-export const isLoadingPositionsList = createSelector(positionsList, s => s.loading)
+export const isLoadingPositionsList = createSelector(positionsList, s => s.loading);
 
 export interface PoolWithPoolKeyAndIndex extends PoolWithPoolKey {
-  poolIndex: number
+  poolIndex: number;
 }
 
 export interface PositionWithPoolData extends Position {
-  poolData: PoolWithPoolKeyAndIndex
-  tokenX: Token
-  tokenY: Token
-  positionIndex: number
+  poolData: PoolWithPoolKeyAndIndex;
+  tokenX: Token;
+  tokenY: Token;
+  positionIndex: number;
 }
 
 export const positionsWithPoolsData = createSelector(
@@ -39,21 +43,20 @@ export const positionsWithPoolsData = createSelector(
   positionsList,
   swapTokens,
   (allPools, { list }, tokens) => {
-    console.log({ allPools, list, tokens })
-    const poolsByKey: Record<string, PoolWithPoolKeyAndIndex> = {}
+    const poolsByKey: Record<string, PoolWithPoolKeyAndIndex> = {};
     allPools.forEach((pool, index) => {
       poolsByKey[poolKeyToString(pool.pool_key)] = {
         ...pool,
         poolIndex: index
-      }
-    })
+      };
+    });
 
     return list.map((position, index) => {
-      const tokenX = tokens.find(token => token.assetAddress === position.pool_key.token_x)
-      const tokenY = tokens.find(token => token.assetAddress === position.pool_key.token_y)
+      const tokenX = tokens.find(token => token.assetAddress === position.pool_key.token_x);
+      const tokenY = tokens.find(token => token.assetAddress === position.pool_key.token_y);
 
       if (!tokenX || !tokenY) {
-        throw new Error(`Token not found for position: ${position}`)
+        throw new Error(`Token not found for position: ${position}`);
       }
 
       return {
@@ -62,21 +65,21 @@ export const positionsWithPoolsData = createSelector(
         tokenX,
         tokenY,
         positionIndex: index
-      }
-    })
+      };
+    });
   }
-)
+);
 
 export const singlePositionData = (id: bigint) =>
   createSelector(positionsWithPoolsData, positions =>
     positions.find(position => id === BigInt(position.positionIndex))
-  )
+  );
 
 export const positionsSelectors = {
   positionsList,
   plotTicks,
   currentPositionTicks,
   initPosition
-}
+};
 
-export default positionsSelectors
+export default positionsSelectors;

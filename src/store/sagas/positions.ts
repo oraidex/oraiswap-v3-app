@@ -201,6 +201,7 @@ export function* handleGetPositionsList() {
 
     yield* put(actions.setPositionsList(positions));
   } catch (e) {
+    console.log('error handleGetPositionsList :>>', e);
     yield* put(actions.setPositionsList([]));
   }
 }
@@ -224,8 +225,8 @@ function* handleInitPositionWithNative(action: PayloadAction<InitPositionData>):
   const walletAddress = yield* select(address);
 
   // TODO: implement work with native token
-  const loaderCreatePosition = createLoaderKey()
-  const loaderSigningTx = createLoaderKey()
+  const loaderCreatePosition = createLoaderKey();
+  const loaderSigningTx = createLoaderKey();
 
   const {
     poolKeyData,
@@ -235,9 +236,9 @@ function* handleInitPositionWithNative(action: PayloadAction<InitPositionData>):
     liquidityDelta,
     initPool,
     slippageTolerance
-  } = action.payload
+  } = action.payload;
 
-  const { token_x, token_y, fee_tier } = poolKeyData
+  const { token_x, token_y, fee_tier } = poolKeyData;
 
   try {
     yield put(
@@ -247,7 +248,7 @@ function* handleInitPositionWithNative(action: PayloadAction<InitPositionData>):
         persist: true,
         key: loaderCreatePosition
       })
-    )
+    );
 
     const [xAmountWithSlippage, yAmountWithSlippage] = calculateTokenAmountsWithSlippage(
       fee_tier.tick_spacing,
@@ -257,11 +258,11 @@ function* handleInitPositionWithNative(action: PayloadAction<InitPositionData>):
       upperTick,
       Number(slippageTolerance),
       true
-    )
+    );
 
-    yield* call(approveToken, token_x, xAmountWithSlippage, walletAddress)
+    yield* call(approveToken, token_x, xAmountWithSlippage, walletAddress);
 
-    yield* call(approveToken, token_y, yAmountWithSlippage, walletAddress)
+    yield* call(approveToken, token_y, yAmountWithSlippage, walletAddress);
 
     const poolKey = newPoolKey(token_x, token_y, fee_tier);
 
@@ -290,15 +291,15 @@ function* handleInitPositionWithNative(action: PayloadAction<InitPositionData>):
         persist: true,
         key: loaderSigningTx
       })
-    )
+    );
 
-    closeSnackbar(loaderSigningTx)
-    yield put(snackbarsActions.remove(loaderSigningTx))
+    closeSnackbar(loaderSigningTx);
+    yield put(snackbarsActions.remove(loaderSigningTx));
 
-    yield* put(actions.setInitPositionSuccess(true))
+    yield* put(actions.setInitPositionSuccess(true));
 
-    closeSnackbar(loaderCreatePosition)
-    yield put(snackbarsActions.remove(loaderCreatePosition))
+    closeSnackbar(loaderCreatePosition);
+    yield put(snackbarsActions.remove(loaderCreatePosition));
 
     yield put(
       snackbarsActions.add({
@@ -307,24 +308,24 @@ function* handleInitPositionWithNative(action: PayloadAction<InitPositionData>):
         persist: false,
         txid: tx
       })
-    )
+    );
 
-    yield put(walletActions.getSelectedTokens([token_x, token_y]))
+    yield put(walletActions.getSelectedTokens([token_x, token_y]));
 
-    yield put(actions.getPositionsList())
+    yield put(actions.getPositionsList());
 
-    yield* call(fetchBalances, [token_x, token_y])
+    yield* call(fetchBalances, [token_x, token_y]);
 
-    yield* put(poolsActions.getPoolKeys())
+    yield* put(poolsActions.getPoolKeys());
   } catch (e: any) {
-    console.log(e)
+    console.log(e);
 
-    yield* put(actions.setInitPositionSuccess(false))
+    yield* put(actions.setInitPositionSuccess(false));
 
-    closeSnackbar(loaderCreatePosition)
-    yield put(snackbarsActions.remove(loaderCreatePosition))
-    closeSnackbar(loaderSigningTx)
-    yield put(snackbarsActions.remove(loaderSigningTx))
+    closeSnackbar(loaderCreatePosition);
+    yield put(snackbarsActions.remove(loaderCreatePosition));
+    closeSnackbar(loaderSigningTx);
+    yield put(snackbarsActions.remove(loaderSigningTx));
 
     if (e.message) {
       yield put(
@@ -333,7 +334,7 @@ function* handleInitPositionWithNative(action: PayloadAction<InitPositionData>):
           variant: 'error',
           persist: false
         })
-      )
+      );
     } else {
       yield put(
         snackbarsActions.add({
@@ -341,15 +342,13 @@ function* handleInitPositionWithNative(action: PayloadAction<InitPositionData>):
           variant: 'error',
           persist: false
         })
-      )
+      );
     }
   }
 }
 
-export function* handleGetCurrentPlotTicks(
-  action: PayloadAction<GetCurrentTicksData>
-): Generator {
-  const { poolKey, isXtoY, fetchTicksAndTickmap } = action.payload
+export function* handleGetCurrentPlotTicks(action: PayloadAction<GetCurrentTicksData>): Generator {
+  const { poolKey, isXtoY, fetchTicksAndTickmap } = action.payload;
   let allTickmaps = yield* select(tickMaps);
   const allTokens = yield* select(tokens);
   const allPools = yield* select(poolsArraySortedByFees);
@@ -616,7 +615,7 @@ export function* handleClosePosition(action: PayloadAction<ClosePositionData>) {
           variant: 'error',
           persist: false
         })
-      )
+      );
     } else {
       yield put(
         snackbarsActions.add({
@@ -624,7 +623,7 @@ export function* handleClosePosition(action: PayloadAction<ClosePositionData>) {
           variant: 'error',
           persist: false
         })
-      )
+      );
     }
 
     console.log(e);
