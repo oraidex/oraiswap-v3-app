@@ -9,10 +9,12 @@ import {
   positionsWithPoolsData
 } from '@store/selectors/positions';
 import { address, status } from '@store/selectors/wallet';
+import SingletonOraiswapV3 from '@store/services/contractSingleton';
 import { openWalletSelectorModal } from '@utils/web3/selector';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { useSigningClient } from '../../contexts/cosmwasm';
 
 export const WrappedPositionsList: React.FC = () => {
   const walletAddress = useSelector(address);
@@ -23,23 +25,20 @@ export const WrappedPositionsList: React.FC = () => {
   const walletStatus = useSelector(status);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  // const { signingClient } = useSigningClient();
+  const { signingClient } = useSigningClient();
 
   // useEffect(() => {
   //   dispatch(poolActions.getPoolKeys())
   // }, [walletAddress])
 
   useEffect(() => {
-    if (
-      window.walletType &&
-      walletAddress &&
-      ![Status.Uninitialized, Status.Initialized].includes(walletStatus)
-    ) {
+    if (window.walletType && walletAddress) {
+      if (!SingletonOraiswapV3?.dexQuerier) {
+        SingletonOraiswapV3.load(signingClient, walletAddress);
+      }
       dispatch(actions.getPositionsList());
     }
   }, [window.walletType, walletAddress]);
-
-  // console.log({ listTest })
 
   // useEffect(() => {
   //   (async () => {

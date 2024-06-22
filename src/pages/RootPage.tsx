@@ -33,6 +33,7 @@ const RootPage: React.FC = () => {
       walletStatus === WalletStatus.Initialized &&
       walletAddress
     ) {
+      console.log('36', 36);
       dispatch(actions.getPositionsList());
     }
   }, [signerStatus, walletStatus, walletAddress]);

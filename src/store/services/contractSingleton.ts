@@ -51,7 +51,6 @@ export default class SingletonOraiswapV3 {
   }
 
   public static async load(signingClient: SigningCosmWasmClient, sender: string) {
-    console.log("load", sender)
     if (!this.dex || defaultState.dexAddress !== this.dex.contractAddress) {
       this._dex = new OraiswapV3Client(signingClient, sender, defaultState.dexAddress);
     }
@@ -98,14 +97,17 @@ export default class SingletonOraiswapV3 {
     return tickmaps;
   }
 
-  public static async getTokensInfo(tokens: string[], address: string): Promise<TokenDataOnChain[]> {
+  public static async getTokensInfo(
+    tokens: string[],
+    address: string
+  ): Promise<TokenDataOnChain[]> {
     return await Promise.all(
       tokens.map(async token => {
         if (token.includes('ibc') || token == 'orai') {
           const balance = this._dex ? BigInt(await this.queryBalance(address, token)) : BigInt(0);
           return {
             address: token,
-            balance: balance, 
+            balance: balance,
             symbol: token == 'orai' ? 'ORAI' : 'IBC',
             decimals: 6,
             name: token == 'orai' ? 'ORAI' : 'IBC Token'
@@ -147,10 +149,14 @@ export default class SingletonOraiswapV3 {
     return {
       pool: pool,
       pool_key: poolKey
-    }
+    };
   }
 
-  public static async getAllPosition(address: string, limit?: number, offset?: PoolKey): Promise<any> {
+  public static async getAllPosition(
+    address: string,
+    limit?: number,
+    offset?: PoolKey
+  ): Promise<any> {
     const position = await this.dex.client.queryContractSmart(defaultState.dexAddress, {
       positions: {
         limit,
@@ -249,7 +255,7 @@ export default class SingletonOraiswapV3 {
       amount: amount.toString(),
       spender: this.dex.contractAddress
     });
-  }
+  };
 
   // public static getPool = async (poolKey: PoolKey) => {
   //   const client = await CosmWasmClient.connect(import.meta.env.VITE_CHAIN_RPC_ENDPOINT);
