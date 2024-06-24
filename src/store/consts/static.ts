@@ -275,15 +275,25 @@ export const POOL_SAFE_TRANSACTION_FEE = BigInt(Math.ceil(0.05 * 10 ** 12));
 
 export const REFRESHER_INTERVAL = 20;
 
+/**
+ * export const FaucetTokenList = {
+  ORAI: 'orai',
+  ORAIX: 'orai1lus0f0rhx8s03gdllx2n6vhkmf0536dv57wfge',
+  OCH: 'orai1hn8w33cqvysun2aujk5sv33tku4pgcxhhnsxmvnkfvdxagcx0p8qa4l98q',
+  USDT: 'orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh',
+  USDC: 'orai15un8msx3n5zf9ahlxmfeqd2kwa5wm0nrpxer304m9nd5q6qq0g6sku5pdd'
+};
+ */
+
 // key: PoolKey syntax: {tokenX}_{tokenY}_{feeTier}_{tickSpacing}, value is SwapHop[]
 export const SWAP_HOPS_CACHE: Record<string, SwapHop[]> = {
-  'orai-orai13r0p78qtakcxu7yckfs7vr2mswe5qghv6t6t57ff4drqeqw44v5q9zrhq0-0-0': [
+  'orai-orai1lus0f0rhx8s03gdllx2n6vhkmf0536dv57wfge-0-0': [
     {
       pool_key: {
         token_x: 'orai',
-        token_y: 'orai176zyt4mmwtncuuc63ahsfu5v8xymcuxxa8w258yrtrad7l4wqktsajtdg0',
+        token_y: 'orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh',
         fee_tier: {
-          fee: 100000000,
+          fee: 500000000,
           tick_spacing: 100
         }
       },
@@ -291,14 +301,134 @@ export const SWAP_HOPS_CACHE: Record<string, SwapHop[]> = {
     },
     {
       pool_key: {
-        token_x: 'orai13r0p78qtakcxu7yckfs7vr2mswe5qghv6t6t57ff4drqeqw44v5q9zrhq0',
-        token_y: 'orai176zyt4mmwtncuuc63ahsfu5v8xymcuxxa8w258yrtrad7l4wqktsajtdg0',
+        token_x: 'orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh',
+        token_y: 'orai1lus0f0rhx8s03gdllx2n6vhkmf0536dv57wfge',
         fee_tier: {
-          fee: 100000000,
+          fee: 500000000,
+          tick_spacing: 100
+        }
+      },
+      x_to_y: true
+    }
+  ],
+  'orai-orai1hn8w33cqvysun2aujk5sv33tku4pgcxhhnsxmvnkfvdxagcx0p8qa4l98q-0-0': [
+    {
+      pool_key: {
+        token_x: 'orai',
+        token_y: 'orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh',
+        fee_tier: {
+          fee: 500000000,
+          tick_spacing: 100
+        }
+      },
+      x_to_y: true
+    },
+    {
+      pool_key: {
+        token_x: 'orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh',
+        token_y: 'orai1hn8w33cqvysun2aujk5sv33tku4pgcxhhnsxmvnkfvdxagcx0p8qa4l98q',
+        fee_tier: {
+          fee: 500000000,
+          tick_spacing: 100
+        }
+      },
+      x_to_y: true
+    }
+  ],
+  'orai-orai15un8msx3n5zf9ahlxmfeqd2kwa5wm0nrpxer304m9nd5q6qq0g6sku5pdd-0-0': [
+    {
+      pool_key: {
+        token_x: 'orai',
+        token_y: 'orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh',
+        fee_tier: {
+          fee: 500000000,
+          tick_spacing: 100
+        }
+      },
+      x_to_y: true
+    },
+    {
+      pool_key: {
+        token_x: 'orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh',
+        token_y: 'orai15un8msx3n5zf9ahlxmfeqd2kwa5wm0nrpxer304m9nd5q6qq0g6sku5pdd',
+        fee_tier: {
+          fee: 500000000,
+          tick_spacing: 100
+        }
+      },
+      x_to_y: true
+    }
+  ],
+  'orai1lus0f0rhx8s03gdllx2n6vhkmf0536dv57wfge-orai1hn8w33cqvysun2aujk5sv33tku4pgcxhhnsxmvnkfvdxagcx0p8qa4l98q-0-0': [
+    {
+      pool_key: {
+        token_x: 'orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh',
+        token_y: 'orai1lus0f0rhx8s03gdllx2n6vhkmf0536dv57wfge',
+        fee_tier: {
+          fee: 500000000,
           tick_spacing: 100
         }
       },
       x_to_y: false
+    },
+    {
+      pool_key: {
+        token_x: 'orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh',
+        token_y: 'orai1hn8w33cqvysun2aujk5sv33tku4pgcxhhnsxmvnkfvdxagcx0p8qa4l98q',
+        fee_tier: {
+          fee: 500000000,
+          tick_spacing: 100
+        }
+      },
+      x_to_y: true
     }
-  ]
+  ],
+  'orai1lus0f0rhx8s03gdllx2n6vhkmf0536dv57wfge-orai15un8msx3n5zf9ahlxmfeqd2kwa5wm0nrpxer304m9nd5q6qq0g6sku5pdd-0-0': [
+    {
+      pool_key: {
+        token_x: 'orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh',
+        token_y: 'orai1lus0f0rhx8s03gdllx2n6vhkmf0536dv57wfge',
+        fee_tier: {
+          fee: 500000000,
+          tick_spacing: 100
+        }
+      },
+      x_to_y: false
+    },
+    {
+      pool_key: {
+        token_x: 'orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh',
+        token_y: 'orai15un8msx3n5zf9ahlxmfeqd2kwa5wm0nrpxer304m9nd5q6qq0g6sku5pdd',
+        fee_tier: {
+          fee: 500000000,
+          tick_spacing: 100
+        }
+      },
+      x_to_y: true
+    }
+  ],
+  'orai1hn8w33cqvysun2aujk5sv33tku4pgcxhhnsxmvnkfvdxagcx0p8qa4l98q-orai15un8msx3n5zf9ahlxmfeqd2kwa5wm0nrpxer304m9nd5q6qq0g6sku5pdd-0-0': [
+    {
+      pool_key: {
+        token_x: 'orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh',
+        token_y: 'orai1hn8w33cqvysun2aujk5sv33tku4pgcxhhnsxmvnkfvdxagcx0p8qa4l98q',
+        fee_tier: {
+          fee: 500000000,
+          tick_spacing: 100
+        }
+      },
+      x_to_y: false
+    },
+    {
+      pool_key: {
+        token_x: 'orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh',
+        token_y: 'orai15un8msx3n5zf9ahlxmfeqd2kwa5wm0nrpxer304m9nd5q6qq0g6sku5pdd',
+        fee_tier: {
+          fee: 500000000,
+          tick_spacing: 100
+        }
+      },
+      x_to_y: true
+    }
+  ],
 };
