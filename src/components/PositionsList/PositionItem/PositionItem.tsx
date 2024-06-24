@@ -154,8 +154,8 @@ export const PositionItem: React.FC<IPositionItem> = ({
         direction={'column'}
         alignItems='flex-start'
         wrap='nowrap'>
-        <Typography className={classNames(classes.greyText, classes.label)}>Value</Typography>
-        <Grid className={classes.infoCenter} container item>
+        {/* <Typography className={classNames(classes.greyText, classes.label)}>Value</Typography> */}
+        {/* <Grid className={classes.infoCenter} container item>
           <Typography className={classes.infoText}>
             $
             {formatNumbers(isXs || isDesktop ? shorterThresholds : undefined)(
@@ -166,7 +166,7 @@ export const PositionItem: React.FC<IPositionItem> = ({
               isXs || isDesktop ? shorterPrefixConfig : undefined
             )}{' '}
           </Typography>
-        </Grid>
+        </Grid> */}
       </Grid>
     ),
     [valueX, valueY, tokenXName, classes, isXs, isDesktop, tokenYName, xToY, tokenXPriceData]
