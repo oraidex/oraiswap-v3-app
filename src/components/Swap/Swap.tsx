@@ -9,7 +9,7 @@ import infoIcon from '@static/svg/info.svg';
 import refreshIcon from '@static/svg/refresh.svg';
 import settingIcon from '@static/svg/settings.svg';
 import SwapArrows from '@static/svg/swap-position.svg';
-import { TokenPriceData } from '@store/consts/static';
+import { SWAP_HOPS_CACHE, TokenPriceData } from '@store/consts/static';
 import {
   PERCENTAGE_DENOMINATOR,
   SimulateResult,
@@ -28,7 +28,7 @@ import ExchangeRate from './ExchangeRate/ExchangeRate';
 import TransactionDetailsBox from './TransactionDetailsBox/TransactionDetailsBox';
 import useStyles from './style';
 import { PoolWithPoolKey } from '@/sdk/OraiswapV3.types';
-import { Price, Tick, PoolKey, TokenAmount } from '@wasm';
+import { Price, Tick, PoolKey, TokenAmount, SwapError } from '@wasm';
 
 export interface Pools {
   tokenX: string;
@@ -285,6 +285,17 @@ export const Swap: React.FC<ISwap> = ({
         (fromToken === pool.pool_key.token_x && toToken === pool.pool_key.token_y) ||
         (fromToken === pool.pool_key.token_y && toToken === pool.pool_key.token_x)
     );
+
+    if (!swapPool) {
+      const key = fromToken + '-' + toToken + '-0-0';
+      if (SWAP_HOPS_CACHE[key]) {
+        return true;
+      } else {
+        const key = toToken + '-' + fromToken + '-0-0';
+        return !!SWAP_HOPS_CACHE[key];
+      }
+    }
+
     return !!swapPool;
   };
 
@@ -323,26 +334,26 @@ export const Swap: React.FC<ISwap> = ({
       return 'No route found';
     }
 
-    // if (
-    //   simulateResult.poolKey === null &&
-    //   (isError(SwapError.InsufficientLiquidity) || isError(SwapError.MaxTicksCrossed))
-    // ) {
-    //   return 'Insufficient liquidity'
-    // }
+    if (
+      simulateResult.poolKey === null &&
+      (isError(SwapError.InsufficientLiquidity) || isError(SwapError.MaxTicksCrossed))
+    ) {
+      return 'Insufficient liquidity'
+    }
 
-    // if (
-    //   convertBalanceToBigint(amountFrom, Number(tokens[tokenFromIndex].decimals)) >
-    //   tokens[tokenFromIndex].balance
-    // ) {
-    //   return 'Insufficient balance'
-    // }
+    if (
+      convertBalanceToBigint(amountFrom, Number(tokens[tokenFromIndex].decimals)) >
+      tokens[tokenFromIndex].balance
+    ) {
+      return 'Insufficient balance'
+    }
 
-    // if (
-    //   convertBalanceToBigint(amountFrom, Number(tokens[tokenFromIndex].decimals)) === 0n ||
-    //   (simulateResult.poolKey === null && isError(SwapError.AmountIsZero))
-    // ) {
-    //   return 'Insufficient volume'
-    // }
+    if (
+      convertBalanceToBigint(amountFrom, Number(tokens[tokenFromIndex].decimals)) === 0n ||
+      (simulateResult.poolKey === null && isError(SwapError.AmountIsZero))
+    ) {
+      return 'Insufficient volume'
+    }
 
     return 'Swap Tokens';
   };
@@ -366,6 +377,13 @@ export const Swap: React.FC<ISwap> = ({
     blurContent();
     setSettings(true);
   };
+
+  const isError = (error: SwapError): boolean => {
+    if (simulateResult.errors) {
+      return simulateResult.errors.some(err => err === error)
+    }
+    return false
+  }
 
   const handleCloseSettings = () => {
     unblurContent();

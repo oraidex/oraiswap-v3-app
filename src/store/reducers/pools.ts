@@ -2,7 +2,7 @@ import { PoolWithPoolKey } from '@/sdk/OraiswapV3.types';
 import { FeeTier, LiquidityTick, Pool, PoolKey, Tick, Tickmap } from '@wasm';
 
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
-import { BTC, OCH, ORAI, Token, USDC, USDT } from '@store/consts/static';
+import { ORAIX, OCH, ORAI, USDC, USDT, Token } from '@store/consts/static';
 import { PayloadType } from '@store/consts/types';
 import { poolKeyToString } from '@store/consts/utils';
 
@@ -64,15 +64,7 @@ export const defaultState: IPoolsStore = {
     [USDT.address.toString()]: USDT,
     [USDC.address.toString()]: USDC,
     [OCH.address.toString()]: OCH,
-    [BTC.address.toString()]: BTC
-    // [DEFI2.address.toString()]: DEFI2,
-    // [DEFI3.address.toString()]: DEFI3,
-    // [DEFI4.address.toString()]: DEFI4,
-    // [DEFI5.address.toString()]: DEFI5,
-    // [DEFI6.address.toString()]: DEFI6
-    // [TESTNET_BTC_ADDRESS]: BTC,
-    // [TESTNET_ETH_ADDRESS]: ETH,
-    // [TESTNET_USDC_ADDRESS]: USDC
+    [ORAIX.address.toString()]: ORAIX
   },
   pools: {},
   poolKeys: {},

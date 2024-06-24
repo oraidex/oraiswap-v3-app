@@ -1,3 +1,5 @@
+import { SwapHop } from '@/wasm/oraiswap_v3_wasm';
+
 export const TESTNET_BTC_ADDRESS = '5FEE8ptrT6387MYHqYmyB8ChWfkEsGEDpTMDpwUh4FCYGyCi';
 export const TESTNET_ETH_ADDRESS = '5FmDoQPFS5qPMkSumdvVVekiTpsKVmL9E5DHxHEUXCdHFdYy';
 export const TESTNET_USDC_ADDRESS = '5EjKBBJMLE9R2HsXKJRw2CCMZW2q48Ps5bVAQqzsxyhH9jU5';
@@ -127,120 +129,43 @@ export const TokenAirdropAmount = {
 };
 
 export const FaucetTokenList = {
-  // BTC: TESTNET_BTC_ADDRESS,
-  // ETH: TESTNET_ETH_ADDRESS,
-  // USDC: TESTNET_USDC_ADDRESS,
-  USDT: 'orai13r0p78qtakcxu7yckfs7vr2mswe5qghv6t6t57ff4drqeqw44v5q9zrhq0',
-  USDC: 'orai176zyt4mmwtncuuc63ahsfu5v8xymcuxxa8w258yrtrad7l4wqktsajtdg0',
-  BTC: 'orai1tgcfr9hffjcjdpgc2354k4ut2s0fufmpva2aapsdswccp3ka442spg9efy',
-  OCH: 'orai184daw0zxx4vjkjhcgc2e9q787x67qlgfk0ehg6ea6wrl6grlrztsjuydnc',
-  // DEFI3: 'orai1rsx2fr97wnunevl7n09tzlvrau5u5875jq36mjx04e53mdyxnrwq9n90kh',
-  // DEFI4: 'orai1gfru0p5n0w4hl0sc7gj8dsaud7zerv8wdu9e4jdh77ghydhahv2q0ecxj7',
-  // DEFI5: 'orai1etr7495tul34lvrjk4zxzlnpltf5383sp497prm97pwjmwzhs73sc2umfp',
-  // DEFI6: 'orai1a7fdtl4vpylkt4l2vyweaadl687g9s9jjxzz5panlx075kq96k8sfpwjhz',
-  ORAI: 'orai'
-  // USDT: 'orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh'
+  ORAI: 'orai',
+  ORAIX: 'orai1lus0f0rhx8s03gdllx2n6vhkmf0536dv57wfge',
+  OCH: 'orai1hn8w33cqvysun2aujk5sv33tku4pgcxhhnsxmvnkfvdxagcx0p8qa4l98q',
+  USDT: 'orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh',
+  USDC: 'orai15un8msx3n5zf9ahlxmfeqd2kwa5wm0nrpxer304m9nd5q6qq0g6sku5pdd'
 };
 
 export const allowTokenSymbol = Object.keys(FaucetTokenList);
-export const BTC: Token = {
-  symbol: 'BTC',
-  address: 'orai1tgcfr9hffjcjdpgc2354k4ut2s0fufmpva2aapsdswccp3ka442spg9efy',
-  decimals: 6,
-  name: 'BTC',
-  logoURI:
-    'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/9n4nbM75f5Ui33ZbPYXn59EwSgE8CGsHtAeTH5YFeJ9E/logo.png',
-  coingeckoId: 'bitcoin'
-};
+
 export const OCH: Token = {
   symbol: 'OCH',
-  address: 'orai184daw0zxx4vjkjhcgc2e9q787x67qlgfk0ehg6ea6wrl6grlrztsjuydnc',
+  address: 'orai1hn8w33cqvysun2aujk5sv33tku4pgcxhhnsxmvnkfvdxagcx0p8qa4l98q',
   decimals: 6,
   name: 'OCH',
   logoURI:
     'https://assets.coingecko.com/coins/images/34236/standard/orchai_logo_white_copy_4x-8_%281%29.png?1704307670',
   coingeckoId: 'och'
 };
-// export const DEFI3: Token = {
-//   symbol: 'DEFI3',
-//   address: 'orai1rsx2fr97wnunevl7n09tzlvrau5u5875jq36mjx04e53mdyxnrwq9n90kh',
-//   decimals: 6,
-//   name: 'DEFI3',
-//   logoURI: 'https://assets.coingecko.com/coins/images/12931/standard/orai.png',
-//   coingeckoId: 'tether'
-// }
-// export const DEFI4: Token = {
-//   symbol: 'DEFI4',
-//   address: 'orai1gfru0p5n0w4hl0sc7gj8dsaud7zerv8wdu9e4jdh77ghydhahv2q0ecxj7',
-//   decimals: 6,
-//   name: 'DEFI4',
-//   logoURI: 'https://assets.coingecko.com/coins/images/12931/standard/orai.png',
-//   coingeckoId: 'tether'
-// }
-// export const DEFI5: Token = {
-//   symbol: 'DEFI5',
-//   address: 'orai1etr7495tul34lvrjk4zxzlnpltf5383sp497prm97pwjmwzhs73sc2umfp',
-//   decimals: 6,
-//   name: 'DEFI5',
-//   logoURI: 'https://assets.coingecko.com/coins/images/12931/standard/orai.png',
-//   coingeckoId: 'tether'
-// }
-// export const DEFI6: Token = {
-//   symbol: 'DEFI6',
-//   address: 'orai1a7fdtl4vpylkt4l2vyweaadl687g9s9jjxzz5panlx075kq96k8sfpwjhz',
-//   decimals: 6,
-//   name: 'DEFI6',
-//   logoURI: 'https://assets.coingecko.com/coins/images/12931/standard/orai.png',
-//   coingeckoId: 'tether'
-// }
 
 export const USDT: Token = {
   symbol: 'USDT',
-  address: 'orai13r0p78qtakcxu7yckfs7vr2mswe5qghv6t6t57ff4drqeqw44v5q9zrhq0',
+  address: 'orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh',
   decimals: 6,
   name: 'USDT',
   logoURI: 'https://assets.coingecko.com/coins/images/325/standard/Tether.png',
   coingeckoId: 'tether'
 };
+
 export const USDC: Token = {
   symbol: 'USDC',
-  address: 'orai176zyt4mmwtncuuc63ahsfu5v8xymcuxxa8w258yrtrad7l4wqktsajtdg0',
+  address: 'orai15un8msx3n5zf9ahlxmfeqd2kwa5wm0nrpxer304m9nd5q6qq0g6sku5pdd',
   decimals: 6,
   name: 'USDC',
   logoURI:
     'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png',
   coingeckoId: 'usd-coin'
 };
-
-// export const BTC: Token = {
-//   symbol: 'BTC',
-//   address: TESTNET_BTC_ADDRESS,
-//   decimals: 8,
-//   name: 'Bitcoin',
-//   logoURI:
-//     'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/9n4nbM75f5Ui33ZbPYXn59EwSgE8CGsHtAeTH5YFeJ9E/logo.png',
-//   coingeckoId: 'bitcoin'
-// }
-
-export const ETH: Token = {
-  symbol: 'ETH',
-  address: TESTNET_ETH_ADDRESS,
-  decimals: 18,
-  name: 'Ether',
-  logoURI:
-    'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/2FPyTwcZLUg1MDrwsyoP4D6s1tM7hAkHYRjkNb5w6Pxk/logo.png',
-  coingeckoId: 'ethereum'
-};
-
-// export const USDC: Token = {
-//   symbol: 'USDC',
-//   address: TESTNET_USDC_ADDRESS,
-//   decimals: 6,
-//   name: 'USDC',
-//   logoURI:
-//     'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png',
-//   coingeckoId: 'usdc'
-// }
 
 export const ORAI: Token = {
   symbol: 'ORAI',
@@ -251,16 +176,16 @@ export const ORAI: Token = {
   coingeckoId: 'oraichain-token'
 };
 
-// export const USDT: Token = {
-//   symbol: 'USDT',
-//   address: 'orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh',
-//   decimals: 6,
-//   name: 'Tether USD',
-//   logoURI: 'https://assets.coingecko.com/coins/images/325/standard/Tether.png',
-//   coingeckoId: 'tether'
-// }
+export const ORAIX: Token = {
+  symbol: 'ORAIX',
+  address: 'orai1lus0f0rhx8s03gdllx2n6vhkmf0536dv57wfge',
+  decimals: 6,
+  name: 'ORAIX',
+  logoURI: 'https://i.ibb.co/VmMJtf7/oraix.png',
+  coingeckoId: 'oraidex'
+};
 
-export const FAUCET_LIST_TOKEN = [USDT, USDC, OCH, BTC, ORAI];
+export const FAUCET_LIST_TOKEN = [ORAIX, USDT, USDC, OCH, ORAI];
 
 export const DEFAULT_INVARIANT_OPTIONS = {
   storageDepositLimit: null,
@@ -345,3 +270,31 @@ export const SWAP_SAFE_TRANSACTION_FEE = BigInt(Math.ceil(0.05 * 10 ** 12));
 export const POOL_SAFE_TRANSACTION_FEE = BigInt(Math.ceil(0.05 * 10 ** 12));
 
 export const REFRESHER_INTERVAL = 20;
+
+// key: PoolKey syntax: {tokenX}_{tokenY}_{feeTier}_{tickSpacing}, value is SwapHop[]
+export const SWAP_HOPS_CACHE: Record<string, SwapHop[]> = {
+  'orai-orai13r0p78qtakcxu7yckfs7vr2mswe5qghv6t6t57ff4drqeqw44v5q9zrhq0-0-0': [
+    {
+      pool_key: {
+        token_x: 'orai',
+        token_y: 'orai176zyt4mmwtncuuc63ahsfu5v8xymcuxxa8w258yrtrad7l4wqktsajtdg0',
+        fee_tier: {
+          fee: 100000000,
+          tick_spacing: 100
+        }
+      },
+      x_to_y: true
+    },
+    {
+      pool_key: {
+        token_x: 'orai13r0p78qtakcxu7yckfs7vr2mswe5qghv6t6t57ff4drqeqw44v5q9zrhq0',
+        token_y: 'orai176zyt4mmwtncuuc63ahsfu5v8xymcuxxa8w258yrtrad7l4wqktsajtdg0',
+        fee_tier: {
+          fee: 100000000,
+          tick_spacing: 100
+        }
+      },
+      x_to_y: false
+    }
+  ]
+};

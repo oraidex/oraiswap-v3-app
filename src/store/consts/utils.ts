@@ -39,7 +39,7 @@ import {
   TokenAmounts,
   SwapHop
 } from '@wasm';
-import { Token, TokenPriceData } from './static';
+import { SWAP_HOPS_CACHE, Token, TokenPriceData } from './static';
 import { PoolWithPoolKey } from '@/sdk/OraiswapV3.types';
 import { Coin } from '@cosmjs/proto-signing';
 
@@ -406,10 +406,10 @@ export const getMockedTokenPrice = (symbol: string, network: Network): TokenPric
     case 'ORAI':
       return prices[symbol + sufix];
     case 'USDT':
-      return prices['W' + symbol + sufix];
+      return prices[symbol + sufix];
     case 'USDC':
       return prices[symbol + sufix];
-    case 'BTC':
+    case 'ORAIX':
       return prices[symbol + sufix];
     case 'OCH':
       return prices[symbol + sufix];
@@ -958,6 +958,14 @@ export const calculateAmountInWithSlippage = (
   const price = +printBigint(sqrtPriceToPrice(sqrtPriceLimit), PRICE_SCALE);
   const amountIn = xToY ? Number(amountOut) * price : Number(amountOut) / price;
 
+  if (fee === 0n) {
+    return BigInt(
+      Math.ceil(
+        Number(amountIn) * (Number(PERCENTAGE_DENOMINATOR) / Number(PERCENTAGE_DENOMINATOR))
+      )
+    );
+  }
+
   const amountInWithFee =
     Number(amountIn) *
     (Number(PERCENTAGE_DENOMINATOR) / (Number(PERCENTAGE_DENOMINATOR) - Number(fee)));
@@ -1126,7 +1134,6 @@ export const calculateSqrtPriceAfterSlippage = (
   const price = sqrtPriceToPrice(sqrtPrice);
   const priceWithSlippage = BigInt(price) * multiplier * getPercentageDenominator();
   const sqrtPriceWithSlippage = priceToSqrtPrice(priceWithSlippage) / getPercentageDenominator();
-
   return sqrtPriceWithSlippage;
 };
 
@@ -1243,6 +1250,62 @@ export const approveToken = async (
   return result.transactionHash;
 };
 
+export const swapRouteWithSlippageTx = async (
+  poolKey: PoolKey,
+  xToY: boolean,
+  amount: bigint,
+  estimatedSqrtPrice: bigint,
+  expectedAmountOut: bigint,
+  slippage: Percentage,
+  address: string,
+  swaps: SwapHop[]
+): Promise<string> => {
+  const sqrtPriceAfterSlippage = calculateSqrtPriceAfterSlippage(
+    estimatedSqrtPrice,
+    slippage,
+    !xToY
+  );
+
+  if (SingletonOraiswapV3.dex.sender !== address) {
+    SingletonOraiswapV3.load(SingletonOraiswapV3.dex.client, address);
+  }
+
+  if (isNativeToken(poolKey.token_x) || isNativeToken(poolKey.token_y)) {
+    const swapToken = xToY ? poolKey.token_x : poolKey.token_y;
+
+    const fund: Coin[] = isNativeToken(swapToken)
+      ? [{ denom: swapToken, amount: amount.toString() }]
+      : [];
+
+    const res = await SingletonOraiswapV3.dex.swapRoute(
+      {
+        amountIn: amount.toString(),
+        slippage: slippage,
+        expectedAmountOut: expectedAmountOut.toString(),
+        swaps
+      },
+      'auto',
+      '',
+      fund
+    );
+
+    return res.transactionHash;
+  }
+
+  try {
+    const res = await SingletonOraiswapV3.dex.swapRoute({
+      amountIn: amount.toString(),
+      slippage: slippage,
+      expectedAmountOut: expectedAmountOut.toString(),
+      swaps
+    });
+
+    return res.transactionHash;
+  } catch (e) {
+    console.log('error', e);
+  }
+};
+
 export const swapWithSlippageTx = async (
   poolKey: PoolKey,
   xToY: boolean,
@@ -1265,7 +1328,9 @@ export const swapWithSlippageTx = async (
   if (isNativeToken(poolKey.token_x) || isNativeToken(poolKey.token_y)) {
     const swapToken = xToY ? poolKey.token_x : poolKey.token_y;
 
-    const fund: Coin[] = isNativeToken(swapToken) ? [{ denom: swapToken, amount: amount.toString() }] : [];
+    const fund: Coin[] = isNativeToken(swapToken)
+      ? [{ denom: swapToken, amount: amount.toString() }]
+      : [];
 
     const res = await SingletonOraiswapV3.dex.swap(
       {
@@ -1380,8 +1445,22 @@ export const createPositionWithNativeTx = async (
 export const roundTickToSpacing = (tickValue: number, tickSpacing: number): number => {
   const roundedTick = Math.round(tickValue / tickSpacing) * tickSpacing;
   return roundedTick;
-}
+};
 
-// export const simualteSwapHop = async (allPools: PoolWithPoolKey[], tokenFrom: string, tokenTo: string, amount: bigint): Promise<SwapHop[]> => {
+export const quoteRoute = async (amountIn: string, swaps: SwapHop[]): Promise<bigint> => {
+  const res = await SingletonOraiswapV3.dexQuerier.quoteRoute({ amountIn, swaps });
+  return BigInt(res);
+};
 
-// }
+export const reverseSwapHopArray = (swaps: SwapHop[]): SwapHop[] => {
+  swaps = swaps.map((_swap, index) => {
+    return swaps[swaps.length - 1 - index];
+  });
+  swaps = swaps.map(swap => {
+    return {
+      pool_key: swap.pool_key,
+      x_to_y: !swap.x_to_y
+    };
+  });
+  return swaps;
+};

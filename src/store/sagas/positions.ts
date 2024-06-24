@@ -571,19 +571,7 @@ export function* handleClosePosition(action: PayloadAction<ClosePositionData>) {
       })
     );
 
-    yield put(
-      snackbarsActions.add({
-        message: 'Signing transaction...',
-        variant: 'pending',
-        persist: true,
-        key: loaderSigningTx
-      })
-    );
-
     const tx = yield* call(removePosition, positionIndex, walletAddress);
-
-    closeSnackbar(loaderSigningTx);
-    yield put(snackbarsActions.remove(loaderSigningTx));
 
     // const txResult = yield* call(sendTx, signedTx)
 

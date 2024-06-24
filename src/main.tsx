@@ -4,9 +4,9 @@ import './index.css';
 import App from './App.tsx';
 
 window.walletType = 'keplr';
-if (!window.keplr) {
-  window.keplr = window.parent.keplr;
-  window.Keplr = window.keplr;
+window.Keplr = window?.keplr;
+if (!window.Keplr) {
+  window.keplr = window.Keplr = window.parent.keplr;
 }
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
