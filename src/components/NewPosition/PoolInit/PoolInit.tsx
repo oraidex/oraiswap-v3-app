@@ -194,7 +194,7 @@ export const PoolInit: React.FC<IPoolInit> = ({
             </Grid> */}
             <Typography className={classes.info}>
               This pool does not exist yet. To create it, select the fee tier, initial price, and
-              enter the amount of tokens. The estimated cost of creating a pool is 0.003 AZERO.
+              enter the amount of tokens
             </Typography>
           </Grid>
 
