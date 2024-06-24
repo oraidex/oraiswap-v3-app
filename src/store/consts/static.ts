@@ -1,3 +1,5 @@
+import { SwapHop } from "@/wasm/oraiswap_v3_wasm"
+
 export const TESTNET_BTC_ADDRESS = '5FEE8ptrT6387MYHqYmyB8ChWfkEsGEDpTMDpwUh4FCYGyCi'
 export const TESTNET_ETH_ADDRESS = '5FmDoQPFS5qPMkSumdvVVekiTpsKVmL9E5DHxHEUXCdHFdYy'
 export const TESTNET_USDC_ADDRESS = '5EjKBBJMLE9R2HsXKJRw2CCMZW2q48Ps5bVAQqzsxyhH9jU5'
@@ -345,3 +347,31 @@ export const POOL_SAFE_TRANSACTION_FEE = BigInt(Math.ceil(0.05 * 10 ** 12))
 
 
 export const REFRESHER_INTERVAL = 20
+
+// key: PoolKey syntax: {tokenX}_{tokenY}_{feeTier}_{tickSpacing}, value is SwapHop[]
+export const SWAP_HOPS_CACHE: Record<string, SwapHop[]> = {
+  'orai-orai13r0p78qtakcxu7yckfs7vr2mswe5qghv6t6t57ff4drqeqw44v5q9zrhq0-0-0': [
+    {
+      pool_key: {
+        token_x: 'orai',
+        token_y: 'orai176zyt4mmwtncuuc63ahsfu5v8xymcuxxa8w258yrtrad7l4wqktsajtdg0',
+        fee_tier: {
+          fee: 100000000,
+          tick_spacing: 100,
+        },
+      },
+      x_to_y: true
+    },
+    {
+      pool_key: {
+        token_x: 'orai13r0p78qtakcxu7yckfs7vr2mswe5qghv6t6t57ff4drqeqw44v5q9zrhq0',
+        token_y: 'orai176zyt4mmwtncuuc63ahsfu5v8xymcuxxa8w258yrtrad7l4wqktsajtdg0',
+        fee_tier: {
+          fee: 100000000,
+          tick_spacing: 100,
+        },
+      },
+      x_to_y: false
+    }
+  ]
+}

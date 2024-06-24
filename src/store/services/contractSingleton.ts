@@ -256,14 +256,4 @@ export default class SingletonOraiswapV3 {
       spender: this.dex.contractAddress
     });
   };
-
-  // public static getPool = async (poolKey: PoolKey) => {
-  //   const client = await CosmWasmClient.connect(import.meta.env.VITE_CHAIN_RPC_ENDPOINT);
-  //   const queryClient = new OraiswapV3QueryClient(client, defaultState.dexAddress);
-  //   return await queryClient.pool({
-  //     feeTier: poolKey.fee_tier,
-  //     token0: poolKey.token_x,
-  //     token1: poolKey.token_y
-  //   });
-  // }
 }
