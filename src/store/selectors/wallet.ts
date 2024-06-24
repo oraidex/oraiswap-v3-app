@@ -1,10 +1,11 @@
-import { createSelector } from '@reduxjs/toolkit'
-import { IOraichainWallet, ITokenBalance, walletSliceName } from '@store/reducers/wallet'
-import { AnyProps, keySelectors } from './helpers'
-import { tokens } from './pools'
-import { TokenAmount } from '@wasm'
+import { createSelector } from '@reduxjs/toolkit';
+import { IOraichainWallet, ITokenBalance, walletSliceName } from '@store/reducers/wallet';
+import { AnyProps, keySelectors } from './helpers';
+import { tokens } from './pools';
+import { TokenAmount } from '@wasm';
+import { allowTokenSymbol } from '@store/consts/static';
 
-const store = (s: AnyProps) => s[walletSliceName] as IOraichainWallet
+const store = (s: AnyProps) => s[walletSliceName] as IOraichainWallet;
 
 export const { address, balance, tokensBalances, status, balanceLoading } = keySelectors(store, [
   'address',
@@ -12,7 +13,7 @@ export const { address, balance, tokensBalances, status, balanceLoading } = keyS
   'tokensBalances',
   'status',
   'balanceLoading'
-])
+]);
 
 // export const tokenBalance = (tokenAddress: Keyring) =>
 //   createSelector(accounts, balance, (tokensAccounts, solBalance) => {
@@ -32,26 +33,26 @@ export const { address, balance, tokensBalances, status, balanceLoading } = keyS
 export const tokenBalance = (tokenAddress: string) =>
   createSelector(tokensBalances, tokensAccounts => {
     if (tokensAccounts[tokenAddress.toString()]) {
-      return tokensAccounts[tokenAddress.toString()]
+      return tokensAccounts[tokenAddress.toString()];
     }
-  })
+  });
 
 export const tokenBalanceAddress = () =>
   createSelector(tokensBalances, tokenAccounts => {
     return Object.values(tokenAccounts).map(item => {
-      return item.address
-    })
-  })
+      return item.address;
+    });
+  });
 
 export interface SwapToken {
-  balance: TokenAmount
-  decimals: number
-  symbol: string
-  assetAddress: string
-  name: string
-  logoURI: string
-  isUnknown?: boolean
-  coingeckoId?: string
+  balance: TokenAmount;
+  decimals: number;
+  symbol: string;
+  assetAddress: string;
+  name: string;
+  logoURI: string;
+  isUnknown?: boolean;
+  coingeckoId?: string;
 }
 
 export const swapTokens = createSelector(
@@ -59,16 +60,18 @@ export const swapTokens = createSelector(
   tokens,
   balance,
   (allAccounts, tokens, _a0Balance) => {
-    return Object.values(tokens).map(token => {
-      const tokenSwap: SwapToken = {
-        ...token,
-        assetAddress: token.address,
-        balance: allAccounts[token.address]?.balance ?? 0n
-      }
-      return tokenSwap
-    })
+    return Object.values(tokens)
+      .filter(to => allowTokenSymbol.includes(to.symbol))
+      .map(token => {
+        const tokenSwap: SwapToken = {
+          ...token,
+          assetAddress: token.address,
+          balance: allAccounts[token.address]?.balance ?? 0n
+        };
+        return tokenSwap;
+      });
   }
-)
+);
 
 export const poolTokens = createSelector(
   tokensBalances,
@@ -79,27 +82,27 @@ export const poolTokens = createSelector(
       ...token,
       assetAddress: token.address,
       balance: allAccounts[token.address]?.balance ?? 0n
-    }))
+    }));
   }
-)
+);
 
 export const swapTokensDict = createSelector(
   tokensBalances,
   tokens,
   balance,
   (allAccounts, tokens, _a0Balance) => {
-    const swapTokens: Record<string, SwapToken> = {}
+    const swapTokens: Record<string, SwapToken> = {};
     Object.entries(tokens).forEach(([key, val]) => {
       swapTokens[key] = {
         ...val,
         assetAddress: val.address,
         balance: allAccounts[val.address]?.balance ?? 0n
-      }
-    })
+      };
+    });
 
-    return swapTokens
+    return swapTokens;
   }
-)
+);
 
 export const canCreateNewPool = () =>
   createSelector(balance, () => {
@@ -113,8 +116,8 @@ export const canCreateNewPool = () =>
     //   default:
     //     return ethBalance.gte(WETH_POOL_INIT_LAMPORTS)
     // }
-    return true
-  })
+    return true;
+  });
 export const canCreateNewPosition = () =>
   createSelector(balance, () => {
     // switch (network) {
@@ -127,14 +130,14 @@ export const canCreateNewPosition = () =>
     //   default:
     //     return ethBalance.gte(WETH_POOL_INIT_LAMPORTS)
     // }
-    return true
-  })
+    return true;
+  });
 
 export type TokenBalances = ITokenBalance & {
-  symbol: string
-  usdValue: bigint
-  assetDecimals: number
-}
+  symbol: string;
+  usdValue: bigint;
+  assetDecimals: number;
+};
 
 export const oraichainWalletSelectors = {
   address,
@@ -143,5 +146,5 @@ export const oraichainWalletSelectors = {
   status,
   tokenBalance,
   balanceLoading
-}
-export default oraichainWalletSelectors
+};
+export default oraichainWalletSelectors;
