@@ -138,6 +138,10 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
       return 'Select different tokens';
     }
 
+    if (![tokens[tokenAIndex].symbol, tokens[tokenBIndex].symbol].includes('USDT')) {
+      return 'Not support pair';
+    }
+
     if (positionOpeningMethod === 'concentration' && concentrationIndex < minimumSliderIndex) {
       return concentrationArray[minimumSliderIndex]
         ? `Set concentration to at least ${concentrationArray[minimumSliderIndex].toFixed(0)}x`
@@ -227,6 +231,20 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
               tokens={tokens}
               current={tokenAIndex !== null ? tokens[tokenAIndex] : null}
               onSelect={index => {
+                const tokenAIndexs = tokens[index];
+                const tokenBIndexs = tokens[tokenBIndex];
+                if (tokenAIndexs.symbol === tokenBIndexs.symbol) {
+                  if (!tokenBInputState.blocked) {
+                    tokenAInputState.setValue(tokenBInputState.value);
+                  } else {
+                    tokenBInputState.setValue(tokenAInputState.value);
+                  }
+                  const pom = tokenAIndex;
+                  setTokenAIndex(tokenBIndex);
+                  setTokenBIndex(pom);
+                  onReverseTokens();
+                  return;
+                }
                 setTokenAIndex(index);
                 setPositionTokens(index, tokenBIndex, feeTierIndex);
               }}
@@ -264,6 +282,20 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
               tokens={tokens}
               current={tokenBIndex !== null ? tokens[tokenBIndex] : null}
               onSelect={index => {
+                const tokenAIndexs = tokens[tokenAIndex];
+                const tokenBIndexs = tokens[index];
+                if (tokenAIndexs.symbol === tokenBIndexs.symbol) {
+                  if (!tokenBInputState.blocked) {
+                    tokenAInputState.setValue(tokenBInputState.value);
+                  } else {
+                    tokenBInputState.setValue(tokenAInputState.value);
+                  }
+                  const pom = tokenBIndex;
+                  setTokenAIndex(pom);
+                  setTokenBIndex(tokenAIndex);
+                  onReverseTokens();
+                  return;
+                }
                 setTokenBIndex(index);
                 setPositionTokens(tokenAIndex, index, feeTierIndex);
               }}
