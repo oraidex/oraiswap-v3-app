@@ -84,9 +84,10 @@ export const PositionsList: React.FC<IProps> = ({
   return (
     <Grid container direction='column' className={classes.root}>
       <Grid
+        className={classes.wrapSearch}
         container
         item
-        wrap='nowrap'
+        wrap='wrap'
         direction='row'
         alignItems='center'
         justifyContent={'flex-end'}

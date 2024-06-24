@@ -1,18 +1,23 @@
-import { colors, typography } from '@static/theme';
+import { colors, theme, typography } from '@static/theme';
 import { makeStyles } from 'tss-react/mui';
 
 export const useStyles = makeStyles()(() => {
   return {
     popover: {
       marginTop: 'calc(50vh - 350px)',
-      marginLeft: 'calc(50vw - 251px)'
-      // [theme.breakpoints.down('xs')]: {
-      //   display: 'flex',
-      //   marginLeft: 'auto',
-      //   justifyContent: 'center'
-      // }
+      marginLeft: 'calc(50vw - 251px)',
+      [theme.breakpoints.down('sm')]: {
+        display: 'flex',
+        marginLeft: 'auto',
+        justifyContent: 'center'
+      }
+
+      // width: '100%',
+      // left: '50%',
+      // transform: 'translateX(-50%)'
     },
     paper: {
+      maxWidth: '100%',
       background: 'none',
       backgroundColor: 'transparent',
       '& > *': {
@@ -31,6 +36,10 @@ export const useStyles = makeStyles()(() => {
       '& h2': {
         ...typography.heading4,
         paddingBottom: 10
+      },
+
+      [theme.breakpoints.down('sm')]: {
+        maxWidth: 400
       }
     },
 

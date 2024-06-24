@@ -90,7 +90,7 @@ const Slippage: React.FC<Props> = ({
         horizontal: 'center'
       }}>
       <Grid container className={classes.detailsWrapper}>
-        <Grid container justifyContent='space-between' style={{ marginBottom: 6 }}>
+        <Grid container justifyContent='space-between' wrap='nowrap' style={{ marginBottom: 6 }}>
           <div></div>
           <Typography component='h2'>{headerText ?? 'Swap Transaction Settings'}</Typography>
           <Button className={classes.selectTokenClose} onClick={handleClose} />

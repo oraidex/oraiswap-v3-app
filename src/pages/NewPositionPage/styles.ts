@@ -1,5 +1,5 @@
-import { theme } from '@static/theme'
-import { makeStyles } from 'tss-react/mui'
+import { theme } from '@static/theme';
+import { makeStyles } from 'tss-react/mui';
 
 const useStyles = makeStyles()(() => {
   return {
@@ -7,23 +7,19 @@ const useStyles = makeStyles()(() => {
       display: 'flex',
       justifyContent: 'center',
       backgroundColor: 'transparent',
-      paddingInline: 200,
+      paddingInline: 138,
       marginTop: 45,
       minHeight: '70vh',
 
       [theme.breakpoints.down('md')]: {
-        paddingInline: 40
+        paddingInline: 36
       },
 
       [theme.breakpoints.down('sm')]: {
-        paddingInline: 90
-      },
-
-      [theme.breakpoints.down('xs')]: {
-        paddingInline: 16
+        paddingInline: 10
       }
     }
-  }
-})
+  };
+});
 
-export default useStyles
+export default useStyles;

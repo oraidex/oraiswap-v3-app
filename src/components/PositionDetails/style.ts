@@ -27,7 +27,11 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     fontWeight: 600,
     lineHeight: 1.5,
 
-    borderBottom: '1px solid #232521'
+    borderBottom: '1px solid #232521',
+
+    [theme.breakpoints.down('sm')]: {
+      paddingBottom: 20
+    }
   },
 
   wrapperContainer: {
@@ -108,7 +112,12 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   buttonTextWrap: {
     flex: 1,
     display: 'flex',
-    justifyContent: 'flex-end'
+    justifyContent: 'flex-end',
+
+    [theme.breakpoints.down('sm')]: {
+      visibility: 'hidden',
+      height: 0
+    }
   },
   buttonText: {
     width: 'fit-content',

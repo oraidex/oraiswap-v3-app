@@ -18,7 +18,7 @@ export const PositionsFilter: React.FC<FilterProps> = ({ setSearchValue }) => {
   const { classes } = useStyles();
 
   return (
-    <Grid>
+    <Grid className={classes.root}>
       <div className={classes.poolFilter}>
         <div className={classes.poolFilterRight}>
           <div className={classes.poolSearch}>

@@ -79,6 +79,14 @@ const PositionDetails: React.FC<IProps> = ({
     initialXtoY(tokenXAddress.toString(), tokenYAddress.toString())
   );
 
+  const navigateAdd = () => {
+    const parsedFee = parseFeeToPathFee(fee);
+    const address1 = addressToTicker(tokenXAddress.toString());
+    const address2 = addressToTicker(tokenYAddress.toString());
+
+    navigate(`/newPosition/${address1}/${address2}/${parsedFee}`);
+  };
+
   return (
     <div className={classes.container}>
       <div className={classes.header}>
@@ -89,15 +97,7 @@ const PositionDetails: React.FC<IProps> = ({
         <span>Liquidity Position Detail</span>
 
         <div className={classes.buttonTextWrap}>
-          <span
-            className={classes.buttonText}
-            onClick={() => {
-              const parsedFee = parseFeeToPathFee(fee);
-              const address1 = addressToTicker(tokenXAddress.toString());
-              const address2 = addressToTicker(tokenYAddress.toString());
-
-              navigate(`/newPosition/${address1}/${address2}/${parsedFee}`);
-            }}>
+          <span className={classes.buttonText} onClick={() => navigateAdd()}>
             <svg
               xmlns='http://www.w3.org/2000/svg'
               width='21'
@@ -129,6 +129,7 @@ const PositionDetails: React.FC<IProps> = ({
             userHasStakes={userHasStakes}
             poolAddress={poolAddress}
             copyPoolAddressHandler={copyPoolAddressHandler}
+            navigateAdd={navigateAdd}
           />
         </Grid>
 

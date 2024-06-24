@@ -1,6 +1,6 @@
-import { Theme } from '@mui/material/styles/createTheme'
-import { colors, typography } from '@static/theme'
-import { makeStyles } from 'tss-react/mui'
+import { Theme } from '@mui/material/styles/createTheme';
+import { colors, typography } from '@static/theme';
+import { makeStyles } from 'tss-react/mui';
 
 export const useStyles = makeStyles()((theme: Theme) => ({
   root: {
@@ -36,7 +36,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     },
 
     '& .Mui-selected': {
-      color: colors.oraidex.green
+      color: colors.oraidex.greenLinearGradient
     },
     '& .Mui-selected:hover': {
       color: `${colors.oraidex.green} !important`
@@ -45,11 +45,11 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     '& .MuiPaginationItem-page.Mui-selected': {
       backgroundColor: 'transparent',
       '&:hover': {
-        color: colors.oraidex.green
+        color: colors.oraidex.greenLinearGradient
       }
     },
     '& li:first-of-type button': {
-      backgroundColor: colors.oraidex.green,
+      backgroundColor: colors.oraidex.greenLinearGradient,
       minWidth: 40,
       minHeight: 40,
       opacity: 0.8
@@ -59,7 +59,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     },
 
     '& li:last-child button': {
-      backgroundColor: colors.oraidex.green,
+      backgroundColor: colors.oraidex.greenLinearGradient,
       minWidth: 40,
       minHeight: 40,
       opacity: 0.8
@@ -73,4 +73,4 @@ export const useStyles = makeStyles()((theme: Theme) => ({
       transform: 'scale(2.2)'
     }
   }
-}))
+}));

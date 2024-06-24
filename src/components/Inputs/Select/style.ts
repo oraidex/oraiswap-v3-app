@@ -28,7 +28,11 @@ export const useStyles = makeStyles()((theme: Theme) => {
     },
     tokenName: {
       position: 'relative',
-      color: colors.oraidex.text
+      color: colors.oraidex.text,
+
+      [theme.breakpoints.down('sm')]: {
+        fontSize: 16
+      }
     },
     icon: {
       marginRight: 8,

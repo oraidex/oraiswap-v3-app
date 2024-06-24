@@ -10,6 +10,12 @@ export const useStyles = makeStyles()((theme: Theme) => ({
       width: '100%'
     }
   },
+  wrapSearch: {
+    [theme.breakpoints.down('sm')]: {
+      width: '100%',
+      justifyContent: 'flex-start'
+    }
+  },
   header: {
     paddingBottom: 16,
     display: 'flex',

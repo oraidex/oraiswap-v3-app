@@ -33,6 +33,7 @@ export const useTabsStyles = makeStyles()(() => {
       top: 0
     },
     flexContainer: {
+      width: '100%',
       justifyContent: 'space-between'
     },
     scrollButtons: {
@@ -58,8 +59,9 @@ export const useSingleTabStyles = makeStyles()(() => {
       minHeight: 36,
       color: colors.oraidex.text,
       paddingInline: 0,
-      minWidth: 65,
-      width: '32%',
+      // minWidth: 65,
+      // width: '32%',
+      flex: 1,
       marginRight: '7px',
       position: 'relative',
       overflow: 'visible',
