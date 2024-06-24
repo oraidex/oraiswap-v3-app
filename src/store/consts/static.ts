@@ -1,4 +1,6 @@
 import { SwapHop } from '@/wasm/oraiswap_v3_wasm';
+import OraiIcon from '@static/svg/orai.svg';
+import OraiXIcon from '@static/svg/oraix.svg';
 
 export const TESTNET_BTC_ADDRESS = '5FEE8ptrT6387MYHqYmyB8ChWfkEsGEDpTMDpwUh4FCYGyCi';
 export const TESTNET_ETH_ADDRESS = '5FmDoQPFS5qPMkSumdvVVekiTpsKVmL9E5DHxHEUXCdHFdYy';
@@ -172,7 +174,8 @@ export const ORAI: Token = {
   address: 'orai',
   decimals: 6,
   name: 'Oraichain Native Token',
-  logoURI: 'https://assets.coingecko.com/coins/images/12931/standard/orai.png',
+  // logoURI: 'https://assets.coingecko.com/coins/images/12931/standard/orai.png',
+  logoURI: OraiIcon,
   coingeckoId: 'oraichain-token'
 };
 
@@ -181,7 +184,8 @@ export const ORAIX: Token = {
   address: 'orai1lus0f0rhx8s03gdllx2n6vhkmf0536dv57wfge',
   decimals: 6,
   name: 'ORAIX',
-  logoURI: 'https://i.ibb.co/VmMJtf7/oraix.png',
+  // logoURI: 'https://i.ibb.co/VmMJtf7/oraix.png',
+  logoURI: OraiXIcon,
   coingeckoId: 'oraidex'
 };
 
