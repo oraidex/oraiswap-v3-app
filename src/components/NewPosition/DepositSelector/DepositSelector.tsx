@@ -233,7 +233,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
               onSelect={index => {
                 const tokenAIndexs = tokens[index];
                 const tokenBIndexs = tokens[tokenBIndex];
-                if (tokenAIndexs.symbol === tokenBIndexs.symbol) {
+                if (tokenAIndex !== null && tokenAIndexs.symbol === tokenBIndexs.symbol) {
                   if (!tokenBInputState.blocked) {
                     tokenAInputState.setValue(tokenBInputState.value);
                   } else {
@@ -284,7 +284,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
               onSelect={index => {
                 const tokenAIndexs = tokens[tokenAIndex];
                 const tokenBIndexs = tokens[index];
-                if (tokenAIndexs.symbol === tokenBIndexs.symbol) {
+                if (tokenBIndex !== null && tokenAIndexs.symbol === tokenBIndexs.symbol) {
                   if (!tokenBInputState.blocked) {
                     tokenAInputState.setValue(tokenBInputState.value);
                   } else {
