@@ -8,7 +8,11 @@ const useStyles = makeStyles()(theme => {
       borderRadius: '12px',
       border: '1px solid #232521',
       backgroundColor: '#1B1D19',
-      padding: '24px'
+      padding: '24px',
+
+      [theme.breakpoints.down('sm')]: {
+        padding: 10
+      }
     },
     head: {
       borderBottom: '1px solid #232521',

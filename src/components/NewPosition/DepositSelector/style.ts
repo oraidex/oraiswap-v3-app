@@ -1,4 +1,4 @@
-import { colors, typography } from '@static/theme';
+import { colors, theme, typography } from '@static/theme';
 import { makeStyles } from 'tss-react/mui';
 
 export const useStyles = makeStyles()(() => {
@@ -8,7 +8,11 @@ export const useStyles = makeStyles()(() => {
       backgroundColor: colors.oraidex.component,
       padding: 24,
       paddingTop: 16,
-      flex: '1 1 0%'
+      flex: '1 1 0%',
+
+      [theme.breakpoints.down('sm')]: {
+        padding: 10
+      }
     },
     sectionTitle: {
       ...typography.heading4,
@@ -59,7 +63,8 @@ export const useStyles = makeStyles()(() => {
     hoverButton: {
       '&:hover': {
         filter: 'brightness(1.2)',
-        boxShadow: `0 0 10px ${colors.oraidex.pink}`,
+        background: colors.oraidex.greenLinearGradient,
+        boxShadow: `0 0 10px ${colors.oraidex.greenLinearGradientOpacity}`,
         transition: '.2s all',
         cursor: 'pointer'
       }

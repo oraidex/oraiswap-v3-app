@@ -1,10 +1,10 @@
-import { colors, typography } from '@static/theme';
+import { colors, theme, typography } from '@static/theme';
 import { makeStyles } from 'tss-react/mui';
 
 const useStyles = makeStyles()(() => {
   return {
     button: {
-      minWidth: 67,
+      // minWidth: 67,
       backgroundColor: 'transparent',
       color: '#979995',
       height: 32,
@@ -15,12 +15,15 @@ const useStyles = makeStyles()(() => {
       fontWeight: 500,
       fontSize: 16,
       '&:hover': {
-        // background: '#fff',
         backgroundColor: '#232521',
         color: '#979995',
-        ...typography.body1,
-        fontWeight: 500,
-        fontSize: 16
+        fontWeight: 500
+      },
+      textAlign: 'center',
+      width: '100%',
+
+      [theme.breakpoints.down('sm')]: {
+        fontSize: 14
       }
     },
     active: {

@@ -60,7 +60,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
       lineHeight: '32px',
       width: 'unset'
     },
-    [theme.breakpoints.down('xs')]: {
+    [theme.breakpoints.down('sm')]: {
       ...typography.heading3,
       lineHeight: '25px'
     }
@@ -86,8 +86,9 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     whiteSpace: 'nowrap',
     textOverflow: 'ellipsis',
     overflow: 'hidden',
-    [theme.breakpoints.down('xs')]: {
-      ...typography.caption1
+    [theme.breakpoints.down('sm')]: {
+      ...typography.caption1,
+      fontWeight: 500
     }
   },
   activeInfoText: {
@@ -144,7 +145,8 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     background: '#494949'
   },
   infoCenter: {
-    flex: '1 1 0%'
+    flex: '1 1 0%',
+    alignItems: 'center'
   },
   minMax: {
     borderRadius: 11,

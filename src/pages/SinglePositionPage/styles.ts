@@ -1,5 +1,5 @@
-import { Theme } from '@mui/material'
-import { makeStyles } from 'tss-react/mui'
+import { Theme } from '@mui/material';
+import { makeStyles } from 'tss-react/mui';
 
 const useStyles = makeStyles()((theme: Theme) => {
   return {
@@ -14,14 +14,14 @@ const useStyles = makeStyles()((theme: Theme) => {
       },
 
       [theme.breakpoints.down('sm')]: {
-        paddingInline: 40
+        paddingInline: 10
       },
 
       [theme.breakpoints.down('xs')]: {
         paddingInline: 16
       }
     }
-  }
-})
+  };
+});
 
-export default useStyles
+export default useStyles;

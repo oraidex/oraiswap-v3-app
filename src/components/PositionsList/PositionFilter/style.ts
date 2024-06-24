@@ -4,9 +4,7 @@ import { makeStyles } from 'tss-react/mui';
 
 export const useStyles = makeStyles()((theme: Theme) => ({
   root: {
-    width: 1122,
-
-    [theme.breakpoints.down('md')]: {
+    [theme.breakpoints.down('sm')]: {
       width: '100%'
     }
   },
@@ -19,6 +17,9 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     [theme.breakpoints.down('md')]: {
       flexDirection: 'column',
       gap: '6px'
+    },
+    [theme.breakpoints.down('sm')]: {
+      width: '100%'
     }
   },
   poolFilterRight: {
@@ -26,8 +27,8 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     alignItems: 'center',
     justifyContent: 'space-between',
     [theme.breakpoints.down('md')]: {
-      width: '100%',
-      marginTop: '8px'
+      width: '100%'
+      // marginTop: '8px'
     }
   },
 
@@ -72,7 +73,14 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     borderRadius: '99px',
     color: '#EFEFEF',
     minWidth: '280px',
-    maxWidth: 400
+    maxWidth: 400,
+
+    [theme.breakpoints.down('sm')]: {
+      width: '100%',
+      maxWidth: 600,
+
+      marginRight: '0px'
+    }
   },
 
   filterActive: {

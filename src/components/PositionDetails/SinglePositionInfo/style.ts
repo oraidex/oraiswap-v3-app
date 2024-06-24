@@ -74,11 +74,50 @@ export const useStyles = makeStyles()((theme: Theme) => ({
 
     button: {
       flex: 1
+    },
+    [theme.breakpoints.down('sm')]: { display: 'none' }
+  },
+
+  btnMobile: {
+    zIndex: 11,
+    display: 'none',
+    // position: 'sticky',
+    // bottom: 0,
+    // left: 10,
+
+    [theme.breakpoints.down('sm')]: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 12
+
+      // padding: 16,
+
+      // borderRadius: 16,
+      // border: '1px solid #232521',
+      // background: '#181A17',
+
+      // boxShadow: `0px 4px 24px 0px rgba(0, 0, 0, 0.05)`
+    },
+
+    '&.closeButton': {
+      marginRight: '0 !important'
     }
-    // [theme.breakpoints.down('xs')]: {
-    //   justifyContent: 'space-between',
-    //   marginTop: 16
-    // }
+  },
+
+  buttonTextMb: {
+    width: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    color: colors.oraidex.neutralTextLight,
+    height: 28,
+    textDecoration: 'underline',
+    cursor: 'pointer',
+
+    '& svg': {
+      height: 20
+    }
   },
   feeText: {
     ...typography.body4,
@@ -251,6 +290,9 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     },
     [theme.breakpoints.down('md')]: {
       marginRight: 10
+    },
+    [theme.breakpoints.down('sm')]: {
+      marginRight: 0
     },
 
     [theme.breakpoints.down('xs')]: {
