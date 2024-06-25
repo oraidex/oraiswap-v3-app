@@ -93,10 +93,10 @@ export function* handleSwap(action: PayloadAction<Omit<Swap, 'txid'>>): Generato
     );
     let calculatedAmountIn = slippage
       ? calculateAmountInWithSlippage(amountOut, sqrtPriceLimit, xToY, BigInt(poolKey.fee_tier.fee))
-      : amountIn
+      : amountIn;
 
     if (calculatedAmountIn < amountIn) {
-      calculatedAmountIn = amountIn
+      calculatedAmountIn = amountIn;
     }
     if (xToY) {
       const approveTx = yield* call(
@@ -195,13 +195,13 @@ export function* handleSwap(action: PayloadAction<Omit<Swap, 'txid'>>): Generato
     //     })
     //   );
     // } else {
-      yield put(
-        snackbarsActions.add({
-          message: 'Tokens swapping failed. Please try again.',
-          variant: 'error',
-          persist: false
-        })
-      );
+    yield put(
+      snackbarsActions.add({
+        message: 'Tokens swapping failed. Please try again.',
+        variant: 'error',
+        persist: false
+      })
+    );
     // }
 
     yield put(
@@ -222,7 +222,7 @@ export function* handleSwapWithMultiHop(action: PayloadAction<Omit<Swap, 'txid'>
     slippage,
     amountIn,
     amountOut,
-    // byAmountIn,
+    byAmountIn,
     estimatedPriceAfterSwap,
     tokenTo
   } = action.payload;
@@ -252,9 +252,7 @@ export function* handleSwapWithMultiHop(action: PayloadAction<Omit<Swap, 'txid'>
 
     const txs = [];
     const sqrtPriceLimit = calculateSqrtPriceAfterSlippage(estimatedPriceAfterSwap, slippage, !xToY)
-    const calculatedAmountIn = slippage
-      ? calculateAmountInWithSlippage(amountOut, sqrtPriceLimit, xToY, BigInt(poolKey.fee_tier.fee))
-      : amountIn
+    const calculatedAmountIn = amountIn;
 
     if (xToY) {
       const approveTx = yield* call(
@@ -284,13 +282,15 @@ export function* handleSwapWithMultiHop(action: PayloadAction<Omit<Swap, 'txid'>
       swapHopArray = reverseSwapHopArray(swapHopArray);
     }
 
+    const estimateAmountOut = byAmountIn ? amountOut : calculateAmountInWithSlippage(amountOut, sqrtPriceLimit, xToY, BigInt(poolKey.fee_tier.fee));
+    // console.log({estimateAmountOut})
+
     const swapTx = yield* call(
       swapRouteWithSlippageTx,
       poolKey,
       xToY,
       amountIn,
-      estimatedPriceAfterSwap,
-      amountOut,
+      estimateAmountOut,
       slippage,
       walletAddress,
       swapHopArray
@@ -351,13 +351,13 @@ export function* handleSwapWithMultiHop(action: PayloadAction<Omit<Swap, 'txid'>
     //     })
     //   );
     // } else {
-      yield put(
-        snackbarsActions.add({
-          message: 'Tokens swapping failed. Please try again.',
-          variant: 'error',
-          persist: false
-        })
-      );
+    yield put(
+      snackbarsActions.add({
+        message: 'Tokens swapping failed. Please try again.',
+        variant: 'error',
+        persist: false
+      })
+    );
     // }
 
     yield put(
@@ -382,8 +382,8 @@ export function* handleSwapWithNative(action: PayloadAction<Omit<Swap, 'txid'>>)
     estimatedPriceAfterSwap,
     tokenTo
   } = action.payload;
-  console.log({ poolKey, tokenFrom, slippage, amountIn, amountOut, byAmountIn, tokenTo })
-  
+  // console.log({ poolKey, tokenFrom, slippage, amountIn, amountOut, byAmountIn, tokenTo });
+
   if (!poolKey) {
     return;
   }
@@ -410,11 +410,18 @@ export function* handleSwapWithNative(action: PayloadAction<Omit<Swap, 'txid'>>)
     const txs = [];
 
     // const estimatedPriceAfterSwap = priceToSqrtPrice(amountOut);
-    const sqrtPriceLimit = calculateSqrtPriceAfterSlippage(estimatedPriceAfterSwap, slippage, !xToY)
-    const calculatedAmountIn = slippage
+    const sqrtPriceLimit = calculateSqrtPriceAfterSlippage(
+      estimatedPriceAfterSwap,
+      slippage,
+      !xToY
+    );
+    let calculatedAmountIn = slippage
       ? calculateAmountInWithSlippage(amountOut, sqrtPriceLimit, xToY, BigInt(poolKey.fee_tier.fee))
-      : amountIn
+      : amountIn;
 
+    if (calculatedAmountIn < amountIn) {
+      calculatedAmountIn = amountIn;
+    }
     if (xToY) {
       const approveTx = yield* call(
         approveToken,
@@ -498,13 +505,13 @@ export function* handleSwapWithNative(action: PayloadAction<Omit<Swap, 'txid'>>)
     //     })
     //   );
     // } else {
-      yield put(
-        snackbarsActions.add({
-          message: 'Tokens swapping failed. Please try again.',
-          variant: 'error',
-          persist: false
-        })
-      );
+    yield put(
+      snackbarsActions.add({
+        message: 'Tokens swapping failed. Please try again.',
+        variant: 'error',
+        persist: false
+      })
+    );
     // }
 
     yield put(
@@ -553,10 +560,10 @@ export function* handleGetSimulateResult(action: PayloadAction<Simulate>) {
     // console.log({ filteredPools });
 
     const multiHopRes = yield* call(handleGetSimulateResultMultiHop, action);
-    console.log({ multiHopRes })
+    // console.log({ multiHopRes });
 
     if (filteredPools.length === 0 && multiHopRes.poolKey !== null) {
-      console.log("filteredPools.length === 0 && multiHopRes.poolKey !== null")
+      // console.log('filteredPools.length === 0 && multiHopRes.poolKey !== null');
       yield put(
         actions.setSimulateResult({
           poolKey: multiHopRes.poolKey,
@@ -567,8 +574,8 @@ export function* handleGetSimulateResult(action: PayloadAction<Simulate>) {
         })
       );
       return;
-    } else if (filteredPools.length === 0 && multiHopRes.poolKey === null) { 
-      console.log("filteredPools.length === 0 && multiHopRes.poolKey === null")
+    } else if (filteredPools.length === 0 && multiHopRes.poolKey === null) {
+      // console.log('filteredPools.length === 0 && multiHopRes.poolKey === null');
       yield put(
         actions.setSimulateResult({
           poolKey: null,
@@ -595,7 +602,13 @@ export function* handleGetSimulateResult(action: PayloadAction<Simulate>) {
     }
 
     let poolKey = null;
-    let amountOut = byAmountIn ? multiHopRes.amountOut : U128MAX;
+    let amountOut = byAmountIn
+      ? multiHopRes.amountOut > 0n
+        ? multiHopRes.amountOut
+        : 0n
+      : multiHopRes.amountOut > 0n
+        ? multiHopRes.amountOut
+        : U128MAX;
     let priceImpact = 0;
     let targetSqrtPrice = 0n;
     const errors = [];
@@ -673,7 +686,7 @@ export function* handleGetSimulateResult(action: PayloadAction<Simulate>) {
       priceImpact = multiHopRes.priceImpact;
       targetSqrtPrice = multiHopRes.targetSqrtPrice;
     }
-    
+
     yield put(
       actions.setSimulateResult({
         poolKey,

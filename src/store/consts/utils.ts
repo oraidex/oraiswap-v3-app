@@ -1261,18 +1261,11 @@ export const swapRouteWithSlippageTx = async (
   poolKey: PoolKey,
   xToY: boolean,
   amount: bigint,
-  estimatedSqrtPrice: bigint,
   expectedAmountOut: bigint,
   slippage: Percentage,
   address: string,
   swaps: SwapHop[]
 ): Promise<string> => {
-  const sqrtPriceAfterSlippage = calculateSqrtPriceAfterSlippage(
-    estimatedSqrtPrice,
-    slippage,
-    !xToY
-  );
-
   if (SingletonOraiswapV3.dex.sender !== address) {
     SingletonOraiswapV3.load(SingletonOraiswapV3.dex.client, address);
   }
@@ -1532,12 +1525,14 @@ export const handleGetSimulateResultMultiHop = async (
       swapHopArray = reverseSwapHopArray(swapHopArray);
     }
 
-    let amountOut = byAmountIn ? 0n : U128MAX;
+    let amountOut = 0n;
     const priceImpact = 0;
-    const targetSqrtPrice = 0n;
+    let targetSqrtPrice = 0n;
     const errors = [];
 
     amountOut = await quoteRoute(amount.toString(), swapHopArray);
+
+    targetSqrtPrice = byAmountIn ? priceToSqrtPrice(amount) : amountOut;
 
     return {
       poolKey,
