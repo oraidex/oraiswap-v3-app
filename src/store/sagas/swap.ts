@@ -11,6 +11,7 @@ import {
   createLoaderKey,
   deserializeTickmap,
   findPairs,
+  handleGetSimulateResultMultiHop,
   isNativeToken,
   poolKeyToString,
   priceToSqrtPrice,
@@ -591,8 +592,30 @@ export function* handleGetSimulateResult(action: PayloadAction<Simulate>) {
 
     // console.log({ filteredPools });
 
-    if (filteredPools.length === 0) {
-      return yield* call(handleGetSimulateResultMultiHop, action);
+    const multiHopRes = yield* call(handleGetSimulateResultMultiHop, action);
+
+    if (filteredPools.length === 0 && multiHopRes.poolKey !== null) {
+      yield put(
+        actions.setSimulateResult({
+          poolKey: multiHopRes.poolKey,
+          amountOut: multiHopRes.amountOut,
+          priceImpact: multiHopRes.priceImpact,
+          targetSqrtPrice: multiHopRes.targetSqrtPrice,
+          errors: multiHopRes.errors
+        })
+      );
+      return;
+    } else if (filteredPools.length === 0 && multiHopRes.poolKey === null) { 
+      yield put(
+        actions.setSimulateResult({
+          poolKey: null,
+          amountOut: 0n,
+          priceImpact: 0,
+          targetSqrtPrice: 0n,
+          errors: [SwapError.NoRouteFound]
+        })
+      );
+      return;
     }
 
     if (amount === 0n) {
@@ -681,188 +704,13 @@ export function* handleGetSimulateResult(action: PayloadAction<Simulate>) {
       }
     }
 
-    yield put(
-      actions.setSimulateResult({
-        poolKey,
-        amountOut,
-        priceImpact,
-        targetSqrtPrice,
-        errors
-      })
-    );
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-export function* handleGetSimulateResultMultiHop(action: PayloadAction<Simulate>) {
-  try {
-    const { fromToken, toToken, amount } = action.payload;
-    let { byAmountIn } = action.payload;
-
-    let key = fromToken + '-' + toToken + '-0-0';
-    // console.log({ key });
-    let swapHopArray = SWAP_HOPS_CACHE[key];
-
-    if (!swapHopArray) {
-      // console.log('not go here')
-      key = toToken + '-' + fromToken + '-0-0';
-      swapHopArray = SWAP_HOPS_CACHE[key];
-
-      if (!swapHopArray) {
-        // console.log('not go here')
-        yield put(
-          actions.setSimulateResult({
-            poolKey: null,
-            amountOut: 0n,
-            priceImpact: 0,
-            targetSqrtPrice: 0n,
-            errors: [SwapError.NoRouteFound]
-          })
-        );
-
-        return;
-      }
-      byAmountIn = !byAmountIn;
+    if (multiHopRes.poolKey !== null && multiHopRes.amountOut > amountOut) {
+      poolKey = multiHopRes.poolKey;
+      amountOut = multiHopRes.amountOut;
+      priceImpact = multiHopRes.priceImpact;
+      targetSqrtPrice = multiHopRes.targetSqrtPrice;
     }
-
-    // console.log({ swapHopArray });
-
-    const poolKey: PoolKey = {
-      fee_tier: {
-        fee: 0,
-        tick_spacing: 0
-      },
-      token_x: fromToken,
-      token_y: toToken
-    };
-
-    if (amount === 0n) {
-      // console.log('go hereeeeeee');
-      yield put(
-        actions.setSimulateResult({
-          poolKey: null,
-          amountOut: 0n,
-          priceImpact: 0,
-          targetSqrtPrice: 0n,
-          errors: [SwapError.AmountIsZero]
-        })
-      );
-      return;
-    }
-
-    let total_fee = 0;
-    swapHopArray.forEach((hop) => {
-      total_fee += hop.pool_key.fee_tier.fee;
-    })
-
-    poolKey.fee_tier.fee = total_fee;
-
-    /**
-     *  tokenFrom: string
-        tokenTo: string
-        allPools: PoolWithPoolKey[]
-     */
-
-    // const allPools = yield* select(pools);
-    // const poolKeyArray = Object.values(allPools);
-    // const actionFetch: PayloadAction<FetchTicksAndTickMaps> = {
-    //   payload: {
-    //     tokenFrom: fromToken,
-    //     tokenTo: toToken,
-    //     allPools: poolKeyArray
-    //   },
-    //   type: 'pools/fetchTicksAndTickMaps'
-    // };
-    // yield* call(fetchTicksAndTickMaps, actionFetch);
-    // const allTickmaps = yield* select(tickMaps);
-    // const allTicks = yield* select(poolTicks);
-
-    // console.log({ allPools, allTickmaps, allTicks, fromToken, toToken, amount, byAmountIn });
-
-    // const filteredPools = findPairs(
-    //   fromToken.toString(),
-    //   toToken.toString(),
-    //   Object.values(allPools)
-    // );
-
-    if (!byAmountIn) {
-      swapHopArray = reverseSwapHopArray(swapHopArray);
-    }
-
-    let amountOut = byAmountIn ? 0n : U128MAX;
-    const priceImpact = 0;
-    const targetSqrtPrice = 0n;
-    const errors = [];
-
-    // console.log({ filteredPools });
-    amountOut = yield* call(quoteRoute, amount.toString(), swapHopArray);
-
-    // for (const pool of filteredPools) {
-    //   const xToY = fromToken.toString() === pool.pool_key.token_x;
-
-    //   const poolInfo = allPools[poolKeyToString(pool.pool_key)].pool;
-    //   const convertedPool = {
-    //     current_tick_index: poolInfo.current_tick_index,
-    //     fee_growth_global_x: BigInt(poolInfo.fee_growth_global_x),
-    //     fee_growth_global_y: BigInt(poolInfo.fee_growth_global_y),
-    //     fee_protocol_token_x: BigInt(poolInfo.fee_protocol_token_x),
-    //     fee_protocol_token_y: BigInt(poolInfo.fee_protocol_token_y),
-    //     fee_receiver: poolInfo.fee_receiver,
-    //     liquidity: BigInt(poolInfo.liquidity),
-    //     last_timestamp: Number(poolInfo.last_timestamp.toFixed(0)),
-    //     sqrt_price: BigInt(poolInfo.sqrt_price),
-    //     start_timestamp: Number(poolInfo.start_timestamp.toFixed(0))
-    //   };
-    //   console.log({ convertedPool });
-    //   try {
-    //     const result: CalculateSwapResult = simulateSwap(
-    //       deserializeTickmap(allTickmaps[poolKeyToString(pool.pool_key)]),
-    //       pool.pool_key.fee_tier,
-    //       convertedPool,
-    //       allTicks[poolKeyToString(pool.pool_key)],
-    //       xToY,
-    //       amount,
-    //       byAmountIn,
-    //       xToY ? MIN_SQRT_PRICE : MAX_SQRT_PRICE
-    //     );
-
-    //     if (result.global_insufficient_liquidity) {
-    //       errors.push(SwapError.InsufficientLiquidity);
-    //       continue;
-    //     }
-
-    //     if (result.max_ticks_crossed) {
-    //       errors.push(SwapError.MaxTicksCrossed);
-    //       continue;
-    //     }
-
-    //     if (result.state_outdated) {
-    //       errors.push(SwapError.StateOutdated);
-    //       continue;
-    //     }
-
-    //     if (result.amount_out === 0n) {
-    //       errors.push(SwapError.AmountIsZero);
-    //       continue;
-    //     }
-
-    //     if (
-    //       byAmountIn ? result.amount_out > amountOut : result.amount_in + result.fee < amountOut
-    //     ) {
-    //       amountOut = byAmountIn ? result.amount_out : result.amount_in + result.fee;
-    //       poolKey = pool.pool_key;
-    //       priceImpact = +printBigint(
-    //         calculatePriceImpact(BigInt(pool.pool.sqrt_price), result.target_sqrt_price),
-    //         PERCENTAGE_SCALE
-    //       );
-    //       targetSqrtPrice = result.target_sqrt_price;
-    //     }
-    //   } catch (e) {
-    //     console.log(e);
-    //   }
-    // }
-
+    
     yield put(
       actions.setSimulateResult({
         poolKey,

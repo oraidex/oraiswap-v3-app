@@ -23,7 +23,8 @@ import {
   getCoingeckoTokenPrice,
   getMockedTokenPrice,
   poolKeyToString,
-  printBigint
+  printBigint,
+  // roundTickToSpacing
 } from '@store/consts/utils'
 import { actions as poolsActions } from '@store/reducers/pools'
 import { TickPlotPositionData, actions as positionsActions } from '@store/reducers/positions'
@@ -634,7 +635,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       isXtoY={isXtoY}
       xDecimal={xDecimal}
       yDecimal={yDecimal}
-      tickSpacing={10}
+      tickSpacing={tickSpacing}
       isWaitingForNewPool={isWaitingForNewPool}
       poolIndex={poolIndex}
       currentPairReversed={currentPairReversed}

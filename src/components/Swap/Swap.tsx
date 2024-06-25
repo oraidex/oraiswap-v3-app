@@ -306,13 +306,6 @@ export const Swap: React.FC<ISwap> = ({
     }
   };
 
-  // const isError = (error: SwapError): boolean => {
-  //   if (simulateResult.errors) {
-  //     return simulateResult.errors.some(err => err === error)
-  //   }
-  //   return false
-  // }
-
   const getStateMessage = () => {
     if ((tokenFromIndex !== null && tokenToIndex !== null && throttle) || isWaitingForNewPool) {
       return 'Loading';

@@ -39,9 +39,11 @@ import {
   TokenAmounts,
   SwapHop
 } from '@wasm';
-import { SWAP_HOPS_CACHE, Token, TokenPriceData } from './static';
+import { SWAP_HOPS_CACHE, Token, TokenPriceData, U128MAX } from './static';
 import { PoolWithPoolKey } from '@/sdk/OraiswapV3.types';
 import { Coin } from '@cosmjs/proto-signing';
+import { PayloadAction } from '@reduxjs/toolkit';
+import { Simulate } from '@store/reducers/swap';
 
 export const parse = (value: any) => {
   if (isArray(value)) {
@@ -561,8 +563,8 @@ export const createPositionTx = async (
 
   const res = await SingletonOraiswapV3.dex.createPosition({
     poolKey,
-    lowerTick: roundTickToSpacing(lowerTick, poolKey.fee_tier.tick_spacing),
-    upperTick: roundTickToSpacing(upperTick, poolKey.fee_tier.tick_spacing),
+    lowerTick: lowerTick,
+    upperTick: upperTick,
     liquidityDelta: liquidityDelta.toString(),
     slippageLimitLower: slippageLimitLower.toString(),
     slippageLimitUpper: slippageLimitUpper.toString()
@@ -1428,8 +1430,8 @@ export const createPositionWithNativeTx = async (
   const res = await SingletonOraiswapV3.dex.createPosition(
     {
       poolKey,
-      lowerTick: roundTickToSpacing(lowerTick, poolKey.fee_tier.tick_spacing),
-      upperTick: roundTickToSpacing(upperTick, poolKey.fee_tier.tick_spacing),
+      lowerTick: lowerTick,
+      upperTick: upperTick,
       liquidityDelta: liquidityDelta.toString(),
       slippageLimitLower: slippageLimitLower.toString(),
       slippageLimitUpper: slippageLimitUpper.toString()
@@ -1442,10 +1444,14 @@ export const createPositionWithNativeTx = async (
   return res.transactionHash;
 };
 
-export const roundTickToSpacing = (tickValue: number, tickSpacing: number): number => {
-  const roundedTick = Math.round(tickValue / tickSpacing) * tickSpacing;
-  return roundedTick;
-};
+// export const roundTickToSpacing = (tickValue: number, tickSpacing: number, isUpper: boolean): number => {
+//   if (isUpper) {
+//     const roundedTick = Math.ceil(tickValue / tickSpacing) * tickSpacing;
+//     return roundedTick;
+//   }
+//   const roundedTick = Math.floor(tickValue / tickSpacing) * tickSpacing;
+//   return roundedTick;
+// };
 
 export const quoteRoute = async (amountIn: string, swaps: SwapHop[]): Promise<bigint> => {
   const res = await SingletonOraiswapV3.dexQuerier.quoteRoute({ amountIn, swaps });
@@ -1463,4 +1469,79 @@ export const reverseSwapHopArray = (swaps: SwapHop[]): SwapHop[] => {
     };
   });
   return swaps;
+};
+
+export const handleGetSimulateResultMultiHop = async (
+  action: PayloadAction<Simulate>
+): Promise<SimulateResult> => {
+  try {
+    const { fromToken, toToken, amount } = action.payload;
+    let { byAmountIn } = action.payload;
+
+    let key = fromToken + '-' + toToken + '-0-0';
+    let swapHopArray = SWAP_HOPS_CACHE[key];
+
+    if (!swapHopArray) {
+      key = toToken + '-' + fromToken + '-0-0';
+      swapHopArray = SWAP_HOPS_CACHE[key];
+
+      if (!swapHopArray) {
+        return {
+          poolKey: null,
+          amountOut: 0n,
+          priceImpact: 0,
+          targetSqrtPrice: 0n,
+          errors: [SwapError.NoRouteFound]
+        };
+      }
+      byAmountIn = !byAmountIn;
+    }
+
+    const poolKey: PoolKey = {
+      fee_tier: {
+        fee: 0,
+        tick_spacing: 0
+      },
+      token_x: fromToken,
+      token_y: toToken
+    };
+
+    if (amount === 0n) {
+      return {
+        poolKey: null,
+        amountOut: 0n,
+        priceImpact: 0,
+        targetSqrtPrice: 0n,
+        errors: [SwapError.AmountIsZero]
+      };
+    }
+
+    let total_fee = 0;
+    swapHopArray.forEach(hop => {
+      total_fee += hop.pool_key.fee_tier.fee;
+    });
+
+    poolKey.fee_tier.fee = total_fee;
+
+    if (!byAmountIn) {
+      swapHopArray = reverseSwapHopArray(swapHopArray);
+    }
+
+    let amountOut = byAmountIn ? 0n : U128MAX;
+    const priceImpact = 0;
+    const targetSqrtPrice = 0n;
+    const errors = [];
+
+    amountOut = await quoteRoute(amount.toString(), swapHopArray);
+
+    return {
+      poolKey,
+      amountOut,
+      priceImpact,
+      targetSqrtPrice,
+      errors
+    };
+  } catch (error) {
+    console.log(error);
+  }
 };
