@@ -365,13 +365,18 @@ export interface CoingeckoApiPriceData {
 
 export const getCoingeckoTokenPrice = async (id: string): Promise<CoingeckoPriceData> => {
   return await axios
-    .get<
-      CoingeckoApiPriceData[]
-    >(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${id}`)
+    // .get<CoingeckoApiPriceData[]>(
+    //   `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${id}`
+    // )
+    .get<CoingeckoApiPriceData[]>(
+      `https://price.market.orai.io/simple/price?ids=${id}&vs_currencies=usd`
+    )
     .then(res => {
       return {
-        price: res.data[0]?.current_price ?? 0,
-        priceChange: res.data[0]?.price_change_percentage_24h ?? 0
+        price: res.data[id].usd ?? 0,
+        priceChange: 0
+        // price: res.data[0]?.current_price ?? 0,
+        // priceChange: res.data[0]?.price_change_percentage_24h ?? 0
       };
     });
 };
