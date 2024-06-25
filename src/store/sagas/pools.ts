@@ -30,7 +30,7 @@ import { address } from '@store/selectors/wallet';
 
 export function* fetchPoolsDataForList(action: PayloadAction<ListPoolsRequest>) {
   const walletAddress = yield* select(address);
-  console.log('fetchPoolsDataForList', action.payload);
+  // console.log('fetchPoolsDataForList', action.payload);
   const pools = yield* call(getPoolsByPoolKeys, action.payload.poolKeys);
 
   // console.log('pools', pools);
@@ -102,7 +102,7 @@ export function* handleInitPool(action: PayloadAction<PoolKey>): Generator {
 export function* fetchPoolData(action: PayloadAction<PoolKey>): Generator {
   const { fee_tier, token_x, token_y } = action.payload;
 
-  console.log('fetching pool data', fee_tier, token_x, token_y);
+  // console.log('fetching pool data', fee_tier, token_x, token_y);
 
   try {
     const pool = yield* call(getPool, { fee_tier, token_x, token_y });
@@ -151,12 +151,12 @@ export function* fetchAllPoolsForPairData(action: PayloadAction<PairTokens>) {
 export function* fetchTicksAndTickMaps(action: PayloadAction<FetchTicksAndTickMaps>) {
   const { tokenFrom, tokenTo, allPools } = action.payload;
 
-  console.log('fetchTicksAndTickMaps', tokenFrom, tokenTo);
+  // console.log('fetchTicksAndTickMaps', tokenFrom, tokenTo);
 
   try {
     const pools = findPairs(tokenFrom.toString(), tokenTo.toString(), allPools);
 
-    console.log('pools to fetch tick and tickmap', pools);
+    // console.log('pools to fetch tick and tickmap', pools);
 
     const tickmapCalls = pools.map(pool => call(getFullTickmap, pool.pool_key));
 

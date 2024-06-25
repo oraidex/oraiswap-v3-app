@@ -53,7 +53,7 @@ function* handleInitPosition(action: PayloadAction<InitPositionData>): Generator
     slippageTolerance
   } = action.payload;
 
-  console.log('handleInitPosition', action.payload);
+  // console.log('handleInitPosition', action.payload);
 
   const { token_x, token_y, fee_tier } = poolKeyData;
 
@@ -82,7 +82,7 @@ function* handleInitPosition(action: PayloadAction<InitPositionData>): Generator
 
     const txs = [];
 
-    console.log({ fee_tier, spotSqrtPrice, liquidityDelta, lowerTick, upperTick, slippageTolerance })
+    // console.log({ fee_tier, spotSqrtPrice, liquidityDelta, lowerTick, upperTick, slippageTolerance })
     const [xAmountWithSlippage, yAmountWithSlippage] = calculateTokenAmountsWithSlippage(
       fee_tier.tick_spacing,
       spotSqrtPrice,
@@ -253,7 +253,7 @@ function* handleInitPositionWithNative(action: PayloadAction<InitPositionData>):
       })
     );
 
-    console.log({ fee_tier, spotSqrtPrice, liquidityDelta, lowerTick, upperTick, slippageTolerance })
+    // console.log({ fee_tier, spotSqrtPrice, liquidityDelta, lowerTick, upperTick, slippageTolerance })
     const [xAmountWithSlippage, yAmountWithSlippage] = calculateTokenAmountsWithSlippage(
       fee_tier.tick_spacing,
       spotSqrtPrice,
@@ -529,7 +529,7 @@ export function* handleClaimFee(action: PayloadAction<HandleClaimFee>) {
 export function* handleGetSinglePosition(action: PayloadAction<bigint>) {
   const walletAddress = yield* select(address);
   const position = yield* call(getPosition, action.payload, walletAddress);
-  console.log('position', position);
+  // console.log('position', position);
   yield* put(
     actions.setSinglePosition({
       index: action.payload,

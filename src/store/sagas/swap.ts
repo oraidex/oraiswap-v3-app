@@ -582,7 +582,7 @@ export function* handleGetSimulateResult(action: PayloadAction<Simulate>) {
     const allTickmaps = yield* select(tickMaps);
     const allTicks = yield* select(poolTicks);
 
-    console.log({ allPools, allTickmaps, allTicks, fromToken, toToken, amount, byAmountIn });
+    // console.log({ allPools, allTickmaps, allTicks, fromToken, toToken, amount, byAmountIn });
 
     const filteredPools = findPairs(
       fromToken.toString(),
@@ -637,7 +637,7 @@ export function* handleGetSimulateResult(action: PayloadAction<Simulate>) {
     let targetSqrtPrice = 0n;
     const errors = [];
 
-    console.log({ filteredPools });
+    // console.log({ filteredPools });
 
     for (const pool of filteredPools) {
       const xToY = fromToken.toString() === pool.pool_key.token_x;
@@ -655,7 +655,7 @@ export function* handleGetSimulateResult(action: PayloadAction<Simulate>) {
         sqrt_price: BigInt(poolInfo.sqrt_price),
         start_timestamp: Number(poolInfo.start_timestamp.toFixed(0))
       };
-      console.log({ convertedPool });
+      // console.log({ convertedPool });
       try {
         const result: CalculateSwapResult = simulateSwap(
           deserializeTickmap(allTickmaps[poolKeyToString(pool.pool_key)]),
