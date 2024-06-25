@@ -1,14 +1,8 @@
-import type { Preview } from '@storybook/react'
-import {
-  reactRouterParameters,
-  reactRouterOutlet,
-  withRouter
-} from 'storybook-addon-remix-react-router'
-import { ThemeProvider, CssBaseline } from '@mui/material'
-import { withThemeFromJSXProvider } from '@storybook/addon-themes'
-import { theme } from '../src/static/theme'
-import { createBrowserRouter } from 'react-router-dom'
-import { withStore } from './decorators'
+import type { Preview } from '@storybook/react';
+import { withRouter } from 'storybook-addon-remix-react-router';
+import { ThemeProvider, CssBaseline } from '@mui/material';
+import { withThemeFromJSXProvider } from '@storybook/addon-themes';
+import { theme } from '../src/static/theme';
 
 const customViewports = {
   sx375: {
@@ -46,7 +40,7 @@ const customViewports = {
       height: '1280px'
     }
   }
-}
+};
 
 const preview: Preview = {
   parameters: {
@@ -94,8 +88,8 @@ const preview: Preview = {
     // withRouter
     // withStore
   ]
-}
+};
 
-export default preview
+export default preview;
 
-export const parameters = {}
+export const parameters = {};

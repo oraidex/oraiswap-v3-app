@@ -5,7 +5,7 @@ import App from './App.tsx';
 
 window.walletType = 'keplr';
 window.Keplr = window?.keplr;
-if (!window.Keplr) {
+if (!window.Keplr && 'parent' in window) {
   window.keplr = window.Keplr = window.parent.keplr;
 }
 

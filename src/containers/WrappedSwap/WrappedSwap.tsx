@@ -255,8 +255,8 @@ export const WrappedSwap = () => {
             estimatedPriceAfterSwap,
             tokenFrom,
             tokenTo,
-            amountIn: BigInt(amountIn),
-            amountOut: BigInt(amountOut),
+            amountIn: amountIn,
+            amountOut: amountOut,
             byAmountIn
           })
         )

@@ -1,4 +1,4 @@
-import type { StorybookConfig } from '@storybook/react-vite'
+import type { StorybookConfig } from '@storybook/react-vite';
 
 const config: StorybookConfig = {
   stories: ['../src/**/*.mdx', '../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
@@ -14,6 +14,9 @@ const config: StorybookConfig = {
     'storybook-addon-remix-react-router',
     '@storybook/addon-actions'
   ],
+  core: {
+    builder: '@storybook/builder-vite' // 👈 The builder enabled here.
+  },
   framework: {
     name: '@storybook/react-vite',
     options: {}
@@ -28,5 +31,5 @@ const config: StorybookConfig = {
       propFilter: prop => (prop.parent ? !/node_modules/.test(prop.parent.fileName) : true)
     }
   }
-}
-export default config
+};
+export default config;
