@@ -338,21 +338,21 @@ export const Swap: React.FC<ISwap> = ({
       simulateResult.poolKey === null &&
       (isError(SwapError.InsufficientLiquidity) || isError(SwapError.MaxTicksCrossed))
     ) {
-      return 'Insufficient liquidity'
+      return 'Insufficient liquidity';
     }
 
     if (
       convertBalanceToBigint(amountFrom, Number(tokens[tokenFromIndex].decimals)) >
       tokens[tokenFromIndex].balance
     ) {
-      return 'Insufficient balance'
+      return 'Insufficient balance';
     }
 
     if (
       convertBalanceToBigint(amountFrom, Number(tokens[tokenFromIndex].decimals)) === 0n ||
       (simulateResult.poolKey === null && isError(SwapError.AmountIsZero))
     ) {
-      return 'Insufficient volume'
+      return 'Insufficient volume';
     }
 
     return 'Swap Tokens';
@@ -380,10 +380,10 @@ export const Swap: React.FC<ISwap> = ({
 
   const isError = (error: SwapError): boolean => {
     if (simulateResult.errors) {
-      return simulateResult.errors.some(err => err === error)
+      return simulateResult.errors.some(err => err === error);
     }
-    return false
-  }
+    return false;
+  };
 
   const handleCloseSettings = () => {
     unblurContent();
@@ -511,7 +511,12 @@ export const Swap: React.FC<ISwap> = ({
             }}
             tokens={tokens}
             current={tokenFromIndex !== null ? tokens[tokenFromIndex] : null}
-            onSelect={setTokenFromIndex}
+            onSelect={value => {
+              if (value === tokenToIndex) {
+                setTokenFromIndex(tokenToIndex);
+                setTokenToIndex(tokenFromIndex);
+              } else setTokenFromIndex(value);
+            }}
             disabled={tokenFromIndex === null}
             hideBalances={walletStatus !== Status.Initialized}
             handleAddToken={handleAddToken}
@@ -585,7 +590,12 @@ export const Swap: React.FC<ISwap> = ({
             }}
             tokens={tokens}
             current={tokenToIndex !== null ? tokens[tokenToIndex] : null}
-            onSelect={setTokenToIndex}
+            onSelect={value => {
+              if (value === tokenFromIndex) {
+                setTokenToIndex(tokenFromIndex);
+                setTokenFromIndex(tokenToIndex);
+              } else setTokenToIndex(value);
+            }}
             disabled={tokenFromIndex === null}
             hideBalances={walletStatus !== Status.Initialized}
             handleAddToken={handleAddToken}
