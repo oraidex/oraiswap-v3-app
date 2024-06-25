@@ -12,6 +12,17 @@
           "oraidex-amm-v3-prod"
         ]
       }
+    },
+    "oraichain-mainnet": {
+      "oraiswap-sb": [
+        "oraiswap-sb"
+      ],
+      "hosting": {
+        "oraiswap-sb": [
+          "oraichain-mainnet"
+        ]
+      }
     }
-  }
+  },
+  "etags": {}
 }
