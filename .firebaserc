@@ -16,7 +16,7 @@
     "oraichain-mainnet": {
       "hosting": {
         "oraiswap-sb": [
-          "oraichain-mainnet"
+          "oraiswap-sb"
         ]
       }
     }
