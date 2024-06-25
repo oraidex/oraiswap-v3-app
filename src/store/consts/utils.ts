@@ -1361,7 +1361,7 @@ export const swapWithSlippageTx = async (
       xToY,
       amount: amount.toString(),
       byAmountIn,
-      sqrtPriceLimit: sqrtPriceAfterSlippage.toString()
+      sqrtPriceLimit: xToY ? (sqrtPriceAfterSlippage - 1n).toString() : (sqrtPriceAfterSlippage + 1n).toString()
     });
 
     return res.transactionHash;
