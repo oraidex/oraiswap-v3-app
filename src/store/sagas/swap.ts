@@ -18,6 +18,7 @@ import {
   printBigint,
   quoteRoute,
   reverseSwapHopArray,
+  sqrtPriceToPrice,
   swapRouteWithSlippageTx,
   swapWithSlippageTx
 } from '@store/consts/utils';
@@ -40,7 +41,7 @@ export function* handleSwap(action: PayloadAction<Omit<Swap, 'txid'>>): Generato
     tokenFrom,
     slippage,
     amountIn,
-    // amountOut,
+    amountOut,
     byAmountIn,
     estimatedPriceAfterSwap,
     tokenTo
@@ -86,20 +87,17 @@ export function* handleSwap(action: PayloadAction<Omit<Swap, 'txid'>>): Generato
     const txs = [];
 
     const sqrtPriceLimit = calculateSqrtPriceAfterSlippage(
-      BigInt(estimatedPriceAfterSwap),
+      estimatedPriceAfterSwap,
       slippage,
       !xToY
     );
-    let calculatedAmountIn = amountIn;
-    if (!byAmountIn) {
-      calculatedAmountIn = calculateAmountInWithSlippage(
-        amountIn,
-        sqrtPriceLimit,
-        !xToY,
-        BigInt(poolKey.fee_tier.fee)
-      );
-    }
+    let calculatedAmountIn = slippage
+      ? calculateAmountInWithSlippage(amountOut, sqrtPriceLimit, xToY, BigInt(poolKey.fee_tier.fee))
+      : amountIn
 
+    if (calculatedAmountIn < amountIn) {
+      calculatedAmountIn = amountIn
+    }
     if (xToY) {
       const approveTx = yield* call(
         approveToken,
@@ -122,9 +120,9 @@ export function* handleSwap(action: PayloadAction<Omit<Swap, 'txid'>>): Generato
       swapWithSlippageTx,
       poolKey,
       xToY,
-      amountIn,
+      byAmountIn ? amountIn : amountOut,
       byAmountIn,
-      sqrtPriceLimit,
+      estimatedPriceAfterSwap,
       slippage,
       walletAddress
     );
@@ -224,12 +222,10 @@ export function* handleSwapWithMultiHop(action: PayloadAction<Omit<Swap, 'txid'>
     slippage,
     amountIn,
     amountOut,
-    byAmountIn,
-    // estimatedPriceAfterSwap,
+    // byAmountIn,
+    estimatedPriceAfterSwap,
     tokenTo
   } = action.payload;
-
-  // console.log('handleSwapWithMultiHop', action.payload);
 
   if (!poolKey) {
     return;
@@ -255,23 +251,10 @@ export function* handleSwapWithMultiHop(action: PayloadAction<Omit<Swap, 'txid'>
     const xToY = tokenFrom.toString() === poolKey.token_x;
 
     const txs = [];
-    // console.log({ amountOut, slippage, xToY });
-    const estimatedPriceAfterSwap = priceToSqrtPrice(amountOut);
-    const sqrtPriceLimit = calculateSqrtPriceAfterSlippage(
-      estimatedPriceAfterSwap,
-      slippage,
-      !xToY
-    );
-    // console.log({ sqrtPriceLimit });
-    let calculatedAmountIn = amountIn;
-    if (!byAmountIn) {
-      calculatedAmountIn = calculateAmountInWithSlippage(
-        amountIn,
-        sqrtPriceLimit,
-        !xToY,
-        BigInt(poolKey.fee_tier.fee)
-      );
-    }
+    const sqrtPriceLimit = calculateSqrtPriceAfterSlippage(estimatedPriceAfterSwap, slippage, !xToY)
+    const calculatedAmountIn = slippage
+      ? calculateAmountInWithSlippage(amountOut, sqrtPriceLimit, xToY, BigInt(poolKey.fee_tier.fee))
+      : amountIn
 
     if (xToY) {
       const approveTx = yield* call(
@@ -292,7 +275,6 @@ export function* handleSwapWithMultiHop(action: PayloadAction<Omit<Swap, 'txid'>
     }
 
     const key = poolKey.token_x + '-' + poolKey.token_y + '-0-0';
-    // console.log({ key });
     let swapHopArray = SWAP_HOPS_CACHE[key];
     if (!swapHopArray) {
       swapHopArray = SWAP_HOPS_CACHE[poolKey.token_y + '-' + poolKey.token_x + '-0-0'];
@@ -302,22 +284,18 @@ export function* handleSwapWithMultiHop(action: PayloadAction<Omit<Swap, 'txid'>
       swapHopArray = reverseSwapHopArray(swapHopArray);
     }
 
-    // console.log({ swapHopArray });
-
     const swapTx = yield* call(
       swapRouteWithSlippageTx,
       poolKey,
       xToY,
       amountIn,
-      sqrtPriceLimit,
+      estimatedPriceAfterSwap,
       amountOut,
       slippage,
       walletAddress,
       swapHopArray
     );
     txs.push(swapTx);
-
-    // const batchedTx = api.tx.utility.batchAll(txs)
 
     yield put(
       snackbarsActions.add({
@@ -328,19 +306,8 @@ export function* handleSwapWithMultiHop(action: PayloadAction<Omit<Swap, 'txid'>
       })
     );
 
-    // let signedBatchedTx: any
-    // try {
-    //   signedBatchedTx = yield* call([batchedTx, batchedTx.signAsync], walletAddress, {
-    //     signer: adapter.signer as Signer
-    //   })
-    // } catch (e) {
-    //   throw new Error(ErrorMessage.TRANSACTION_SIGNING_ERROR)
-    // }
-
     closeSnackbar(loaderSigningTx);
     yield put(snackbarsActions.remove(loaderSigningTx));
-
-    // const txResult = yield* call(sendTx, signedBatchedTx)
 
     closeSnackbar(loaderSwappingTokens);
     yield put(snackbarsActions.remove(loaderSwappingTokens));
@@ -415,7 +382,8 @@ export function* handleSwapWithNative(action: PayloadAction<Omit<Swap, 'txid'>>)
     estimatedPriceAfterSwap,
     tokenTo
   } = action.payload;
-
+  console.log({ poolKey, tokenFrom, slippage, amountIn, amountOut, byAmountIn, tokenTo })
+  
   if (!poolKey) {
     return;
   }
@@ -441,21 +409,11 @@ export function* handleSwapWithNative(action: PayloadAction<Omit<Swap, 'txid'>>)
 
     const txs = [];
 
-    const sqrtPriceLimit = calculateSqrtPriceAfterSlippage(
-      BigInt(estimatedPriceAfterSwap),
-      slippage,
-      !xToY
-    );
-
-    let calculatedAmountIn = amountIn;
-    if (!byAmountIn) {
-      calculatedAmountIn = calculateAmountInWithSlippage(
-        amountIn,
-        sqrtPriceLimit,
-        !xToY,
-        BigInt(poolKey.fee_tier.fee)
-      );
-    }
+    // const estimatedPriceAfterSwap = priceToSqrtPrice(amountOut);
+    const sqrtPriceLimit = calculateSqrtPriceAfterSlippage(estimatedPriceAfterSwap, slippage, !xToY)
+    const calculatedAmountIn = slippage
+      ? calculateAmountInWithSlippage(amountOut, sqrtPriceLimit, xToY, BigInt(poolKey.fee_tier.fee))
+      : amountIn
 
     if (xToY) {
       const approveTx = yield* call(
@@ -479,9 +437,9 @@ export function* handleSwapWithNative(action: PayloadAction<Omit<Swap, 'txid'>>)
       swapWithSlippageTx,
       poolKey,
       xToY,
-      amountIn,
+      byAmountIn ? amountIn : amountOut,
       byAmountIn,
-      sqrtPriceLimit,
+      estimatedPriceAfterSwap,
       slippage,
       walletAddress
     );
@@ -562,6 +520,8 @@ export function* handleGetSimulateResult(action: PayloadAction<Simulate>) {
   try {
     const { fromToken, toToken, amount, byAmountIn } = action.payload;
 
+    console.log({ fromToken, toToken, amount, byAmountIn });
+
     /**
      * tokenFrom: string
   tokenTo: string
@@ -593,8 +553,10 @@ export function* handleGetSimulateResult(action: PayloadAction<Simulate>) {
     // console.log({ filteredPools });
 
     const multiHopRes = yield* call(handleGetSimulateResultMultiHop, action);
+    console.log({ multiHopRes })
 
     if (filteredPools.length === 0 && multiHopRes.poolKey !== null) {
+      console.log("filteredPools.length === 0 && multiHopRes.poolKey !== null")
       yield put(
         actions.setSimulateResult({
           poolKey: multiHopRes.poolKey,
@@ -606,6 +568,7 @@ export function* handleGetSimulateResult(action: PayloadAction<Simulate>) {
       );
       return;
     } else if (filteredPools.length === 0 && multiHopRes.poolKey === null) { 
+      console.log("filteredPools.length === 0 && multiHopRes.poolKey === null")
       yield put(
         actions.setSimulateResult({
           poolKey: null,
@@ -632,7 +595,7 @@ export function* handleGetSimulateResult(action: PayloadAction<Simulate>) {
     }
 
     let poolKey = null;
-    let amountOut = byAmountIn ? 0n : U128MAX;
+    let amountOut = byAmountIn ? multiHopRes.amountOut : U128MAX;
     let priceImpact = 0;
     let targetSqrtPrice = 0n;
     const errors = [];
@@ -704,7 +667,7 @@ export function* handleGetSimulateResult(action: PayloadAction<Simulate>) {
       }
     }
 
-    if (multiHopRes.poolKey !== null && multiHopRes.amountOut > amountOut) {
+    if (multiHopRes.poolKey !== null && multiHopRes.amountOut >= amountOut) {
       poolKey = multiHopRes.poolKey;
       amountOut = multiHopRes.amountOut;
       priceImpact = multiHopRes.priceImpact;
