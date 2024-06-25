@@ -229,7 +229,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
               onSelect={index => {
                 const tokenAIndexs = tokens[index];
                 const tokenBIndexs = tokens[tokenBIndex];
-                if (tokenAIndex !== null && tokenAIndexs.symbol === tokenBIndexs?.symbol) {
+                if (tokenBIndex !== null && tokenAIndexs.symbol === tokenBIndexs?.symbol) {
                   if (!tokenBInputState.blocked) {
                     tokenAInputState.setValue(tokenBInputState.value);
                   } else {
@@ -239,10 +239,10 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
                   setTokenAIndex(tokenBIndex);
                   setTokenBIndex(pom);
                   onReverseTokens();
-                  return;
+                } else {
+                  setTokenAIndex(index);
+                  setPositionTokens(index, tokenBIndex, feeTierIndex);
                 }
-                setTokenAIndex(index);
-                setPositionTokens(index, tokenBIndex, feeTierIndex);
               }}
               centered
               className={classes.customSelect}
@@ -280,7 +280,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
               onSelect={index => {
                 const tokenAIndexs = tokens[tokenAIndex];
                 const tokenBIndexs = tokens[index];
-                if (tokenBIndex !== null && tokenAIndexs.symbol === tokenBIndexs?.symbol) {
+                if (tokenAIndex !== null && tokenAIndexs.symbol === tokenBIndexs?.symbol) {
                   if (!tokenBInputState.blocked) {
                     tokenAInputState.setValue(tokenBInputState.value);
                   } else {
@@ -290,10 +290,10 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
                   setTokenAIndex(pom);
                   setTokenBIndex(tokenAIndex);
                   onReverseTokens();
-                  return;
+                } else {
+                  setTokenBIndex(index);
+                  setPositionTokens(tokenAIndex, index, feeTierIndex);
                 }
-                setTokenBIndex(index);
-                setPositionTokens(tokenAIndex, index, feeTierIndex);
               }}
               centered
               className={classes.customSelect}

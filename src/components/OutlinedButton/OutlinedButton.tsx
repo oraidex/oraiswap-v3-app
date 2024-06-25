@@ -1,19 +1,19 @@
-import React, { ReactElement } from 'react'
-import classNames from 'classnames'
-import useStyles from './style'
-import { Button, ButtonOwnProps } from '@mui/material'
+import React, { ReactElement } from 'react';
+import classNames from 'classnames';
+import useStyles from './style';
+import { Button, ButtonOwnProps } from '@mui/material';
 
 export interface IProps {
-  name: ReactElement | string
-  onClick?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
-  color?: ButtonOwnProps['color']
-  className?: string
-  style?: React.CSSProperties
-  disabled?: boolean
-  startIcon?: JSX.Element
+  name: ReactElement | string;
+  onClick?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+  color?: ButtonOwnProps['color'];
+  className?: string;
+  style?: React.CSSProperties;
+  disabled?: boolean;
+  startIcon?: JSX.Element;
   // fontWeight?: CSSProperties['fontWeight']
   // padding?: CSSProperties['padding']
-  labelClassName?: string
+  labelClassName?: string;
 }
 
 export const OutlinedButton: React.FC<IProps> = ({
@@ -25,7 +25,7 @@ export const OutlinedButton: React.FC<IProps> = ({
   startIcon,
   labelClassName
 }) => {
-  const { classes } = useStyles()
+  const { classes } = useStyles();
 
   return (
     <Button
@@ -40,5 +40,5 @@ export const OutlinedButton: React.FC<IProps> = ({
       sx={{ '& .MuiButton-label': classNames(labelClassName) }}>
       {name}
     </Button>
-  )
-}
+  );
+};

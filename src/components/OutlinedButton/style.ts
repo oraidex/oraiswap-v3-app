@@ -1,5 +1,5 @@
-import { colors, typography, theme } from '@static/theme'
-import { makeStyles } from 'tss-react/mui'
+import { colors, typography, theme } from '@static/theme';
+import { makeStyles } from 'tss-react/mui';
 
 const useStyles = makeStyles()(() => ({
   general: {
@@ -31,6 +31,7 @@ const useStyles = makeStyles()(() => ({
 
   disabled: {
     ...typography.tiny2,
+    display: 'none',
     width: 20,
     maxWidth: 26,
     height: 15,
@@ -41,6 +42,6 @@ const useStyles = makeStyles()(() => ({
       cursor: 'default'
     }
   }
-}))
+}));
 
-export default useStyles
+export default useStyles;
