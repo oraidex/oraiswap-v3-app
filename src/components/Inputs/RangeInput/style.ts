@@ -73,7 +73,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   buttonIcon: {
     width: 22,
     height: 'auto',
-    fill: colors.oraidex.dark
+    fill: colors.oraidex.light
   },
   value: {
     color: colors.white.main,
