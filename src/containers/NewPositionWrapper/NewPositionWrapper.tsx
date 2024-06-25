@@ -374,9 +374,11 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     )
   }
 
-  const initialIsConcentrationOpening =
-    localStorage.getItem('OPENING_METHOD') === 'concentration' ||
-    localStorage.getItem('OPENING_METHOD') === null
+  // const initialIsConcentrationOpening =
+  //   localStorage.getItem('OPENING_METHOD') === 'concentration' ||
+  //   localStorage.getItem('OPENING_METHOD') === null
+
+  const initialIsConcentrationOpening = false
 
   const setPositionOpeningMethod = (val: PositionOpeningMethod) => {
     localStorage.setItem('OPENING_METHOD', val)
