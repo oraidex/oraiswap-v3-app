@@ -1,5 +1,6 @@
 import EventsHandlers from '@containers/EventHandlers/index';
 import HeaderWrapper from '@containers/HeaderWrapper/HeaderWrapper';
+import WrappedSwap from '@containers/WrappedSwap/WrappedSwap';
 import { Status, actions as oraichainConnectionActions } from '@store/reducers/connection';
 import { actions } from '@store/reducers/positions';
 import { Status as WalletStatus } from '@store/reducers/wallet';
@@ -8,7 +9,7 @@ import { address, status } from '@store/selectors/wallet';
 import { toBlur } from '@utils/uiUtils';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+// import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 const RootPage: React.FC = () => {
   const dispatch = useDispatch();
@@ -16,13 +17,13 @@ const RootPage: React.FC = () => {
   const walletStatus = useSelector(status);
   const walletAddress = useSelector(address);
 
-  const navigate = useNavigate();
-  const location = useLocation();
+  // const navigate = useNavigate();
+  // const location = useLocation();
 
   useEffect(() => {
-    if (location.pathname === '/') {
-      navigate('/swap');
-    }
+    // if (location.pathname === '/') {
+    //   navigate('/swap');
+    // }
     // dispatch(providerActions.initProvider())
     dispatch(oraichainConnectionActions.initOraichainConnection());
   }, [dispatch]);
@@ -42,7 +43,7 @@ const RootPage: React.FC = () => {
       {signerStatus === Status.Initialized && <EventsHandlers />}
       <div id={toBlur}>
         <HeaderWrapper />
-        <Outlet />
+        <WrappedSwap />
       </div>
     </>
   );

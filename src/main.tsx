@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
@@ -9,8 +10,9 @@ if (!window.Keplr && 'parent' in window) {
   window.keplr = window.Keplr = window.parent.keplr;
 }
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
+window.RenderV3 = (root: HTMLElement) =>
+  ReactDOM.createRoot(root).render(
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>
+  );

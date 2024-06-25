@@ -2,11 +2,11 @@
 <html lang="en">
   <head>
     <script>
-      window.global = window
+      window.global = window;
       // @ts-ignore
       BigInt.prototype.toJSON = function () {
-        return this.toString()
-      }
+        return this.toString();
+      };
     </script>
     <!-- <script type="module" src="/src/shims.ts"></script> -->
     <meta charset="UTF-8" />
@@ -35,5 +35,10 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <script>
+      window.onload = () => {
+        RenderV3(document.querySelector('#root'));
+      };
+    </script>
   </body>
 </html>
