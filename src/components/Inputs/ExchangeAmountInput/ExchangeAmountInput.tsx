@@ -12,6 +12,7 @@ import useStyles from './style';
 interface IProps {
   setValue: (value: string) => void;
   value?: string;
+  valueFrom?: string;
   error?: string | null;
   className?: string;
   decimal: number;
@@ -59,7 +60,8 @@ export const AmountInput: React.FC<IProps> = ({
   tokenPrice,
   priceLoading = false,
   isBalanceLoading,
-  showMaxButton = true
+  showMaxButton = true,
+  valueFrom
 }) => {
   const { classes } = useStyles({ walletDisconnected: hideBalances });
   const inputRef = useRef<HTMLInputElement>(null);
@@ -237,7 +239,11 @@ export const AmountInput: React.FC<IProps> = ({
               ) : tokenPrice ? (
                 <>
                   <Typography className={classes.caption2}>
-                    ~${formatNumbers(usdThresholds)(usdBalance.toString()) + showPrefix(usdBalance)}
+                    {/* ~${formatNumbers(usdThresholds)(usdBalance.toString()) + showPrefix(usdBalance)} */}
+                    ~$
+                    {formatNumbers(usdThresholds)(
+                      (valueFrom ?? Number(tokenPrice) * Number(value)).toString()
+                    )}
                   </Typography>
                 </>
               ) : (
