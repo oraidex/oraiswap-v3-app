@@ -187,15 +187,15 @@ export function* handleSwap(action: PayloadAction<Omit<Swap, 'txid'>>): Generato
     closeSnackbar(loaderSigningTx);
     yield put(snackbarsActions.remove(loaderSigningTx));
 
-    if (e.message) {
-      yield put(
-        snackbarsActions.add({
-          message: e.message,
-          variant: 'error',
-          persist: false
-        })
-      );
-    } else {
+    // if (e.message) {
+    //   yield put(
+    //     snackbarsActions.add({
+    //       message: e.message,
+    //       variant: 'error',
+    //       persist: false
+    //     })
+    //   );
+    // } else {
       yield put(
         snackbarsActions.add({
           message: 'Tokens swapping failed. Please try again.',
@@ -203,7 +203,7 @@ export function* handleSwap(action: PayloadAction<Omit<Swap, 'txid'>>): Generato
           persist: false
         })
       );
-    }
+    // }
 
     yield put(
       poolActions.getAllPoolsForPairData({
@@ -374,15 +374,15 @@ export function* handleSwapWithMultiHop(action: PayloadAction<Omit<Swap, 'txid'>
     closeSnackbar(loaderSigningTx);
     yield put(snackbarsActions.remove(loaderSigningTx));
 
-    if (e.message) {
-      yield put(
-        snackbarsActions.add({
-          message: e.message,
-          variant: 'error',
-          persist: false
-        })
-      );
-    } else {
+    // if (e.message) {
+    //   yield put(
+    //     snackbarsActions.add({
+    //       message: e.message,
+    //       variant: 'error',
+    //       persist: false
+    //     })
+    //   );
+    // } else {
       yield put(
         snackbarsActions.add({
           message: 'Tokens swapping failed. Please try again.',
@@ -390,7 +390,7 @@ export function* handleSwapWithMultiHop(action: PayloadAction<Omit<Swap, 'txid'>
           persist: false
         })
       );
-    }
+    // }
 
     yield put(
       poolActions.getAllPoolsForPairData({
@@ -530,15 +530,15 @@ export function* handleSwapWithNative(action: PayloadAction<Omit<Swap, 'txid'>>)
     closeSnackbar(loaderSigningTx);
     yield put(snackbarsActions.remove(loaderSigningTx));
 
-    if (e.message) {
-      yield put(
-        snackbarsActions.add({
-          message: e.message,
-          variant: 'error',
-          persist: false
-        })
-      );
-    } else {
+    // if (e.message) {
+    //   yield put(
+    //     snackbarsActions.add({
+    //       message: e.message,
+    //       variant: 'error',
+    //       persist: false
+    //     })
+    //   );
+    // } else {
       yield put(
         snackbarsActions.add({
           message: 'Tokens swapping failed. Please try again.',
@@ -546,7 +546,7 @@ export function* handleSwapWithNative(action: PayloadAction<Omit<Swap, 'txid'>>)
           persist: false
         })
       );
-    }
+    // }
 
     yield put(
       poolActions.getAllPoolsForPairData({
@@ -750,6 +750,13 @@ export function* handleGetSimulateResultMultiHop(action: PayloadAction<Simulate>
       );
       return;
     }
+
+    let total_fee = 0;
+    swapHopArray.forEach((hop) => {
+      total_fee += hop.pool_key.fee_tier.fee;
+    })
+
+    poolKey.fee_tier.fee = total_fee;
 
     /**
      *  tokenFrom: string

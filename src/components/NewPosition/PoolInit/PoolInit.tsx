@@ -179,6 +179,16 @@ export const PoolInit: React.FC<IPoolInit> = ({
     }
   };
 
+  const formatMidPrice = (midPrice: string) => {
+    const decimal = isXtoY ? xDecimal : yDecimal;
+    const test = `^\\d*\\.?\\d{0,${decimal}}$`;
+    const regex = new RegExp(test, 'g');
+    if (regex.test(midPrice)) {
+      return midPrice;
+    }
+    return '';
+  }
+
   return (
     <Grid container direction='column' className={classes.wrapper}>
       <Grid
@@ -219,7 +229,7 @@ export const PoolInit: React.FC<IPoolInit> = ({
                 classes={{ input: classes.innerInput }}
                 inputRef={inputRef}
                 type={'text'}
-                value={midPriceInput}
+                value={formatMidPrice(midPriceInput)}
                 disableUnderline={true}
                 placeholder={'0.0'}
                 onChange={allowOnlyDigitsAndTrimUnnecessaryZeros}
