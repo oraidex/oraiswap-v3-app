@@ -14,9 +14,6 @@
       }
     },
     "oraichain-mainnet": {
-      "oraiswap-sb": [
-        "oraiswap-sb"
-      ],
       "hosting": {
         "oraiswap-sb": [
           "oraichain-mainnet"
