@@ -24,7 +24,7 @@ export default defineConfig({
   },
   server: {
     host: 'localhost',
-    port: 3000,
+    port: Number(process.env.PORT || 3000),
     hmr: {
       overlay: false
     }
