@@ -556,7 +556,6 @@ export const Swap: React.FC<ISwap> = ({
           )}>
           <ExchangeAmountInput
             value={amountTo}
-            valueFrom={(tokenFromPriceData?.price * Number(amountFrom)).toString()}
             balance={
               tokenToIndex !== null
                 ? printBigint(BigInt(tokens[tokenToIndex].balance), tokens[tokenToIndex].decimals)

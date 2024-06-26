@@ -231,7 +231,7 @@ export const DepositAmountInput: React.FC<IProps> = ({
                 <img src={loadingAnimation} className={classes.loading} />
               ) : tokenPrice ? (
                 <Typography className={classes.caption2}>
-                  ~${formatNumbers(usdThresholds)(usdBalance.toString()) + showPrefix(usdBalance)}
+                  ≈${formatNumbers(usdThresholds)(usdBalance.toString()) + showPrefix(usdBalance)}
                 </Typography>
               ) : (
                 <Tooltip
