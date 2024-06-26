@@ -7,6 +7,7 @@ import {
   findPairs,
   findPairsByPoolKeys,
   getAllLiquidityTicks,
+  getAllPools,
   getFullTickmap,
   getPool,
   getPoolKeys,
@@ -32,8 +33,6 @@ export function* fetchPoolsDataForList(action: PayloadAction<ListPoolsRequest>) 
   const walletAddress = yield* select(address);
   // console.log('fetchPoolsDataForList', action.payload);
   const pools = yield* call(getPoolsByPoolKeys, action.payload.poolKeys);
-
-  // console.log('pools', pools);
 
   const allTokens = yield* select(tokens);
   const unknownTokens = new Set(
@@ -99,10 +98,25 @@ export function* handleInitPool(action: PayloadAction<PoolKey>): Generator {
   }
 }
 
+export function* fetchAllPoolData(): Generator {
+  try {
+    const pools = yield* call(getAllPools);
+
+    if (pools) {
+      yield* put(actions.setAllPools(pools as any));
+    } else {
+      yield* put(actions.setAllPools([]));
+    }
+  } catch (error) {
+    console.log(error);
+    yield* put(actions.setAllPools([]));
+  }
+}
+
 export function* fetchPoolData(action: PayloadAction<PoolKey>): Generator {
   const { fee_tier, token_x, token_y } = action.payload;
 
-  // console.log('fetching pool data', fee_tier, token_x, token_y);
+  console.log('fetching pool data', fee_tier, token_x, token_y);
 
   try {
     const pool = yield* call(getPool, { fee_tier, token_x, token_y });
@@ -198,6 +212,10 @@ export function* getPoolDataHandler(): Generator {
   yield* takeLatest(actions.getPoolData, fetchPoolData);
 }
 
+export function* getAllPoolDataHandler(): Generator {
+  yield* takeLatest(actions.getAllPoolData, fetchAllPoolData);
+}
+
 export function* getPoolKeysHandler(): Generator {
   yield* takeLatest(actions.getPoolKeys, fetchAllPoolKeys);
 }
@@ -218,7 +236,8 @@ export function* poolsSaga(): Generator {
       getPoolKeysHandler,
       getPoolsDataForListHandler,
       getAllPoolsForPairDataHandler,
-      getTicksAndTickMapsHandler
+      getTicksAndTickMapsHandler,
+      getAllPoolDataHandler
     ].map(spawn)
   );
 }

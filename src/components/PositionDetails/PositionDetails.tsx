@@ -90,7 +90,7 @@ const PositionDetails: React.FC<IProps> = ({
   return (
     <div className={classes.container}>
       <div className={classes.header}>
-        <Link to='/pool' style={{ textDecoration: 'none' }} className={classes.backWrap}>
+        <Link to='/positions' style={{ textDecoration: 'none' }} className={classes.backWrap}>
           <img className={classes.backIcon} src={backIcon} />
         </Link>
 

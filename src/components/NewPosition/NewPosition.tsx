@@ -452,11 +452,11 @@ export const NewPosition: React.FC<INewPosition> = ({
         justifyContent='space-between'
         alignContent='center'
         wrap='nowrap'>
-        <Link to='/pool' style={{ textDecoration: 'none' }}>
-          <Grid className={classes.back} container item alignItems='center'>
-            <img className={classes.backIcon} src={backIcon} />
-          </Grid>
-        </Link>
+        {/* <Link to='/positions' style={{ textDecoration: 'none' }}> */}
+        <Grid className={classes.back} container item alignItems='center'>
+          <img className={classes.backIcon} src={backIcon} onClick={() => navigate(-1)} />
+        </Grid>
+        {/* </Link> */}
         <Grid container justifyContent='center'>
           <Typography className={classes.title}>Add new liquidity position</Typography>
         </Grid>

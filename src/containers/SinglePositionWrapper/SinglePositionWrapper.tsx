@@ -395,7 +395,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
             actions.closePosition({
               positionIndex: id,
               onSuccess: () => {
-                navigate('/pool');
+                navigate('/positions');
               },
               addressTokenX: position.pool_key.token_x,
               addressTokenY: position.pool_key.token_y
@@ -465,7 +465,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
     );
   }
   if (!position && walletStatus === Status.Initialized && isFinishedDelayRender) {
-    return <Navigate to='/pool' />;
+    return <Navigate to='/positions' />;
   }
   return (
     <Grid

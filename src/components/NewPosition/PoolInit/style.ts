@@ -62,7 +62,7 @@ const useStyles = makeStyles()(theme => {
       [theme.breakpoints.down('sm')]: {
         '&:first-of-type': {
           marginRight: 0,
-          marginBottom: 8
+          marginBottom: 0
         }
       }
     },

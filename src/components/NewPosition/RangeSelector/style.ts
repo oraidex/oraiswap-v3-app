@@ -1,5 +1,5 @@
-import { colors, typography } from '@static/theme'
-import { makeStyles } from 'tss-react/mui'
+import { colors, typography } from '@static/theme';
+import { makeStyles } from 'tss-react/mui';
 
 const useStyles = makeStyles()(theme => {
   return {
@@ -62,7 +62,7 @@ const useStyles = makeStyles()(theme => {
       [theme.breakpoints.down('sm')]: {
         '&:first-of-type': {
           marginRight: 0,
-          marginBottom: 8
+          marginBottom: 0
         }
       }
     },
@@ -213,7 +213,7 @@ const useStyles = makeStyles()(theme => {
       ...typography.caption2,
       textAlign: 'right'
     }
-  }
-})
+  };
+});
 
-export default useStyles
+export default useStyles;

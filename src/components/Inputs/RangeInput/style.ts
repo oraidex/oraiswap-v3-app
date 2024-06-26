@@ -14,7 +14,8 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     borderRadius: 11,
 
     [theme.breakpoints.down('sm')]: {
-      height: 36
+      height: 36,
+      flexDirection: 'column'
     }
   },
   label: {

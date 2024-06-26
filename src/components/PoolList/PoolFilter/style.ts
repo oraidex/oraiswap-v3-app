@@ -4,31 +4,110 @@ import { makeStyles } from 'tss-react/mui';
 
 export const useStyles = makeStyles()((theme: Theme) => ({
   root: {
-    width: 1122,
+    [theme.breakpoints.down('sm')]: {
+      width: '100%'
+    }
+  },
+  poolFilter: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: '24px 16px',
+    flexWrap: 'wrap',
+    [theme.breakpoints.down('md')]: {
+      flexDirection: 'column',
+      gap: '6px'
+    },
+    [theme.breakpoints.down('sm')]: {
+      width: '100%'
+    }
+  },
+  poolFilterRight: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    [theme.breakpoints.down('md')]: {
+      width: '100%'
+      // marginTop: '8px'
+    }
+  },
 
+  //   input: {
+  //     width: '100%',
+  //     marginRight: '0'
+  //   },
+
+  poolFilterList: {
+    display: 'flex',
+    alignItems: 'center',
+    padding: '4px',
+    borderRadius: '99px',
+
+    // @include theme() {
+    //   background-color: theme-get('neutral-border-border-default'),
+    // }
+
+    [theme.breakpoints.down('md')]: {
+      width: '100%',
+      justifyContent: 'space-between'
+    }
+  },
+
+  poolSearch: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderRadius: '99px',
     [theme.breakpoints.down('md')]: {
       width: '100%'
     }
   },
-  wrapSearch: {
-    marginTop: '-100px',
-    paddingBottom: 32,
 
-    [theme.breakpoints.down('lg')]: {
-      marginTop: '0',
-      paddingBottom: 0
-    },
+  input: {
+    height: '40px',
+    fontSize: '14px',
+    fontWeight: '400',
+    lineHeight: '150%',
+    marginRight: '8px',
+    // color: $neutron-text-body-light,
+    borderRadius: '99px',
+    color: '#EFEFEF',
+    minWidth: '280px',
+    maxWidth: 400,
 
     [theme.breakpoints.down('sm')]: {
       width: '100%',
-      justifyContent: 'flex-start'
+      maxWidth: 600,
+
+      marginRight: '0px'
     }
   },
-  header: {
-    paddingBottom: 16,
-    display: 'flex',
-    alignItems: 'flex-end'
+
+  filterActive: {
+    backgroundColor: '#fff'
+
+    //   @include theme() {
+    //     color: #163300,
+    //   }
   },
+
+  filterItem: {
+    padding: '3px 20px',
+    fontSize: '16px',
+    fontƯeight: '500',
+    cursor: 'pointer',
+    borderRadius: '99px',
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    [theme.breakpoints.down('md')]: {
+      width: '100%'
+    }
+    // @include theme() {
+    //   color: theme-get('neutral-text-body'),
+    // }
+  },
+
   titleBar: {
     display: 'flex',
     marginBottom: 20
