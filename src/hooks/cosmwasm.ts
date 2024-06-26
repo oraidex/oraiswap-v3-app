@@ -86,7 +86,7 @@ export const useSigningCosmWasmClient = (): ISigningCosmWasmClientContext => {
         await window.Keplr?.enable(PUBLIC_CHAIN_ID);
 
         // get offline signer for signing txs
-        const offlineSigner = window.Keplr?.getOfflineSigner(PUBLIC_CHAIN_ID);
+        const offlineSigner = window.Keplr?.getOfflineSignerOnlyAmino(PUBLIC_CHAIN_ID);
 
         // make client
         const client = await SigningCosmWasmClient.connectWithSigner(

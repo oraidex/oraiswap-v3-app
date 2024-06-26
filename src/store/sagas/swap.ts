@@ -252,8 +252,11 @@ export function* handleSwapWithMultiHop(action: PayloadAction<Omit<Swap, 'txid'>
 
     const txs = [];
     const sqrtPriceLimit = calculateSqrtPriceAfterSlippage(estimatedPriceAfterSwap, slippage, !xToY)
-    const calculatedAmountIn = amountIn;
+    let calculatedAmountIn = amountIn;
 
+    if (calculatedAmountIn < amountIn) {
+      calculatedAmountIn = amountIn;
+    }
     if (xToY) {
       const approveTx = yield* call(
         approveToken,
