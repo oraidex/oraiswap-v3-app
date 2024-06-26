@@ -584,6 +584,11 @@ export const getPool = async (poolKey: PoolKey): Promise<PoolWithPoolKey> => {
   return pool;
 };
 
+export const getAllPools = async (): Promise<PoolWithPoolKey[]> => {
+  const pool = await SingletonOraiswapV3.getPools();
+  return pool;
+};
+
 export const getPoolKeys = async (): Promise<PoolKey[]> => {
   try {
     const pools = await SingletonOraiswapV3.getPools();
@@ -1354,7 +1359,9 @@ export const swapWithSlippageTx = async (
       xToY,
       amount: amount.toString(),
       byAmountIn,
-      sqrtPriceLimit: xToY ? (sqrtPriceAfterSlippage - 1n).toString() : (sqrtPriceAfterSlippage + 1n).toString()
+      sqrtPriceLimit: xToY
+        ? (sqrtPriceAfterSlippage - 1n).toString()
+        : (sqrtPriceAfterSlippage + 1n).toString()
     });
 
     return res.transactionHash;

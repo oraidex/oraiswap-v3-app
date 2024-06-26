@@ -9,7 +9,8 @@ export const useStyles = makeStyles()(() => {
       [theme.breakpoints.down('sm')]: {
         display: 'flex',
         marginLeft: 'auto',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        alignItems: 'center'
       }
 
       // width: '100%',

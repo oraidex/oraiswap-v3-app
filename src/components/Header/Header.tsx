@@ -3,6 +3,7 @@ import { Grid } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import useStyles from './style';
+import classNames from 'classnames';
 export interface IHeader {
   landing: string;
 }
@@ -16,13 +17,17 @@ export const Header: React.FC<IHeader> = ({ landing }) => {
       name: 'Swap'
     },
     {
-      link: 'pool',
+      link: 'pools',
+      name: 'Pools'
+    },
+    {
+      link: 'positions',
       name: 'Your Liquidity Positions'
     }
   ];
 
   const otherRoutesToHighlight: Record<string, RegExp[]> = {
-    pool: [/^newPosition\/*/, /^position\/*/]
+    positions: [/^newPosition\/*/, /^position\/*/]
   };
 
   const [activePath, setActive] = useState('swap');
@@ -40,7 +45,8 @@ export const Header: React.FC<IHeader> = ({ landing }) => {
         direction='row'
         alignItems='center'
         justifyContent='space-between'
-        wrap='nowrap'>
+        wrap='wrap'
+        gap={1}>
         <Grid
           container
           item
@@ -64,6 +70,22 @@ export const Header: React.FC<IHeader> = ({ landing }) => {
             </Link>
           ))}
         </Grid>
+        {/* <Link
+          key={`path-positions`}
+          to={`/positions`}
+          className={classNames(classes.link, classes.rightMenu)}>
+          <NavbarButton
+            name={'Your Liquidity Positions'}
+            onClick={() => {
+              setActive('positions');
+            }}
+            active={
+              'positions' === activePath ||
+              (!!otherRoutesToHighlight['positions'] &&
+                otherRoutesToHighlight['positions'].some(pathRegex => pathRegex.test(activePath)))
+            }
+          />
+        </Link> */}
       </Grid>
     </Grid>
   );

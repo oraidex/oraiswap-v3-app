@@ -14,7 +14,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     marginTop: '-100px',
     paddingBottom: 32,
 
-    [theme.breakpoints.down('lg')]: {
+    [theme.breakpoints.down('md')]: {
       marginTop: '0',
       paddingBottom: 0
     },

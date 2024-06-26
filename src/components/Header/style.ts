@@ -7,19 +7,19 @@ const useStyles = makeStyles()((theme: Theme) => {
     root: {
       margin: 'auto',
       maxWidth: 1920,
-      paddingInline: 150,
+      paddingInline: 94,
       height: 70,
 
-      [theme.breakpoints.down('lg')]: {
-        paddingInline: 32
-      },
-
       [theme.breakpoints.down('md')]: {
-        paddingInline: 24
+        paddingInline: 36
       },
 
       [theme.breakpoints.down('sm')]: {
         paddingInline: 10
+      },
+
+      [theme.breakpoints.down('xs')]: {
+        paddingInline: 16
       }
     },
     logo: {
@@ -42,6 +42,19 @@ const useStyles = makeStyles()((theme: Theme) => {
         width: '100%'
       }
     },
+    rightMenu: {
+      backgroundColor: '#232521',
+      padding: 4,
+      borderRadius: '99px',
+      transition: 'all ease-in 300ms',
+
+      '&:hover': {
+        // background: 'transparent',
+        // boxShadow: '0px 0px 10px #494949',
+        // filter: 'brightness(1.25)'
+      }
+    },
+
     connectedWalletIcon: {
       minWidth: 21,
       height: 21,

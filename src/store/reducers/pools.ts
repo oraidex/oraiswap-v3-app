@@ -20,6 +20,8 @@ export interface IPoolsStore {
   poolTicks: { [key in string]: LiquidityTick[] };
   nearestPoolTicksForPair: { [key in string]: Tick[] };
   isLoadingLatestPoolsForTransaction: boolean;
+  isLoadingAllPool: boolean;
+  lastPage: number;
   isLoadingTicksAndTickMaps: boolean;
   isLoadingPoolKeys: boolean;
   tickMaps: { [key in string]: string };
@@ -71,6 +73,8 @@ export const defaultState: IPoolsStore = {
   poolTicks: {},
   nearestPoolTicksForPair: {},
   isLoadingLatestPoolsForTransaction: false,
+  isLoadingAllPool: false,
+  lastPage: 1,
   isLoadingTicksAndTickMaps: false,
   isLoadingPoolKeys: false,
   tickMaps: {}
@@ -102,6 +106,10 @@ const poolsSlice = createSlice({
   initialState: defaultState,
   reducers: {
     initPool(state, _action: PayloadAction<PoolKey>) {
+      return state;
+    },
+    setLastPoolPage(state, action: PayloadAction<number>) {
+      state.lastPage = action.payload;
       return state;
     },
     addTokens(state, action: PayloadAction<Record<string, Token>>) {
@@ -150,6 +158,22 @@ const poolsSlice = createSlice({
     },
     getPoolData(state, _action: PayloadAction<PoolKey>) {
       state.isLoadingLatestPoolsForTransaction = true;
+      return state;
+    },
+    getAllPoolData(state) {
+      state.isLoadingAllPool = true;
+      return state;
+    },
+    setAllPools(state, action: PayloadAction<PoolWithPoolKey[]>) {
+      const newData = action.payload.reduce(
+        (acc, pool) => ({
+          ...acc,
+          [poolKeyToString(pool.pool_key)]: pool
+        }),
+        {}
+      );
+      state.pools = R.merge(state.pools, newData);
+      state.isLoadingAllPool = false;
       return state;
     },
     setTickMaps(state, action: PayloadAction<updateTickMaps>) {

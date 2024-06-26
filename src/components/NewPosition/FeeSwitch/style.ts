@@ -67,6 +67,7 @@ export const useSingleTabStyles = makeStyles()(() => {
       overflow: 'visible',
       borderRadius: 99,
       backgroundColor: '#494949',
+      minWidth: 'unset !important',
       '&:hover': {
         backgroundColor: colors.oraidex.light,
         height: 36,
