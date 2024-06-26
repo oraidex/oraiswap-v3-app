@@ -94,15 +94,15 @@ export const PositionItem: React.FC<IPositionItem> = ({
   // tokenXLiq,
   // tokenYLiq,
   fee,
-  min,
-  max,
-  valueX,
-  valueY,
+  // min,
+  // max,
+  // valueX,
+  // valueY,
   isActive = false,
   tokenXId,
   poolAddress,
-  currentPrice,
-  liquidity
+  currentPrice
+  // liquidity
 }) => {
   const { classes } = useStyles();
 

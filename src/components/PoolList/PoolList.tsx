@@ -32,7 +32,7 @@ export const PoolList: React.FC<IProps> = ({
   initialPage,
   setLastPage,
   data,
-  onAddPositionClick,
+  // onAddPositionClick,
   loading = false,
   showNoConnected = false,
   noConnectedBlockerProps,
