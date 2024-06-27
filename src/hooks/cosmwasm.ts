@@ -50,8 +50,8 @@ export const POLL_INTERVAL = parseInt(import.meta.env.VITE_POLL_INTERVAL || '300
 const url = [
   'https://develop-v3.oraiswap-frontend.pages.dev',
   'https://beta.oraidex.io',
-  'https://oraidex.io',
-  'http://localhost:3000'
+  'https://oraidex.io'
+  // 'http://localhost:3000'
 ];
 export const useSigningCosmWasmClient = (): ISigningCosmWasmClientContext => {
   const [walletAddress, setWalletAddress] = useState('');
