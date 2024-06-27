@@ -2,6 +2,7 @@ import { PositionsList } from '@components/PositionsList/PositionsList';
 import { POSITIONS_PER_PAGE } from '@store/consts/static';
 import {
   PERCENTAGE_SCALE,
+  calcPrice,
   calcYPerXPriceByTickIndex,
   poolKeyToString,
   printBigint
@@ -73,8 +74,6 @@ export const WrappedPoolList: React.FC = () => {
 
   const data = Object.values(listPool)
     .map(({ pool, pool_key }: PoolWithPoolKey, index) => {
-      // console.log({ position })
-
       // const lowerPrice = Number(
       //   calcYPerXPriceByTickIndex(
       //     position.lower_tick_index,
@@ -112,15 +111,23 @@ export const WrappedPoolList: React.FC = () => {
       //   tokenYLiq = 0;
       // }
 
-      const tokenX = tokens.find(tk => tk.assetAddress == pool_key.token_x);
-      const tokenY = tokens.find(tk => tk.assetAddress == pool_key.token_y);
+      let temp;
+      let tokenX = tokens.find(tk => tk.assetAddress == pool_key.token_x);
+      let tokenY = tokens.find(tk => tk.assetAddress == pool_key.token_y);
 
       if (!tokenY || !tokenX) {
         return {};
       }
 
-      const currentPrice = calcYPerXPriceByTickIndex(
+      if (tokenX.symbol === 'USDT' || tokenX.symbol === 'USDC') {
+        temp = tokenX;
+        tokenX = tokenY;
+        tokenY = temp;
+      }
+
+      const currentPrice = calcPrice(
         pool.current_tick_index ?? 0,
+        temp ? false : true,
         tokenX.decimals || 0,
         tokenY.decimals || 0
       );
