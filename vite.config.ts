@@ -7,7 +7,7 @@ import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfil
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react(), topLevelAwait(), wasm()],
-  base: process.env.PUBLIC_URL ?? '/v3',
+  // base: process.env.PUBLIC_URL ?? '/v3',
   resolve: {
     alias: {
       '@components': '/src/components',
