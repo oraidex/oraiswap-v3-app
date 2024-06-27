@@ -398,7 +398,7 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
           hasError={hasTicksError}
           reloadHandler={reloadHandler}
         />
-        <Typography className={classes.subheader}>Set Price Range</Typography>
+        <Typography className={classes.subheader}>Set price range</Typography>
         <Grid container className={classes.inputs}>
           <RangeInput
             disabled={positionOpeningMethod === 'concentration'}

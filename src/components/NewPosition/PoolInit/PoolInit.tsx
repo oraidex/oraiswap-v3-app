@@ -271,7 +271,7 @@ export const PoolInit: React.FC<IPoolInit> = ({
             </Typography>
           </Grid> */}
         </Grid>
-        <Typography className={classes.subheader}>Set Price Range</Typography>
+        <Typography className={classes.subheader}>Set price range</Typography>
         <Grid container className={classes.inputs}>
           <RangeInput
             className={classes.input}

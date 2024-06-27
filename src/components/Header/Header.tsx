@@ -22,7 +22,7 @@ export const Header: React.FC<IHeader> = ({ landing }) => {
     },
     {
       link: 'positions',
-      name: 'Your Liquidity Positions'
+      name: 'Your Positions'
     }
   ];
 
@@ -75,7 +75,7 @@ export const Header: React.FC<IHeader> = ({ landing }) => {
           to={`/positions`}
           className={classNames(classes.link, classes.rightMenu)}>
           <NavbarButton
-            name={'Your Liquidity Positions'}
+            name={'Your Positions'}
             onClick={() => {
               setActive('positions');
             }}

@@ -73,6 +73,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     whiteSpace: 'nowrap',
     textOverflow: 'ellipsis',
     overflow: 'hidden',
+
     [theme.breakpoints.down('xs')]: {
       ...typography.caption1
     }
@@ -131,12 +132,14 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     }
   },
   fee: {
+    alignSelf: 'center',
     background: '#494949',
     borderRadius: '8px',
     display: 'flex',
     alignItems: 'center',
     padding: '4px 12px',
     width: 'fit-content',
+
     [theme.breakpoints.down('sm')]: {
       marginRight: 0
     }

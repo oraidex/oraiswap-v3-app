@@ -31,7 +31,8 @@ const useStyles = makeStyles()(theme => {
     backIcon: {
       width: 22,
       height: 24,
-      marginRight: 12
+      marginRight: 12,
+      cursor: 'pointer'
     },
     backText: {
       color: colors.oraidex.lightHover,

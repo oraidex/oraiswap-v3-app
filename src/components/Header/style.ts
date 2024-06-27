@@ -6,7 +6,7 @@ const useStyles = makeStyles()((theme: Theme) => {
   return {
     root: {
       margin: 'auto',
-      maxWidth: 1920,
+      maxWidth: 1312,
       paddingInline: 94,
       height: 70,
 
