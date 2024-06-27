@@ -108,7 +108,7 @@ export const PoolList: React.FC<IProps> = ({
             <Grid
               onClick={() => {
                 // navigate(`/position/${element.address}/${element.id}`);
-                navigate(`/newPosition/${element.token_x}/${element.token_y}/${element.fee}`);
+                navigate(`/newPosition/${element.tokenXName}/${element.tokenYName}/${element.fee}`);
               }}
               key={element.address + element.id}
               className={classes.itemLink}>
