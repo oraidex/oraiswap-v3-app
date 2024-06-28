@@ -293,7 +293,7 @@ export const SWAP_HOPS_CACHE: Record<string, SwapHop[]> = {
         token_x: 'orai',
         token_y: 'orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh',
         fee_tier: {
-          fee: 500000000,
+          fee: 3000000000,
           tick_spacing: 100
         }
       },
@@ -304,7 +304,7 @@ export const SWAP_HOPS_CACHE: Record<string, SwapHop[]> = {
         token_x: 'orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh',
         token_y: 'orai1lus0f0rhx8s03gdllx2n6vhkmf0536dv57wfge',
         fee_tier: {
-          fee: 500000000,
+          fee: 3000000000,
           tick_spacing: 100
         }
       },
@@ -317,7 +317,7 @@ export const SWAP_HOPS_CACHE: Record<string, SwapHop[]> = {
         token_x: 'orai',
         token_y: 'orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh',
         fee_tier: {
-          fee: 500000000,
+          fee: 3000000000,
           tick_spacing: 100
         }
       },
@@ -328,7 +328,7 @@ export const SWAP_HOPS_CACHE: Record<string, SwapHop[]> = {
         token_x: 'orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh',
         token_y: 'orai1hn8w33cqvysun2aujk5sv33tku4pgcxhhnsxmvnkfvdxagcx0p8qa4l98q',
         fee_tier: {
-          fee: 500000000,
+          fee: 3000000000,
           tick_spacing: 100
         }
       },
@@ -341,7 +341,7 @@ export const SWAP_HOPS_CACHE: Record<string, SwapHop[]> = {
         token_x: 'orai',
         token_y: 'orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh',
         fee_tier: {
-          fee: 500000000,
+          fee: 3000000000,
           tick_spacing: 100
         }
       },
@@ -353,7 +353,7 @@ export const SWAP_HOPS_CACHE: Record<string, SwapHop[]> = {
         token_y: 'orai15un8msx3n5zf9ahlxmfeqd2kwa5wm0nrpxer304m9nd5q6qq0g6sku5pdd',
         fee_tier: {
           fee: 500000000,
-          tick_spacing: 100
+          tick_spacing: 10
         }
       },
       x_to_y: true
@@ -365,7 +365,7 @@ export const SWAP_HOPS_CACHE: Record<string, SwapHop[]> = {
         token_x: 'orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh',
         token_y: 'orai1lus0f0rhx8s03gdllx2n6vhkmf0536dv57wfge',
         fee_tier: {
-          fee: 500000000,
+          fee: 3000000000,
           tick_spacing: 100
         }
       },
@@ -376,7 +376,7 @@ export const SWAP_HOPS_CACHE: Record<string, SwapHop[]> = {
         token_x: 'orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh',
         token_y: 'orai1hn8w33cqvysun2aujk5sv33tku4pgcxhhnsxmvnkfvdxagcx0p8qa4l98q',
         fee_tier: {
-          fee: 500000000,
+          fee: 3000000000,
           tick_spacing: 100
         }
       },
@@ -389,7 +389,7 @@ export const SWAP_HOPS_CACHE: Record<string, SwapHop[]> = {
         token_x: 'orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh',
         token_y: 'orai1lus0f0rhx8s03gdllx2n6vhkmf0536dv57wfge',
         fee_tier: {
-          fee: 500000000,
+          fee: 3000000000,
           tick_spacing: 100
         }
       },
@@ -401,7 +401,7 @@ export const SWAP_HOPS_CACHE: Record<string, SwapHop[]> = {
         token_y: 'orai15un8msx3n5zf9ahlxmfeqd2kwa5wm0nrpxer304m9nd5q6qq0g6sku5pdd',
         fee_tier: {
           fee: 500000000,
-          tick_spacing: 100
+          tick_spacing: 10
         }
       },
       x_to_y: true
@@ -413,7 +413,7 @@ export const SWAP_HOPS_CACHE: Record<string, SwapHop[]> = {
         token_x: 'orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh',
         token_y: 'orai1hn8w33cqvysun2aujk5sv33tku4pgcxhhnsxmvnkfvdxagcx0p8qa4l98q',
         fee_tier: {
-          fee: 500000000,
+          fee: 3000000000,
           tick_spacing: 100
         }
       },
@@ -425,7 +425,7 @@ export const SWAP_HOPS_CACHE: Record<string, SwapHop[]> = {
         token_y: 'orai15un8msx3n5zf9ahlxmfeqd2kwa5wm0nrpxer304m9nd5q6qq0g6sku5pdd',
         fee_tier: {
           fee: 500000000,
-          tick_spacing: 100
+          tick_spacing: 10
         }
       },
       x_to_y: true
