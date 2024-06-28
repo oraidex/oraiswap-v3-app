@@ -1262,6 +1262,11 @@ export const approveToken = async (
   return result.transactionHash;
 };
 
+export const approveListToken = async (msg: any, address: string): Promise<string> => {
+  const result = await SingletonOraiswapV3.dex.client.executeMultiple(address, msg, 'auto');
+  return result.transactionHash;
+};
+
 export const swapRouteWithSlippageTx = async (
   poolKey: PoolKey,
   xToY: boolean,
@@ -1551,4 +1556,31 @@ export const handleGetSimulateResultMultiHop = async (
   } catch (error) {
     console.log(error);
   }
+};
+
+export const extractAndSortTokenAddresses = (data: SwapHop[]) => {
+  let tokenAddresses = [];
+
+  data.forEach(item => {
+    let tokenSwap = item.x_to_y ? item.pool_key.token_x : item.pool_key.token_y;
+    if (!isNativeToken(tokenSwap)) tokenAddresses.push(tokenSwap);
+  });
+
+  let uniqueTokenAddresses = [...new Set(tokenAddresses)];
+  return uniqueTokenAddresses;
+};
+
+export const genMsgAllowance = (datas: string[]) => {
+  const MAX_ALLOWANCE_AMOUNT = '18446744073709551615';
+  const spender = import.meta.env.VITE_CONTRACT_ADDRESS;
+
+  return datas.map(data => ({
+    contractAddress: data,
+    msg: {
+      increase_allowance: {
+        amount: MAX_ALLOWANCE_AMOUNT,
+        spender
+      }
+    }
+  }));
 };
