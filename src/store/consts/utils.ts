@@ -88,7 +88,7 @@ const isObject = (value: any): boolean => {
 };
 
 export const calculateFeeTierWithLinearRatio = (tickCount: number): FeeTier => {
-  return newFeeTier(tickCount * Number(toPercentage(1, 4)), tickCount);
+  return newFeeTier(tickCount * Number(toPercentage(1n)), tickCount);
 };
 
 // export const FEE_TIERS: FeeTier[] = [
