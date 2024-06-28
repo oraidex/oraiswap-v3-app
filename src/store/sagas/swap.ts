@@ -4,13 +4,16 @@ import {
   MAX_SQRT_PRICE,
   MIN_SQRT_PRICE,
   PERCENTAGE_SCALE,
+  approveListToken,
   approveToken,
   calculateAmountInWithSlippage,
   calculatePriceImpact,
   calculateSqrtPriceAfterSlippage,
   createLoaderKey,
   deserializeTickmap,
+  extractAndSortTokenAddresses,
   findPairs,
+  genMsgAllowance,
   handleGetSimulateResultMultiHop,
   isNativeToken,
   poolKeyToString,
@@ -251,28 +254,15 @@ export function* handleSwapWithMultiHop(action: PayloadAction<Omit<Swap, 'txid'>
     const xToY = tokenFrom.toString() === poolKey.token_x;
 
     const txs = [];
-    const sqrtPriceLimit = calculateSqrtPriceAfterSlippage(estimatedPriceAfterSwap, slippage, !xToY)
+    const sqrtPriceLimit = calculateSqrtPriceAfterSlippage(
+      estimatedPriceAfterSwap,
+      slippage,
+      !xToY
+    );
     let calculatedAmountIn = amountIn;
 
     if (calculatedAmountIn < amountIn) {
       calculatedAmountIn = amountIn;
-    }
-    if (xToY) {
-      const approveTx = yield* call(
-        approveToken,
-        tokenX.address,
-        calculatedAmountIn,
-        walletAddress
-      );
-      txs.push(approveTx);
-    } else {
-      const approveTx = yield* call(
-        approveToken,
-        tokenY.address,
-        calculatedAmountIn,
-        walletAddress
-      );
-      txs.push(approveTx);
     }
 
     const key = poolKey.token_x + '-' + poolKey.token_y + '-0-0';
@@ -285,7 +275,20 @@ export function* handleSwapWithMultiHop(action: PayloadAction<Omit<Swap, 'txid'>
       swapHopArray = reverseSwapHopArray(swapHopArray);
     }
 
-    const estimateAmountOut = byAmountIn ? amountOut : calculateAmountInWithSlippage(amountOut, sqrtPriceLimit, xToY, BigInt(poolKey.fee_tier.fee));
+    const tokenAddressesAllowance = extractAndSortTokenAddresses(swapHopArray);
+    const msg = genMsgAllowance(tokenAddressesAllowance);
+
+    const approveTx = yield* call(approveListToken, msg, walletAddress);
+    txs.push(approveTx);
+
+    const estimateAmountOut = byAmountIn
+      ? amountOut
+      : calculateAmountInWithSlippage(
+          amountOut,
+          sqrtPriceLimit,
+          xToY,
+          BigInt(poolKey.fee_tier.fee)
+        );
     // console.log({estimateAmountOut})
 
     const swapTx = yield* call(
@@ -298,42 +301,45 @@ export function* handleSwapWithMultiHop(action: PayloadAction<Omit<Swap, 'txid'>
       walletAddress,
       swapHopArray
     );
-    txs.push(swapTx);
 
-    yield put(
-      snackbarsActions.add({
-        message: 'Signing transaction...',
-        variant: 'pending',
-        persist: true,
-        key: loaderSigningTx
-      })
-    );
+    if (swapTx) {
+      txs.push(swapTx);
 
-    closeSnackbar(loaderSigningTx);
-    yield put(snackbarsActions.remove(loaderSigningTx));
+      yield put(
+        snackbarsActions.add({
+          message: 'Signing transaction...',
+          variant: 'pending',
+          persist: true,
+          key: loaderSigningTx
+        })
+      );
 
-    closeSnackbar(loaderSwappingTokens);
-    yield put(snackbarsActions.remove(loaderSwappingTokens));
+      closeSnackbar(loaderSigningTx);
+      yield put(snackbarsActions.remove(loaderSigningTx));
 
-    yield put(
-      snackbarsActions.add({
-        message: 'Tokens swapped successfully.',
-        variant: 'success',
-        persist: false,
-        txid: swapTx
-      })
-    );
+      closeSnackbar(loaderSwappingTokens);
+      yield put(snackbarsActions.remove(loaderSwappingTokens));
 
-    yield* call(fetchBalances, [poolKey.token_x, poolKey.token_y]);
+      yield put(
+        snackbarsActions.add({
+          message: 'Tokens swapped successfully.',
+          variant: 'success',
+          persist: false,
+          txid: swapTx
+        })
+      );
 
-    yield put(actions.setSwapSuccess(true));
+      yield* call(fetchBalances, [poolKey.token_x, poolKey.token_y]);
 
-    yield put(
-      poolActions.getAllPoolsForPairData({
-        first: tokenFrom,
-        second: tokenTo
-      })
-    );
+      yield put(actions.setSwapSuccess(true));
+
+      yield put(
+        poolActions.getAllPoolsForPairData({
+          first: tokenFrom,
+          second: tokenTo
+        })
+      );
+    }
   } catch (e: any) {
     console.log(e.message);
     console.log(e);
