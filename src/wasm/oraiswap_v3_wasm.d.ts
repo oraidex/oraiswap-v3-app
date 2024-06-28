@@ -222,11 +222,11 @@ export function getFeeGrowthScale(): bigint;
 */
 export function getFeeGrowthDenominator(): bigint;
 /**
-* @param {number} integer
-* @param {number} scale
+* @param {bigint} integer
+* @param {number | undefined} [scale]
 * @returns {bigint}
 */
-export function toFeeGrowth(integer: number, scale: number): bigint;
+export function toFeeGrowth(integer: bigint, scale?: number): bigint;
 /**
 * @returns {bigint}
 */
@@ -236,11 +236,11 @@ export function getFixedPointScale(): bigint;
 */
 export function getFixedPointDenominator(): bigint;
 /**
-* @param {number} integer
-* @param {number} scale
+* @param {bigint} integer
+* @param {number | undefined} [scale]
 * @returns {bigint}
 */
-export function toFixedPoint(integer: number, scale: number): bigint;
+export function toFixedPoint(integer: bigint, scale?: number): bigint;
 /**
 * @returns {bigint}
 */
@@ -250,11 +250,11 @@ export function getLiquidityScale(): bigint;
 */
 export function getLiquidityDenominator(): bigint;
 /**
-* @param {number} integer
-* @param {number} scale
+* @param {bigint} integer
+* @param {number | undefined} [scale]
 * @returns {bigint}
 */
-export function toLiquidity(integer: number, scale: number): bigint;
+export function toLiquidity(integer: bigint, scale?: number): bigint;
 /**
 * @returns {bigint}
 */
@@ -264,11 +264,11 @@ export function getPercentageScale(): bigint;
 */
 export function getPercentageDenominator(): bigint;
 /**
-* @param {number} integer
-* @param {number} scale
+* @param {bigint} integer
+* @param {number | undefined} [scale]
 * @returns {bigint}
 */
-export function toPercentage(integer: number, scale: number): bigint;
+export function toPercentage(integer: bigint, scale?: number): bigint;
 /**
 * @returns {bigint}
 */
@@ -278,11 +278,11 @@ export function getPriceScale(): bigint;
 */
 export function getPriceDenominator(): bigint;
 /**
-* @param {number} integer
-* @param {number} scale
+* @param {bigint} integer
+* @param {number | undefined} [scale]
 * @returns {bigint}
 */
-export function toPrice(integer: number, scale: number): bigint;
+export function toPrice(integer: bigint, scale?: number): bigint;
 /**
 * @returns {bigint}
 */
@@ -292,11 +292,11 @@ export function getSecondsPerLiquidityScale(): bigint;
 */
 export function getSecondsPerLiquidityDenominator(): bigint;
 /**
-* @param {number} integer
-* @param {number} scale
+* @param {bigint} integer
+* @param {number | undefined} [scale]
 * @returns {bigint}
 */
-export function toSecondsPerLiquidity(integer: number, scale: number): bigint;
+export function toSecondsPerLiquidity(integer: bigint, scale?: number): bigint;
 /**
 * @returns {bigint}
 */
@@ -306,11 +306,11 @@ export function getSqrtPriceScale(): bigint;
 */
 export function getSqrtPriceDenominator(): bigint;
 /**
-* @param {number} integer
-* @param {number} scale
+* @param {bigint} integer
+* @param {number | undefined} [scale]
 * @returns {bigint}
 */
-export function toSqrtPrice(integer: number, scale: number): bigint;
+export function toSqrtPrice(integer: bigint, scale?: number): bigint;
 /**
 * @param {number} tick_index
 * @returns {SqrtPrice}
@@ -345,11 +345,11 @@ export function getTokenAmountScale(): bigint;
 */
 export function getTokenAmountDenominator(): bigint;
 /**
-* @param {number} integer
-* @param {number} scale
+* @param {bigint} integer
+* @param {number | undefined} [scale]
 * @returns {bigint}
 */
-export function toTokenAmount(integer: number, scale: number): bigint;
+export function toTokenAmount(integer: bigint, scale?: number): bigint;
 /**
 * @param {Tickmap} tickmap
 * @param {FeeTier} fee_tier

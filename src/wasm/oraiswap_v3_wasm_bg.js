@@ -777,14 +777,14 @@ export function getFeeGrowthDenominator() {
 }
 
 /**
-* @param {number} integer
-* @param {number} scale
+* @param {bigint} integer
+* @param {number | undefined} [scale]
 * @returns {bigint}
 */
 export function toFeeGrowth(integer, scale) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.toFeeGrowth(retptr, integer, scale);
+        wasm.toFeeGrowth(retptr, integer, isLikeNone(scale) ? 0xFFFFFF : scale);
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         var r2 = getInt32Memory0()[retptr / 4 + 2];
@@ -814,14 +814,14 @@ export function getFixedPointDenominator() {
 }
 
 /**
-* @param {number} integer
-* @param {number} scale
+* @param {bigint} integer
+* @param {number | undefined} [scale]
 * @returns {bigint}
 */
 export function toFixedPoint(integer, scale) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.toFixedPoint(retptr, integer, scale);
+        wasm.toFixedPoint(retptr, integer, isLikeNone(scale) ? 0xFFFFFF : scale);
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         var r2 = getInt32Memory0()[retptr / 4 + 2];
@@ -851,14 +851,14 @@ export function getLiquidityDenominator() {
 }
 
 /**
-* @param {number} integer
-* @param {number} scale
+* @param {bigint} integer
+* @param {number | undefined} [scale]
 * @returns {bigint}
 */
 export function toLiquidity(integer, scale) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.toLiquidity(retptr, integer, scale);
+        wasm.toLiquidity(retptr, integer, isLikeNone(scale) ? 0xFFFFFF : scale);
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         var r2 = getInt32Memory0()[retptr / 4 + 2];
@@ -888,14 +888,14 @@ export function getPercentageDenominator() {
 }
 
 /**
-* @param {number} integer
-* @param {number} scale
+* @param {bigint} integer
+* @param {number | undefined} [scale]
 * @returns {bigint}
 */
 export function toPercentage(integer, scale) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.toPercentage(retptr, integer, scale);
+        wasm.toPercentage(retptr, integer, isLikeNone(scale) ? 0xFFFFFF : scale);
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         var r2 = getInt32Memory0()[retptr / 4 + 2];
@@ -925,14 +925,14 @@ export function getPriceDenominator() {
 }
 
 /**
-* @param {number} integer
-* @param {number} scale
+* @param {bigint} integer
+* @param {number | undefined} [scale]
 * @returns {bigint}
 */
 export function toPrice(integer, scale) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.toPrice(retptr, integer, scale);
+        wasm.toPrice(retptr, integer, isLikeNone(scale) ? 0xFFFFFF : scale);
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         var r2 = getInt32Memory0()[retptr / 4 + 2];
@@ -962,14 +962,14 @@ export function getSecondsPerLiquidityDenominator() {
 }
 
 /**
-* @param {number} integer
-* @param {number} scale
+* @param {bigint} integer
+* @param {number | undefined} [scale]
 * @returns {bigint}
 */
 export function toSecondsPerLiquidity(integer, scale) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.toSecondsPerLiquidity(retptr, integer, scale);
+        wasm.toSecondsPerLiquidity(retptr, integer, isLikeNone(scale) ? 0xFFFFFF : scale);
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         var r2 = getInt32Memory0()[retptr / 4 + 2];
@@ -999,14 +999,14 @@ export function getSqrtPriceDenominator() {
 }
 
 /**
-* @param {number} integer
-* @param {number} scale
+* @param {bigint} integer
+* @param {number | undefined} [scale]
 * @returns {bigint}
 */
 export function toSqrtPrice(integer, scale) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.toSqrtPrice(retptr, integer, scale);
+        wasm.toSqrtPrice(retptr, integer, isLikeNone(scale) ? 0xFFFFFF : scale);
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         var r2 = getInt32Memory0()[retptr / 4 + 2];
@@ -1092,14 +1092,14 @@ export function getTokenAmountDenominator() {
 }
 
 /**
-* @param {number} integer
-* @param {number} scale
+* @param {bigint} integer
+* @param {number | undefined} [scale]
 * @returns {bigint}
 */
 export function toTokenAmount(integer, scale) {
     try {
         const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-        wasm.toTokenAmount(retptr, integer, scale);
+        wasm.toTokenAmount(retptr, integer, isLikeNone(scale) ? 0xFFFFFF : scale);
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
         var r2 = getInt32Memory0()[retptr / 4 + 2];

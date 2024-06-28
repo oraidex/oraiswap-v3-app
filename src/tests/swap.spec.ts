@@ -9,7 +9,11 @@ import {
   newPoolKey,
   calculateSqrtPrice,
   toPercentage,
-  getGlobalMinSqrtPrice
+  getGlobalMinSqrtPrice,
+  toLiquidity,
+  getLiquidityScale,
+  toTokenAmount,
+  SwapHop
 } from '@wasm';
 
 const senderAddress = 'orai1g4h64yjt0fvzv5v2j8tyfnpe5kmnetejvfgs7g';
@@ -20,29 +24,35 @@ const client = new SimulateCosmWasmClient({
   bech32Prefix: 'orai'
 });
 
-const createToken = async (symbol: string, amount: string) => {
+const createTokens = async (amount: string, ...symbols: string[]) => {
   // init airi token
-  const res = await oraidexArtifacts.deployContract(
-    client,
-    senderAddress,
-    {
-      mint: {
-        minter: senderAddress
-      },
-      decimals: 6,
-      symbol,
-      name: symbol,
-      initial_balances: [{ address: senderAddress, amount }]
-    } as OraiswapTokenTypes.InstantiateMsg,
-    'token',
-    'oraiswap_token'
+  const tokens = await Promise.all(
+    symbols.map(async symbol => {
+      const res = await oraidexArtifacts.deployContract(
+        client,
+        senderAddress,
+        {
+          mint: {
+            minter: senderAddress
+          },
+          decimals: 6,
+          symbol,
+          name: symbol,
+          initial_balances: [{ address: senderAddress, amount }]
+        } as OraiswapTokenTypes.InstantiateMsg,
+        'token',
+        'oraiswap_token'
+      );
+      return new OraiswapTokenClient(client, senderAddress, res.contractAddress);
+    })
   );
-  return new OraiswapTokenClient(client, senderAddress, res.contractAddress);
+
+  return tokens.sort((a, b) => a.contractAddress.localeCompare(b.contractAddress));
 };
 
 describe('swap', () => {
   // decimals: 12 + scale 3 = e9
-  let protocol_fee = Number(toPercentage(6, 3));
+  let protocol_fee = Number(toPercentage(6n, 3));
 
   let dex: OraiswapV3Client;
 
@@ -77,8 +87,7 @@ describe('swap', () => {
     let initSqrtPrice = calculateSqrtPrice(initTick).toString();
 
     let initialAmount = (1e10).toString();
-    let tokenX = await createToken('tokenx', initialAmount);
-    let tokenY = await createToken('tokeny', initialAmount);
+    let [tokenX, tokenY] = await createTokens(initialAmount, 'tokenx', 'tokeny');
 
     await dex.createPool({
       feeTier,
@@ -210,7 +219,7 @@ describe('swap', () => {
     let initialAmount = (1e10).toString();
     let tokenX = 'orai';
     client.app.bank.setBalance(senderAddress, [{ denom: tokenX, amount: initialAmount }]);
-    let tokenY = await createToken('tokeny', initialAmount);
+    let [tokenY] = await createTokens(initialAmount, 'tokeny');
 
     await dex.createPool({
       feeTier,
@@ -335,5 +344,158 @@ describe('swap', () => {
     expect(lowerTickBit).toBeTruthy();
     expect(middleTickBit).toBeTruthy();
     expect(upperTickBit).toBeTruthy();
+  });
+
+  it('test_multiple_swap', async () => {
+    let initialAmount = (1e10).toString();
+    let [token_x, token_y, token_z] = await createTokens(
+      initialAmount,
+      'tokenx',
+      'tokeny',
+      'tokenz'
+    );
+    await token_x.increaseAllowance({ amount: initialAmount, spender: dex.contractAddress });
+    await token_y.increaseAllowance({ amount: initialAmount, spender: dex.contractAddress });
+    await token_z.increaseAllowance({ amount: initialAmount, spender: dex.contractAddress });
+
+    let amount = '1000';
+    await token_x.mint({ amount, recipient: bobAddress });
+    token_x.sender = bobAddress;
+    await token_x.increaseAllowance({ amount, spender: dex.contractAddress });
+    token_y.sender = bobAddress;
+    await token_y.increaseAllowance({ amount: initialAmount, spender: dex.contractAddress });
+    let feeTier = newFeeTier(protocol_fee, 1);
+    await dex.addFeeTier({ feeTier });
+
+    let init_tick = 0;
+    let init_sqrt_price = calculateSqrtPrice(init_tick);
+
+    await dex.createPool({
+      feeTier,
+      initSqrtPrice: init_sqrt_price.toString(),
+      initTick: init_tick,
+      token0: token_x.contractAddress,
+      token1: token_y.contractAddress
+    });
+
+    await dex.createPool({
+      feeTier,
+      initSqrtPrice: init_sqrt_price.toString(),
+      initTick: init_tick,
+      token0: token_y.contractAddress,
+      token1: token_z.contractAddress
+    });
+
+    let pool_key_1 = newPoolKey(token_x.contractAddress, token_y.contractAddress, feeTier);
+    let pool_key_2 = newPoolKey(token_y.contractAddress, token_z.contractAddress, feeTier);
+
+    let liquidity_delta = toLiquidity(2n ** 63n - 1n);
+
+    let pool_1 = await dex.pool({
+      token0: token_x.contractAddress,
+      token1: token_y.contractAddress,
+      feeTier
+    });
+    let slippage_limit_lower = pool_1.sqrt_price;
+    let slippage_limit_upper = pool_1.sqrt_price;
+
+    await dex.createPosition({
+      poolKey: pool_key_1,
+      lowerTick: -1,
+      upperTick: 1,
+      liquidityDelta: liquidity_delta.toString(),
+      slippageLimitLower: pool_1.sqrt_price,
+      slippageLimitUpper: pool_1.sqrt_price
+    });
+
+    let pool_2 = await dex.pool({
+      token0: token_y.contractAddress,
+      token1: token_z.contractAddress,
+      feeTier
+    });
+
+    await dex.createPosition({
+      poolKey: pool_key_2,
+      lowerTick: -1,
+      upperTick: 1,
+      liquidityDelta: liquidity_delta.toString(),
+      slippageLimitLower: pool_2.sqrt_price,
+      slippageLimitUpper: pool_2.sqrt_price
+    });
+
+    let amount_in = toTokenAmount(1000n);
+    let slippage = toPercentage(0n);
+    let swaps: SwapHop[] = [
+      {
+        pool_key: pool_key_1,
+        x_to_y: true
+      },
+      {
+        pool_key: pool_key_2,
+        x_to_y: true
+      }
+    ];
+
+    let expected_token_amount = await dex.quoteRoute({ amountIn: amount_in.toString(), swaps });
+
+    dex.sender = bobAddress;
+    await dex.swapRoute({
+      amountIn: amount_in.toString(),
+      expectedAmountOut: expected_token_amount,
+      slippage: Number(slippage),
+      swaps
+    });
+
+    let bob_amount_x = await token_x.balance({ address: bobAddress }).then(res => res.balance);
+    let bob_amount_y = await token_y.balance({ address: bobAddress }).then(res => res.balance);
+    let bob_amount_z = await token_z.balance({ address: bobAddress }).then(res => res.balance);
+
+    expect(bob_amount_x).toEqual('0');
+    expect(bob_amount_y).toEqual('0');
+    expect(bob_amount_z).toEqual('986');
+
+    let pool_1_after = await dex.pool({
+      token0: token_x.contractAddress,
+      token1: token_y.contractAddress,
+      feeTier
+    });
+    expect(pool_1_after.fee_protocol_token_x).toEqual(toTokenAmount(1n).toString());
+    expect(pool_1_after.fee_protocol_token_y).toEqual(toTokenAmount(0n).toString());
+
+    let pool_2_after = await dex.pool({
+      token0: token_y.contractAddress,
+      token1: token_z.contractAddress,
+      feeTier
+    });
+    expect(pool_2_after.fee_protocol_token_x).toEqual(toTokenAmount(1n).toString());
+    expect(pool_2_after.fee_protocol_token_y).toEqual(toTokenAmount(0n).toString());
+
+    let alice_amount_x_before = BigInt(
+      await token_x.balance({ address: senderAddress }).then(res => res.balance)
+    );
+    let alice_amount_y_before = BigInt(
+      await token_y.balance({ address: senderAddress }).then(res => res.balance)
+    );
+    let alice_amount_z_before = BigInt(
+      await token_z.balance({ address: senderAddress }).then(res => res.balance)
+    );
+
+    dex.sender = senderAddress;
+    await dex.claimFee({ index: 0 });
+    await dex.claimFee({ index: 1 });
+
+    let alice_amount_x_after = BigInt(
+      await token_x.balance({ address: senderAddress }).then(res => res.balance)
+    );
+    let alice_amount_y_after = BigInt(
+      await token_y.balance({ address: senderAddress }).then(res => res.balance)
+    );
+    let alice_amount_z_after = BigInt(
+      await token_z.balance({ address: senderAddress }).then(res => res.balance)
+    );
+
+    expect(alice_amount_x_after - alice_amount_x_before).toEqual(4n);
+    expect(alice_amount_y_after - alice_amount_y_before).toEqual(4n);
+    expect(alice_amount_z_after - alice_amount_z_before).toEqual(0n);
   });
 });
