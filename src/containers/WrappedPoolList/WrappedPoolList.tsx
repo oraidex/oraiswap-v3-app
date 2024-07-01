@@ -30,6 +30,26 @@ import {
 } from '@store/selectors/pools';
 import { Pool, PoolWithPoolKey } from '@/sdk/OraiswapV3.types';
 
+interface PoolInfo {
+  tokenXName: string;
+  tokenYName: string;
+  tokenXIcon: string;
+  tokenYIcon: string;
+  fee: number;
+  id: number;
+  tokenXId: string;
+  poolAddress: string;
+  currentPrice: number;
+  liquidity: string | any;
+  address: string;
+  token_x: string;
+  token_y: string;
+  fee_tier: {
+    fee: number;
+    tick_spacing: number;
+  };
+}
+
 export const WrappedPoolList: React.FC = () => {
   const walletAddress = useSelector(address);
   const list = useSelector(positionsWithPoolsData);
@@ -148,14 +168,15 @@ export const WrappedPoolList: React.FC = () => {
         ...pool_key
       };
     })
-    .filter((item: any) => {
+    .filter((item: PoolInfo) => {
       return (
         item.tokenXName &&
         item.tokenYName &&
         (item.tokenXName.toLowerCase().includes(value) ||
           item.tokenYName.toLowerCase().includes(value))
       );
-    });
+    })
+    .sort((a: PoolInfo, b: PoolInfo) => b.liquidity - a.liquidity);
 
   return (
     <PoolList
