@@ -223,6 +223,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
       const res = calculateTokenAmounts(convertedPool, position);
       const x = res.x;
       const y = res.y;
+      console.log({ x, y });
 
       return [+printBigint(x, position.tokenX.decimals), +printBigint(y, position.tokenY.decimals)];
     }

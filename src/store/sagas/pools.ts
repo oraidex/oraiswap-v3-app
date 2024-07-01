@@ -74,7 +74,7 @@ export function* handleInitPool(action: PayloadAction<PoolKey>): Generator {
 
     const poolKey = newPoolKey(token_x, token_y, fee_tier);
 
-    const initSqrtPrice = toSqrtPrice(1, 0);
+    const initSqrtPrice = toSqrtPrice(1n);
 
     const tx = yield* call(createPoolTx, poolKey, initSqrtPrice.toString(), walletAddress);
 

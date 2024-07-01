@@ -88,7 +88,7 @@ const isObject = (value: any): boolean => {
 };
 
 export const calculateFeeTierWithLinearRatio = (tickCount: number): FeeTier => {
-  return newFeeTier(tickCount * Number(toPercentage(1, 4)), tickCount);
+  return newFeeTier(tickCount * Number(toPercentage(1n)), tickCount);
 };
 
 // export const FEE_TIERS: FeeTier[] = [
@@ -586,6 +586,7 @@ export const getPool = async (poolKey: PoolKey): Promise<PoolWithPoolKey> => {
 
 export const getAllPools = async (): Promise<PoolWithPoolKey[]> => {
   const pool = await SingletonOraiswapV3.getPools();
+  await SingletonOraiswapV3.test();
   return pool;
 };
 
@@ -1559,14 +1560,14 @@ export const handleGetSimulateResultMultiHop = async (
 };
 
 export const extractAndSortTokenAddresses = (data: SwapHop[]) => {
-  let tokenAddresses = [];
+  const tokenAddresses = [];
 
   data.forEach(item => {
-    let tokenSwap = item.x_to_y ? item.pool_key.token_x : item.pool_key.token_y;
+    const tokenSwap = item.x_to_y ? item.pool_key.token_x : item.pool_key.token_y;
     if (!isNativeToken(tokenSwap)) tokenAddresses.push(tokenSwap);
   });
 
-  let uniqueTokenAddresses = [...new Set(tokenAddresses)];
+  const uniqueTokenAddresses = [...new Set(tokenAddresses)];
   return uniqueTokenAddresses;
 };
 

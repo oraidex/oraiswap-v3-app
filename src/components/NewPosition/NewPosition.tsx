@@ -264,7 +264,7 @@ export const NewPosition: React.FC<INewPosition> = ({
     }
     leftRange = left;
     rightRange = right;
-    console.log({ tickSpacing, left, right });
+    // console.log({ tickSpacing, left, right });
 
     setLeftRange(Number(left));
     setRightRange(Number(right));

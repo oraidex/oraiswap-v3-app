@@ -1,7 +1,15 @@
 import { CosmWasmClient, SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate';
 import { OraiswapV3Client, OraiswapV3QueryClient } from '../../sdk';
 import { OraiswapTokenClient, OraiswapTokenQueryClient } from '@oraichain/oraidex-contracts-sdk';
-import { Tickmap, getMaxTick, getMinTick, PoolKey, LiquidityTick, positionToTick } from '@wasm';
+import {
+  Tickmap,
+  getMaxTick,
+  getMinTick,
+  PoolKey,
+  LiquidityTick,
+  positionToTick,
+  calculateAmountDelta
+} from '@wasm';
 import {
   CHUNK_SIZE,
   LIQUIDITY_TICKS_LIMIT,
@@ -255,5 +263,54 @@ export default class SingletonOraiswapV3 {
       amount: amount.toString(),
       spender: this.dex.contractAddress
     });
+  };
+
+  public static test = async () => {
+    const pools = await this._dexQuerier.pools({});
+    console.log(pools);
+
+    const liquidityList = await Promise.all(
+      pools.map(async pool => {
+        const tickMap = await this.getFullTickmap(pool.pool_key);
+
+        const liquidityTicks = await this.getAllLiquidityTicks(pool.pool_key, tickMap);
+
+        let maxTick = getMinTick(pool.pool_key.fee_tier.tick_spacing);
+        let minTick = getMaxTick(pool.pool_key.fee_tier.tick_spacing);
+        liquidityTicks.forEach(tick => {
+          if (tick.index > maxTick) {
+            maxTick = tick.index;
+          }
+          if (tick.index < minTick) {
+            minTick = tick.index;
+          }
+        });
+        console.log({
+          pool: pool.pool_key,
+          liquidityTicks,
+          liquidity: pool.pool.liquidity,
+          maxTick,
+          minTick
+        });
+
+        const res = calculateAmountDelta(
+          pool.pool.current_tick_index,
+          BigInt(pool.pool.sqrt_price),
+          BigInt(pool.pool.liquidity),
+          false,
+          maxTick,
+          minTick
+        );
+        return {
+          pool: pool.pool_key,
+          liquidity: {
+            x: res.x,
+            y: res.y
+          }
+        };
+      })
+    );
+
+    console.log({ liquidityList });
   };
 }
