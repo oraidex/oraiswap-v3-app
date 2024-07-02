@@ -162,5 +162,10 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     '&:hover': {
       filter: 'brightness(1.5)'
     }
-  }
+  },
+  liquidity: {
+    color: colors.oraidex.text,
+    ...typography.heading4,
+    fontWeight: 500,
+  },
 }));

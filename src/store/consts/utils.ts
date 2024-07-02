@@ -586,7 +586,6 @@ export const getPool = async (poolKey: PoolKey): Promise<PoolWithPoolKey> => {
 
 export const getAllPools = async (): Promise<PoolWithPoolKey[]> => {
   const pool = await SingletonOraiswapV3.getPools();
-  await SingletonOraiswapV3.test();
   return pool;
 };
 
@@ -594,6 +593,7 @@ export const getPoolKeys = async (): Promise<PoolKey[]> => {
   try {
     const pools = await SingletonOraiswapV3.getPools();
     const poolKeys: PoolKey[] = pools.map(pool => pool.pool_key);
+    // await SingletonOraiswapV3.test();
     return poolKeys;
   } catch {
     return [];
@@ -1585,3 +1585,8 @@ export const genMsgAllowance = (datas: string[]) => {
     }
   }));
 };
+
+export const getTotalLiquidityValue = async (): Promise<number> => {
+  const res = await SingletonOraiswapV3.getTotalLiquidityValue();
+  return res;
+}

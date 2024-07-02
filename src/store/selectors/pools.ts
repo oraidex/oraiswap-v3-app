@@ -6,6 +6,7 @@ import { RootState } from '..';
 const store = (s: AnyProps) => s[poolsSliceName] as IPoolsStore;
 
 export const {
+  liquidityValue,
   pools,
   poolKeys,
   tokens,
@@ -17,6 +18,7 @@ export const {
   isLoadingTicksAndTickMaps,
   isLoadingPoolKeys
 } = keySelectors(store, [
+  'liquidityValue',
   'pools',
   'poolKeys',
   'tokens',
@@ -41,6 +43,7 @@ export const poolsArraySortedByFees = createSelector(pools, allPools =>
 export const hasTokens = createSelector(tokens, allTokens => !!Object.values(allTokens).length);
 
 export const poolsSelectors = {
+  liquidityValue,
   pools,
   poolKeys,
   tokens,

@@ -8,18 +8,25 @@ import {
   PoolKey,
   LiquidityTick,
   positionToTick,
-  calculateAmountDelta
+  calculateAmountDelta,
+  calculateSqrtPrice,
+  Position,
+  Pool
 } from '@wasm';
 import {
   CHUNK_SIZE,
   LIQUIDITY_TICKS_LIMIT,
   MAX_TICKMAP_QUERY_SIZE,
   TokenDataOnChain,
+  getAllLiquidityTicks,
+  getCoingeckoTokenPrice,
+  getCoingeckoTokenPriceV2,
   parse
   // parse
 } from '@store/consts/utils';
 import { ArrayOfTupleOfUint16AndUint64, PoolWithPoolKey } from '@/sdk/OraiswapV3.types';
 import { defaultState } from '@store/reducers/connection';
+import { FAUCET_LIST_TOKEN } from '@store/consts/static';
 
 export const assert = (condition: boolean, message?: string) => {
   if (!condition) {
@@ -265,52 +272,223 @@ export default class SingletonOraiswapV3 {
     });
   };
 
-  public static test = async () => {
+  public static getTotalLiquidityValue = async (): Promise<number> => {
     const pools = await this._dexQuerier.pools({});
-    console.log(pools);
+    // console.log(pools);
 
-    const liquidityList = await Promise.all(
+    const totalLiquidity = await Promise.all(
       pools.map(async pool => {
-        const tickMap = await this.getFullTickmap(pool.pool_key);
+        const tickmap = await this.getFullTickmap(pool.pool_key);
 
-        const liquidityTicks = await this.getAllLiquidityTicks(pool.pool_key, tickMap);
+        const liquidityTicks = await this.getAllLiquidityTicks(pool.pool_key, tickmap);
 
-        let maxTick = getMinTick(pool.pool_key.fee_tier.tick_spacing);
-        let minTick = getMaxTick(pool.pool_key.fee_tier.tick_spacing);
-        liquidityTicks.forEach(tick => {
-          if (tick.index > maxTick) {
-            maxTick = tick.index;
-          }
-          if (tick.index < minTick) {
-            minTick = tick.index;
-          }
-        });
-        console.log({
-          pool: pool.pool_key,
-          liquidityTicks,
-          liquidity: pool.pool.liquidity,
-          maxTick,
-          minTick
-        });
+        // console.log({ liquidityTicks });
 
-        const res = calculateAmountDelta(
-          pool.pool.current_tick_index,
-          BigInt(pool.pool.sqrt_price),
-          BigInt(pool.pool.liquidity),
-          false,
-          maxTick,
-          minTick
-        );
-        return {
-          pool: pool.pool_key,
-          liquidity: {
-            x: res.x,
-            y: res.y
+        const tickIndexes: number[] = [];
+        for (const [chunkIndex, chunk] of tickmap.bitmap.entries()) {
+          for (let bit = 0; bit < CHUNK_SIZE; bit++) {
+            const checkedBit = chunk & (1n << BigInt(bit));
+            if (checkedBit) {
+              const tickIndex = positionToTick(
+                Number(chunkIndex),
+                bit,
+                pool.pool_key.fee_tier.tick_spacing
+              );
+              tickIndexes.push(tickIndex);
+            }
           }
-        };
+        }
+
+        const tickArray: VirtualRange[] = [];
+
+        for (let i = 0; i < tickIndexes.length - 1; i++) {
+          tickArray.push({
+            lowerTick: tickIndexes[i],
+            upperTick: tickIndexes[i + 1]
+          });
+        }
+
+        const posTest: PositionTest[] = calculateLiquidityForRanges(liquidityTicks, tickArray);
+
+        const res = await calculateLiquidityForPair(posTest, BigInt(pool.pool.sqrt_price));
+
+        return [
+          { address: pool.pool_key.token_x, balance: res.liquidityX },
+          { address: pool.pool_key.token_y, balance: res.liquidityY }
+        ];
       })
     );
 
-    console.log({ liquidityList });
+    const flattenArray = totalLiquidity.flat(1);
+
+    // get all tokens and remove duplicate
+    const tokens = flattenArray
+      .map(item => item.address)
+      .filter((value, index, self) => self.indexOf(value) === index);
+
+    // get token info
+    const tokenInfos = await Promise.all(tokens.map(async token => {
+      if (FAUCET_LIST_TOKEN.filter(item => item.address === token).length > 0) {
+        const info = FAUCET_LIST_TOKEN.filter(item => item.address === token)[0];
+        return { info, price: await getCoingeckoTokenPriceV2(info.coingeckoId) };
+      }
+    }));
+
+    // console.log({ tokenInfos });
+
+    const tokenWithLiquidities = tokens.map(token => {
+      const liquidity = flattenArray
+        .filter(item => item.address === token)
+        .reduce((acc, item) => acc + item.balance, 0n);
+      return { address: token, balance: liquidity };
+    });
+
+    // console.log({ tokenWithLiquidities })
+
+    // tokenWithUSDValue
+    const tokenWithUSDValue = tokenWithLiquidities.map(token => {
+      const tokenInfo = tokenInfos.filter(item => item.info.address === token.address)[0];
+      return {
+        address: token.address,
+        usdValue: Number(token.balance) / 10 ** 6 * tokenInfo.price.price
+      };
+    });
+
+    // console.log({ tokenWithUSDValue });
+
+    const totalValue = tokenWithUSDValue.reduce((acc, item) => acc + item.usdValue, 0);
+
+    return totalValue;
   };
+}
+
+export interface PositionTest {
+  liquidity: bigint;
+  upper_tick_index: number;
+  lower_tick_index: number;
+}
+
+export interface VirtualRange {
+  lowerTick: number;
+  upperTick: number;
+}
+
+export const calculateLiquidityForPair = async (positions: PositionTest[], sqrt_price: bigint) => {
+  let liquidityX = 0n;
+  let liquidityY = 0n;
+  for (const position of positions) {
+    let xVal, yVal;
+
+    try {
+      xVal = getX(
+        position.liquidity,
+        calculateSqrtPrice(position.upper_tick_index),
+        sqrt_price,
+        calculateSqrtPrice(position.lower_tick_index)
+      );
+    } catch (error) {
+      xVal = 0n;
+    }
+
+    try {
+      yVal = getY(
+        position.liquidity,
+        calculateSqrtPrice(position.upper_tick_index),
+        sqrt_price,
+        calculateSqrtPrice(position.lower_tick_index)
+      );
+    } catch (error) {
+      yVal = 0n;
+    }
+
+    liquidityX = liquidityX + xVal;
+    liquidityY = liquidityY + yVal;
+  }
+
+  return { liquidityX, liquidityY };
+};
+
+export const LIQUIDITY_SCALE = 6n;
+export const PRICE_SCALE = 24n;
+export const LIQUIDITY_DENOMINATOR = 10n ** LIQUIDITY_SCALE;
+export const PRICE_DENOMINATOR = 10n ** PRICE_SCALE;
+
+export const getX = (
+  liquidity: bigint,
+  upperSqrtPrice: bigint,
+  currentSqrtPrice: bigint,
+  lowerSqrtPrice: bigint
+): bigint => {
+  if (upperSqrtPrice <= 0n || currentSqrtPrice <= 0n || lowerSqrtPrice <= 0n) {
+    throw new Error('Price cannot be lower or equal 0');
+  }
+
+  let denominator: bigint;
+  let nominator: bigint;
+
+  if (currentSqrtPrice >= upperSqrtPrice) {
+    return 0n;
+  } else if (currentSqrtPrice < lowerSqrtPrice) {
+    denominator = (lowerSqrtPrice * upperSqrtPrice) / PRICE_DENOMINATOR;
+    nominator = upperSqrtPrice - lowerSqrtPrice;
+  } else {
+    denominator = (upperSqrtPrice * currentSqrtPrice) / PRICE_DENOMINATOR;
+    nominator = upperSqrtPrice - currentSqrtPrice;
+  }
+
+  return (liquidity * nominator) / denominator / LIQUIDITY_DENOMINATOR;
+};
+export const getY = (
+  liquidity: bigint,
+  upperSqrtPrice: bigint,
+  currentSqrtPrice: bigint,
+  lowerSqrtPrice: bigint
+): bigint => {
+  if (lowerSqrtPrice <= 0n || currentSqrtPrice <= 0n || upperSqrtPrice <= 0n) {
+    throw new Error('Price cannot be 0');
+  }
+
+  let difference: bigint;
+  if (currentSqrtPrice <= lowerSqrtPrice) {
+    return 0n;
+  } else if (currentSqrtPrice >= upperSqrtPrice) {
+    difference = upperSqrtPrice - lowerSqrtPrice;
+  } else {
+    difference = currentSqrtPrice - lowerSqrtPrice;
+  }
+
+  return (liquidity * difference) / PRICE_DENOMINATOR / LIQUIDITY_DENOMINATOR;
+};
+
+function calculateLiquidityForRanges(
+  liquidityChanges: LiquidityTick[],
+  tickRanges: VirtualRange[]
+): PositionTest[] {
+  let currentLiquidity = 0n;
+  const rangeLiquidity = [];
+
+  liquidityChanges.forEach(change => {
+    // Update current liquidity based on the change at this tick
+    let liquidityChange = change.liquidity_change;
+    if (!change.sign) {
+      liquidityChange = -liquidityChange;
+    }
+    currentLiquidity += liquidityChange;
+
+    // Update the liquidity for the ranges that include this tick
+    tickRanges.forEach((range, index) => {
+      if (change.index >= range.lowerTick && change.index < range.upperTick) {
+        if (!rangeLiquidity[index]) {
+          rangeLiquidity[index] = 0;
+        }
+        rangeLiquidity[index] = currentLiquidity;
+      }
+    });
+  });
+
+  return rangeLiquidity.map((liquidity, index) => ({
+    lower_tick_index: tickRanges[index].lowerTick,
+    upper_tick_index: tickRanges[index].upperTick,
+    liquidity: liquidity
+  }));
 }

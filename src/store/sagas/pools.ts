@@ -14,7 +14,8 @@ import {
   getPools,
   getPoolsByPoolKeys,
   getTokenBalances,
-  getTokenDataByAddresses
+  getTokenDataByAddresses,
+  getTotalLiquidityValue
 } from '@store/consts/utils';
 import {
   FetchTicksAndTickMaps,
@@ -28,6 +29,7 @@ import { tokens } from '@store/selectors/pools';
 import { closeSnackbar } from 'notistack';
 import { all, call, put, select, spawn, takeEvery, takeLatest } from 'typed-redux-saga';
 import { address } from '@store/selectors/wallet';
+import { formatCompactNumber } from '@store/consts/uiUtiils';
 
 export function* fetchPoolsDataForList(action: PayloadAction<ListPoolsRequest>) {
   const walletAddress = yield* select(address);
@@ -144,10 +146,17 @@ export function* fetchAllPoolKeys(): Generator {
       }
     };
     yield call(fetchPoolsDataForList, actionPayload as PayloadAction<ListPoolsRequest>);
+    yield call(getLiquidityValue);
   } catch (error) {
     yield* put(actions.setPoolKeys([]));
     console.log(error);
   }
+}
+
+export function* getLiquidityValue(): Generator {
+  const liquidityValue = yield* call(getTotalLiquidityValue);
+
+  yield* put(actions.setLiquidityValue(formatCompactNumber(liquidityValue)));
 }
 
 export function* fetchAllPoolsForPairData(action: PayloadAction<PairTokens>) {

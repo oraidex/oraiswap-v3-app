@@ -15,6 +15,7 @@ import { useStyles } from './style';
 import { FallbackEmptyData } from '@components/FallbackEmptyData';
 
 interface IProps {
+  liquidity: string;
   initialPage: number;
   setLastPage: (page: number) => void;
   data: IPositionItem[];
@@ -29,6 +30,7 @@ interface IProps {
 }
 
 export const PoolList: React.FC<IProps> = ({
+  liquidity,
   initialPage,
   setLastPage,
   data,
@@ -82,57 +84,62 @@ export const PoolList: React.FC<IProps> = ({
   }, [initialPage]);
 
   return (
-    <Grid container direction='column' className={classes.root}>
-      <Grid
-        className={classes.wrapSearch}
-        container
-        item
-        wrap='nowrap'
-        direction='row'
-        alignItems='center'
-        justifyContent={'flex-end'}
-        gap={'10px'}
-        marginBottom={'24px'}
-        // sx={{ display: { xs: 'none', lg: 'flex' } }}
-      >
-        <PositionsFilter searchValue={searchValue} setSearchValue={searchSetValue} />
+    <>
+      <Grid container direction='column' className={classes.root}>
+        <Grid
+          className={classes.wrapSearch}
+          container
+          item
+          wrap='nowrap'
+          direction='row'
+          alignItems='center'
+          justifyContent={'flex-end'}
+          gap={'10px'}
+          marginBottom={'24px'}
+          // sx={{ display: { xs: 'none', lg: 'flex' } }}
+        >
+          <PositionsFilter searchValue={searchValue} setSearchValue={searchSetValue} />
 
-        <Button disabled={showNoConnected} onClick={showNoConnected ? () => {} : handleRefresh}>
-          <img src={IconRefresh} alt='' />
-        </Button>
-      </Grid>
+          <Button disabled={showNoConnected} onClick={showNoConnected ? () => {} : handleRefresh}>
+            <img src={IconRefresh} alt='' />
+          </Button>
+        </Grid>
 
-      <Grid container direction='column' className={classes.list} justifyContent='flex-start'>
-        {data.length > 0 && !loading ? (
-          paginator(page).data.map((element, index) => (
-            <Grid
-              onClick={() => {
-                // navigate(`/position/${element.address}/${element.id}`);
-                navigate(`/newPosition/${element.tokenXName}/${element.tokenYName}/${element.fee}`);
-              }}
-              key={element.address + element.id}
-              className={classes.itemLink}>
-              <PositionItem key={index} {...element} />
+        <h1 className={classes.liquidity}>Liquidity: {liquidity == '0' ? 'Loading...' : `$${liquidity}`} </h1>
+        <Grid container direction='column' className={classes.list} justifyContent='flex-start'>
+          {data.length > 0 && !loading ? (
+            paginator(page).data.map((element, index) => (
+              <Grid
+                onClick={() => {
+                  // navigate(`/position/${element.address}/${element.id}`);
+                  navigate(
+                    `/newPosition/${element.tokenXName}/${element.tokenYName}/${element.fee}`
+                  );
+                }}
+                key={element.address + element.id}
+                className={classes.itemLink}>
+                <PositionItem key={index} {...element} />
+              </Grid>
+            ))
+          ) : showNoConnected ? (
+            <NoConnected {...noConnectedBlockerProps} />
+          ) : loading ? (
+            <Grid container style={{ flex: 1 }}>
+              <img src={loader} className={classes.loading} />
             </Grid>
-          ))
-        ) : showNoConnected ? (
-          <NoConnected {...noConnectedBlockerProps} />
-        ) : loading ? (
-          <Grid container style={{ flex: 1 }}>
-            <img src={loader} className={classes.loading} />
-          </Grid>
-        ) : (
-          <FallbackEmptyData />
-        )}
+          ) : (
+            <FallbackEmptyData />
+          )}
+        </Grid>
+        {paginator(page).totalPages > 1 ? (
+          <PaginationList
+            pages={paginator(page).totalPages}
+            defaultPage={defaultPage}
+            handleChangePage={handleChangePagination}
+            variant='end'
+          />
+        ) : null}
       </Grid>
-      {paginator(page).totalPages > 1 ? (
-        <PaginationList
-          pages={paginator(page).totalPages}
-          defaultPage={defaultPage}
-          handleChangePage={handleChangePagination}
-          variant='end'
-        />
-      ) : null}
-    </Grid>
+    </>
   );
 };
