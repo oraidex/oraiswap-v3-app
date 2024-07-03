@@ -23,6 +23,10 @@ export const Header: React.FC<IHeader> = ({ landing }) => {
     {
       link: 'positions',
       name: 'Your Positions'
+    },
+    {
+      link: 'status',
+      name: 'Status'
     }
   ];
 

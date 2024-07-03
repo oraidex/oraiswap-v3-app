@@ -8,18 +8,13 @@ import {
   PoolKey,
   LiquidityTick,
   positionToTick,
-  calculateAmountDelta,
   calculateSqrtPrice,
-  Position,
-  Pool
 } from '@wasm';
 import {
   CHUNK_SIZE,
   LIQUIDITY_TICKS_LIMIT,
   MAX_TICKMAP_QUERY_SIZE,
   TokenDataOnChain,
-  getAllLiquidityTicks,
-  getCoingeckoTokenPrice,
   getCoingeckoTokenPriceV2,
   parse
   // parse
@@ -468,14 +463,12 @@ function calculateLiquidityForRanges(
   const rangeLiquidity = [];
 
   liquidityChanges.forEach(change => {
-    // Update current liquidity based on the change at this tick
     let liquidityChange = change.liquidity_change;
     if (!change.sign) {
       liquidityChange = -liquidityChange;
     }
     currentLiquidity += liquidityChange;
 
-    // Update the liquidity for the ranges that include this tick
     tickRanges.forEach((range, index) => {
       if (change.index >= range.lowerTick && change.index < range.upperTick) {
         if (!rangeLiquidity[index]) {
