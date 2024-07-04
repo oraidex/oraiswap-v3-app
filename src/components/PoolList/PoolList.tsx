@@ -114,11 +114,11 @@ export const PoolList: React.FC<IProps> = ({
         <h1 className={classes.liquidity}>
           Total liquidity:{' '}
           {liquidity == '0' ? (
-            '$0'
+            <img src={loadingAnimation} style={{ height: 12, width: 12, zIndex: 10 }}></img>
           ) : (
             `$${liquidity}`
           )}{' '}
-          {isLoadingPoolLiquidities && <img src={loadingAnimation} style={{ height: 12, width: 12, zIndex: 10 }}></img>}
+          {/* {isLoadingPoolLiquidities && <img src={loadingAnimation} style={{ height: 12, width: 12, zIndex: 10 }}></img>} */}
         </h1>
         <Grid container direction='column' className={classes.list} justifyContent='flex-start'>
           {data.length > 0 && !loading ? (

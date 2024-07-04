@@ -237,11 +237,11 @@ export const PositionItem: React.FC<IPositionItem> = ({
             <span>
               Liquidity:{' '}
               {liquidity == undefined ? (
-                '$0'
+                <img src={loadingAnimation} style={{ height: 12, width: 12, zIndex: 10 }}></img>
               ) : (
                 `$${formatCompactNumber(liquidity)}`
               )} 
-              {' '}{isLoadingPoolLiquidities && <img src={loadingAnimation} style={{ height: 12, width: 12, zIndex: 10 }}></img>}
+              {/* {' '}{isLoadingPoolLiquidities && <img src={loadingAnimation} style={{ height: 12, width: 12, zIndex: 10 }}></img>} */}
             </span>
           </Typography>
         </Grid>
