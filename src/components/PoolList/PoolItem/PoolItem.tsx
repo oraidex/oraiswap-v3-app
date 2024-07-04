@@ -104,7 +104,7 @@ export const PositionItem: React.FC<IPositionItem> = ({
   tokenXId,
   poolAddress,
   currentPrice,
-  liquidity,
+  liquidity
   // isLoadingPoolLiquidities
 }) => {
   const { classes } = useStyles();
@@ -191,36 +191,6 @@ export const PositionItem: React.FC<IPositionItem> = ({
 
       <Grid container item className={classes.mdInfo} direction='row'>
         <Hidden mdUp>{feeFragment}</Hidden>
-
-        {/* <Grid
-          container
-          item
-          className={classes.minMax}
-          justifyContent='flex-start'
-          direction={'column'}
-          alignItems='flex-start'
-          wrap='nowrap'>
-          <Typography className={classNames(classes.greyText, classes.label)}>
-            Liquidity
-          </Typography>
-          <Grid className={classes.infoCenter} container item>
-            <Typography className={classes.infoText}>$16.21</Typography>
-          </Grid>
-        </Grid> */}
-
-        {/* <Grid
-          container
-          item
-          className={classes.minMax}
-          justifyContent='center'
-          direction={'column'}
-          alignItems='center'
-          wrap='nowrap'>
-          <Typography className={classNames(classes.greyText, classes.label)}>
-            <span>Market ID:</span> {poolAddress.slice(0, 9)}...
-            {poolAddress.slice(poolAddress.length - 9, poolAddress.length)}{' '}
-          </Typography>
-        </Grid> */}
         <Grid
           container
           item
@@ -229,21 +199,49 @@ export const PositionItem: React.FC<IPositionItem> = ({
           direction={'column'}
           // alignItems='center'
           wrap='nowrap'>
-          <Typography className={classNames(classes.greyText, classes.label)}>
-            1 {tokenXName} ≈ <strong>{currentPrice.toFixed(6)} </strong>
-            {tokenYName}
-          </Typography>
-          <Typography className={classNames(classes.greyText, classes.liquidityLabel)}>
-            <span>
-              Liquidity:{' '}
-              {liquidity == undefined ? (
-                <img src={loadingAnimation} style={{ height: 12, width: 12, zIndex: 10 }}></img>
-              ) : (
-                `$${formatCompactNumber(liquidity)}`
-              )} 
-              {/* {' '}{isLoadingPoolLiquidities && <img src={loadingAnimation} style={{ height: 12, width: 12, zIndex: 10 }}></img>} */}
-            </span>
-          </Typography>
+          <Grid container item className={classes.mdTop} direction='row' wrap='nowrap' gap={2}>
+            <Grid
+              container
+              item
+              className={classes.iconsAndNames}
+              alignItems='center'
+              wrap='nowrap'>
+              <Typography className={classes.names}>
+                Liquidity
+                <Typography className={classNames(classes.greyText, classes.label)}>
+                  {liquidity == undefined ? (
+                    <img src={loadingAnimation} style={{ height: 12, width: 12, zIndex: 10 }}></img>
+                  ) : (
+                    `$${formatCompactNumber(liquidity)}`
+                  )}
+                </Typography>
+              </Typography>
+            </Grid>
+          </Grid>
+        </Grid>
+        <Grid
+          container
+          item
+          className={classes.minMax}
+          justifyContent='center'
+          direction={'column'}
+          // alignItems='center'
+          wrap='nowrap'>
+          <Grid container item className={classes.mdTop} direction='row' wrap='nowrap' gap={2}>
+            <Grid
+              container
+              item
+              className={classes.iconsAndNames}
+              alignItems='center'
+              wrap='nowrap'>
+              <Typography className={classes.names}>
+                Rate
+                <Typography className={classNames(classes.greyText, classes.label)}>
+                  1 {tokenXName} ≈ <strong>{currentPrice.toFixed(6)} </strong>
+                </Typography>
+              </Typography>
+            </Grid>
+          </Grid>
         </Grid>
       </Grid>
     </Grid>
