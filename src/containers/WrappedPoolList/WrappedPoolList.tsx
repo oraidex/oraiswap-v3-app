@@ -4,7 +4,6 @@ import {
   PERCENTAGE_SCALE,
   calcPrice,
   calcYPerXPriceByTickIndex,
-  getTotalLiquidityValue,
   poolKeyToString,
   printBigint
 } from '@store/consts/utils';
@@ -26,8 +25,10 @@ import { PoolList } from '@components/PoolList/PoolList';
 import {
   isLoadingAllPool,
   isLoadingLatestPoolsForTransaction,
+  isLoadingPoolLiquidities,
   liquidityValue,
   poolKeys,
+  poolLiquidities,
   pools
 } from '@store/selectors/pools';
 import { Pool, PoolWithPoolKey } from '@/sdk/OraiswapV3.types';
@@ -66,10 +67,35 @@ export const WrappedPoolList: React.FC = () => {
   const { signingClient } = useSigningClient();
   const tokens = useSelector(swapTokens);
   const liquidity = useSelector(liquidityValue);
+  const liquidities = useSelector(poolLiquidities);
+  const isLoadingPoolLiquid = useSelector(isLoadingPoolLiquidities);
+
+  // const [poolLiquidityList, setPoolLiquidityList] = useState<Record<string, number>>({});
 
   useEffect(() => {
     dispatch(actions.getAllPoolData());
   }, [window.walletType, walletAddress]);
+
+  console.log('first')
+  useEffect(() => {
+    if (localStorage.getItem('LIQUIDITIES') != null && Object.keys(liquidities).length === 0) {
+      const liquidities = JSON.parse(localStorage.getItem('LIQUIDITIES') || '{}');
+      const liquidity = JSON.parse(localStorage.getItem('LIQUIDITY') || '{}');
+      dispatch(actions.setPoolLiquidities(liquidities));
+      dispatch(actions.setLiquidityValue(liquidity));
+      dispatch(actions.setIsLoadingPoolLiquidities(true));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (Object.keys(liquidities).length > 0) {
+      localStorage.setItem('LIQUIDITIES', JSON.stringify(liquidities));
+    }
+
+    if (liquidity != '0') {
+      localStorage.setItem('LIQUIDITY', JSON.stringify(liquidity));
+    }
+  }, [liquidities, liquidity]);
 
   const [value, setValue] = useState<string>('');
 
@@ -200,7 +226,9 @@ export const WrappedPoolList: React.FC = () => {
         onConnect: openWalletSelectorModal,
         descCustomText: 'No pools.'
       }}
+      liquidities={liquidities}
       itemsPerPage={POSITIONS_PER_PAGE}
+      isLoadingPoolLiquidities={isLoadingPoolLiquid}
     />
   );
 };

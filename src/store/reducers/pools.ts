@@ -15,6 +15,7 @@ export interface IndexedFeeTier {
 
 export interface IPoolsStore {
   liquidityValue: string;
+  poolLiquidities: Record<string, number>;
   tokens: Record<string, Token>;
   pools: { [key in string]: PoolWithPoolKey };
   poolKeys: { [key in string]: PoolKey };
@@ -26,6 +27,7 @@ export interface IPoolsStore {
   isLoadingTicksAndTickMaps: boolean;
   isLoadingPoolKeys: boolean;
   tickMaps: { [key in string]: string };
+  isLoadingPoolLiquidities: boolean;
 }
 
 export interface UpdatePool {
@@ -63,6 +65,7 @@ export interface FetchTicksAndTickMaps {
 
 export const defaultState: IPoolsStore = {
   liquidityValue: '0',
+  poolLiquidities: {},
   tokens: {
     [ORAI.address.toString()]: ORAI,
     [USDT.address.toString()]: USDT,
@@ -79,7 +82,8 @@ export const defaultState: IPoolsStore = {
   lastPage: 1,
   isLoadingTicksAndTickMaps: false,
   isLoadingPoolKeys: false,
-  tickMaps: {}
+  tickMaps: {},
+  isLoadingPoolLiquidities: false
 };
 
 export interface PairTokens {
@@ -236,6 +240,14 @@ const poolsSlice = createSlice({
     },
     setLiquidityValue(state, action: PayloadAction<string>) {
       state.liquidityValue = action.payload;
+      return state;
+    },
+    setPoolLiquidities(state, action: PayloadAction<Record<string, number>>) {
+      state.poolLiquidities = action.payload;
+      return state;
+    },
+    setIsLoadingPoolLiquidities(state, action: PayloadAction<boolean>) {
+      state.isLoadingPoolLiquidities = action.payload;
       return state;
     }
   }

@@ -207,6 +207,12 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     fontSize: 14,
     color: colors.oraidex.neutralTextLight
   },
+  liquidityLabel: {
+    marginRight: 2,
+    fontSize: 14,
+    color: colors.oraidex.neutralTextLight,
+    textAlign: 'right'
+  },
   tooltip: {
     background: colors.oraidex.componentBcg,
     border: `1px solid ${colors.oraidex.lightGrey}`,

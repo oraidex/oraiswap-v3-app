@@ -7,6 +7,7 @@ const store = (s: AnyProps) => s[poolsSliceName] as IPoolsStore;
 
 export const {
   liquidityValue,
+  poolLiquidities,
   pools,
   poolKeys,
   tokens,
@@ -16,9 +17,11 @@ export const {
   tickMaps,
   nearestPoolTicksForPair,
   isLoadingTicksAndTickMaps,
-  isLoadingPoolKeys
+  isLoadingPoolKeys,
+  isLoadingPoolLiquidities
 } = keySelectors(store, [
   'liquidityValue',
+  'poolLiquidities',
   'pools',
   'poolKeys',
   'tokens',
@@ -28,7 +31,8 @@ export const {
   'tickMaps',
   'nearestPoolTicksForPair',
   'isLoadingTicksAndTickMaps',
-  'isLoadingPoolKeys'
+  'isLoadingPoolKeys',
+  'isLoadingPoolLiquidities'
 ]);
 
 // export const lastPageSelector = createSelector(lastPage, s => s);
@@ -44,6 +48,7 @@ export const hasTokens = createSelector(tokens, allTokens => !!Object.values(all
 
 export const poolsSelectors = {
   liquidityValue,
+  poolLiquidities,
   pools,
   poolKeys,
   tokens,
@@ -51,7 +56,8 @@ export const poolsSelectors = {
   isLoadingLatestPoolsForTransaction,
   tickMaps,
   nearestPoolTicksForPair,
-  isLoadingTicksAndTickMaps
+  isLoadingTicksAndTickMaps,
+  isLoadingPoolLiquidities
 };
 
 export default poolsSelectors;

@@ -1,7 +1,8 @@
 import { Grid, Hidden, Tooltip, Typography, useMediaQuery } from '@mui/material';
 import { theme } from '@static/theme';
 import { TokenPriceData } from '@store/consts/static';
-import { initialXtoY, tickerToAddress } from '@store/consts/uiUtiils';
+import loadingAnimation from '@static/gif/loading.gif';
+import { formatCompactNumber, initialXtoY, tickerToAddress } from '@store/consts/uiUtiils';
 import {
   FormatNumberThreshold,
   PrefixConfig,
@@ -31,9 +32,10 @@ export interface IPositionItem {
   tokenXId?: string;
   poolAddress: string;
   currentPrice: number;
-  liquidity: string;
+  liquidity: number;
   token_x: string;
   token_y: string;
+  isLoadingPoolLiquidities: boolean;
 }
 
 const shorterThresholds: FormatNumberThreshold[] = [
@@ -101,8 +103,9 @@ export const PositionItem: React.FC<IPositionItem> = ({
   isActive = false,
   tokenXId,
   poolAddress,
-  currentPrice
-  // liquidity
+  currentPrice,
+  liquidity,
+  // isLoadingPoolLiquidities
 }) => {
   const { classes } = useStyles();
 
@@ -198,12 +201,13 @@ export const PositionItem: React.FC<IPositionItem> = ({
           alignItems='flex-start'
           wrap='nowrap'>
           <Typography className={classNames(classes.greyText, classes.label)}>
-            Claimable Rewards
+            Liquidity
           </Typography>
           <Grid className={classes.infoCenter} container item>
             <Typography className={classes.infoText}>$16.21</Typography>
           </Grid>
         </Grid> */}
+
         {/* <Grid
           container
           item
@@ -228,6 +232,17 @@ export const PositionItem: React.FC<IPositionItem> = ({
           <Typography className={classNames(classes.greyText, classes.label)}>
             1 {tokenXName} ≈ <strong>{currentPrice.toFixed(6)} </strong>
             {tokenYName}
+          </Typography>
+          <Typography className={classNames(classes.greyText, classes.liquidityLabel)}>
+            <span>
+              Liquidity:{' '}
+              {liquidity == undefined ? (
+                <img src={loadingAnimation} style={{ height: 12, width: 12, zIndex: 10 }}></img>
+              ) : (
+                `$${formatCompactNumber(liquidity)}`
+              )} 
+              {/* {' '}{isLoadingPoolLiquidities && <img src={loadingAnimation} style={{ height: 12, width: 12, zIndex: 10 }}></img>} */}
+            </span>
           </Typography>
         </Grid>
       </Grid>

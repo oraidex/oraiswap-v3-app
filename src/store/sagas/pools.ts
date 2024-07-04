@@ -11,11 +11,11 @@ import {
   getFullTickmap,
   getPool,
   getPoolKeys,
+  getPoolLiquidities,
   getPools,
   getPoolsByPoolKeys,
   getTokenBalances,
   getTokenDataByAddresses,
-  getTotalLiquidityValue
 } from '@store/consts/utils';
 import {
   FetchTicksAndTickMaps,
@@ -25,7 +25,7 @@ import {
   actions
 } from '@store/reducers/pools';
 import { actions as snackbarsActions } from '@store/reducers/snackbars';
-import { tokens } from '@store/selectors/pools';
+import { poolLiquidities, pools, tokens } from '@store/selectors/pools';
 import { closeSnackbar } from 'notistack';
 import { all, call, put, select, spawn, takeEvery, takeLatest } from 'typed-redux-saga';
 import { address } from '@store/selectors/wallet';
@@ -146,6 +146,7 @@ export function* fetchAllPoolKeys(): Generator {
       }
     };
     yield call(fetchPoolsDataForList, actionPayload as PayloadAction<ListPoolsRequest>);
+    yield call(getLiquidityValueForPools);
     yield call(getLiquidityValue);
   } catch (error) {
     yield* put(actions.setPoolKeys([]));
@@ -154,9 +155,27 @@ export function* fetchAllPoolKeys(): Generator {
 }
 
 export function* getLiquidityValue(): Generator {
-  const liquidityValue = yield* call(getTotalLiquidityValue);
+  const liquidityValue = yield* select(poolLiquidities);
 
-  yield* put(actions.setLiquidityValue(formatCompactNumber(liquidityValue)));
+  const liquidities = Object.values(liquidityValue);
+
+  let totalValue = 0;
+  liquidities.forEach((liquidity) => {
+    totalValue += liquidity;
+  });
+
+  yield* put(actions.setLiquidityValue(formatCompactNumber(totalValue)));
+}
+
+export function* getLiquidityValueForPools(): Generator {
+  yield* put(actions.setIsLoadingPoolLiquidities(true));
+  const poolList = yield* select(pools);
+  const poolArray = Object.values(poolList);
+
+  const poolLiquidityRes = yield* call(getPoolLiquidities, poolArray);
+
+  yield* put(actions.setPoolLiquidities(poolLiquidityRes));
+  yield* put(actions.setIsLoadingPoolLiquidities(false));
 }
 
 export function* fetchAllPoolsForPairData(action: PayloadAction<PairTokens>) {

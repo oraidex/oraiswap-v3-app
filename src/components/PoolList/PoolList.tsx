@@ -1,6 +1,7 @@
 import { Button as CustomButton } from '@components/Button';
 import { EmptyPlaceholder } from '@components/EmptyPlaceholder/EmptyPlaceholder';
 import { INoConnected, NoConnected } from '@components/NoConnected/NoConnected';
+import loadingAnimation from '@static/gif/loading.gif';
 import { PaginationList } from '@components/PaginationList/PaginationList';
 import { Button, Grid, InputAdornment, InputBase } from '@mui/material';
 import loader from '@static/gif/loader.gif';
@@ -13,6 +14,7 @@ import { PositionsFilter } from './PoolFilter/PoolFilter';
 import { IPositionItem, PositionItem } from './PoolItem/PoolItem';
 import { useStyles } from './style';
 import { FallbackEmptyData } from '@components/FallbackEmptyData';
+import { formatCompactNumber } from '@store/consts/uiUtiils';
 
 interface IProps {
   liquidity: string;
@@ -27,6 +29,8 @@ interface IProps {
   searchValue: string;
   searchSetValue: (value: string) => void;
   handleRefresh: () => void;
+  liquidities: Record<string, number>;
+  isLoadingPoolLiquidities: boolean;
 }
 
 export const PoolList: React.FC<IProps> = ({
@@ -41,7 +45,9 @@ export const PoolList: React.FC<IProps> = ({
   itemsPerPage,
   searchValue,
   searchSetValue,
-  handleRefresh
+  handleRefresh,
+  liquidities,
+  // isLoadingPoolLiquidities
 }) => {
   const { classes } = useStyles();
   const navigate = useNavigate();
@@ -105,7 +111,15 @@ export const PoolList: React.FC<IProps> = ({
           </Button>
         </Grid>
 
-        <h1 className={classes.liquidity}>Liquidity: {liquidity == '0' ? 'Loading...' : `$${liquidity}`} </h1>
+        <h1 className={classes.liquidity}>
+          Total liquidity:{' '}
+          {liquidity == '0' ? (
+            <img src={loadingAnimation} style={{ height: 12, width: 12, zIndex: 10 }}></img>
+          ) : (
+            `$${liquidity}`
+          )}{' '}
+          {/* {isLoadingPoolLiquidities && <img src={loadingAnimation} style={{ height: 12, width: 12, zIndex: 10 }}></img>} */}
+        </h1>
         <Grid container direction='column' className={classes.list} justifyContent='flex-start'>
           {data.length > 0 && !loading ? (
             paginator(page).data.map((element, index) => (
@@ -118,7 +132,12 @@ export const PoolList: React.FC<IProps> = ({
                 }}
                 key={element.address + element.id}
                 className={classes.itemLink}>
-                <PositionItem key={index} {...element} />
+                <PositionItem
+                  key={index}
+                  {...element}
+                  liquidity={liquidities[element.poolAddress]}
+                  // isLoadingPoolLiquidities={isLoadingPoolLiquidities}
+                />
               </Grid>
             ))
           ) : showNoConnected ? (
