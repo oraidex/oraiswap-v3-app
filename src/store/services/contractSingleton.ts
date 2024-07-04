@@ -21,7 +21,8 @@ import {
   getAllLiquidityTicks,
   getCoingeckoTokenPrice,
   getCoingeckoTokenPriceV2,
-  parse
+  parse,
+  poolKeyToString
   // parse
 } from '@store/consts/utils';
 import { ArrayOfTupleOfUint16AndUint64, PoolWithPoolKey } from '@/sdk/OraiswapV3.types';
@@ -272,9 +273,82 @@ export default class SingletonOraiswapV3 {
     });
   };
 
+  public static getPoolLiquidities = async (
+    pools: PoolWithPoolKey[]
+  ): Promise<Record<string, number>> => {
+    const poolLiquidities: Record<string, number> = {};
+    for (const pool of pools) {
+      const tickmap = await this.getFullTickmap(pool.pool_key);
+
+      const liquidityTicks = await this.getAllLiquidityTicks(pool.pool_key, tickmap);
+
+      const tickIndexes: number[] = [];
+      for (const [chunkIndex, chunk] of tickmap.bitmap.entries()) {
+        for (let bit = 0; bit < CHUNK_SIZE; bit++) {
+          const checkedBit = chunk & (1n << BigInt(bit));
+          if (checkedBit) {
+            const tickIndex = positionToTick(
+              Number(chunkIndex),
+              bit,
+              pool.pool_key.fee_tier.tick_spacing
+            );
+            tickIndexes.push(tickIndex);
+          }
+        }
+      }
+
+      const tickArray: VirtualRange[] = [];
+
+      for (let i = 0; i < tickIndexes.length - 1; i++) {
+        tickArray.push({
+          lowerTick: tickIndexes[i],
+          upperTick: tickIndexes[i + 1]
+        });
+      }
+
+      const posTest: PositionTest[] = calculateLiquidityForRanges(liquidityTicks, tickArray);
+
+      const res = await calculateLiquidityForPair(posTest, BigInt(pool.pool.sqrt_price));
+
+      const tokens = [pool.pool_key.token_x, pool.pool_key.token_y];
+
+      const tokenInfos = await Promise.all(
+        tokens.map(async token => {
+          if (FAUCET_LIST_TOKEN.filter(item => item.address === token).length > 0) {
+            const info = FAUCET_LIST_TOKEN.filter(item => item.address === token)[0];
+            return { info, price: await getCoingeckoTokenPriceV2(info.coingeckoId) };
+          }
+        })
+      );
+
+      const tokenWithLiquidities = [
+        {
+          address: pool.pool_key.token_x,
+          balance: res.liquidityX
+        },
+        {
+          address: pool.pool_key.token_y,
+          balance: res.liquidityY
+        }
+      ]
+
+      const tokenWithUSDValue = tokenWithLiquidities.map(token => {
+        const tokenInfo = tokenInfos.filter(item => item.info.address === token.address)[0];
+        return {
+          address: token.address,
+          usdValue: (Number(token.balance) / 10 ** 6) * tokenInfo.price.price
+        };
+      });
+
+      const totalValue = tokenWithUSDValue.reduce((acc, item) => acc + item.usdValue, 0);
+
+      poolLiquidities[poolKeyToString(pool.pool_key)] = totalValue;
+    }
+    return poolLiquidities;
+  };
+
   public static getTotalLiquidityValue = async (): Promise<number> => {
-    const pools = await this._dexQuerier.pools({});
-    // console.log(pools);
+    const pools = await this._dexQuerier.pools({}); // get pools from state
 
     const totalLiquidity = await Promise.all(
       pools.map(async pool => {
@@ -327,12 +401,14 @@ export default class SingletonOraiswapV3 {
       .filter((value, index, self) => self.indexOf(value) === index);
 
     // get token info
-    const tokenInfos = await Promise.all(tokens.map(async token => {
-      if (FAUCET_LIST_TOKEN.filter(item => item.address === token).length > 0) {
-        const info = FAUCET_LIST_TOKEN.filter(item => item.address === token)[0];
-        return { info, price: await getCoingeckoTokenPriceV2(info.coingeckoId) };
-      }
-    }));
+    const tokenInfos = await Promise.all(
+      tokens.map(async token => {
+        if (FAUCET_LIST_TOKEN.filter(item => item.address === token).length > 0) {
+          const info = FAUCET_LIST_TOKEN.filter(item => item.address === token)[0];
+          return { info, price: await getCoingeckoTokenPriceV2(info.coingeckoId) };
+        }
+      })
+    );
 
     // console.log({ tokenInfos });
 
@@ -350,7 +426,7 @@ export default class SingletonOraiswapV3 {
       const tokenInfo = tokenInfos.filter(item => item.info.address === token.address)[0];
       return {
         address: token.address,
-        usdValue: Number(token.balance) / 10 ** 6 * tokenInfo.price.price
+        usdValue: (Number(token.balance) / 10 ** 6) * tokenInfo.price.price
       };
     });
 

@@ -4,7 +4,6 @@ import {
   PERCENTAGE_SCALE,
   calcPrice,
   calcYPerXPriceByTickIndex,
-  getTotalLiquidityValue,
   poolKeyToString,
   printBigint
 } from '@store/consts/utils';
@@ -28,6 +27,7 @@ import {
   isLoadingLatestPoolsForTransaction,
   liquidityValue,
   poolKeys,
+  poolLiquidities,
   pools
 } from '@store/selectors/pools';
 import { Pool, PoolWithPoolKey } from '@/sdk/OraiswapV3.types';
@@ -66,6 +66,7 @@ export const WrappedPoolList: React.FC = () => {
   const { signingClient } = useSigningClient();
   const tokens = useSelector(swapTokens);
   const liquidity = useSelector(liquidityValue);
+  const liquidities = useSelector(poolLiquidities);
 
   useEffect(() => {
     dispatch(actions.getAllPoolData());
@@ -200,6 +201,7 @@ export const WrappedPoolList: React.FC = () => {
         onConnect: openWalletSelectorModal,
         descCustomText: 'No pools.'
       }}
+      liquidities={liquidities}
       itemsPerPage={POSITIONS_PER_PAGE}
     />
   );

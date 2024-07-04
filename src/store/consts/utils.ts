@@ -1586,7 +1586,8 @@ export const genMsgAllowance = (datas: string[]) => {
   }));
 };
 
-export const getTotalLiquidityValue = async (): Promise<number> => {
-  const res = await SingletonOraiswapV3.getTotalLiquidityValue();
+
+export const getPoolLiquidities = async (pools: PoolWithPoolKey[]): Promise<Record<string, number>> => {
+  const res = await SingletonOraiswapV3.getPoolLiquidities(pools);
   return res;
 }
