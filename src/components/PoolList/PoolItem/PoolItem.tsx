@@ -35,6 +35,7 @@ export interface IPositionItem {
   liquidity: number;
   token_x: string;
   token_y: string;
+  isLoadingPoolLiquidities: boolean;
 }
 
 const shorterThresholds: FormatNumberThreshold[] = [
@@ -103,7 +104,8 @@ export const PositionItem: React.FC<IPositionItem> = ({
   tokenXId,
   poolAddress,
   currentPrice,
-  liquidity
+  liquidity,
+  isLoadingPoolLiquidities
 }) => {
   const { classes } = useStyles();
 
@@ -231,14 +233,15 @@ export const PositionItem: React.FC<IPositionItem> = ({
             1 {tokenXName} ≈ <strong>{currentPrice.toFixed(6)} </strong>
             {tokenYName}
           </Typography>
-          <Typography className={classNames(classes.greyText, classes.label)}>
+          <Typography className={classNames(classes.greyText, classes.liquidityLabel)}>
             <span>
               Liquidity:{' '}
               {liquidity == undefined ? (
-                <img src={loadingAnimation} style={{ height: 12, width: 12, zIndex: 10 }}></img>
+                '$0'
               ) : (
                 `$${formatCompactNumber(liquidity)}`
-              )}
+              )} 
+              {' '}{isLoadingPoolLiquidities && <img src={loadingAnimation} style={{ height: 12, width: 12, zIndex: 10 }}></img>}
             </span>
           </Typography>
         </Grid>

@@ -30,6 +30,7 @@ interface IProps {
   searchSetValue: (value: string) => void;
   handleRefresh: () => void;
   liquidities: Record<string, number>;
+  isLoadingPoolLiquidities: boolean;
 }
 
 export const PoolList: React.FC<IProps> = ({
@@ -45,7 +46,8 @@ export const PoolList: React.FC<IProps> = ({
   searchValue,
   searchSetValue,
   handleRefresh,
-  liquidities
+  liquidities,
+  isLoadingPoolLiquidities
 }) => {
   const { classes } = useStyles();
   const navigate = useNavigate();
@@ -112,10 +114,11 @@ export const PoolList: React.FC<IProps> = ({
         <h1 className={classes.liquidity}>
           Total liquidity:{' '}
           {liquidity == '0' ? (
-            <img src={loadingAnimation} style={{ height: 20, width: 20, zIndex: 10 }}></img>
+            '$0'
           ) : (
             `$${liquidity}`
           )}{' '}
+          {isLoadingPoolLiquidities && <img src={loadingAnimation} style={{ height: 12, width: 12, zIndex: 10 }}></img>}
         </h1>
         <Grid container direction='column' className={classes.list} justifyContent='flex-start'>
           {data.length > 0 && !loading ? (
@@ -133,6 +136,7 @@ export const PoolList: React.FC<IProps> = ({
                   key={index}
                   {...element}
                   liquidity={liquidities[element.poolAddress]}
+                  isLoadingPoolLiquidities={isLoadingPoolLiquidities}
                 />
               </Grid>
             ))

@@ -168,12 +168,14 @@ export function* getLiquidityValue(): Generator {
 }
 
 export function* getLiquidityValueForPools(): Generator {
+  yield* put(actions.setIsLoadingPoolLiquidities(true));
   const poolList = yield* select(pools);
   const poolArray = Object.values(poolList);
 
   const poolLiquidityRes = yield* call(getPoolLiquidities, poolArray);
 
   yield* put(actions.setPoolLiquidities(poolLiquidityRes));
+  yield* put(actions.setIsLoadingPoolLiquidities(false));
 }
 
 export function* fetchAllPoolsForPairData(action: PayloadAction<PairTokens>) {

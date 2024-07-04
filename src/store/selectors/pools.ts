@@ -17,7 +17,8 @@ export const {
   tickMaps,
   nearestPoolTicksForPair,
   isLoadingTicksAndTickMaps,
-  isLoadingPoolKeys
+  isLoadingPoolKeys,
+  isLoadingPoolLiquidities
 } = keySelectors(store, [
   'liquidityValue',
   'poolLiquidities',
@@ -30,7 +31,8 @@ export const {
   'tickMaps',
   'nearestPoolTicksForPair',
   'isLoadingTicksAndTickMaps',
-  'isLoadingPoolKeys'
+  'isLoadingPoolKeys',
+  'isLoadingPoolLiquidities'
 ]);
 
 // export const lastPageSelector = createSelector(lastPage, s => s);
@@ -54,7 +56,8 @@ export const poolsSelectors = {
   isLoadingLatestPoolsForTransaction,
   tickMaps,
   nearestPoolTicksForPair,
-  isLoadingTicksAndTickMaps
+  isLoadingTicksAndTickMaps,
+  isLoadingPoolLiquidities
 };
 
 export default poolsSelectors;

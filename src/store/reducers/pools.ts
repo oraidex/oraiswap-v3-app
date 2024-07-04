@@ -27,6 +27,7 @@ export interface IPoolsStore {
   isLoadingTicksAndTickMaps: boolean;
   isLoadingPoolKeys: boolean;
   tickMaps: { [key in string]: string };
+  isLoadingPoolLiquidities: boolean;
 }
 
 export interface UpdatePool {
@@ -81,7 +82,8 @@ export const defaultState: IPoolsStore = {
   lastPage: 1,
   isLoadingTicksAndTickMaps: false,
   isLoadingPoolKeys: false,
-  tickMaps: {}
+  tickMaps: {},
+  isLoadingPoolLiquidities: false
 };
 
 export interface PairTokens {
@@ -244,6 +246,10 @@ const poolsSlice = createSlice({
       state.poolLiquidities = action.payload;
       return state;
     },
+    setIsLoadingPoolLiquidities(state, action: PayloadAction<boolean>) {
+      state.isLoadingPoolLiquidities = action.payload;
+      return state;
+    }
   }
 });
 
