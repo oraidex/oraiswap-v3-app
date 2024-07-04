@@ -167,5 +167,16 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     color: colors.oraidex.text,
     ...typography.heading4,
     fontWeight: 500,
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 10
   },
+  label: {
+    ...typography.caption1,
+    fontWeight: 500,
+    color: colors.oraidex.neutralText
+  },
+  value: {
+    ...typography.heading3
+  }
 }));

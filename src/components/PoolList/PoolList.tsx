@@ -46,7 +46,7 @@ export const PoolList: React.FC<IProps> = ({
   searchValue,
   searchSetValue,
   handleRefresh,
-  liquidities,
+  liquidities
   // isLoadingPoolLiquidities
 }) => {
   const { classes } = useStyles();
@@ -112,12 +112,15 @@ export const PoolList: React.FC<IProps> = ({
         </Grid>
 
         <h1 className={classes.liquidity}>
-          Total liquidity:{' '}
-          {liquidity == '0' ? (
-            <img src={loadingAnimation} style={{ height: 12, width: 12, zIndex: 10 }}></img>
-          ) : (
-            `$${liquidity}`
-          )}{' '}
+          <span className={classes.label}>Total liquidity: </span>
+          <span className={classes.value}>
+            {liquidity == '0' ? (
+              <img src={loadingAnimation} style={{ height: 12, width: 12, zIndex: 10 }}></img>
+            ) : (
+              `$${liquidity}`
+            )}{' '}
+          </span>
+
           {/* {isLoadingPoolLiquidities && <img src={loadingAnimation} style={{ height: 12, width: 12, zIndex: 10 }}></img>} */}
         </h1>
         <Grid container direction='column' className={classes.list} justifyContent='flex-start'>
