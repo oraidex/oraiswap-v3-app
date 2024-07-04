@@ -47,7 +47,7 @@ export const PoolList: React.FC<IProps> = ({
   searchSetValue,
   handleRefresh,
   liquidities,
-  isLoadingPoolLiquidities
+  // isLoadingPoolLiquidities
 }) => {
   const { classes } = useStyles();
   const navigate = useNavigate();
@@ -136,7 +136,7 @@ export const PoolList: React.FC<IProps> = ({
                   key={index}
                   {...element}
                   liquidity={liquidities[element.poolAddress]}
-                  isLoadingPoolLiquidities={isLoadingPoolLiquidities}
+                  // isLoadingPoolLiquidities={isLoadingPoolLiquidities}
                 />
               </Grid>
             ))

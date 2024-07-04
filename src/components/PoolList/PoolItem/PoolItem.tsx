@@ -105,7 +105,7 @@ export const PositionItem: React.FC<IPositionItem> = ({
   poolAddress,
   currentPrice,
   liquidity,
-  isLoadingPoolLiquidities
+  // isLoadingPoolLiquidities
 }) => {
   const { classes } = useStyles();
 
