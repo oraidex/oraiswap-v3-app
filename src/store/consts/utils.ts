@@ -37,9 +37,20 @@ import {
   Position,
   LiquidityTick,
   TokenAmounts,
-  SwapHop
+  SwapHop,
+  FeeGrowth
 } from '@wasm';
-import { SWAP_HOPS_CACHE, Token, TokenPriceData, U128MAX } from './static';
+import {
+  OCH,
+  ORAI,
+  ORAIX,
+  SWAP_HOPS_CACHE,
+  Token,
+  TokenPriceData,
+  U128MAX,
+  USDC,
+  USDT
+} from './static';
 import { PoolWithPoolKey } from '@/sdk/OraiswapV3.types';
 import { Coin } from '@cosmjs/proto-signing';
 import { PayloadAction } from '@reduxjs/toolkit';
@@ -381,6 +392,20 @@ export const getCoingeckoTokenPrice = async (id: string): Promise<CoingeckoPrice
         // priceChange: res.data[0]?.price_change_percentage_24h ?? 0
       };
     });
+};
+
+export const getCoingeckoTokenPrices = async (
+  ids: string[]
+): Promise<Record<string, CoingeckoPriceData>> => {
+  return await Promise.all(ids.map(id => getCoingeckoTokenPrice(id))).then(prices =>
+    prices.reduce(
+      (acc, price, index) => {
+        acc[ids[index]] = price;
+        return acc;
+      },
+      {} as Record<string, CoingeckoPriceData>
+    )
+  );
 };
 
 export const getCoingeckoTokenPriceV2 = async (id: string): Promise<CoingeckoPriceData> => {
@@ -1589,4 +1614,1232 @@ export const genMsgAllowance = (datas: string[]) => {
 export const getTotalLiquidityValue = async (): Promise<number> => {
   const res = await SingletonOraiswapV3.getTotalLiquidityValue();
   return res;
+};
+
+export interface SnapshotValueData {
+  tokenBNFromBeginning: string;
+  usdValue24: number;
 }
+
+export interface PoolSnapshot {
+  timestamp: number;
+  volumeX: SnapshotValueData;
+  volumeY: SnapshotValueData;
+  liquidityX: SnapshotValueData;
+  liquidityY: SnapshotValueData;
+  feeX: SnapshotValueData;
+  feeY: SnapshotValueData;
+}
+
+export const getNetworkStats = async (): Promise<Record<string, PoolSnapshot[]>> => {
+  // const { data } = await axios.get<Record<string, PoolSnapshot[]>>(
+  //   `https://stats.invariant.app/full/${name}`
+  // )
+
+  const mockData: Record<string, PoolSnapshot[]> = {
+    'orai-orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh-3000000000-100': [
+      {
+        timestamp: 1648036800000,
+        volumeX: {
+          tokenBNFromBeginning: '344800000',
+          usdValue24: 345.1448
+        },
+        volumeY: {
+          tokenBNFromBeginning: '2086800000',
+          usdValue24: 190.52484
+        },
+        liquidityX: {
+          tokenBNFromBeginning: '356979285',
+          usdValue24: 357.336264
+        },
+        liquidityY: {
+          tokenBNFromBeginning: '6610222804',
+          usdValue24: 603.513342005
+        },
+        feeX: { tokenBNFromBeginning: '172400', usdValue24: 0.172572 },
+        feeY: { tokenBNFromBeginning: '1043400', usdValue24: 0.09526242 }
+      },
+      {
+        timestamp: 1648123200000,
+        volumeX: {
+          tokenBNFromBeginning: '3057800000',
+          usdValue24: 2711.087335
+        },
+        volumeY: {
+          tokenBNFromBeginning: '18891800000',
+          usdValue24: 1688.5664
+        },
+        liquidityX: {
+          tokenBNFromBeginning: '1211377712',
+          usdValue24: 1210.52369
+        },
+        liquidityY: {
+          tokenBNFromBeginning: '509292709',
+          usdValue24: 51.1737314
+        },
+        feeX: { tokenBNFromBeginning: '1528900', usdValue24: 1.355543 },
+        feeY: { tokenBNFromBeginning: '9445900', usdValue24: 0.8442832 }
+      },
+      {
+        timestamp: 1648209600000,
+        volumeX: {
+          tokenBNFromBeginning: '3287000000',
+          usdValue24: 229.076461
+        },
+        volumeY: {
+          tokenBNFromBeginning: '20267000000',
+          usdValue24: 143.185824
+        },
+        liquidityX: {
+          tokenBNFromBeginning: '349870330',
+          usdValue24: 349.681749
+        },
+        liquidityY: {
+          tokenBNFromBeginning: '381678966',
+          usdValue24: 39.740413939
+        },
+        feeX: { tokenBNFromBeginning: '1643500', usdValue24: 0.114538 },
+        feeY: {
+          tokenBNFromBeginning: '10133500',
+          usdValue24: 0.071592912
+        }
+      },
+      {
+        timestamp: 1648296000000,
+        volumeX: {
+          tokenBNFromBeginning: '3472000000',
+          usdValue24: 184.851815
+        },
+        volumeY: {
+          tokenBNFromBeginning: '23729400000',
+          usdValue24: 350.810368
+        },
+        liquidityX: {
+          tokenBNFromBeginning: '183500146',
+          usdValue24: 183.353162
+        },
+        liquidityY: {
+          tokenBNFromBeginning: '2021767233',
+          usdValue24: 204.845456047
+        },
+        feeX: { tokenBNFromBeginning: '1736000', usdValue24: 0.092425 },
+        feeY: {
+          tokenBNFromBeginning: '11864700',
+          usdValue24: 0.175405184
+        }
+      },
+      {
+        timestamp: 1648382400000,
+        volumeX: {
+          tokenBNFromBeginning: '3781200000',
+          usdValue24: 308.96037
+        },
+        volumeY: {
+          tokenBNFromBeginning: '26556000000',
+          usdValue24: 282.66
+        },
+        liquidityX: {
+          tokenBNFromBeginning: '201332412',
+          usdValue24: 201.176379
+        },
+        liquidityY: {
+          tokenBNFromBeginning: '1843861352',
+          usdValue24: 184.3861352
+        },
+        feeX: { tokenBNFromBeginning: '1890600', usdValue24: 0.15448 },
+        feeY: { tokenBNFromBeginning: '13278000', usdValue24: 0.14133 }
+      },
+      {
+        timestamp: 1648468800000,
+        volumeX: {
+          tokenBNFromBeginning: '4054200000',
+          usdValue24: 273.546
+        },
+        volumeY: {
+          tokenBNFromBeginning: '27068200000',
+          usdValue24: 56.531514
+        },
+        liquidityX: {
+          tokenBNFromBeginning: '405909442',
+          usdValue24: 406.72126
+        },
+        liquidityY: {
+          tokenBNFromBeginning: '129343459',
+          usdValue24: 14.275637569
+        },
+        feeX: { tokenBNFromBeginning: '2027100', usdValue24: 0.136773 },
+        feeY: {
+          tokenBNFromBeginning: '13534100',
+          usdValue24: 0.028265757
+        }
+      },
+      {
+        timestamp: 1648555200000,
+        volumeX: {
+          tokenBNFromBeginning: '4088600000',
+          usdValue24: 34.4344
+        },
+        volumeY: {
+          tokenBNFromBeginning: '27388400000',
+          usdValue24: 35.538998
+        },
+        liquidityX: {
+          tokenBNFromBeginning: '305874746',
+          usdValue24: 306.18062
+        },
+        liquidityY: {
+          tokenBNFromBeginning: '144688646',
+          usdValue24: 16.058992819
+        },
+        feeX: { tokenBNFromBeginning: '2044300', usdValue24: 0.017217 },
+        feeY: {
+          tokenBNFromBeginning: '13694200',
+          usdValue24: 0.017769499
+        }
+      },
+      {
+        timestamp: 1648641600000,
+        volumeX: {
+          tokenBNFromBeginning: '4161000000',
+          usdValue24: 72.4724
+        },
+        volumeY: {
+          tokenBNFromBeginning: '27489400000',
+          usdValue24: 11.2817
+        },
+        liquidityX: {
+          tokenBNFromBeginning: '420157570',
+          usdValue24: 420.577727
+        },
+        liquidityY: {
+          tokenBNFromBeginning: '88458073',
+          usdValue24: 9.880766754
+        },
+        feeX: { tokenBNFromBeginning: '2080500', usdValue24: 0.036236 },
+        feeY: { tokenBNFromBeginning: '13744700', usdValue24: 0.00564085 }
+      },
+      {
+        timestamp: 1648728000000,
+        volumeX: {
+          tokenBNFromBeginning: '4230400000',
+          usdValue24: 69.8164
+        },
+        volumeY: { tokenBNFromBeginning: '27489400000', usdValue24: 0 },
+        liquidityX: {
+          tokenBNFromBeginning: '334945339',
+          usdValue24: 336.955011
+        },
+        liquidityY: {
+          tokenBNFromBeginning: '12948267',
+          usdValue24: 1.623453716
+        },
+        feeX: { tokenBNFromBeginning: '2115200', usdValue24: 0.034908 },
+        feeY: { tokenBNFromBeginning: '13744700', usdValue24: 0 }
+      },
+      {
+        timestamp: 1648814400000,
+        volumeX: { tokenBNFromBeginning: '4230400000', usdValue24: 0 },
+        volumeY: { tokenBNFromBeginning: '27489400000', usdValue24: 0 },
+        liquidityX: {
+          tokenBNFromBeginning: '334945339',
+          usdValue24: 335.615229
+        },
+        liquidityY: {
+          tokenBNFromBeginning: '12948267',
+          usdValue24: 1.621123028
+        },
+        feeX: { tokenBNFromBeginning: '2115200', usdValue24: 0 },
+        feeY: { tokenBNFromBeginning: '13744700', usdValue24: 0 }
+      },
+      {
+        timestamp: 1648900800000,
+        volumeX: {
+          tokenBNFromBeginning: '4231000000',
+          usdValue24: 0.6048
+        },
+        volumeY: { tokenBNFromBeginning: '27489400000', usdValue24: 0 },
+        liquidityX: {
+          tokenBNFromBeginning: '388367311',
+          usdValue24: 391.474249
+        },
+        liquidityY: {
+          tokenBNFromBeginning: '431877999',
+          usdValue24: 59.599163862
+        },
+        feeX: { tokenBNFromBeginning: '2115500', usdValue24: 0.000302 },
+        feeY: { tokenBNFromBeginning: '13744700', usdValue24: 0 }
+      },
+      {
+        timestamp: 1648987200000,
+        volumeX: {
+          tokenBNFromBeginning: '4241000000',
+          usdValue24: 10.03
+        },
+        volumeY: { tokenBNFromBeginning: '27489400000', usdValue24: 0 },
+        liquidityX: {
+          tokenBNFromBeginning: '352310535',
+          usdValue24: 353.367466
+        },
+        liquidityY: {
+          tokenBNFromBeginning: '469161995',
+          usdValue24: 65.527855841
+        },
+        feeX: { tokenBNFromBeginning: '2120500', usdValue24: 0.005015 },
+        feeY: { tokenBNFromBeginning: '13744700', usdValue24: 0 }
+      }
+    ],
+    'orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh-orai1lus0f0rhx8s03gdllx2n6vhkmf0536dv57wfge-3000000000-100':
+      [
+        {
+          timestamp: 1648036800000,
+          volumeX: {
+            tokenBNFromBeginning: '344800000',
+            usdValue24: 345.1448
+          },
+          volumeY: {
+            tokenBNFromBeginning: '2086800000',
+            usdValue24: 190.52484
+          },
+          liquidityX: {
+            tokenBNFromBeginning: '356979285',
+            usdValue24: 357.336264
+          },
+          liquidityY: {
+            tokenBNFromBeginning: '6610222804',
+            usdValue24: 603.513342005
+          },
+          feeX: { tokenBNFromBeginning: '172400', usdValue24: 0.172572 },
+          feeY: { tokenBNFromBeginning: '1043400', usdValue24: 0.09526242 }
+        },
+        {
+          timestamp: 1648123200000,
+          volumeX: {
+            tokenBNFromBeginning: '3057800000',
+            usdValue24: 2711.087335
+          },
+          volumeY: {
+            tokenBNFromBeginning: '18891800000',
+            usdValue24: 1688.5664
+          },
+          liquidityX: {
+            tokenBNFromBeginning: '1211377712',
+            usdValue24: 1210.52369
+          },
+          liquidityY: {
+            tokenBNFromBeginning: '509292709',
+            usdValue24: 51.1737314
+          },
+          feeX: { tokenBNFromBeginning: '1528900', usdValue24: 1.355543 },
+          feeY: { tokenBNFromBeginning: '9445900', usdValue24: 0.8442832 }
+        },
+        {
+          timestamp: 1648209600000,
+          volumeX: {
+            tokenBNFromBeginning: '3287000000',
+            usdValue24: 229.076461
+          },
+          volumeY: {
+            tokenBNFromBeginning: '20267000000',
+            usdValue24: 143.185824
+          },
+          liquidityX: {
+            tokenBNFromBeginning: '349870330',
+            usdValue24: 349.681749
+          },
+          liquidityY: {
+            tokenBNFromBeginning: '381678966',
+            usdValue24: 39.740413939
+          },
+          feeX: { tokenBNFromBeginning: '1643500', usdValue24: 0.114538 },
+          feeY: {
+            tokenBNFromBeginning: '10133500',
+            usdValue24: 0.071592912
+          }
+        },
+        {
+          timestamp: 1648296000000,
+          volumeX: {
+            tokenBNFromBeginning: '3472000000',
+            usdValue24: 184.851815
+          },
+          volumeY: {
+            tokenBNFromBeginning: '23729400000',
+            usdValue24: 350.810368
+          },
+          liquidityX: {
+            tokenBNFromBeginning: '183500146',
+            usdValue24: 183.353162
+          },
+          liquidityY: {
+            tokenBNFromBeginning: '2021767233',
+            usdValue24: 204.845456047
+          },
+          feeX: { tokenBNFromBeginning: '1736000', usdValue24: 0.092425 },
+          feeY: {
+            tokenBNFromBeginning: '11864700',
+            usdValue24: 0.175405184
+          }
+        },
+        {
+          timestamp: 1648382400000,
+          volumeX: {
+            tokenBNFromBeginning: '3781200000',
+            usdValue24: 308.96037
+          },
+          volumeY: {
+            tokenBNFromBeginning: '26556000000',
+            usdValue24: 282.66
+          },
+          liquidityX: {
+            tokenBNFromBeginning: '201332412',
+            usdValue24: 201.176379
+          },
+          liquidityY: {
+            tokenBNFromBeginning: '1843861352',
+            usdValue24: 184.3861352
+          },
+          feeX: { tokenBNFromBeginning: '1890600', usdValue24: 0.15448 },
+          feeY: { tokenBNFromBeginning: '13278000', usdValue24: 0.14133 }
+        },
+        {
+          timestamp: 1648468800000,
+          volumeX: {
+            tokenBNFromBeginning: '4054200000',
+            usdValue24: 273.546
+          },
+          volumeY: {
+            tokenBNFromBeginning: '27068200000',
+            usdValue24: 56.531514
+          },
+          liquidityX: {
+            tokenBNFromBeginning: '405909442',
+            usdValue24: 406.72126
+          },
+          liquidityY: {
+            tokenBNFromBeginning: '129343459',
+            usdValue24: 14.275637569
+          },
+          feeX: { tokenBNFromBeginning: '2027100', usdValue24: 0.136773 },
+          feeY: {
+            tokenBNFromBeginning: '13534100',
+            usdValue24: 0.028265757
+          }
+        },
+        {
+          timestamp: 1648555200000,
+          volumeX: {
+            tokenBNFromBeginning: '4088600000',
+            usdValue24: 34.4344
+          },
+          volumeY: {
+            tokenBNFromBeginning: '27388400000',
+            usdValue24: 35.538998
+          },
+          liquidityX: {
+            tokenBNFromBeginning: '305874746',
+            usdValue24: 306.18062
+          },
+          liquidityY: {
+            tokenBNFromBeginning: '144688646',
+            usdValue24: 16.058992819
+          },
+          feeX: { tokenBNFromBeginning: '2044300', usdValue24: 0.017217 },
+          feeY: {
+            tokenBNFromBeginning: '13694200',
+            usdValue24: 0.017769499
+          }
+        },
+        {
+          timestamp: 1648641600000,
+          volumeX: {
+            tokenBNFromBeginning: '4161000000',
+            usdValue24: 72.4724
+          },
+          volumeY: {
+            tokenBNFromBeginning: '27489400000',
+            usdValue24: 11.2817
+          },
+          liquidityX: {
+            tokenBNFromBeginning: '420157570',
+            usdValue24: 420.577727
+          },
+          liquidityY: {
+            tokenBNFromBeginning: '88458073',
+            usdValue24: 9.880766754
+          },
+          feeX: { tokenBNFromBeginning: '2080500', usdValue24: 0.036236 },
+          feeY: { tokenBNFromBeginning: '13744700', usdValue24: 0.00564085 }
+        },
+        {
+          timestamp: 1648728000000,
+          volumeX: {
+            tokenBNFromBeginning: '4230400000',
+            usdValue24: 69.8164
+          },
+          volumeY: { tokenBNFromBeginning: '27489400000', usdValue24: 0 },
+          liquidityX: {
+            tokenBNFromBeginning: '334945339',
+            usdValue24: 336.955011
+          },
+          liquidityY: {
+            tokenBNFromBeginning: '12948267',
+            usdValue24: 1.623453716
+          },
+          feeX: { tokenBNFromBeginning: '2115200', usdValue24: 0.034908 },
+          feeY: { tokenBNFromBeginning: '13744700', usdValue24: 0 }
+        },
+        {
+          timestamp: 1648814400000,
+          volumeX: { tokenBNFromBeginning: '4230400000', usdValue24: 0 },
+          volumeY: { tokenBNFromBeginning: '27489400000', usdValue24: 0 },
+          liquidityX: {
+            tokenBNFromBeginning: '334945339',
+            usdValue24: 335.615229
+          },
+          liquidityY: {
+            tokenBNFromBeginning: '12948267',
+            usdValue24: 1.621123028
+          },
+          feeX: { tokenBNFromBeginning: '2115200', usdValue24: 0 },
+          feeY: { tokenBNFromBeginning: '13744700', usdValue24: 0 }
+        },
+        {
+          timestamp: 1648900800000,
+          volumeX: {
+            tokenBNFromBeginning: '4231000000',
+            usdValue24: 0.6048
+          },
+          volumeY: { tokenBNFromBeginning: '27489400000', usdValue24: 0 },
+          liquidityX: {
+            tokenBNFromBeginning: '388367311',
+            usdValue24: 391.474249
+          },
+          liquidityY: {
+            tokenBNFromBeginning: '431877999',
+            usdValue24: 59.599163862
+          },
+          feeX: { tokenBNFromBeginning: '2115500', usdValue24: 0.000302 },
+          feeY: { tokenBNFromBeginning: '13744700', usdValue24: 0 }
+        },
+        {
+          timestamp: 1648987200000,
+          volumeX: {
+            tokenBNFromBeginning: '4241000000',
+            usdValue24: 10.03
+          },
+          volumeY: { tokenBNFromBeginning: '27489400000', usdValue24: 0 },
+          liquidityX: {
+            tokenBNFromBeginning: '352310535',
+            usdValue24: 353.367466
+          },
+          liquidityY: {
+            tokenBNFromBeginning: '469161995',
+            usdValue24: 65.527855841
+          },
+          feeX: { tokenBNFromBeginning: '2120500', usdValue24: 0.005015 },
+          feeY: { tokenBNFromBeginning: '13744700', usdValue24: 0 }
+        }
+      ],
+    'orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh-orai15un8msx3n5zf9ahlxmfeqd2kwa5wm0nrpxer304m9nd5q6qq0g6sku5pdd-500000000-10':
+      [
+        {
+          timestamp: 1648036800000,
+          volumeX: {
+            tokenBNFromBeginning: '344800000',
+            usdValue24: 345.1448
+          },
+          volumeY: {
+            tokenBNFromBeginning: '2086800000',
+            usdValue24: 190.52484
+          },
+          liquidityX: {
+            tokenBNFromBeginning: '356979285',
+            usdValue24: 357.336264
+          },
+          liquidityY: {
+            tokenBNFromBeginning: '6610222804',
+            usdValue24: 603.513342005
+          },
+          feeX: { tokenBNFromBeginning: '172400', usdValue24: 0.172572 },
+          feeY: { tokenBNFromBeginning: '1043400', usdValue24: 0.09526242 }
+        },
+        {
+          timestamp: 1648123200000,
+          volumeX: {
+            tokenBNFromBeginning: '3057800000',
+            usdValue24: 2711.087335
+          },
+          volumeY: {
+            tokenBNFromBeginning: '18891800000',
+            usdValue24: 1688.5664
+          },
+          liquidityX: {
+            tokenBNFromBeginning: '1211377712',
+            usdValue24: 1210.52369
+          },
+          liquidityY: {
+            tokenBNFromBeginning: '509292709',
+            usdValue24: 51.1737314
+          },
+          feeX: { tokenBNFromBeginning: '1528900', usdValue24: 1.355543 },
+          feeY: { tokenBNFromBeginning: '9445900', usdValue24: 0.8442832 }
+        },
+        {
+          timestamp: 1648209600000,
+          volumeX: {
+            tokenBNFromBeginning: '3287000000',
+            usdValue24: 229.076461
+          },
+          volumeY: {
+            tokenBNFromBeginning: '20267000000',
+            usdValue24: 143.185824
+          },
+          liquidityX: {
+            tokenBNFromBeginning: '349870330',
+            usdValue24: 349.681749
+          },
+          liquidityY: {
+            tokenBNFromBeginning: '381678966',
+            usdValue24: 39.740413939
+          },
+          feeX: { tokenBNFromBeginning: '1643500', usdValue24: 0.114538 },
+          feeY: {
+            tokenBNFromBeginning: '10133500',
+            usdValue24: 0.071592912
+          }
+        },
+        {
+          timestamp: 1648296000000,
+          volumeX: {
+            tokenBNFromBeginning: '3472000000',
+            usdValue24: 184.851815
+          },
+          volumeY: {
+            tokenBNFromBeginning: '23729400000',
+            usdValue24: 350.810368
+          },
+          liquidityX: {
+            tokenBNFromBeginning: '183500146',
+            usdValue24: 183.353162
+          },
+          liquidityY: {
+            tokenBNFromBeginning: '2021767233',
+            usdValue24: 204.845456047
+          },
+          feeX: { tokenBNFromBeginning: '1736000', usdValue24: 0.092425 },
+          feeY: {
+            tokenBNFromBeginning: '11864700',
+            usdValue24: 0.175405184
+          }
+        },
+        {
+          timestamp: 1648382400000,
+          volumeX: {
+            tokenBNFromBeginning: '3781200000',
+            usdValue24: 308.96037
+          },
+          volumeY: {
+            tokenBNFromBeginning: '26556000000',
+            usdValue24: 282.66
+          },
+          liquidityX: {
+            tokenBNFromBeginning: '201332412',
+            usdValue24: 201.176379
+          },
+          liquidityY: {
+            tokenBNFromBeginning: '1843861352',
+            usdValue24: 184.3861352
+          },
+          feeX: { tokenBNFromBeginning: '1890600', usdValue24: 0.15448 },
+          feeY: { tokenBNFromBeginning: '13278000', usdValue24: 0.14133 }
+        },
+        {
+          timestamp: 1648468800000,
+          volumeX: {
+            tokenBNFromBeginning: '4054200000',
+            usdValue24: 273.546
+          },
+          volumeY: {
+            tokenBNFromBeginning: '27068200000',
+            usdValue24: 56.531514
+          },
+          liquidityX: {
+            tokenBNFromBeginning: '405909442',
+            usdValue24: 406.72126
+          },
+          liquidityY: {
+            tokenBNFromBeginning: '129343459',
+            usdValue24: 14.275637569
+          },
+          feeX: { tokenBNFromBeginning: '2027100', usdValue24: 0.136773 },
+          feeY: {
+            tokenBNFromBeginning: '13534100',
+            usdValue24: 0.028265757
+          }
+        },
+        {
+          timestamp: 1648555200000,
+          volumeX: {
+            tokenBNFromBeginning: '4088600000',
+            usdValue24: 34.4344
+          },
+          volumeY: {
+            tokenBNFromBeginning: '27388400000',
+            usdValue24: 35.538998
+          },
+          liquidityX: {
+            tokenBNFromBeginning: '305874746',
+            usdValue24: 306.18062
+          },
+          liquidityY: {
+            tokenBNFromBeginning: '144688646',
+            usdValue24: 16.058992819
+          },
+          feeX: { tokenBNFromBeginning: '2044300', usdValue24: 0.017217 },
+          feeY: {
+            tokenBNFromBeginning: '13694200',
+            usdValue24: 0.017769499
+          }
+        },
+        {
+          timestamp: 1648641600000,
+          volumeX: {
+            tokenBNFromBeginning: '4161000000',
+            usdValue24: 72.4724
+          },
+          volumeY: {
+            tokenBNFromBeginning: '27489400000',
+            usdValue24: 11.2817
+          },
+          liquidityX: {
+            tokenBNFromBeginning: '420157570',
+            usdValue24: 420.577727
+          },
+          liquidityY: {
+            tokenBNFromBeginning: '88458073',
+            usdValue24: 9.880766754
+          },
+          feeX: { tokenBNFromBeginning: '2080500', usdValue24: 0.036236 },
+          feeY: { tokenBNFromBeginning: '13744700', usdValue24: 0.00564085 }
+        },
+        {
+          timestamp: 1648728000000,
+          volumeX: {
+            tokenBNFromBeginning: '4230400000',
+            usdValue24: 69.8164
+          },
+          volumeY: { tokenBNFromBeginning: '27489400000', usdValue24: 0 },
+          liquidityX: {
+            tokenBNFromBeginning: '334945339',
+            usdValue24: 336.955011
+          },
+          liquidityY: {
+            tokenBNFromBeginning: '12948267',
+            usdValue24: 1.623453716
+          },
+          feeX: { tokenBNFromBeginning: '2115200', usdValue24: 0.034908 },
+          feeY: { tokenBNFromBeginning: '13744700', usdValue24: 0 }
+        },
+        {
+          timestamp: 1648814400000,
+          volumeX: { tokenBNFromBeginning: '4230400000', usdValue24: 0 },
+          volumeY: { tokenBNFromBeginning: '27489400000', usdValue24: 0 },
+          liquidityX: {
+            tokenBNFromBeginning: '334945339',
+            usdValue24: 335.615229
+          },
+          liquidityY: {
+            tokenBNFromBeginning: '12948267',
+            usdValue24: 1.621123028
+          },
+          feeX: { tokenBNFromBeginning: '2115200', usdValue24: 0 },
+          feeY: { tokenBNFromBeginning: '13744700', usdValue24: 0 }
+        },
+        {
+          timestamp: 1648900800000,
+          volumeX: {
+            tokenBNFromBeginning: '4231000000',
+            usdValue24: 0.6048
+          },
+          volumeY: { tokenBNFromBeginning: '27489400000', usdValue24: 0 },
+          liquidityX: {
+            tokenBNFromBeginning: '388367311',
+            usdValue24: 391.474249
+          },
+          liquidityY: {
+            tokenBNFromBeginning: '431877999',
+            usdValue24: 59.599163862
+          },
+          feeX: { tokenBNFromBeginning: '2115500', usdValue24: 0.000302 },
+          feeY: { tokenBNFromBeginning: '13744700', usdValue24: 0 }
+        },
+        {
+          timestamp: 1648987200000,
+          volumeX: {
+            tokenBNFromBeginning: '4241000000',
+            usdValue24: 10.03
+          },
+          volumeY: { tokenBNFromBeginning: '27489400000', usdValue24: 0 },
+          liquidityX: {
+            tokenBNFromBeginning: '352310535',
+            usdValue24: 353.367466
+          },
+          liquidityY: {
+            tokenBNFromBeginning: '469161995',
+            usdValue24: 65.527855841
+          },
+          feeX: { tokenBNFromBeginning: '2120500', usdValue24: 0.005015 },
+          feeY: { tokenBNFromBeginning: '13744700', usdValue24: 0 }
+        }
+      ],
+    'orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh-orai1hn8w33cqvysun2aujk5sv33tku4pgcxhhnsxmvnkfvdxagcx0p8qa4l98q-3000000000-100':
+      [
+        {
+          timestamp: 1648036800000,
+          volumeX: {
+            tokenBNFromBeginning: '344800000',
+            usdValue24: 345.1448
+          },
+          volumeY: {
+            tokenBNFromBeginning: '2086800000',
+            usdValue24: 190.52484
+          },
+          liquidityX: {
+            tokenBNFromBeginning: '356979285',
+            usdValue24: 357.336264
+          },
+          liquidityY: {
+            tokenBNFromBeginning: '6610222804',
+            usdValue24: 603.513342005
+          },
+          feeX: { tokenBNFromBeginning: '172400', usdValue24: 0.172572 },
+          feeY: { tokenBNFromBeginning: '1043400', usdValue24: 0.09526242 }
+        },
+        {
+          timestamp: 1648123200000,
+          volumeX: {
+            tokenBNFromBeginning: '3057800000',
+            usdValue24: 2711.087335
+          },
+          volumeY: {
+            tokenBNFromBeginning: '18891800000',
+            usdValue24: 1688.5664
+          },
+          liquidityX: {
+            tokenBNFromBeginning: '1211377712',
+            usdValue24: 1210.52369
+          },
+          liquidityY: {
+            tokenBNFromBeginning: '509292709',
+            usdValue24: 51.1737314
+          },
+          feeX: { tokenBNFromBeginning: '1528900', usdValue24: 1.355543 },
+          feeY: { tokenBNFromBeginning: '9445900', usdValue24: 0.8442832 }
+        },
+        {
+          timestamp: 1648209600000,
+          volumeX: {
+            tokenBNFromBeginning: '3287000000',
+            usdValue24: 229.076461
+          },
+          volumeY: {
+            tokenBNFromBeginning: '20267000000',
+            usdValue24: 143.185824
+          },
+          liquidityX: {
+            tokenBNFromBeginning: '349870330',
+            usdValue24: 349.681749
+          },
+          liquidityY: {
+            tokenBNFromBeginning: '381678966',
+            usdValue24: 39.740413939
+          },
+          feeX: { tokenBNFromBeginning: '1643500', usdValue24: 0.114538 },
+          feeY: {
+            tokenBNFromBeginning: '10133500',
+            usdValue24: 0.071592912
+          }
+        },
+        {
+          timestamp: 1648296000000,
+          volumeX: {
+            tokenBNFromBeginning: '3472000000',
+            usdValue24: 184.851815
+          },
+          volumeY: {
+            tokenBNFromBeginning: '23729400000',
+            usdValue24: 350.810368
+          },
+          liquidityX: {
+            tokenBNFromBeginning: '183500146',
+            usdValue24: 183.353162
+          },
+          liquidityY: {
+            tokenBNFromBeginning: '2021767233',
+            usdValue24: 204.845456047
+          },
+          feeX: { tokenBNFromBeginning: '1736000', usdValue24: 0.092425 },
+          feeY: {
+            tokenBNFromBeginning: '11864700',
+            usdValue24: 0.175405184
+          }
+        },
+        {
+          timestamp: 1648382400000,
+          volumeX: {
+            tokenBNFromBeginning: '3781200000',
+            usdValue24: 308.96037
+          },
+          volumeY: {
+            tokenBNFromBeginning: '26556000000',
+            usdValue24: 282.66
+          },
+          liquidityX: {
+            tokenBNFromBeginning: '201332412',
+            usdValue24: 201.176379
+          },
+          liquidityY: {
+            tokenBNFromBeginning: '1843861352',
+            usdValue24: 184.3861352
+          },
+          feeX: { tokenBNFromBeginning: '1890600', usdValue24: 0.15448 },
+          feeY: { tokenBNFromBeginning: '13278000', usdValue24: 0.14133 }
+        },
+        {
+          timestamp: 1648468800000,
+          volumeX: {
+            tokenBNFromBeginning: '4054200000',
+            usdValue24: 273.546
+          },
+          volumeY: {
+            tokenBNFromBeginning: '27068200000',
+            usdValue24: 56.531514
+          },
+          liquidityX: {
+            tokenBNFromBeginning: '405909442',
+            usdValue24: 406.72126
+          },
+          liquidityY: {
+            tokenBNFromBeginning: '129343459',
+            usdValue24: 14.275637569
+          },
+          feeX: { tokenBNFromBeginning: '2027100', usdValue24: 0.136773 },
+          feeY: {
+            tokenBNFromBeginning: '13534100',
+            usdValue24: 0.028265757
+          }
+        },
+        {
+          timestamp: 1648555200000,
+          volumeX: {
+            tokenBNFromBeginning: '4088600000',
+            usdValue24: 34.4344
+          },
+          volumeY: {
+            tokenBNFromBeginning: '27388400000',
+            usdValue24: 35.538998
+          },
+          liquidityX: {
+            tokenBNFromBeginning: '305874746',
+            usdValue24: 306.18062
+          },
+          liquidityY: {
+            tokenBNFromBeginning: '144688646',
+            usdValue24: 16.058992819
+          },
+          feeX: { tokenBNFromBeginning: '2044300', usdValue24: 0.017217 },
+          feeY: {
+            tokenBNFromBeginning: '13694200',
+            usdValue24: 0.017769499
+          }
+        },
+        {
+          timestamp: 1648641600000,
+          volumeX: {
+            tokenBNFromBeginning: '4161000000',
+            usdValue24: 72.4724
+          },
+          volumeY: {
+            tokenBNFromBeginning: '27489400000',
+            usdValue24: 11.2817
+          },
+          liquidityX: {
+            tokenBNFromBeginning: '420157570',
+            usdValue24: 420.577727
+          },
+          liquidityY: {
+            tokenBNFromBeginning: '88458073',
+            usdValue24: 9.880766754
+          },
+          feeX: { tokenBNFromBeginning: '2080500', usdValue24: 0.036236 },
+          feeY: { tokenBNFromBeginning: '13744700', usdValue24: 0.00564085 }
+        },
+        {
+          timestamp: 1648728000000,
+          volumeX: {
+            tokenBNFromBeginning: '4230400000',
+            usdValue24: 69.8164
+          },
+          volumeY: { tokenBNFromBeginning: '27489400000', usdValue24: 0 },
+          liquidityX: {
+            tokenBNFromBeginning: '334945339',
+            usdValue24: 336.955011
+          },
+          liquidityY: {
+            tokenBNFromBeginning: '12948267',
+            usdValue24: 1.623453716
+          },
+          feeX: { tokenBNFromBeginning: '2115200', usdValue24: 0.034908 },
+          feeY: { tokenBNFromBeginning: '13744700', usdValue24: 0 }
+        },
+        {
+          timestamp: 1648814400000,
+          volumeX: { tokenBNFromBeginning: '4230400000', usdValue24: 0 },
+          volumeY: { tokenBNFromBeginning: '27489400000', usdValue24: 0 },
+          liquidityX: {
+            tokenBNFromBeginning: '334945339',
+            usdValue24: 335.615229
+          },
+          liquidityY: {
+            tokenBNFromBeginning: '12948267',
+            usdValue24: 1.621123028
+          },
+          feeX: { tokenBNFromBeginning: '2115200', usdValue24: 0 },
+          feeY: { tokenBNFromBeginning: '13744700', usdValue24: 0 }
+        },
+        {
+          timestamp: 1648900800000,
+          volumeX: {
+            tokenBNFromBeginning: '4231000000',
+            usdValue24: 0.6048
+          },
+          volumeY: { tokenBNFromBeginning: '27489400000', usdValue24: 0 },
+          liquidityX: {
+            tokenBNFromBeginning: '388367311',
+            usdValue24: 391.474249
+          },
+          liquidityY: {
+            tokenBNFromBeginning: '431877999',
+            usdValue24: 59.599163862
+          },
+          feeX: { tokenBNFromBeginning: '2115500', usdValue24: 0.000302 },
+          feeY: { tokenBNFromBeginning: '13744700', usdValue24: 0 }
+        },
+        {
+          timestamp: 1648987200000,
+          volumeX: {
+            tokenBNFromBeginning: '4241000000',
+            usdValue24: 10.03
+          },
+          volumeY: { tokenBNFromBeginning: '27489400000', usdValue24: 0 },
+          liquidityX: {
+            tokenBNFromBeginning: '352310535',
+            usdValue24: 353.367466
+          },
+          liquidityY: {
+            tokenBNFromBeginning: '469161995',
+            usdValue24: 65.527855841
+          },
+          feeX: { tokenBNFromBeginning: '2120500', usdValue24: 0.005015 },
+          feeY: { tokenBNFromBeginning: '13744700', usdValue24: 0 }
+        }
+      ]
+  };
+
+  return mockData;
+};
+
+export const getPoolsAPY = async (): Promise<Record<string, number>> => {
+  try {
+    // const { data } = await axios.get<Record<string, number>>(
+    //   `https://stats.invariant.app/pool_apy/${name}`
+    // )
+
+    const mockData: Record<string, number> = {
+      'orai-orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh-3000000000-100': 12.34,
+      'orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh-orai1lus0f0rhx8s03gdllx2n6vhkmf0536dv57wfge-3000000000-100': 34.56,
+      'orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh-orai15un8msx3n5zf9ahlxmfeqd2kwa5wm0nrpxer304m9nd5q6qq0g6sku5pdd-500000000-10': 56.78,
+      'orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh-orai1hn8w33cqvysun2aujk5sv33tku4pgcxhhnsxmvnkfvdxagcx0p8qa4l98q-3000000000-100': 12.67
+    };
+
+    return mockData;
+  } catch (_err) {
+    return {};
+  }
+};
+
+export interface PoolWithStringKey extends PoolStructure {
+  pookKey: string;
+}
+
+export interface PoolStructure {
+  tokenX: string;
+  tokenY: string;
+  tokenXReserve: string;
+  tokenYReserve: string;
+  positionIterator: bigint;
+  tickSpacing: number;
+  fee: bigint;
+  protocolFee: bigint;
+  liquidity: bigint;
+  sqrtPrice: bigint;
+  currentTickIndex: number;
+  tickmap: string;
+  feeGrowthGlobalX: FeeGrowth;
+  feeGrowthGlobalY: FeeGrowth;
+  feeProtocolTokenX: bigint;
+  feeProtocolTokenY: bigint;
+  secondsPerLiquidityGlobal: bigint;
+  startTimestamp: bigint;
+  lastTimestamp: bigint;
+  feeReceiver: string;
+  oracleAddress: string;
+  oracleInitialized: boolean;
+  bump: number;
+}
+
+export const getPoolsFromAdresses = async (
+  poolKey: string[]
+  // marketProgram: Market -->>> api
+): Promise<PoolWithStringKey[]> => {
+  // poolkey take from string
+
+  // TODO: getPools
+  // const pools = (await marketProgram.program.account.pool.fetchMultiple(
+  //   addresses
+  // )) as Array<PoolStructure | null>
+
+  const pools: PoolWithStringKey[] = [
+    {
+      pookKey: 'orai-orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh-3000000000-100',
+      tokenX: 'orai',
+      tokenY: 'orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh',
+      tokenXReserve: '100000000',
+      tokenYReserve: '100000000',
+      positionIterator: 0n,
+      tickSpacing: 100,
+      fee: 3000000000n,
+      protocolFee: 0n,
+      liquidity: 1000000000n,
+      sqrtPrice: 10000000000n,
+      currentTickIndex: 0,
+      tickmap: '',
+      feeGrowthGlobalX: 0n,
+      feeGrowthGlobalY: 0n,
+      feeProtocolTokenX: 0n,
+      feeProtocolTokenY: 0n,
+      secondsPerLiquidityGlobal: 0n,
+      startTimestamp: 0n,
+      lastTimestamp: 0n,
+      feeReceiver: '',
+      oracleAddress: '',
+      oracleInitialized: false,
+      bump: 0
+    },
+    {
+      pookKey:
+        'orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh-orai1lus0f0rhx8s03gdllx2n6vhkmf0536dv57wfge-3000000000-100',
+      tokenX: 'orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh',
+      tokenY: 'orai1lus0f0rhx8s03gdllx2n6vhkmf0536dv57wfge',
+      tokenXReserve: '100000000',
+      tokenYReserve: '100000000',
+      positionIterator: 0n,
+      tickSpacing: 100,
+      fee: 3000000000n,
+      protocolFee: 0n,
+      liquidity: 1000000000n,
+      sqrtPrice: 10000000000n,
+      currentTickIndex: 0,
+      tickmap: '',
+      feeGrowthGlobalX: 0n,
+      feeGrowthGlobalY: 0n,
+      feeProtocolTokenX: 0n,
+      feeProtocolTokenY: 0n,
+      secondsPerLiquidityGlobal: 0n,
+      startTimestamp: 0n,
+      lastTimestamp: 0n,
+      feeReceiver: '',
+      oracleAddress: '',
+      oracleInitialized: false,
+      bump: 0
+    },
+    {
+      pookKey:
+        'orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh-orai15un8msx3n5zf9ahlxmfeqd2kwa5wm0nrpxer304m9nd5q6qq0g6sku5pdd-500000000-10',
+      tokenX: 'orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh',
+      tokenY: 'orai15un8msx3n5zf9ahlxmfeqd2kwa5wm0nrpxer304m9nd5q6qq0g6sku5pdd',
+      tokenXReserve: '100000000',
+      tokenYReserve: '100000000',
+      positionIterator: 0n,
+      tickSpacing: 10,
+      fee: 500000000n,
+      protocolFee: 0n,
+      liquidity: 1000000000n,
+      sqrtPrice: 10000000000n,
+      currentTickIndex: 0,
+      tickmap: '',
+      feeGrowthGlobalX: 0n,
+      feeGrowthGlobalY: 0n,
+      feeProtocolTokenX: 0n,
+      feeProtocolTokenY: 0n,
+      secondsPerLiquidityGlobal: 0n,
+      startTimestamp: 0n,
+      lastTimestamp: 0n,
+      feeReceiver: '',
+      oracleAddress: '',
+      oracleInitialized: false,
+      bump: 0
+    },
+    {
+      pookKey:
+        'orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh-orai1hn8w33cqvysun2aujk5sv33tku4pgcxhhnsxmvnkfvdxagcx0p8qa4l98q-3000000000-100',
+      tokenX: 'orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh',
+      tokenY: 'orai1hn8w33cqvysun2aujk5sv33tku4pgcxhhnsxmvnkfvdxagcx0p8qa4l98q',
+      tokenXReserve: '100000000',
+      tokenYReserve: '100000000',
+      positionIterator: 0n,
+      tickSpacing: 100,
+      fee: 3000000000n,
+      protocolFee: 0n,
+      liquidity: 1000000000n,
+      sqrtPrice: 10000000000n,
+      currentTickIndex: 0,
+      tickmap: '',
+      feeGrowthGlobalX: 0n,
+      feeGrowthGlobalY: 0n,
+      feeProtocolTokenX: 0n,
+      feeProtocolTokenY: 0n,
+      secondsPerLiquidityGlobal: 0n,
+      startTimestamp: 0n,
+      lastTimestamp: 0n,
+      feeReceiver: '',
+      oracleAddress: '',
+      oracleInitialized: false,
+      bump: 0
+    }
+  ];
+
+  return pools;
+  // return pools
+  //   .map((pool, index) =>
+  //     pool !== null
+  //       ? {
+  //           ...pool,
+  //           pookKey: poolKey[index]
+  //         }
+  //       : null
+  //   )
+  //   .filter(pool => pool !== null) as PoolWithStringKey[];
+};
+
+export const getFullNewTokensData = async (addresses: string[]): Promise<Record<string, Token>> => {
+  const tokens: Record<string, Token> = {
+    orai: ORAI,
+    orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh: USDT,
+    orai1lus0f0rhx8s03gdllx2n6vhkmf0536dv57wfge: ORAIX,
+    orai15un8msx3n5zf9ahlxmfeqd2kwa5wm0nrpxer304m9nd5q6qq0g6sku5pdd: USDC,
+    orai1hn8w33cqvysun2aujk5sv33tku4pgcxhhnsxmvnkfvdxagcx0p8qa4l98q: OCH
+  };
+
+  return tokens;
+};

@@ -4,16 +4,16 @@ import loader from '@static/gif/loader.gif'
 import useStyles from './styles'
 import { Grid, Typography } from '@mui/material'
 import { EmptyPlaceholder } from '@components/EmptyPlaceholder/EmptyPlaceholder'
-// import {
-//   fees24,
-//   isLoading,
-//   liquidityPlot,
-//   poolsStatsWithTokensDetails,
-//   tokensStatsWithTokensDetails,
-//   tvl24,
-//   volume24,
-//   volumePlot
-// } from '@store/selectors/stats'
+import {
+  fees24,
+  isLoading,
+  liquidityPlot,
+  poolsStatsWithTokensDetails,
+  tokensStatsWithTokensDetails,
+  tvl24,
+  volume24,
+  volumePlot
+} from '@store/selectors/stats'
 import { networkType } from '@store/selectors/connection'
 import { actions } from '@store/reducers/stats'
 import Volume from '@components/Stats/Volume/Volume'
@@ -21,31 +21,31 @@ import Liquidity from '@components/Stats/Liquidity/Liquidity'
 import VolumeBar from '@components/Stats/volumeBar/VolumeBar'
 import TokensList from '@components/Stats/TokensList/TokensList'
 import PoolList from '@components/Stats/PoolList/PoolList'
-import {
-  isLoadingStats,
-  liquidityPlotData,
-  fees24h,
-  poolsList,
-  tokensList,
-  tvl24h,
-  volume24h,
-  volumePlotData
-} from './mockStats'
+// import {
+//   isLoadingStats,
+//   liquidityPlotData,
+//   fees24h,
+//   poolsList,
+//   tokensList,
+//   tvl24h,
+//   volume24h,
+//   volumePlotData
+// } from './mockStats'
 
 export const WrappedStats: React.FC = () => {
   const { classes } = useStyles()
 
   const dispatch = useDispatch()
 
-  //   const poolsList = useSelector(poolsStatsWithTokensDetails)
-  //   const tokensList = useSelector(tokensStatsWithTokensDetails)
-  //   const volume24h = useSelector(volume24)
-  //   const tvl24h = useSelector(tvl24)
-  //   const fees24h = useSelector(fees24)
-  //   const volumePlotData = useSelector(volumePlot)
-  //   const liquidityPlotData = useSelector(liquidityPlot)
-  //   const isLoadingStats = useSelector(isLoading)
-  const currentNetwork = useSelector(networkType)
+    const poolsList = useSelector(poolsStatsWithTokensDetails)
+    const tokensList = useSelector(tokensStatsWithTokensDetails)
+    const volume24h = useSelector(volume24)
+    const tvl24h = useSelector(tvl24)
+    const fees24h = useSelector(fees24)
+    const volumePlotData = useSelector(volumePlot)
+    const liquidityPlotData = useSelector(liquidityPlot)
+    const isLoadingStats = useSelector(isLoading)
+  // const currentNetwork = useSelector(networkType)
 
   useEffect(() => {
     dispatch(actions.getCurrentStats())
@@ -117,11 +117,11 @@ export const WrappedStats: React.FC = () => {
               TVL: poolData.tvl,
               fee: poolData.fee,
               apy: poolData.apy,
-              apyData: {
-                fees: poolData.apy,
-                accumulatedFarmsSingleTick: 0,
-                accumulatedFarmsAvg: 0
-              },
+              // apyData: {
+              //   fees: poolData.apy,
+              //   accumulatedFarmsSingleTick: 0,
+              //   accumulatedFarmsAvg: 0
+              // },
               // apy:
               //   poolData.apy + (accumulatedSingleTickAPY?.[poolData.poolAddress.toString()] ?? 0),
               // apyData: {
