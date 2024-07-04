@@ -386,26 +386,30 @@ export const getCoingeckoTokenPrice = async (id: string): Promise<CoingeckoPrice
     )
     .then(res => {
       return {
-        price: res.data[id].usd ?? 0,
-        priceChange: 0
+        price: res.data[id].usd ?? 0
         // price: res.data[0]?.current_price ?? 0,
         // priceChange: res.data[0]?.price_change_percentage_24h ?? 0
       };
     });
 };
 
+
 export const getCoingeckoTokenPrices = async (
   ids: string[]
 ): Promise<Record<string, CoingeckoPriceData>> => {
-  return await Promise.all(ids.map(id => getCoingeckoTokenPrice(id))).then(prices =>
-    prices.reduce(
-      (acc, price, index) => {
-        acc[ids[index]] = price;
-        return acc;
-      },
-      {} as Record<string, CoingeckoPriceData>
+  return await axios
+    .get<CoingeckoApiPriceData[]>(
+      `https://price.market.orai.io/simple/price?vs_currencies=usd&ids=${ids.join(',')}`
     )
-  );
+    .then(res => {
+      return Object.keys(res.data).reduce((acc, token) => {
+        acc[token] = {
+          price: res.data[token].usd ?? 0,
+          priceChange: 1
+        };
+        return acc;
+      }, {} as Record<string, CoingeckoPriceData>);
+    });
 };
 
 export const getCoingeckoTokenPriceV2 = async (id: string): Promise<CoingeckoPriceData> => {
@@ -528,7 +532,7 @@ export type TokenDataOnChain = {
 
 export const getTokenDataByAddresses = async (
   tokens: string[],
-  address: string
+  address?: string
 ): Promise<Record<string, Token>> => {
   const tokenInfos: TokenDataOnChain[] = await SingletonOraiswapV3.getTokensInfo(tokens, address);
 
@@ -1876,7 +1880,7 @@ export const getNetworkStats = async (): Promise<Record<string, PoolSnapshot[]>>
           tokenBNFromBeginning: '4241000000',
           usdValue24: 10.03
         },
-        volumeY: { tokenBNFromBeginning: '27489400000', usdValue24: 0 },
+        volumeY: { tokenBNFromBeginning: '27489400000', usdValue24: 5.34 },
         liquidityX: {
           tokenBNFromBeginning: '352310535',
           usdValue24: 353.367466
@@ -1886,7 +1890,7 @@ export const getNetworkStats = async (): Promise<Record<string, PoolSnapshot[]>>
           usdValue24: 65.527855841
         },
         feeX: { tokenBNFromBeginning: '2120500', usdValue24: 0.005015 },
-        feeY: { tokenBNFromBeginning: '13744700', usdValue24: 0 }
+        feeY: { tokenBNFromBeginning: '13744700', usdValue24: 0.1 }
       }
     ],
     'orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh-orai1lus0f0rhx8s03gdllx2n6vhkmf0536dv57wfge-3000000000-100':
@@ -2128,7 +2132,7 @@ export const getNetworkStats = async (): Promise<Record<string, PoolSnapshot[]>>
             tokenBNFromBeginning: '4241000000',
             usdValue24: 10.03
           },
-          volumeY: { tokenBNFromBeginning: '27489400000', usdValue24: 0 },
+          volumeY: { tokenBNFromBeginning: '27489400000', usdValue24: 5.34 },
           liquidityX: {
             tokenBNFromBeginning: '352310535',
             usdValue24: 353.367466
@@ -2138,7 +2142,7 @@ export const getNetworkStats = async (): Promise<Record<string, PoolSnapshot[]>>
             usdValue24: 65.527855841
           },
           feeX: { tokenBNFromBeginning: '2120500', usdValue24: 0.005015 },
-          feeY: { tokenBNFromBeginning: '13744700', usdValue24: 0 }
+          feeY: { tokenBNFromBeginning: '13744700', usdValue24: 0.1 }
         }
       ],
     'orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh-orai15un8msx3n5zf9ahlxmfeqd2kwa5wm0nrpxer304m9nd5q6qq0g6sku5pdd-500000000-10':
@@ -2380,7 +2384,7 @@ export const getNetworkStats = async (): Promise<Record<string, PoolSnapshot[]>>
             tokenBNFromBeginning: '4241000000',
             usdValue24: 10.03
           },
-          volumeY: { tokenBNFromBeginning: '27489400000', usdValue24: 0 },
+          volumeY: { tokenBNFromBeginning: '27489400000', usdValue24: 5.34 },
           liquidityX: {
             tokenBNFromBeginning: '352310535',
             usdValue24: 353.367466
@@ -2390,7 +2394,7 @@ export const getNetworkStats = async (): Promise<Record<string, PoolSnapshot[]>>
             usdValue24: 65.527855841
           },
           feeX: { tokenBNFromBeginning: '2120500', usdValue24: 0.005015 },
-          feeY: { tokenBNFromBeginning: '13744700', usdValue24: 0 }
+          feeY: { tokenBNFromBeginning: '13744700', usdValue24: 0.1 }
         }
       ],
     'orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh-orai1hn8w33cqvysun2aujk5sv33tku4pgcxhhnsxmvnkfvdxagcx0p8qa4l98q-3000000000-100':
@@ -2632,7 +2636,7 @@ export const getNetworkStats = async (): Promise<Record<string, PoolSnapshot[]>>
             tokenBNFromBeginning: '4241000000',
             usdValue24: 10.03
           },
-          volumeY: { tokenBNFromBeginning: '27489400000', usdValue24: 0 },
+          volumeY: { tokenBNFromBeginning: '27489400000', usdValue24: 5.34 },
           liquidityX: {
             tokenBNFromBeginning: '352310535',
             usdValue24: 353.367466
@@ -2642,7 +2646,7 @@ export const getNetworkStats = async (): Promise<Record<string, PoolSnapshot[]>>
             usdValue24: 65.527855841
           },
           feeX: { tokenBNFromBeginning: '2120500', usdValue24: 0.005015 },
-          feeY: { tokenBNFromBeginning: '13744700', usdValue24: 0 }
+          feeY: { tokenBNFromBeginning: '13744700', usdValue24: 0.1 }
         }
       ]
   };
@@ -2831,16 +2835,4 @@ export const getPoolsFromAdresses = async (
   //       : null
   //   )
   //   .filter(pool => pool !== null) as PoolWithStringKey[];
-};
-
-export const getFullNewTokensData = async (addresses: string[]): Promise<Record<string, Token>> => {
-  const tokens: Record<string, Token> = {
-    orai: ORAI,
-    orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh: USDT,
-    orai1lus0f0rhx8s03gdllx2n6vhkmf0536dv57wfge: ORAIX,
-    orai15un8msx3n5zf9ahlxmfeqd2kwa5wm0nrpxer304m9nd5q6qq0g6sku5pdd: USDC,
-    orai1hn8w33cqvysun2aujk5sv33tku4pgcxhhnsxmvnkfvdxagcx0p8qa4l98q: OCH
-  };
-
-  return tokens;
 };

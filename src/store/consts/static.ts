@@ -144,7 +144,7 @@ export const OCH: Token = {
   symbol: 'OCH',
   address: 'orai1hn8w33cqvysun2aujk5sv33tku4pgcxhhnsxmvnkfvdxagcx0p8qa4l98q',
   decimals: 6,
-  name: 'OCH',
+  name: 'Orchai Token',
   logoURI:
     'https://assets.coingecko.com/coins/images/34236/standard/orchai_logo_white_copy_4x-8_%281%29.png?1704307670',
   coingeckoId: 'och'
@@ -154,7 +154,7 @@ export const USDT: Token = {
   symbol: 'USDT',
   address: 'orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh',
   decimals: 6,
-  name: 'USDT',
+  name: 'USDC',
   logoURI: 'https://assets.coingecko.com/coins/images/325/standard/Tether.png',
   coingeckoId: 'tether'
 };
@@ -173,7 +173,7 @@ export const ORAI: Token = {
   symbol: 'ORAI',
   address: 'orai',
   decimals: 6,
-  name: 'Oraichain Native Token',
+  name: 'Orai Token',
   // logoURI: 'https://assets.coingecko.com/coins/images/12931/standard/orai.png',
   logoURI: OraiIcon,
   coingeckoId: 'oraichain-token'

@@ -110,12 +110,12 @@ export default class SingletonOraiswapV3 {
 
   public static async getTokensInfo(
     tokens: string[],
-    address: string
+    address?: string
   ): Promise<TokenDataOnChain[]> {
     return await Promise.all(
       tokens.map(async token => {
         if (token.includes('ibc') || token == 'orai') {
-          const balance = this._dex ? BigInt(await this.queryBalance(address, token)) : BigInt(0);
+          const balance = address ? BigInt(await this.queryBalance(address, token)) : 0n;
           return {
             address: token,
             balance: balance,
@@ -126,7 +126,7 @@ export default class SingletonOraiswapV3 {
         }
 
         const queryClient = new OraiswapTokenQueryClient(this.dex.client, token);
-        const balance = await queryClient.balance({ address: address });
+        const balance = address ? await queryClient.balance({ address: address }) : { balance: '0' };
         const tokenInfo = await queryClient.tokenInfo();
         const symbol = tokenInfo.symbol;
         const decimals = tokenInfo.decimals;

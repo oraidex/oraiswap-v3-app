@@ -2,7 +2,7 @@ import React from 'react'
 import { theme } from '@static/theme'
 import { useStyles } from './style'
 import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
-import { formatNumbers, showPrefix } from '@store/consts/utils'
+import { PERCENTAGE_SCALE, formatNumbers, parseFeeToPathFee, printBigint, showPrefix } from '@store/consts/utils'
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp'
 
@@ -123,7 +123,7 @@ const PoolListItem: React.FC<IProps> = ({
               </Tooltip>
             </Typography>
           ) : null} */}
-          <Typography>{fee}%</Typography>
+          <Typography>{+printBigint(BigInt(fee), PERCENTAGE_SCALE - 2)}%</Typography>
           <Typography>{`$${formatNumbers()(volume.toString())}${showPrefix(volume)}`}</Typography>
           <Typography>{`$${formatNumbers()(TVL.toString())}${showPrefix(TVL)}`}</Typography>
         </Grid>

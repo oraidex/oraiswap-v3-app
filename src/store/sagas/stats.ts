@@ -5,31 +5,36 @@ import { actions as poolsActions } from '@store/reducers/pools';
 import { Token, TokenPriceData } from '@store/consts/static';
 import {
   getCoingeckoTokenPrices,
-  getFullNewTokensData,
   getNetworkStats,
   getPoolsAPY,
   getPoolsFromAdresses,
+  getTokenDataByAddresses,
   PoolWithStringKey
 } from '@store/consts/utils';
 
 export function* getStats(): Generator {
   try {
+    // get pool data snapshoted
     const data = yield* call(getNetworkStats); // pookey -> poolData[]
-    const poolsApy = yield* call(getPoolsAPY);
+    // get apy result from data snapshoted
+    // const poolsApy = yield* call(getPoolsAPY);
 
-    console.log({ data, poolsApy })
+    // console.log({ data, poolsApy })
 
+    // get all pool data aggregated
     const allPoolsData = yield* call(getPoolsFromAdresses, Object.keys(data));
 
+    // transform aggregated pool data to object: poolKey in string -> poolData
     const poolsDataObject: Record<string, PoolWithStringKey> = {};
     allPoolsData.forEach(pool => {
       poolsDataObject[pool.pookKey.toString()] = pool;
     });
 
+    // get all tokens we have
     let allTokens = yield* select(tokens);
 
+    // take unknown tokens from all pools
     const unknownTokens = new Set<string>();
-
     allPoolsData.forEach(pool => {
       if (!allTokens[pool.tokenX.toString()]) {
         unknownTokens.add(pool.tokenX);
@@ -40,10 +45,14 @@ export function* getStats(): Generator {
       }
     });
 
-    const newTokens = yield* call(getFullNewTokensData, [...unknownTokens]);
+    // get full data for unknown tokens
+    const newTokens = yield* call(getTokenDataByAddresses, [...unknownTokens]);
     yield* put(poolsActions.addTokens(newTokens));
-    allTokens = yield* select(tokens);
 
+    allTokens = yield* select(tokens);
+    // console.log({ allTokens });
+
+    // prepare price for each tokens
     const preparedTokens: Record<string, Required<Token>> = {};
     Object.entries(allTokens).forEach(([key, val]) => {
       if (typeof val.coingeckoId !== 'undefined') {
@@ -51,12 +60,16 @@ export function* getStats(): Generator {
       }
     });
 
+    // console.log({preparedTokens})
+
+    // get token prices
     let tokensPricesData: Record<string, TokenPriceData> = {};
-    const fromJupiter = false;
     tokensPricesData = yield* call(
       getCoingeckoTokenPrices,
       Object.values(preparedTokens).map(token => token.coingeckoId)
     );
+
+    // console.log({ tokensPricesData });
 
     const volume24 = {
       value: 0,
@@ -84,18 +97,16 @@ export function* getStats(): Generator {
         .map(snaps => +snaps[snaps.length - 1].timestamp)
     );
 
+    // console.log({ lastTimestamp });
     Object.entries(data).forEach(([address, snapshots]) => {
+      console.log('address', address, snapshots.length)
       if (!poolsDataObject[address]) {
         return;
       }
 
-      const tokenXId = fromJupiter
-        ? preparedTokens?.[poolsDataObject[address].tokenX.toString()]?.address.toString() ?? ''
-        : preparedTokens?.[poolsDataObject[address].tokenX.toString()]?.coingeckoId ?? '';
+      const tokenXId = preparedTokens?.[poolsDataObject[address].tokenX.toString()]?.coingeckoId ?? '';
 
-      const tokenYId = fromJupiter
-        ? preparedTokens?.[poolsDataObject[address].tokenY.toString()]?.address.toString() ?? ''
-        : preparedTokens?.[poolsDataObject[address].tokenY.toString()]?.coingeckoId ?? '';
+      const tokenYId = preparedTokens?.[poolsDataObject[address].tokenY.toString()]?.coingeckoId ?? '';
 
       if (!tokensDataObject[poolsDataObject[address].tokenX.toString()]) {
         tokensDataObject[poolsDataObject[address].tokenX.toString()] = {
@@ -124,8 +135,8 @@ export function* getStats(): Generator {
           tokenX: poolsDataObject[address].tokenX,
           tokenY: poolsDataObject[address].tokenY,
           // TODO: hard code decimals
-          fee: Number(poolsDataObject[address].fee / 1000000n),
-          apy: poolsApy[address] ?? 0,
+          fee: Number(poolsDataObject[address].fee),
+          apy: 0, // TODO: calculate apy
           poolAddress: address
         });
         return;
@@ -135,6 +146,8 @@ export function* getStats(): Generator {
       const tokenY = allTokens[poolsDataObject[address].tokenY.toString()];
 
       const lastSnapshot = snapshots[snapshots.length - 1];
+
+      console.log('token: ', tokenX.coingeckoId, tokenY.coingeckoId, lastSnapshot, lastTimestamp);
 
       tokensDataObject[tokenX.address.toString()].volume24 +=
         lastSnapshot.timestamp === lastTimestamp ? lastSnapshot.volumeX.usdValue24 : 0;
@@ -154,8 +167,8 @@ export function* getStats(): Generator {
             : 0,
         tokenX: poolsDataObject[address].tokenX,
         tokenY: poolsDataObject[address].tokenY,
-        fee: Number(poolsDataObject[address].fee / 1000000n),
-        apy: poolsApy[address] ?? 0,
+        fee: Number(poolsDataObject[address].fee),
+        apy: 0, // TODO: calculate apy
         poolAddress: address
       });
 

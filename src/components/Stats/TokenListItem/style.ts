@@ -5,7 +5,8 @@ import { makeStyles } from 'tss-react/mui';
 export const useStyles = makeStyles()((theme: Theme) => ({
   container: {
     display: 'grid',
-    gridTemplateColumns: '5% 35% 15% 15% 15% 15%',
+    gridTemplateColumns: '5% 45% 15% 20% auto',
+    // gridTemplateColumns: 'repeat(5, 1fr)',
     padding: '18px 0 ',
     backgroundColor: colors.oraidex.component,
     borderBottom: `1px solid ${colors.oraidex.light}`,
@@ -19,7 +20,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     },
 
     [theme.breakpoints.down('xs')]: {
-      gridTemplateColumns: '15% 25% 35% 25%'
+      gridTemplateColumns: '28% 15% 30% 25%'
     }
   },
 

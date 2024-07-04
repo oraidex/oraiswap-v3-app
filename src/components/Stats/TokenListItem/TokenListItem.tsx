@@ -65,16 +65,16 @@ const TokenListItem: React.FC<IProps> = ({
           <Grid className={classes.tokenName}>
             {!isXDown && <img src={icon} alt='Token icon'></img>}
             <Typography>
-              {hideName ? symbol : name}
-              {!hideName && <span className={classes.tokenSymbol}>{` (${symbol})`}</span>}
+              {symbol}
+              {/* {!hideName && <span className={classes.tokenSymbol}>{` (${symbol})`}</span>} */}
             </Typography>
           </Grid>
           <Typography>{`~$${formatNumbers()(price.toString())}${showPrefix(price)}`}</Typography>
-          {!hideName && (
+          {/* {!hideName && (
             <Typography style={{ color: isNegative ? colors.oraidex.Error : colors.green.main }}>
               {isNegative ? `${priceChange.toFixed(2)}%` : `+${priceChange.toFixed(2)}%`}
             </Typography>
-          )}
+          )} */}
           <Typography>{`$${formatNumbers()(volume.toString())}${showPrefix(volume)}`}</Typography>
           <Typography>{`$${formatNumbers()(TVL.toString())}${showPrefix(TVL)}`}</Typography>
         </Grid>
@@ -120,7 +120,7 @@ const TokenListItem: React.FC<IProps> = ({
               <ArrowDropDownIcon className={classes.icon} />
             ) : null}
           </Typography>
-          {!hideName && (
+          {/* {!hideName && (
             <Typography
               style={{ cursor: 'pointer' }}
               onClick={() => {
@@ -137,7 +137,7 @@ const TokenListItem: React.FC<IProps> = ({
                 <ArrowDropDownIcon className={classes.icon} />
               ) : null}
             </Typography>
-          )}
+          )} */}
           <Typography
             style={{ cursor: 'pointer' }}
             onClick={() => {
