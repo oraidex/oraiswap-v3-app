@@ -206,6 +206,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     borderRadius: 11,
     gap: 4,
     height: 40,
+    minWidth: 200,
     width: 'fit-content',
     paddingInline: 10,
     marginRight: 8,
