@@ -38,7 +38,7 @@ const TokenListItem: React.FC<IProps> = ({
   displayType,
   itemNumber = 0,
   icon = 'BTCIcon',
-  name = 'Bitcoin',
+  // name = 'Bitcoin',
   symbol = 'BTCIcon',
   price = 0,
   priceChange = 0,
