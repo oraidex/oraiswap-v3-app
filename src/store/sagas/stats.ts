@@ -6,7 +6,6 @@ import { Token, TokenPriceData } from '@store/consts/static';
 import {
   getCoingeckoTokenPrices,
   getNetworkStats,
-  getPoolsAPY,
   getPoolsFromAdresses,
   getTokenDataByAddresses,
   PoolWithStringKey
@@ -19,15 +18,13 @@ export function* getStats(): Generator {
     // get apy result from data snapshoted
     // const poolsApy = yield* call(getPoolsAPY);
 
-    // console.log({ data, poolsApy })
-
     // get all pool data aggregated
     const allPoolsData = yield* call(getPoolsFromAdresses, Object.keys(data));
 
     // transform aggregated pool data to object: poolKey in string -> poolData
     const poolsDataObject: Record<string, PoolWithStringKey> = {};
     allPoolsData.forEach(pool => {
-      poolsDataObject[pool.pookKey.toString()] = pool;
+      poolsDataObject[pool.poolKey.toString()] = pool;
     });
 
     // get all tokens we have
