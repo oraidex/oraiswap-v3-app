@@ -194,7 +194,7 @@ export const PositionItem: React.FC<IPositionItem> = ({
         <Grid
           container
           item
-          className={classes.minMax}
+          className={classes.mdInfoLiquidity}
           justifyContent='center'
           direction={'column'}
           // alignItems='center'
@@ -206,7 +206,7 @@ export const PositionItem: React.FC<IPositionItem> = ({
               className={classes.iconsAndNames}
               alignItems='center'
               wrap='nowrap'>
-              <Typography className={classes.names}>
+              <Typography className={classes.namesRateLiquidity}>
                 Liquidity
                 <Typography className={classNames(classes.greyText, classes.label)}>
                   {liquidity == undefined ? (
@@ -222,7 +222,7 @@ export const PositionItem: React.FC<IPositionItem> = ({
         <Grid
           container
           item
-          className={classes.minMax}
+          className={classes.mdInfoRate}
           justifyContent='center'
           direction={'column'}
           // alignItems='center'
@@ -234,10 +234,10 @@ export const PositionItem: React.FC<IPositionItem> = ({
               className={classes.iconsAndNames}
               alignItems='center'
               wrap='nowrap'>
-              <Typography className={classes.names}>
+              <Typography className={classes.namesRateLiquidity}>
                 Rate
                 <Typography className={classNames(classes.greyText, classes.label)}>
-                  1 {tokenXName} ≈ <strong>{currentPrice.toFixed(6)} </strong>
+                  1 {tokenXName} ≈ <strong>{currentPrice.toFixed(6)} </strong> {tokenYName}
                 </Typography>
               </Typography>
             </Grid>

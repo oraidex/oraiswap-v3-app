@@ -65,6 +65,28 @@ export const useStyles = makeStyles()((theme: Theme) => ({
       lineHeight: '25px'
     }
   },
+
+  namesRateLiquidity: {
+    textOverflow: 'ellipsis',
+    overflow: 'hidden',
+    ...typography.heading3,
+    color: colors.oraidex.neutralText,
+    lineHeight: '40px',
+    whiteSpace: 'nowrap',
+    fontSize: '18px',
+
+    [theme.breakpoints.down('lg')]: {
+      ...typography.heading2
+    },
+    [theme.breakpoints.down('md')]: {
+      lineHeight: '32px',
+      width: 'unset'
+    },
+    [theme.breakpoints.down('sm')]: {
+      ...typography.heading5,
+      lineHeight: '25px'
+    }
+  },
   infoText: {
     ...typography.body1,
     fontWeight: 500,
@@ -165,6 +187,37 @@ export const useStyles = makeStyles()((theme: Theme) => ({
       marginTop: 8
     }
   },
+  mdInfoLiquidity: {
+    borderRadius: 11,
+    gap: 4,
+    height: 40,
+    width: 'fit-content',
+    paddingInline: 10,
+    marginRight: 8,
+
+    [theme.breakpoints.down('sm')]: {
+      width: '100%',
+      marginRight: 0,
+      paddingInline: 0,
+      marginTop: 8
+    }
+  },
+  mdInfoRate: {
+    borderRadius: 11,
+    gap: 4,
+    height: 40,
+    minWidth: 200,
+    width: 'fit-content',
+    paddingInline: 10,
+    marginRight: 8,
+
+    [theme.breakpoints.down('sm')]: {
+      width: '100%',
+      marginRight: 0,
+      paddingInline: 0,
+      marginTop: 8
+    }
+  },
   value: {
     background: colors.oraidex.light,
     borderRadius: 11,
@@ -193,7 +246,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   },
   mdTop: {
     width: 'fit-content',
-
+    minWidth: '150px',
     [theme.breakpoints.down('md')]: {
       width: '100%',
       justifyContent: 'space-between'

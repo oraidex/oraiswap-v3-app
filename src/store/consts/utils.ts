@@ -26,7 +26,6 @@ import {
   Pool,
   PoolKey,
   FeeTier,
-  // Position,
   SqrtPrice,
   TokenAmount,
   positionToTick,
@@ -37,9 +36,20 @@ import {
   Position,
   LiquidityTick,
   TokenAmounts,
-  SwapHop
+  SwapHop,
+  FeeGrowth
 } from '@wasm';
-import { SWAP_HOPS_CACHE, Token, TokenPriceData, U128MAX } from './static';
+import {
+  OCH,
+  ORAI,
+  ORAIX,
+  SWAP_HOPS_CACHE,
+  Token,
+  TokenPriceData,
+  U128MAX,
+  USDC,
+  USDT
+} from './static';
 import { PoolWithPoolKey } from '@/sdk/OraiswapV3.types';
 import { Coin } from '@cosmjs/proto-signing';
 import { PayloadAction } from '@reduxjs/toolkit';
@@ -375,11 +385,29 @@ export const getCoingeckoTokenPrice = async (id: string): Promise<CoingeckoPrice
     )
     .then(res => {
       return {
-        price: res.data[id].usd ?? 0,
-        priceChange: 0
+        price: res.data[id].usd ?? 0
         // price: res.data[0]?.current_price ?? 0,
         // priceChange: res.data[0]?.price_change_percentage_24h ?? 0
       };
+    });
+};
+
+
+export const getCoingeckoTokenPrices = async (
+  ids: string[]
+): Promise<Record<string, CoingeckoPriceData>> => {
+  return await axios
+    .get<CoingeckoApiPriceData[]>(
+      `https://price.market.orai.io/simple/price?vs_currencies=usd&ids=${ids.join(',')}`
+    )
+    .then(res => {
+      return Object.keys(res.data).reduce((acc, token) => {
+        acc[token] = {
+          price: res.data[token].usd ?? 0,
+          priceChange: 1
+        };
+        return acc;
+      }, {} as Record<string, CoingeckoPriceData>);
     });
 };
 
@@ -503,7 +531,7 @@ export type TokenDataOnChain = {
 
 export const getTokenDataByAddresses = async (
   tokens: string[],
-  address: string
+  address?: string
 ): Promise<Record<string, Token>> => {
   const tokenInfos: TokenDataOnChain[] = await SingletonOraiswapV3.getTokensInfo(tokens, address);
 
@@ -1590,4 +1618,71 @@ export const genMsgAllowance = (datas: string[]) => {
 export const getPoolLiquidities = async (pools: PoolWithPoolKey[]): Promise<Record<string, number>> => {
   const res = await SingletonOraiswapV3.getPoolLiquidities(pools);
   return res;
+};
+
+export interface SnapshotValueData {
+  tokenBNFromBeginning: string;
+  usdValue24: number;
 }
+
+export interface PoolSnapshot {
+  timestamp: number;
+  volumeX: SnapshotValueData;
+  volumeY: SnapshotValueData;
+  liquidityX: SnapshotValueData;
+  liquidityY: SnapshotValueData;
+  feeX: SnapshotValueData;
+  feeY: SnapshotValueData;
+}
+
+export const getNetworkStats = async (): Promise<Record<string, PoolSnapshot[]>> => {
+  const { data } = await axios.get<Record<string, PoolSnapshot[]>>(
+    `https://api-staging.oraidex.io/v1/pool-v3/status`
+  )
+
+  return data;
+};
+
+// export const getPoolsAPY = async (): Promise<Record<string, number>> => {
+//   try {
+//     // const { data } = await axios.get<Record<string, number>>(
+//     //   `https://stats.invariant.app/pool_apy/${name}`
+//     // )
+
+//     const mockData: Record<string, number> = {
+//       'orai-orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh-3000000000-100': 12.34,
+//       'orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh-orai1lus0f0rhx8s03gdllx2n6vhkmf0536dv57wfge-3000000000-100': 34.56,
+//       'orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh-orai15un8msx3n5zf9ahlxmfeqd2kwa5wm0nrpxer304m9nd5q6qq0g6sku5pdd-500000000-10': 56.78,
+//       'orai12hzjxfh77wl572gdzct2fxv2arxcwh6gykc7qh-orai1hn8w33cqvysun2aujk5sv33tku4pgcxhhnsxmvnkfvdxagcx0p8qa4l98q-3000000000-100': 12.67
+//     };
+
+//     return mockData;
+//   } catch (_err) {
+//     return {};
+//   }
+// };
+
+export interface PoolWithStringKey extends PoolStructure {
+  poolKey: string;
+}
+
+export interface PoolStructure {
+  tokenX: string;
+  tokenY: string;
+  fee: bigint;
+}
+
+export const getPoolsFromAdresses = async (): Promise<PoolWithStringKey[]> => {
+  const pools = await SingletonOraiswapV3.getPools();
+
+  const poolWithStringKey: PoolWithStringKey[] = pools.map((pool) => {
+    return {
+      tokenX: pool.pool_key.token_x,
+      tokenY: pool.pool_key.token_y,
+      fee: BigInt(pool.pool_key.fee_tier.fee),
+      poolKey: poolKeyToString(pool.pool_key)
+    };
+  });
+
+  return poolWithStringKey;
+};

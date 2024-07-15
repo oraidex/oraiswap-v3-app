@@ -76,7 +76,7 @@ export const WrappedPoolList: React.FC = () => {
     dispatch(actions.getAllPoolData());
   }, [window.walletType, walletAddress]);
 
-  console.log('first')
+  // console.log('first')
   useEffect(() => {
     if (localStorage.getItem('LIQUIDITIES') != null && Object.keys(liquidities).length === 0) {
       const liquidities = JSON.parse(localStorage.getItem('LIQUIDITIES') || '{}');

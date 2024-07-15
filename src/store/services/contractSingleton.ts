@@ -8,18 +8,13 @@ import {
   PoolKey,
   LiquidityTick,
   positionToTick,
-  calculateAmountDelta,
   calculateSqrtPrice,
-  Position,
-  Pool
 } from '@wasm';
 import {
   CHUNK_SIZE,
   LIQUIDITY_TICKS_LIMIT,
   MAX_TICKMAP_QUERY_SIZE,
   TokenDataOnChain,
-  getAllLiquidityTicks,
-  getCoingeckoTokenPrice,
   getCoingeckoTokenPriceV2,
   parse,
   poolKeyToString
@@ -115,12 +110,12 @@ export default class SingletonOraiswapV3 {
 
   public static async getTokensInfo(
     tokens: string[],
-    address: string
+    address?: string
   ): Promise<TokenDataOnChain[]> {
     return await Promise.all(
       tokens.map(async token => {
         if (token.includes('ibc') || token == 'orai') {
-          const balance = this._dex ? BigInt(await this.queryBalance(address, token)) : BigInt(0);
+          const balance = address ? BigInt(await this.queryBalance(address, token)) : 0n;
           return {
             address: token,
             balance: balance,
@@ -131,7 +126,7 @@ export default class SingletonOraiswapV3 {
         }
 
         const queryClient = new OraiswapTokenQueryClient(this.dex.client, token);
-        const balance = await queryClient.balance({ address: address });
+        const balance = address ? await queryClient.balance({ address: address }) : { balance: '0' };
         const tokenInfo = await queryClient.tokenInfo();
         const symbol = tokenInfo.symbol;
         const decimals = tokenInfo.decimals;
@@ -544,14 +539,12 @@ function calculateLiquidityForRanges(
   const rangeLiquidity = [];
 
   liquidityChanges.forEach(change => {
-    // Update current liquidity based on the change at this tick
     let liquidityChange = change.liquidity_change;
     if (!change.sign) {
       liquidityChange = -liquidityChange;
     }
     currentLiquidity += liquidityChange;
 
-    // Update the liquidity for the ranges that include this tick
     tickRanges.forEach((range, index) => {
       if (change.index >= range.lowerTick && change.index < range.upperTick) {
         if (!rangeLiquidity[index]) {
