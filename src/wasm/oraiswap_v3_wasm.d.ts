@@ -101,6 +101,19 @@ export function checkTick(tick_index: number, tick_spacing: number): void;
 */
 export function calculateMinAmountOut(expected_amount_out: TokenAmount, slippage: Percentage): TokenAmount;
 /**
+* @param {number} tick
+* @param {number} tick_spacing
+* @returns {PositionResult}
+*/
+export function tickToPositionJs(tick: number, tick_spacing: number): PositionResult;
+/**
+* @param {number} chunk
+* @param {number} bit
+* @param {number} tick_spacing
+* @returns {number}
+*/
+export function positionToTick(chunk: number, bit: number, tick_spacing: number): number;
+/**
 * @returns {bigint}
 */
 export function getGlobalMaxSqrtPrice(): bigint;
@@ -213,6 +226,18 @@ export function newFeeTier(fee: Percentage, tick_spacing: number): FeeTier;
 * @returns {PoolKey}
 */
 export function newPoolKey(token_0: string, token_1: string, fee_tier: FeeTier): PoolKey;
+/**
+* @param {Tickmap} tickmap
+* @param {FeeTier} fee_tier
+* @param {Pool} pool
+* @param {LiquidityTickVec} ticks
+* @param {boolean} x_to_y
+* @param {TokenAmount} amount
+* @param {boolean} by_amount_in
+* @param {SqrtPrice} sqrt_price_limit
+* @returns {CalculateSwapResult}
+*/
+export function simulateSwap(tickmap: Tickmap, fee_tier: FeeTier, pool: Pool, ticks: LiquidityTickVec, x_to_y: boolean, amount: TokenAmount, by_amount_in: boolean, sqrt_price_limit: SqrtPrice): CalculateSwapResult;
 /**
 * @returns {bigint}
 */
@@ -351,31 +376,6 @@ export function getTokenAmountDenominator(): bigint;
 */
 export function toTokenAmount(integer: bigint, scale?: number): bigint;
 /**
-* @param {Tickmap} tickmap
-* @param {FeeTier} fee_tier
-* @param {Pool} pool
-* @param {any} ticks
-* @param {boolean} x_to_y
-* @param {TokenAmount} amount
-* @param {boolean} by_amount_in
-* @param {SqrtPrice} sqrt_price_limit
-* @returns {CalculateSwapResult}
-*/
-export function simulateSwap(tickmap: Tickmap, fee_tier: FeeTier, pool: Pool, ticks: any, x_to_y: boolean, amount: TokenAmount, by_amount_in: boolean, sqrt_price_limit: SqrtPrice): CalculateSwapResult;
-/**
-* @param {number} tick
-* @param {number} tick_spacing
-* @returns {PositionResult}
-*/
-export function tickToPositionJs(tick: number, tick_spacing: number): PositionResult;
-/**
-* @param {number} chunk
-* @param {number} bit
-* @param {number} tick_spacing
-* @returns {number}
-*/
-export function positionToTick(chunk: number, bit: number, tick_spacing: number): number;
-/**
 */
 export enum SwapError {
   NotAdmin = 0,
@@ -421,6 +421,15 @@ export interface SwapResult {
     amount_in: TokenAmount;
     amount_out: TokenAmount;
     fee_amount: TokenAmount;
+}
+
+export interface Tickmap {
+    bitmap: Map<bigint,bigint>;
+}
+
+export interface PositionResult {
+    chunk: number;
+    bit: number;
 }
 
 export interface SwapHop {
@@ -510,6 +519,8 @@ export interface LiquidityTick {
     sign: boolean;
 }
 
+export type LiquidityTickVec = LiquidityTick[];
+
 export type FeeGrowth = bigint;
 
 export type FixedPoint = bigint;
@@ -525,15 +536,6 @@ export type SecondsPerLiquidity = bigint;
 export type SqrtPrice = bigint;
 
 export type TokenAmount = bigint;
-
-export interface Tickmap {
-    bitmap: Map<bigint,bigint>;
-}
-
-export interface PositionResult {
-    chunk: number;
-    bit: number;
-}
 
 export interface CalculateSwapResult {
     amount_in: TokenAmount;

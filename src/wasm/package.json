@@ -1,5 +1,6 @@
 {
   "name": "oraiswap-v3-wasm",
+  "type": "module",
   "collaborators": [
     "Oraichain Labs"
   ],
@@ -15,7 +16,6 @@
     "oraiswap_v3_wasm_bg.js",
     "oraiswap_v3_wasm.d.ts"
   ],
-  "module": "oraiswap_v3_wasm.js",
   "main": "oraiswap_v3_wasm.js",
   "homepage": "https://orai.io",
   "types": "oraiswap_v3_wasm.d.ts",
