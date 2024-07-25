@@ -63,6 +63,8 @@ export const PoolList: React.FC<IProps> = ({
     setPage(page);
   };
 
+  // console.log(liquidity);
+
   const paginator = (currentPage: number) => {
     const page = currentPage || 1;
     const perPage = itemsPerPage || 10;

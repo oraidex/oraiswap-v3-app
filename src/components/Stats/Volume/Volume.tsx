@@ -54,7 +54,7 @@ const Volume: React.FC<StatsInterface> = ({ percentVolume, volume, data, classNa
                   classes.volumeStatusHeader,
                   isLower ? classes.volumeLow : classes.volumeUp
                 )}>
-                {percentVolume < 0 ? percentVolume.toFixed(2) : `+${percentVolume.toFixed(2)}`}%
+                {percentVolume == Infinity ? `+9999` :(percentVolume < 0 ? percentVolume.toFixed(2) : `+${percentVolume.toFixed(2)}`)}%
               </Typography>
             </Box>
           </Box>

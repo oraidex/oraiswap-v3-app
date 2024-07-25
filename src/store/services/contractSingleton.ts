@@ -244,9 +244,11 @@ export default class SingletonOraiswapV3 {
     }
     const tickLimit = LIQUIDITY_TICKS_LIMIT;
     const promises: Promise<LiquidityTick[]>[] = [];
+    const client = await CosmWasmClient.connect(import.meta.env.VITE_CHAIN_RPC_ENDPOINT);
+    this._dexQuerier = new OraiswapV3QueryClient(client, defaultState.dexAddress);
     for (let i = 0; i < tickIndexes.length; i += tickLimit) {
       promises.push(
-        this.dex
+        this.dexQuerier
           .liquidityTicks({
             poolKey,
             tickIndexes: tickIndexes.slice(i, i + tickLimit).map(Number)

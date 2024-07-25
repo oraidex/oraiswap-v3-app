@@ -106,6 +106,7 @@ export function* fetchAllPoolData(): Generator {
 
     if (pools) {
       yield* put(actions.setAllPools(pools as any));
+      yield* put(actions.getPoolKeys());
     } else {
       yield* put(actions.setAllPools([]));
     }
@@ -168,6 +169,7 @@ export function* getLiquidityValue(): Generator {
 }
 
 export function* getLiquidityValueForPools(): Generator {
+  // console.log("call this")
   yield* put(actions.setIsLoadingPoolLiquidities(true));
   const poolList = yield* select(pools);
   const poolArray = Object.values(poolList);

@@ -40,9 +40,9 @@ const VolumeBar: React.FC<Iprops> = ({
               classes.tokenContent,
               percentVolume < 0 ? classes.tokenLow : classes.tokenUp
             )}>
-            {percentVolume < 0
+            {percentVolume === Infinity ? '(+9999%)' :(percentVolume < 0
               ? `(${percentVolume.toFixed(2)}%)`
-              : `(+${percentVolume.toFixed(2)}%)`}
+              : `(+${percentVolume.toFixed(2)}%)`)}
           </Typography>
         )}
       </Box>
@@ -74,7 +74,7 @@ const VolumeBar: React.FC<Iprops> = ({
               classes.tokenContent,
               percentFees < 0 ? classes.tokenLow : classes.tokenUp
             )}>
-            {percentFees < 0 ? `(${percentFees.toFixed(2)}%)` : `(+${percentFees.toFixed(2)}%)`}
+            {percentFees === Infinity ? '(+9999%)' : (percentFees < 0 ? `(${percentFees.toFixed(2)}%)` : `(+${percentFees.toFixed(2)}%)`)}
           </Typography>
         )}
       </Box>

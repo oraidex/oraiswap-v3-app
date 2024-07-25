@@ -74,7 +74,8 @@ export const WrappedPoolList: React.FC = () => {
 
   useEffect(() => {
     dispatch(actions.getAllPoolData());
-  }, [window.walletType, walletAddress]);
+    // console.log("get all pool data")
+  }, []);
 
   // console.log('first')
   useEffect(() => {
@@ -84,6 +85,7 @@ export const WrappedPoolList: React.FC = () => {
       dispatch(actions.setPoolLiquidities(liquidities));
       dispatch(actions.setLiquidityValue(liquidity));
       dispatch(actions.setIsLoadingPoolLiquidities(true));
+      // console.log("set liquidity")
     }
   }, []);
 
