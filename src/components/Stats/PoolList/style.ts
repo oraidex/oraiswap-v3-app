@@ -1,5 +1,5 @@
-import { colors } from '@static/theme'
-import { makeStyles } from 'tss-react/mui'
+import { colors, theme } from '@static/theme';
+import { makeStyles } from 'tss-react/mui';
 
 export const useStyles = makeStyles()(() => ({
   container: {
@@ -10,5 +10,15 @@ export const useStyles = makeStyles()(() => ({
   },
   pagination: {
     padding: '20px 0 10px 0'
+  },
+  listWrapper: {
+    [theme.breakpoints.down('md')]: {
+      overflowX: 'scroll'
+    }
+  },
+  inner: {
+    [theme.breakpoints.down('md')]: {
+      minWidth: 576
+    }
   }
-}))
+}));

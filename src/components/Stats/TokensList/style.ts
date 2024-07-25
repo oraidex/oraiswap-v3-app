@@ -1,4 +1,4 @@
-import { colors } from '@static/theme';
+import { colors, theme } from '@static/theme';
 import { makeStyles } from 'tss-react/mui';
 
 export const useStyles = makeStyles()(() => ({
@@ -13,6 +13,16 @@ export const useStyles = makeStyles()(() => ({
     display: 'flex',
     justifyContent: 'center',
     marginBlock: 10
+  },
+  listWrapper: {
+    [theme.breakpoints.down('md')]: {
+      overflowX: 'scroll'
+    }
+  },
+  inner: {
+    [theme.breakpoints.down('md')]: {
+      minWidth: 576
+    }
   }
 }));
 

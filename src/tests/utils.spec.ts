@@ -1,40 +1,40 @@
-import { parse } from '@store/consts/utils'
-import { positionToTick, LiquidityTick } from '@wasm'
+import { MIN_SQRT_PRICE, deserializeTickmap, parse } from '@store/consts/utils';
+import { positionToTick, LiquidityTick, simulateSwap, CalculateSwapResult } from '@wasm';
 
 describe('utils', () => {
   it('test postion to tick', async () => {
-    const tickSpacing = 1
+    const tickSpacing = 1;
 
     const bitmap = {
       3465: 281474976710656n,
       3466: 16n
-    }
+    };
 
-    const ticks: number[] = []
+    const ticks: number[] = [];
 
     Object.entries(bitmap).forEach(([chunkIndex, chunk]) => {
       for (let i = 0; i < 64; i++) {
         if ((chunk & (1n << BigInt(i))) != 0n) {
-          const tickIndex = positionToTick(Number(chunkIndex), i, tickSpacing)
-          ticks.push(Number(tickIndex.toString()))
+          const tickIndex = positionToTick(Number(chunkIndex), i, tickSpacing);
+          ticks.push(Number(tickIndex.toString()));
         }
       }
-    })
+    });
 
-    expect(ticks).toEqual([-10, 10])
-  })
+    expect(ticks).toEqual([-10, 10]);
+  });
 
   it('test parse', async () => {
     const liquidityTick: LiquidityTick = parse({
       index: 1,
       sign: true,
       liquidity_change: '10000'
-    })
+    });
 
     expect(liquidityTick).toEqual({
       index: 1,
       sign: true,
       liquidity_change: 10000n
-    })
-  })
-})
+    });
+  });
+});
