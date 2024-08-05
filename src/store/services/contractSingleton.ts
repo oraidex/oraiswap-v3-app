@@ -16,6 +16,7 @@ import {
   MAX_TICKMAP_QUERY_SIZE,
   TokenDataOnChain,
   getCoingeckoTokenPriceV2,
+  isNativeToken,
   parse,
   poolKeyToString
   // parse
@@ -23,6 +24,41 @@ import {
 import { ArrayOfTupleOfUint16AndUint64, PoolWithPoolKey } from '@/sdk/OraiswapV3.types';
 import { defaultState } from '@store/reducers/connection';
 import { FAUCET_LIST_TOKEN } from '@store/consts/static';
+import { oraichainTokens } from "@oraichain/oraidex-common/build/token.js";
+
+export interface TokenData {
+  address: string;
+  symbol: string;
+  coingeckoId?: string;
+  decimals: number;
+}
+
+export const MAINNET_TOKENS = oraichainTokens.reduce((acc, cur) => {
+  return [
+    ...acc,
+    {
+      symbol: cur.name,
+      coinGeckoId: cur.coinGeckoId,
+      decimals: cur.decimals,
+      address: cur.contractAddress || cur.denom
+    }
+  ];
+}, []);
+
+export const getTokensData = async (): Promise<Record<string, TokenData>> => {
+  const tokensObj: Record<string, TokenData> = {};
+
+  (MAINNET_TOKENS as TokenData[]).forEach((token) => {
+    tokensObj[token.address] = {
+      address: token.address,
+      decimals: token.decimals,
+      coingeckoId: (token as any).coinGeckoId as any,
+      symbol: token?.symbol
+    };
+  });
+
+  return tokensObj;
+};
 
 export const assert = (condition: boolean, message?: string) => {
   if (!condition) {
@@ -114,7 +150,7 @@ export default class SingletonOraiswapV3 {
   ): Promise<TokenDataOnChain[]> {
     return await Promise.all(
       tokens.map(async token => {
-        if (token.includes('ibc') || token == 'orai') {
+        if (isNativeToken(token)) {
           const balance = address ? BigInt(await this.queryBalance(address, token)) : 0n;
           return {
             address: token,

@@ -1274,7 +1274,7 @@ export const positionList = async (ownerId: string): Promise<Position[]> => {
 };
 
 export const isNativeToken = (token: string): boolean => {
-  return token === 'orai' || token.includes('ibc');
+  return token === 'orai' || token.includes('ibc') || token.includes('factory');
 };
 
 export const approveToken = async (
@@ -1637,7 +1637,7 @@ export interface PoolSnapshot {
 
 export const getNetworkStats = async (): Promise<Record<string, PoolSnapshot[]>> => {
   const { data } = await axios.get<Record<string, PoolSnapshot[]>>(
-    `https://api-staging.oraidex.io/v1/pool-v3/status`
+    `https://api.oraidex.io/v1/pool-v3/status`
   )
 
   return data;

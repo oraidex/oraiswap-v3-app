@@ -7,15 +7,15 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     marginTop: 32,
     height: '100%',
     position: 'relative',
-    '& g > text': {
-      stroke: 'none',
-      fill: '#A9B6BF!important',
-      fontFamily: 'IBM Plex Sans!important',
+    // '& g > text': {
+    //   stroke: 'none',
+    //   fill: '#A9B6BF!important',
+    //   fontFamily: 'IBM Plex Sans!important',
 
-      [theme.breakpoints.down('sm')]: {
-        fontSize: '8px!important'
-      }
-    }
+    //   [theme.breakpoints.down('sm')]: {
+    //     fontSize: '8px!important'
+    //   }
+    // }
   },
   zoomIcon: {
     // width: 18,

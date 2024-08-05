@@ -61,6 +61,31 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
   hasError = false,
   reloadHandler
 }) => {
+  // console.log({
+  //   data,
+  //   leftRange,
+  //   rightRange,
+  //   midPrice,
+  //   onChangeRange,
+  //   style,
+  //   className,
+  //   disabled,
+  //   plotMin,
+  //   plotMax,
+  //   zoomMinus,
+  //   zoomPlus,
+  //   loading,
+  //   isXtoY,
+  //   xDecimal,
+  //   yDecimal,
+  //   tickSpacing,
+  //   isDiscrete,
+  //   coverOnLoading,
+  //   hasError,
+  //   reloadHandler
+  // })
+
+
   const { classes } = useStyles()
 
   const isSmDown = useMediaQuery(theme.breakpoints.down('sm'))

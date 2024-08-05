@@ -221,9 +221,9 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
         fee_receiver: position.poolData.pool.fee_receiver
       };
       const res = calculateTokenAmounts(convertedPool, position);
+      console.log({ convertedPool });
       const x = res.x;
       const y = res.y;
-      console.log({ x, y });
 
       return [+printBigint(x, position.tokenX.decimals), +printBigint(y, position.tokenY.decimals)];
     }

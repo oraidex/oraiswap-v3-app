@@ -155,6 +155,7 @@ export const NewPosition: React.FC<INewPosition> = ({
   onRefresh
   // isBalanceLoading
 }) => {
+  console.log({ midPrice });
   const { classes } = useStyles();
   const navigate = useNavigate();
 
@@ -680,15 +681,15 @@ export const NewPosition: React.FC<INewPosition> = ({
             onChangeRange={onChangeRange}
             isXtoY={isXtoY}
             tickSpacing={Number(tickSpacing)}
-            xDecimal={xDecimal}
-            yDecimal={yDecimal}
+            xDecimal={xDecimal} //
+            yDecimal={yDecimal} //
             tokenASymbol={
               tokenAIndex !== null && tokens[tokenAIndex] ? tokens[tokenAIndex].symbol : 'ABC'
-            }
+            } //
             tokenBSymbol={
               tokenBIndex !== null && tokens[tokenBIndex] ? tokens[tokenBIndex].symbol : 'XYZ'
-            }
-            midPrice={BigInt(midPrice.index)}
+            } //
+            midPrice={BigInt(midPrice.index)} //
             onChangeMidPrice={onChangeMidPrice}
             currentPairReversed={currentPairReversed}
           />

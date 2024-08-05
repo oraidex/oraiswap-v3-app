@@ -360,6 +360,8 @@ export function* handleGetCurrentPlotTicks(action: PayloadAction<GetCurrentTicks
   const xDecimal = allTokens[poolKey.token_x].decimals;
   const yDecimal = allTokens[poolKey.token_y].decimals;
 
+  console.log({ poolKey, isXtoY,  });
+
   try {
     if (!allTickmaps[poolKeyToString(poolKey)] || fetchTicksAndTickmap) {
       const fetchTicksAndTickMapsAction: PayloadAction<FetchTicksAndTickMaps> = {
@@ -394,6 +396,7 @@ export function* handleGetCurrentPlotTicks(action: PayloadAction<GetCurrentTicks
       poolKey,
       deserializeTickmap(allTickmaps[poolKeyToString(poolKey)])
     );
+    console.log('rawTicks', rawTicks);
     if (rawTicks.length === 0) {
       const data = createPlaceholderLiquidityPlot(
         action.payload.isXtoY,
@@ -413,6 +416,7 @@ export function* handleGetCurrentPlotTicks(action: PayloadAction<GetCurrentTicks
       xDecimal,
       yDecimal
     );
+    console.log('ticksData', ticksData);
     yield put(actions.setPlotTicks(ticksData));
   } catch (error) {
     console.log(error);

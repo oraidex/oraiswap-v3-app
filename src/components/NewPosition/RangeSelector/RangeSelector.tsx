@@ -154,6 +154,7 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
     let rightRange: number;
 
     if (positionOpeningMethod === 'range') {
+      // implement later
       const { leftInRange, rightInRange } = getTicksInsideRange(left, right, isXtoY);
       leftRange = leftInRange;
       rightRange = rightInRange;
